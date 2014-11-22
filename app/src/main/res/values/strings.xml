@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">IDoCare</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="get_message_btn">Get message</string>
 
 </resources>

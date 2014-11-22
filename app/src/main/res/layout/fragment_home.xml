@@ -1,16 +1,21 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context=".Main$PlaceholderFragment">
+    android:gravity="center_horizontal"
+    android:layout_margin="@dimen/fragment_default_margin">
+
+    <Button
+        android:id="@+id/get_message_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/get_message_btn"/>
 
     <TextView
-        android:text="@string/hello_world"
-        android:layout_width="wrap_content"
+        android:id="@+id/incoming_message_txt"
+        android:layout_marginTop="@dimen/fragment_default_margin"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-</RelativeLayout>
+</LinearLayout>

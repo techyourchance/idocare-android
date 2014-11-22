@@ -3,17 +3,28 @@ package il.co.idocare.www.idocare;
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
+import android.widget.TextView;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
+public class Main extends Activity implements HomeFragment.HomeFragmentCallback{
 
-public class Main extends Activity {
+    private static final String LOG_TAG = "Main";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,44 +32,74 @@ public class Main extends Activity {
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.contents, new HomeFragment())
                     .commit();
         }
     }
 
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+    public void getMessageFromServer() {
+        new GetMessageFromServer().execute("http://idocare.co.il/api/");
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+    private void receivedMessage(String msg) {
+        HomeFragment f = (HomeFragment) getFragmentManager().findFragmentById(R.id.contents);
+        TextView txt = null;
+        if (f != null) {
+            txt = (TextView) f.getView().findViewById(R.id.incoming_message_txt);
+        } else {
+            Log.e(LOG_TAG, "contents of 'contents' is null!");
+            return;
         }
-        return super.onOptionsItemSelected(item);
+
+        txt.setText(msg);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
 
-        public PlaceholderFragment() {
+
+
+    private class GetMessageFromServer extends AsyncTask<String, String, String> {
+
+        protected String doInBackground(String... urls) {
+            URL url = null;
+            try {
+                url = new URL(urls[0]);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
+            int numOfBytesRead = 0;
+            byte input[] = new byte[100];
+
+            HttpURLConnection urlConnection = null;
+            try {
+                urlConnection = (HttpURLConnection) url.openConnection();
+                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+
+                numOfBytesRead = in.read(input, 0, 100);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+            }
+
+            return numOfBytesRead > 0 ? new String(input) : null;
         }
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-            return rootView;
+        protected void onPostExecute(String result) {
+            if (result != null) {
+                receivedMessage(result);
+            } else {
+                receivedMessage("Null");
+            }
         }
+
     }
+
+
+
 }
