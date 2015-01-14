@@ -1,3 +1,4 @@
 <resources>
     <dimen name="fragment_default_margin">30dp</dimen>
+    <dimen name="fragment_default_padding">20dp</dimen>
 </resources>

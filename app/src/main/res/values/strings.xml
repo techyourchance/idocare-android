@@ -2,6 +2,9 @@
 <resources>
 
     <string name="app_name">IDoCare</string>
-    <string name="get_message_btn">Get message</string>
+    <string name="btn_new_request">New request</string>
+    <string name="btn_request_details">Request details</string>
+    <string name="btn_add_new_request">Add request</string>
+    <string name="btn_pickup_request">Pickup request</string>
 
 </resources>

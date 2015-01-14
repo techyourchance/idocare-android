@@ -1,18 +1,8 @@
 package il.co.idocare.www.idocare;
 
 import android.app.Activity;
-import android.app.ActionBar;
-import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
-import android.widget.TextView;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -22,9 +12,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 
-public class Main extends Activity implements HomeFragment.HomeFragmentCallback{
+public class Main extends Activity {
 
     private static final String LOG_TAG = "Main";
+
+    private static final int TAKE_PHOTO_CODE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,31 +24,10 @@ public class Main extends Activity implements HomeFragment.HomeFragmentCallback{
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.contents, new HomeFragment())
+                    .add(R.id.frame_contents, new FragmentHome())
                     .commit();
         }
     }
-
-
-    @Override
-    public void getMessageFromServer() {
-        new GetMessageFromServer().execute("http://idocare.co.il/api/");
-    }
-
-    private void receivedMessage(String msg) {
-        HomeFragment f = (HomeFragment) getFragmentManager().findFragmentById(R.id.contents);
-        TextView txt = null;
-        if (f != null) {
-            txt = (TextView) f.getView().findViewById(R.id.incoming_message_txt);
-        } else {
-            Log.e(LOG_TAG, "contents of 'contents' is null!");
-            return;
-        }
-
-        txt.setText(msg);
-    }
-
-
 
 
     private class GetMessageFromServer extends AsyncTask<String, String, String> {
@@ -92,9 +63,7 @@ public class Main extends Activity implements HomeFragment.HomeFragmentCallback{
 
         protected void onPostExecute(String result) {
             if (result != null) {
-                receivedMessage(result);
             } else {
-                receivedMessage("Null");
             }
         }
 

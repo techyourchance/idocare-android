@@ -7,15 +7,15 @@
     android:layout_margin="@dimen/fragment_default_margin">
 
     <Button
-        android:id="@+id/get_message_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/get_message_btn"/>
-
-    <TextView
-        android:id="@+id/incoming_message_txt"
-        android:layout_marginTop="@dimen/fragment_default_margin"
+        android:id="@+id/btn_new_request"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="@string/btn_new_request"/>
+
+    <Button
+        android:id="@+id/btn_request_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_request_details"/>
 
 </LinearLayout>
