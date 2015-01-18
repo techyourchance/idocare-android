@@ -3,6 +3,12 @@ package il.co.idocare.www.idocare;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+
+import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -27,47 +33,17 @@ public class Main extends Activity {
                     .add(R.id.frame_contents, new FragmentHome())
                     .commit();
         }
+
+        // TODO: alter the configuration of UIL according to our needs
+        DisplayImageOptions defaultDisplayImageOptions = new DisplayImageOptions.Builder()
+                .cacheOnDisk(true)
+                .build();
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
+                .defaultDisplayImageOptions(defaultDisplayImageOptions)
+                .build();
+        ImageLoader.getInstance().init(config);
     }
 
-
-    private class GetMessageFromServer extends AsyncTask<String, String, String> {
-
-        protected String doInBackground(String... urls) {
-            URL url = null;
-            try {
-                url = new URL(urls[0]);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-
-            int numOfBytesRead = 0;
-            byte input[] = new byte[100];
-
-            HttpURLConnection urlConnection = null;
-            try {
-                urlConnection = (HttpURLConnection) url.openConnection();
-                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-
-                numOfBytesRead = in.read(input, 0, 100);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-            }
-
-            return numOfBytesRead > 0 ? new String(input) : null;
-        }
-
-        protected void onPostExecute(String result) {
-            if (result != null) {
-            } else {
-            }
-        }
-
-    }
 
 
 
