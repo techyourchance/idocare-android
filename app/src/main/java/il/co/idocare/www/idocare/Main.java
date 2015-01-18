@@ -24,6 +24,8 @@ public class Main extends Activity {
 
     private static final int TAKE_PHOTO_CODE = 0;
 
+    protected static HttpTaskExecutor sHttpTaskExecutor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +34,10 @@ public class Main extends Activity {
             getFragmentManager().beginTransaction()
                     .add(R.id.frame_contents, new FragmentHome())
                     .commit();
+        }
+
+        if (sHttpTaskExecutor == null) {
+            sHttpTaskExecutor = new HttpTaskExecutor();
         }
 
         // TODO: alter the configuration of UIL according to our needs
@@ -43,8 +49,5 @@ public class Main extends Activity {
                 .build();
         ImageLoader.getInstance().init(config);
     }
-
-
-
 
 }

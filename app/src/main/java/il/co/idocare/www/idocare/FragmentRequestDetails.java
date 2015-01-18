@@ -3,7 +3,6 @@ package il.co.idocare.www.idocare;
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,20 +11,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class FragmentRequestDetails extends Fragment {
+public class FragmentRequestDetails extends Fragment implements HttpTaskExecutor.HttpTaskDoneCallback {
 
     private final static String LOG_TAG = "FragmentRequestDetails";
 
@@ -56,10 +49,63 @@ public class FragmentRequestDetails extends Fragment {
         ListView listPictures = (ListView) view.findViewById(R.id.list_request_pictures);
         listPictures.setAdapter(mListAdapter);
 
-        HttpTask httpTask = new HttpTask();
-        httpTask.execute();
+        if (savedInstanceState == null) {
+            ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+            nameValuePairs.add(new BasicNameValuePair("username", USERNAME));
+            nameValuePairs.add(new BasicNameValuePair("password", PASSWORD));
+
+            Main.sHttpTaskExecutor.executePost(Constants.HttpTaskTag.REQUEST_DETAILS, this, URI, nameValuePairs);
+        }
 
         return view;
+    }
+
+
+
+
+
+    @Override
+    public void httpTaskDone(Constants.HttpTaskTag tag, String responseData) {
+      if (tag == Constants.HttpTaskTag.REQUEST_DETAILS) {
+          List<String> uris = extractUrisFromJSON(responseData);
+          if (uris != null) {
+              mListAdapter.clear();
+              mListAdapter.addAll(uris);
+              mListAdapter.notifyDataSetChanged();
+          } else {
+              Log.e(LOG_TAG, "list of URIs is null");
+          }
+      } else {
+          Log.e(LOG_TAG, "httpTaskDone was called with unrecognized tag: " + tag.toString());
+      }
+    }
+
+
+    private List<String> extractUrisFromJSON(String jsonData) {
+
+        ArrayList<String> urisList = null;
+
+        if (jsonData != null) {
+            try {
+                JSONObject jsonObj = new JSONObject(jsonData);
+
+                // Getting JSON Array
+                JSONArray uris = jsonObj.getJSONArray(JSON_TAG_URIS);
+
+                urisList = new ArrayList<String>(uris.length());
+
+                // Adding uris to the list
+                for (int i = 0; i < uris.length(); i++) {
+                    urisList.add(uris.getString(i));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.e(LOG_TAG,  "Couldn't get any data from the url");
+        }
+
+        return urisList;
     }
 
     private static class ViewHolder {
@@ -113,96 +159,4 @@ public class FragmentRequestDetails extends Fragment {
     }
 
 
-    private class HttpTask extends AsyncTask<String, Void, List<String>> {
-
-        private static final String LOG_TAG = "HttpTask";
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected List<String> doInBackground(String... strings) {
-
-            Log.d(LOG_TAG, "Executing http POST to URI: " + URI + "\nUsername: " + USERNAME
-                    + "\nPassword: " + PASSWORD);
-
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-
-            try
-            {
-
-                HttpPost httpPost = new HttpPost(URI);
-
-                // Adding data
-                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-                nameValuePairs.add(new BasicNameValuePair("username", "admin"));
-                nameValuePairs.add(new BasicNameValuePair("password", "123456"));
-                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-
-                HttpResponse httpResponse = httpClient.execute(httpPost);
-
-                Log.d(LOG_TAG, "Got a response. Status: " + httpResponse.getStatusLine().toString());
-
-                if (httpResponse.getStatusLine().getStatusCode() == 200 ) {
-
-                    String jsonData = EntityUtils.toString(httpResponse.getEntity());
-
-                    Log.d(LOG_TAG, "The content of the response is:\n" + jsonData);
-
-                    return extractUrisFromJSON(jsonData);
-                }
-
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-            finally
-            {
-                httpClient.getConnectionManager().shutdown();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(List<String> urisList) {
-            if (urisList != null) {
-                mListAdapter.clear();
-                mListAdapter.addAll(urisList);
-                mListAdapter.notifyDataSetChanged();
-            }
-
-        }
-
-        private List<String> extractUrisFromJSON(String jsonData) {
-
-            ArrayList<String> urisList = null;
-
-            if (jsonData != null) {
-                try {
-                    JSONObject jsonObj = new JSONObject(jsonData);
-
-                    // Getting JSON Array
-                    JSONArray uris = jsonObj.getJSONArray(JSON_TAG_URIS);
-
-                    urisList = new ArrayList<String>(uris.length());
-
-                    // Adding uris to the list
-                    for (int i = 0; i < uris.length(); i++) {
-                        urisList.add(uris.getString(i));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                Log.e(LOG_TAG,  "Couldn't get any data from the url");
-            }
-
-            return urisList;
-        }
-    }
 }

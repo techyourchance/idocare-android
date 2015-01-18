@@ -15,4 +15,7 @@ public class FragmentNewRequest extends Fragment {
 
         return view;
     }
+
+
+
 }
