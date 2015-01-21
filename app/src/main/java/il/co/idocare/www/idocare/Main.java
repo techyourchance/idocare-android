@@ -1,6 +1,7 @@
 package il.co.idocare.www.idocare;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -24,7 +25,11 @@ public class Main extends Activity {
 
     private static final int TAKE_PHOTO_CODE = 0;
 
-    protected static HttpTaskExecutor sHttpTaskExecutor;
+    /**
+     * This object shall be used in order to execute HTTP requests and be notified of
+     * incoming responses.
+     */
+    public static HttpTaskExecutor sHttpTaskExecutor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,4 +55,8 @@ public class Main extends Activity {
         ImageLoader.getInstance().init(config);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 }

@@ -3,6 +3,24 @@ package il.co.idocare.www.idocare;
 public class Constants {
 
 
-    public enum HttpTaskTag {REQUEST_DETAILS, POST_NEW_REQUEST }
+    /**
+     * This enum is used in order to relate HTTP response to a particular HTTP request
+     */
+    public enum HttpTaskTag {REQUEST_DETAILS, NEW_REQUEST }
+
+    /**
+     * This enum (its ordinal() values) is used with startActivityForResult() and
+     * onActivityResult() calls across the app
+     */
+    public enum StartActivityTag {CAPTURE_PICTURE_FOR_NEW_REQUEST}
+
+
+    public final static String USERNAME = "admin";
+    public final static String PASSWORD = "123456";
+    public final static String IMGLIST_URI = "http://dev-04.idocare.co.il/api-04/imglist";
+    public final static String IMGTEST_URI = "http://dev-04.idocare.co.il/api-04/imgtest";
+
+
+
 
 }

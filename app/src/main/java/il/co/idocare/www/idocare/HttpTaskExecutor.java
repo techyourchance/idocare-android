@@ -4,19 +4,29 @@ package il.co.idocare.www.idocare;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 
+
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+
+import ch.boye.httpclientandroidlib.HttpEntity;
+import ch.boye.httpclientandroidlib.HttpResponse;
+import ch.boye.httpclientandroidlib.NameValuePair;
+import ch.boye.httpclientandroidlib.client.entity.UrlEncodedFormEntity;
+import ch.boye.httpclientandroidlib.client.methods.HttpEntityEnclosingRequestBase;
+import ch.boye.httpclientandroidlib.client.methods.HttpGet;
+import ch.boye.httpclientandroidlib.client.methods.HttpPost;
+import ch.boye.httpclientandroidlib.client.methods.HttpUriRequest;
+import ch.boye.httpclientandroidlib.entity.ContentType;
+import ch.boye.httpclientandroidlib.entity.mime.MultipartEntityBuilder;
+import ch.boye.httpclientandroidlib.entity.mime.content.StringBody;
+import ch.boye.httpclientandroidlib.impl.client.CloseableHttpClient;
+import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
+import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
+import ch.boye.httpclientandroidlib.util.EntityUtils;
 
 public class HttpTaskExecutor {
 
@@ -54,12 +64,25 @@ public class HttpTaskExecutor {
      * @param nameValuePairs name/value pairs to be added to the request
      */
     public void executePost(Constants.HttpTaskTag tag, HttpTaskDoneCallback callback, String uri,
-                            List<NameValuePair> nameValuePairs) {
+                            Map<String, String> nameValuePairs) {
         HttpTask getTask = new HttpTask(tag, HttpMethod.POST, callback, nameValuePairs);
         getTask.execute(uri);
     }
 
 
+    /**
+     * Execute http POST request containing additional query strings (name/value pairs) and
+     * an image file.
+     * @param tag the tag of the task
+     * @param callback callback object to be used when the response is available (can be null)
+     * @param uri the URL to be used
+     * @param nameValuePairs name/value pairs to be added to the request
+     */
+    public void executePost(Constants.HttpTaskTag tag, HttpTaskDoneCallback callback, String uri,
+                            Map<String, String> nameValuePairs, File imgFile) {
+        HttpTask getTask = new HttpTask(tag, HttpMethod.POST, callback, nameValuePairs, imgFile);
+        getTask.execute(uri);
+    }
 
     /**
      * Classes implementing this interface are eligible to be used as callback targets once
@@ -83,21 +106,35 @@ public class HttpTaskExecutor {
 
 
         private HttpMethod mHttpMethod;
-        private List<NameValuePair> mNameValuePairs;
+        private Map<String, String> mParamMap;
         private HttpTaskDoneCallback mCallback;
         private Constants.HttpTaskTag mTag;
+        private File mImgFile;
 
-        protected HttpTask (Constants.HttpTaskTag tag, HttpMethod httpMethod, HttpTaskDoneCallback callback) {
+        protected HttpTask (Constants.HttpTaskTag tag, HttpMethod httpMethod,
+                            HttpTaskDoneCallback callback) {
             mTag = tag;
             mHttpMethod = httpMethod;
             mCallback = callback;
         }
 
-        protected HttpTask (Constants.HttpTaskTag tag, HttpMethod httpMethod, HttpTaskDoneCallback callback, List<NameValuePair> nameValuePairs) {
+        protected HttpTask (Constants.HttpTaskTag tag, HttpMethod httpMethod,
+                            HttpTaskDoneCallback callback, Map<String, String> nameValuePairs) {
             mTag = tag;
             mHttpMethod = httpMethod;
             mCallback = callback;
-            mNameValuePairs = nameValuePairs;
+            mParamMap = nameValuePairs;
+        }
+
+
+        protected HttpTask (Constants.HttpTaskTag tag, HttpMethod httpMethod,
+                            HttpTaskDoneCallback callback, Map<String, String> nameValuePairs,
+                            File imgFile) {
+            mTag = tag;
+            mHttpMethod = httpMethod;
+            mCallback = callback;
+            mParamMap = nameValuePairs;
+            mImgFile = imgFile;
         }
 
         @Override
@@ -110,7 +147,7 @@ public class HttpTaskExecutor {
         protected String doInBackground(String... uris) {
 
 
-            DefaultHttpClient httpClient = new DefaultHttpClient();
+            CloseableHttpClient httpClient = HttpClientBuilder.create().build();
             StringBuilder httpResponseBuffer = new StringBuilder();
             HttpUriRequest httpRequest;
 
@@ -128,20 +165,26 @@ public class HttpTaskExecutor {
                         break;
                 }
 
-                // Setting the parameters (if applicable to the method)
-                if (mNameValuePairs != null) {
+                // Adding an entity (if required)
+                HttpEntity httpEntity = getHttpEntity();
+                String httpEntityType = "";
+
+                if (httpEntity != null) {
                     try {
                         HttpEntityEnclosingRequestBase entityEnclosingRequest = (HttpEntityEnclosingRequestBase) httpRequest;
-                        entityEnclosingRequest.setEntity(new UrlEncodedFormEntity(mNameValuePairs));
+                        entityEnclosingRequest.setEntity(httpEntity);
+
+                        httpEntityType = httpEntity.toString();
                     } catch (ClassCastException e) {
-                        e.printStackTrace();
-                    } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
                 }
 
-                Log.d(LOG_TAG, "Executing http " + mHttpMethod.toString() + " to " + uri);
 
+                Log.d(LOG_TAG, "Executing http " + mHttpMethod.toString() + " to " + uri +
+                        (httpEntity != null ? ". Entity:\n" + httpEntityType : ""));
+
+                // Executing the request
                 try {
 
                     HttpResponse httpResponse = httpClient.execute(httpRequest);
@@ -162,7 +205,12 @@ public class HttpTaskExecutor {
                 } catch (IOException e ) {
                     e.printStackTrace();
                 } finally {
-                    httpClient.getConnectionManager().shutdown();
+                    // Close the client
+                    try {
+                        httpClient.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
@@ -179,6 +227,44 @@ public class HttpTaskExecutor {
                 Log.d(LOG_TAG, "sending data to callback:\n" + responseData);
                 mCallback.httpTaskDone(mTag, responseData);
             }
+        }
+
+        protected HttpEntity getHttpEntity() {
+
+            HttpEntity httpEntity = null;
+
+            // Whether multipart message is required
+            boolean isMultipart = (mImgFile != null);
+
+            if (isMultipart ) {
+                MultipartEntityBuilder multipartEntity = MultipartEntityBuilder.create();
+
+                if (mParamMap != null) {
+                    for (String name : mParamMap.keySet()) {
+                        multipartEntity.addPart(name, new StringBody(mParamMap.get(name), ContentType.TEXT_PLAIN));
+                    }
+                }
+
+                multipartEntity.addBinaryBody("image", mImgFile, ContentType.create("image/jpeg"), mImgFile.getName());
+
+                httpEntity = multipartEntity.build();
+
+            } else if (mParamMap != null) {
+                try {
+                    ArrayList<NameValuePair> nameValuePairs= new ArrayList<NameValuePair>();
+
+                    for (String name : mParamMap.keySet()) {
+                        nameValuePairs.add(new BasicNameValuePair(name, mParamMap.get(name)));
+                    }
+
+                    httpEntity = new UrlEncodedFormEntity(nameValuePairs);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            return httpEntity;
         }
 
     }

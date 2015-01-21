@@ -17,25 +17,19 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 
 public class FragmentRequestDetails extends Fragment implements HttpTaskExecutor.HttpTaskDoneCallback {
 
     private final static String LOG_TAG = "FragmentRequestDetails";
-
-    private final static String USERNAME = "admin";
-    private final static String PASSWORD = "123456";
-    private final static String URI = "http://dev-04.idocare.co.il/api-04/imglist";
-
 
     private final static String JSON_TAG_URIS = "filelist";
 
@@ -50,19 +44,14 @@ public class FragmentRequestDetails extends Fragment implements HttpTaskExecutor
         listPictures.setAdapter(mListAdapter);
 
         if (savedInstanceState == null) {
-            ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-            nameValuePairs.add(new BasicNameValuePair("username", USERNAME));
-            nameValuePairs.add(new BasicNameValuePair("password", PASSWORD));
-
-            Main.sHttpTaskExecutor.executePost(Constants.HttpTaskTag.REQUEST_DETAILS, this, URI, nameValuePairs);
+            HashMap<String, String> paramMap = new HashMap<String, String>(2);
+            paramMap.put("username", Constants.USERNAME);
+            paramMap.put("password", Constants.PASSWORD);
+            Main.sHttpTaskExecutor.executePost(Constants.HttpTaskTag.REQUEST_DETAILS, this, Constants.IMGLIST_URI, paramMap);
         }
 
         return view;
     }
-
-
-
-
 
     @Override
     public void httpTaskDone(Constants.HttpTaskTag tag, String responseData) {
