@@ -1,4 +1,7 @@
 <resources>
-    <dimen name="fragment_default_margin">30dp</dimen>
-    <dimen name="fragment_default_padding">20dp</dimen>
+    <dimen name="fragment_default_margin">15dp</dimen>
+    <dimen name="fragment_default_padding">10dp</dimen>
+    <dimen name="list_pictures_height">150dp</dimen>
+    <dimen name="list_pictures_padding_horizontal">30dp</dimen>
+    <dimen name="list_pictures_padding_vertical">10dp</dimen>
 </resources>

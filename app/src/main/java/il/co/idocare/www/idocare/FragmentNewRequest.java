@@ -15,8 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RatingBar;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
@@ -46,10 +48,10 @@ public class FragmentNewRequest extends Fragment {
 
 
         mListAdapter = new NewRequestPicturesAdapter(getActivity(), 0);
-        ListView listPictures = (ListView) view.findViewById(R.id.list_new_request_images);
+        ListView listPictures = (ListView) view.findViewById(R.id.list_pictures);
         listPictures.setAdapter(mListAdapter);
 
-        Button btnAddNewImage = (Button) view.findViewById(R.id.btn_add_new_image);
+        Button btnAddNewImage = (Button) view.findViewById(R.id.btn_take_picture);
         btnAddNewImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -123,12 +125,27 @@ public class FragmentNewRequest extends Fragment {
 
         // TODO: this method should send a proper request to the proper URL
 
+        @SuppressWarnings("ConstantConditions")
+        RatingBar rating = (RatingBar) getView().findViewById(R.id.ratingbar_rate);
+        EditText edtComment = (EditText) getView().findViewById(R.id.edt_comment);
 
-        ServerRequest serverRequest = new ServerRequest(Constants.IMGTEST_URL);
+
+        ServerRequest serverRequest = new ServerRequest(Constants.ADD_REQUEST_URL);
 
         serverRequest.addTextField("username", Constants.USERNAME);
         serverRequest.addTextField("password", Constants.PASSWORD);
-        serverRequest.addPicture("Picture1", mCameraPictureAbsolutePath);
+        serverRequest.addTextField("openedBy", "666");
+        serverRequest.addTextField("lat", "10");
+        serverRequest.addTextField("long", "10");
+        serverRequest.addTextField("pollutionLevel", String.valueOf(rating.getNumStars()));
+
+        if (edtComment.getText().toString().length() > 0) {
+            serverRequest.addTextField("noteBefore", edtComment.getText().toString());
+        }
+
+        for (int i = 0; i < mListAdapter.getCount(); i++) {
+            serverRequest.addPicture("picture" + String.valueOf(i), mListAdapter.getItem(i));
+        }
 
         serverRequest.execute();
     }
@@ -154,7 +171,7 @@ public class FragmentNewRequest extends Fragment {
             View view = convertView;
             final ViewHolder holder;
             if (convertView == null) {
-                view = mInflater.inflate(R.layout.request_images_list_item, parent, false);
+                view = mInflater.inflate(R.layout.element_camera_picture, parent, false);
                 holder = new ViewHolder();
                 holder.imageView = (ImageView) view.findViewById(R.id.image);
                 view.setTag(holder);

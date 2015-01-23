@@ -6,6 +6,7 @@
     <string name="btn_request_details">Request details</string>
     <string name="btn_add_new_request">Add request</string>
     <string name="btn_pickup_request">Pickup request</string>
-    <string name="btn_add_new_image">Add photo</string>
+    <string name="btn_take_picture">Add photo</string>
+    <string name="edt_comment_hint">Comment</string>
 
 </resources>

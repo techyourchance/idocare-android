@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:background="@drawable/border_background">
+
+
+    <ListView
+        android:id="@+id/list_pictures"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_pictures_height"
+        android:background="@drawable/border_background"
+        android:paddingTop="@dimen/list_pictures_padding_vertical"
+        android:paddingBottom="@dimen/list_pictures_padding_vertical"
+        android:paddingLeft="@dimen/list_pictures_padding_horizontal"
+        android:paddingRight="@dimen/list_pictures_padding_horizontal"/>
+
+    <Button
+        android:id="@+id/btn_take_picture"
+        android:text="@string/btn_take_picture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"/>
+
+
+</LinearLayout>

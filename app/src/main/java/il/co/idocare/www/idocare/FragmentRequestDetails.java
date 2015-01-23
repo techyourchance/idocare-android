@@ -133,7 +133,7 @@ public class FragmentRequestDetails extends Fragment implements ServerRequest.On
             View view = convertView;
             final ViewHolder holder;
             if (convertView == null) {
-                view = mInflater.inflate(R.layout.request_images_list_item, parent, false);
+                view = mInflater.inflate(R.layout.element_camera_picture, parent, false);
                 holder = new ViewHolder();
                 holder.imageView = (ImageView) view.findViewById(R.id.image);
                 view.setTag(holder);

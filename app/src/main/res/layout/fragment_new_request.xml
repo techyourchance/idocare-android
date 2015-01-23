@@ -5,22 +5,29 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
+    android:gravity="center_horizontal"
     android:padding="@dimen/fragment_default_padding">
 
-    <ListView
-        android:id="@+id/list_new_request_images"
+    <!-- Include camera control layout -->
+    <include layout="@layout/element_camera_control" />
+    
+    <EditText
+        android:id="@+id/edt_comment"
+        android:hint="@string/edt_comment_hint"
         android:layout_width="match_parent"
-        android:layout_height="200dp"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fragment_default_margin"
+        android:lines="1"/>
 
-    <Button
-        android:id="@+id/btn_add_new_image"
-        android:text="@string/btn_add_new_image"
+    <RatingBar
+        android:id="@+id/ratingbar_rate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:layout_marginTop="@dimen/fragment_default_margin"/>
-
+        android:layout_marginTop="@dimen/fragment_default_margin"
+        android:numStars="5"
+        android:stepSize="1"
+        android:rating="2"
+        style="?android:attr/ratingBarStyle"/>
 
     <Button
         android:id="@+id/btn_add_new_request"
