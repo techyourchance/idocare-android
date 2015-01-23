@@ -28,7 +28,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -66,9 +65,28 @@ public class FragmentNewRequest extends Fragment {
             }
         });
 
+
+        if (savedInstanceState != null) {
+            // Get the list of pictures from saved state
+            String[] adapterItems = savedInstanceState.getStringArray("adapterItems");
+            if (adapterItems != null) {
+                mListAdapter.addAll(adapterItems);
+                mListAdapter.notifyDataSetChanged();
+            }
+        }
+
         return view;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Save adapter items
+        String[] adapterItems = mListAdapter.getItems();
+        if (adapterItems != null) {
+            outState.putStringArray("adapterItems", adapterItems);
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -90,6 +108,7 @@ public class FragmentNewRequest extends Fragment {
 
         File outputFile = new File(getActivity()
                 .getExternalFilesDir(Environment.DIRECTORY_PICTURES), currDateTime + ".jpg");
+
         mCameraPictureAbsolutePath = outputFile.getAbsolutePath();
 
         Uri cameraPictureUri = Uri.fromFile(outputFile);
@@ -104,17 +123,14 @@ public class FragmentNewRequest extends Fragment {
 
         // TODO: this method should send a proper request to the proper URL
 
-        File imgFile = new File(mCameraPictureAbsolutePath);
-        if (!imgFile.exists()) {
-            Log.e(LOG_TAG, "the referenced image file does not exist: " + mCameraPictureAbsolutePath);
-            return;
-        }
 
-        HashMap<String, String> paramMap = new HashMap<String, String>(2);
-        paramMap.put("username", Constants.USERNAME);
-        paramMap.put("password", Constants.PASSWORD);
+        ServerRequest serverRequest = new ServerRequest(Constants.IMGTEST_URL);
 
-        Main.sHttpTaskExecutor.executePost(Constants.HttpTaskTag.NEW_REQUEST, null, Constants.IMGTEST_URI, paramMap, imgFile);
+        serverRequest.addTextField("username", Constants.USERNAME);
+        serverRequest.addTextField("password", Constants.PASSWORD);
+        serverRequest.addPicture("Picture1", mCameraPictureAbsolutePath);
+
+        serverRequest.execute();
     }
 
     private static class ViewHolder {
@@ -153,6 +169,22 @@ public class FragmentNewRequest extends Fragment {
             ImageLoader.getInstance().displayImage(pathForUIL, holder.imageView, animateFirstListener);
 
             return view;
+        }
+
+
+        /**
+         * Get all the items of this adapter
+         * @return array of items or null if there are none
+         */
+        public String[] getItems() {
+            if (getCount() == 0) {
+                return null;
+            }
+            String[] items = new String[getCount()];
+            for (int i = 0; i < getCount(); i++) {
+                items[i] = getItem(i);
+            }
+            return items;
         }
     }
 

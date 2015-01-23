@@ -23,11 +23,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 
-public class FragmentRequestDetails extends Fragment implements HttpTaskExecutor.HttpTaskDoneCallback {
+public class FragmentRequestDetails extends Fragment implements ServerRequest.OnServerResponseCallback {
 
     private final static String LOG_TAG = "FragmentRequestDetails";
 
@@ -44,28 +43,46 @@ public class FragmentRequestDetails extends Fragment implements HttpTaskExecutor
         listPictures.setAdapter(mListAdapter);
 
         if (savedInstanceState == null) {
-            HashMap<String, String> paramMap = new HashMap<String, String>(2);
-            paramMap.put("username", Constants.USERNAME);
-            paramMap.put("password", Constants.PASSWORD);
-            Main.sHttpTaskExecutor.executePost(Constants.HttpTaskTag.REQUEST_DETAILS, this, Constants.IMGLIST_URI, paramMap);
+            // Get the list of pictures from the server
+            ServerRequest serverRequest =
+                    new ServerRequest(Constants.IMGLIST_URL, Constants.ServerRequestTag.REQUEST_DETAILS, this);
+            serverRequest.addTextField("username", Constants.USERNAME);
+            serverRequest.addTextField("password", Constants.PASSWORD);
+            serverRequest.execute();
+        } else {
+            // Get the list of pictures from saved state
+            String[] adapterItems = savedInstanceState.getStringArray("adapterItems");
+            if (adapterItems != null) {
+                mListAdapter.addAll(adapterItems);
+                mListAdapter.notifyDataSetChanged();
+            }
         }
 
         return view;
     }
 
     @Override
-    public void httpTaskDone(Constants.HttpTaskTag tag, String responseData) {
-      if (tag == Constants.HttpTaskTag.REQUEST_DETAILS) {
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        String[] adapterItems = mListAdapter.getItems();
+        if (adapterItems != null) {
+            outState.putStringArray("adapterItems", adapterItems);
+        }
+    }
+
+    @Override
+    public void serverResponse(Constants.ServerRequestTag tag, String responseData) {
+      if (tag == Constants.ServerRequestTag.REQUEST_DETAILS) {
+          mListAdapter.clear();
           List<String> uris = extractUrisFromJSON(responseData);
           if (uris != null) {
-              mListAdapter.clear();
               mListAdapter.addAll(uris);
               mListAdapter.notifyDataSetChanged();
           } else {
               Log.e(LOG_TAG, "list of URIs is null");
           }
       } else {
-          Log.e(LOG_TAG, "httpTaskDone was called with unrecognized tag: " + tag.toString());
+          Log.e(LOG_TAG, "serverResponse was called with unrecognized tag: " + tag.toString());
       }
     }
 
@@ -127,6 +144,21 @@ public class FragmentRequestDetails extends Fragment implements HttpTaskExecutor
             ImageLoader.getInstance().displayImage(getItem(position), holder.imageView, animateFirstListener);
 
             return view;
+        }
+
+        /**
+         * Get all the items of this adapter
+         * @return array of items or null if there are none
+         */
+        public String[] getItems() {
+            if (getCount() == 0) {
+                return null;
+            }
+            String[] items = new String[getCount()];
+            for (int i = 0; i < getCount(); i++) {
+                items[i] = getItem(i);
+            }
+            return items;
         }
     }
 
