@@ -213,7 +213,7 @@ public class ServerRequest {
                     try {
                         HttpEntityEnclosingRequestBase entityEnclosingRequest = (HttpEntityEnclosingRequestBase) httpRequest;
                         entityEnclosingRequest.setEntity(httpEntity);
-                        httpEntityBody = getHttpEntityBody(httpEntity);
+                        httpEntityBody = httpEntity.toString(); //getHttpEntityBody(httpEntity);
                     } catch (ClassCastException e) {
                         e.printStackTrace();
                     }
@@ -288,15 +288,19 @@ public class ServerRequest {
                 }
 
                 if (mPicturesMap != null) {
+                    int i =0;
                     for (String name : mPicturesMap.keySet()) {
                         String uri = mPicturesMap.get(name);
                         File pictureFile = new File(uri);
 
                         if (pictureFile.exists()) {
-                            multipartEntity.addBinaryBody(Constants.PICTURES_HTTP_FIELD_NAME, pictureFile, ContentType.create("image/jpeg"), name);
+                            multipartEntity.addBinaryBody(
+                                    Constants.PICTURES_HTTP_FIELD_NAME+"["+i+"]",
+                                    pictureFile, ContentType.create("image/jpeg"), name);
                         } else {
                             Log.e(LOG_TAG, "the picture file does not exist: " + pictureFile);
                         }
+                        i++;
                     }
                 }
                 httpEntity = multipartEntity.build();

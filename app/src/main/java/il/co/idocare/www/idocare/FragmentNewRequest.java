@@ -144,7 +144,7 @@ public class FragmentNewRequest extends Fragment {
         }
 
         for (int i = 0; i < mListAdapter.getCount(); i++) {
-            serverRequest.addPicture("picture" + String.valueOf(i), mListAdapter.getItem(i));
+            serverRequest.addPicture("picture" + String.valueOf(i) + ".jpg", mListAdapter.getItem(i));
         }
 
         serverRequest.execute();
