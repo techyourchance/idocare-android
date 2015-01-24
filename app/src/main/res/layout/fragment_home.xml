@@ -7,12 +7,6 @@
     android:layout_margin="@dimen/fragment_default_margin">
 
     <Button
-        android:id="@+id/btn_new_request"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_new_request"/>
-
-    <Button
         android:id="@+id/btn_request_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

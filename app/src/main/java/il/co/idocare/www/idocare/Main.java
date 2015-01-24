@@ -23,8 +23,6 @@ public class Main extends Activity {
 
     private static final String LOG_TAG = "Main";
 
-    private static final int TAKE_PHOTO_CODE = 0;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
