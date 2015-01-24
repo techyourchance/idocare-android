@@ -137,7 +137,7 @@ public class FragmentNewRequest extends Fragment {
         serverRequest.addTextField("openedBy", "666");
         serverRequest.addTextField("lat", "10");
         serverRequest.addTextField("long", "10");
-        serverRequest.addTextField("pollutionLevel", String.valueOf(rating.getNumStars()));
+        serverRequest.addTextField("pollutionLevel", String.valueOf(rating.getRating()));
 
         if (edtComment.getText().toString().length() > 0) {
             serverRequest.addTextField("noteBefore", edtComment.getText().toString());
