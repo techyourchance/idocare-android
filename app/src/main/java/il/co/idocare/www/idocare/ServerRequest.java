@@ -206,22 +206,22 @@ public class ServerRequest {
                 }
 
                 // Adding an entity (if required)
-                HttpEntity httpEntity = getHttpEntity();
-                String httpEntityType = "";
+                HttpEntity httpEntity = createHttpEntity();
+                String httpEntityBody = "";
 
                 if (httpEntity != null) {
                     try {
                         HttpEntityEnclosingRequestBase entityEnclosingRequest = (HttpEntityEnclosingRequestBase) httpRequest;
                         entityEnclosingRequest.setEntity(httpEntity);
-                        httpEntityType = httpEntity.toString();
+                        httpEntityBody = getHttpEntityBody(httpEntity);
                     } catch (ClassCastException e) {
                         e.printStackTrace();
                     }
                 }
 
 
-                Log.d(LOG_TAG, "Executing http " + mHttpMethod.toString() + " to " + uri +
-                        (httpEntity != null ? ". Entity:\n" + httpEntityType : ""));
+                Log.d(LOG_TAG, "Executing http " + mHttpMethod.toString() + " to " + uri);
+                Log.v(LOG_TAG, "Entity contents:" + (httpEntity != null ? "\n" + httpEntityBody : " entity is null!"));
 
                 // Executing the request
                 try {
@@ -268,7 +268,11 @@ public class ServerRequest {
             }
         }
 
-        protected HttpEntity getHttpEntity() {
+        /**
+         * This method creates an appropriate entity for the request
+         * @return
+         */
+        protected HttpEntity createHttpEntity() {
             HttpEntity httpEntity = null;
 
             // Use multipart body if pictures should be attached
@@ -311,6 +315,23 @@ public class ServerRequest {
                 }
             }
             return httpEntity;
+        }
+
+
+        /**
+         * This method returns the actual contents of the entity object
+         * @param entity
+         * @return
+         */
+        protected String getHttpEntityBody(HttpEntity entity) {
+            java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream((int)entity.getContentLength());
+            try {
+                entity.writeTo(out);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            String entityContentAsString = new String(out.toByteArray());
+            return entityContentAsString;
         }
 
     }
