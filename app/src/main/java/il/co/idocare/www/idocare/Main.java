@@ -1,6 +1,7 @@
 package il.co.idocare.www.idocare;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,7 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 
-public class Main extends Activity {
+public class Main extends Activity implements FragmentManager.OnBackStackChangedListener {
 
     private static final String LOG_TAG = "Main";
 
@@ -41,10 +42,27 @@ public class Main extends Activity {
                 .defaultDisplayImageOptions(defaultDisplayImageOptions)
                 .build();
         ImageLoader.getInstance().init(config);
+
+
+        // This callback will be used to show/hide up (back) button in actionbar
+        getFragmentManager().addOnBackStackChangedListener(this);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        // Enable Up button only  if there are entries in the back stack
+        boolean hasBackstackEntries = getFragmentManager().getBackStackEntryCount() > 0;
+        getActionBar().setDisplayHomeAsUpEnabled(hasBackstackEntries);
+    }
+
+    @Override
+    public boolean onNavigateUp() {
+        getFragmentManager().popBackStack();
+        return true;
     }
 }
