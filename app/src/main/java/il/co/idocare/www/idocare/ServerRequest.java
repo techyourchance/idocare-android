@@ -263,7 +263,6 @@ public class ServerRequest {
         @Override
         protected void onPostExecute(String responseData) {
             if (mCallback != null) {
-                Log.d(LOG_TAG, "sending data to callback:\n" + responseData);
                 mCallback.serverResponse(mTag, responseData);
             }
         }

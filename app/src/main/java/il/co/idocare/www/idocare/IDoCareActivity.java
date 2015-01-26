@@ -20,9 +20,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 
-public class Main extends Activity implements FragmentManager.OnBackStackChangedListener {
+public class IDoCareActivity extends Activity implements
+        FragmentManager.OnBackStackChangedListener {
 
-    private static final String LOG_TAG = "Main";
+    private static final String LOG_TAG = "IDoCareActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

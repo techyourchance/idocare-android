@@ -6,10 +6,9 @@
     android:gravity="center_horizontal"
     android:layout_margin="@dimen/fragment_default_margin">
 
-    <Button
-        android:id="@+id/btn_request_details"
+    <ListView
+        android:id="@+id/list_requests_thumbnails"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_request_details"/>
+        android:layout_height="match_parent"/>
 
 </LinearLayout>
