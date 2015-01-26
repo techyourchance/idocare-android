@@ -97,10 +97,6 @@ public class FragmentHome extends Fragment implements ServerRequest.OnServerResp
         if (jsonData != null && jsonData.length() > 0) {
             try {
 
-                // TODO: these replacements must be removed - this is a bug on server side!
-                jsonData = jsonData.replaceAll("\"\\[", "\\[");
-                jsonData = jsonData.replaceAll("\\]\"", "\\]");
-                jsonData = jsonData.replaceAll("\\\\\"", "\"");
 
                 JSONObject jsonObj = new JSONObject(jsonData);
 
