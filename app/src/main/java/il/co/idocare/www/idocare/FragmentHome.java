@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -43,8 +44,28 @@ public class FragmentHome extends Fragment implements ServerRequest.OnServerResp
         setHasOptionsMenu(true);
 
         mListAdapter = new RequestsListAdapter(getActivity(), 0);
-        ListView listPictures = (ListView) view.findViewById(R.id.list_requests_thumbnails);
+        final ListView listPictures = (ListView) view.findViewById(R.id.list_requests_thumbnails);
         listPictures.setAdapter(mListAdapter);
+
+
+
+        listPictures.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+
+                RequestItem item = (RequestItem) listPictures.getItemAtPosition(position);
+
+
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.addToBackStack(null);
+                FragmentRequestDetails f = new FragmentRequestDetails();
+                f.setRequestItem(item);
+                ft.replace(R.id.frame_contents, f);
+                ft.commit();
+            }
+        });
+
+
 
         // Fetch the requests from the server
         getRequestsFromServer();
@@ -91,56 +112,42 @@ public class FragmentHome extends Fragment implements ServerRequest.OnServerResp
     }
 
     private List<RequestItem> extractRequestsFromJSON(String jsonData) {
+
         ArrayList<RequestItem> requestItemsList = new ArrayList<RequestItem>();
-        // TODO: continue
 
-        if (jsonData != null && jsonData.length() > 0) {
-            try {
+        if (jsonData == null || jsonData.length() <= 0) {
+            Log.e(LOG_TAG, "jsonData is null or empty");
+            return requestItemsList;
+        }
 
+        try {
+            JSONObject jsonObj = new JSONObject(jsonData);
 
-                JSONObject jsonObj = new JSONObject(jsonData);
+            // Getting JSON Array
+            JSONArray requestsArray = jsonObj.getJSONArray(JSON_TAG_REQUESTS);
 
-                // Getting JSON Array
-                JSONArray requestsArray = jsonObj.getJSONArray(JSON_TAG_REQUESTS);
+            if (requestsArray != null && requestsArray.length() > 0) {
 
-                if (requestsArray != null && requestsArray.length() > 0) {
-                    RequestItem requestItem;
-                    JSONObject request;
+                JSONObject request;
+                RequestItem requestItem;
 
-                    for (int i = 0; i < requestsArray.length(); i++) {
+                for (int i = 0; i < requestsArray.length(); i++) {
 
-                        request = requestsArray.getJSONObject(i);
-                        requestItem = new RequestItem();
-                        // TODO: all the "key" strings must be hardcoded into Constants class!
-                        requestItem.mCreationDate = request.getString("creation_date");
-                        requestItem.mOpenedBy = request.getString("opened_by");
+                    request = requestsArray.getJSONObject(i);
+                    requestItem = RequestItem.createRequestItem(request);
 
-                        if (request.getString("images_before").length() > 0) {
-                            // Remove the escape characters in front of / and split the list
-                            requestItem.mPicturesUrls = (request.getString("images_before")).replaceAll("\\\\/", "/").split(", ");
-
-                            for (String url : requestItem.mPicturesUrls) {
-                                Log.d(LOG_TAG, "Found URL: " + url);
-                            }
-                        }
-
+                    if (requestItem != null) {
                         requestItemsList.add(requestItem);
+                    } else {
+                        Log.e(LOG_TAG, "couldn't build request item!");
                     }
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
-        } else {
-            Log.e(LOG_TAG,  "jsonData is null or empty");
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
         return requestItemsList;
-    }
-
-    private static class RequestItem {
-        String mCreationDate;
-        String mOpenedBy;
-        String[] mPicturesUrls;
     }
 
     private static class ViewHolder {
@@ -180,8 +187,8 @@ public class FragmentHome extends Fragment implements ServerRequest.OnServerResp
 
             holder.mTxtTitle.setText(request.mOpenedBy + "@" + request.mCreationDate);
 
-            if (request.mPicturesUrls != null && request.mPicturesUrls.length > 0) {
-                ImageLoader.getInstance().displayImage(request.mPicturesUrls[0], holder.mImageView);
+            if (request.mImagesBefore != null && request.mImagesBefore.length > 0) {
+                ImageLoader.getInstance().displayImage(request.mImagesBefore[0], holder.mImageView);
             }
 
             return view;

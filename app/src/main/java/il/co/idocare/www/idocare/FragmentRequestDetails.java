@@ -26,13 +26,13 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class FragmentRequestDetails extends Fragment implements ServerRequest.OnServerResponseCallback {
+public class FragmentRequestDetails extends Fragment {
 
     private final static String LOG_TAG = "FragmentRequestDetails";
 
-    private final static String JSON_TAG_URIS = "filelist";
+    RequestPicturesAdapter mListAdapter;
+    RequestItem mRequestItem;
 
-    private RequestPicturesAdapter mListAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,20 +42,9 @@ public class FragmentRequestDetails extends Fragment implements ServerRequest.On
         ListView listPictures = (ListView) view.findViewById(R.id.list_request_pictures);
         listPictures.setAdapter(mListAdapter);
 
-        if (savedInstanceState == null) {
-            // Get the list of pictures from the server
-            ServerRequest serverRequest =
-                    new ServerRequest(Constants.IMGLIST_URL, Constants.ServerRequestTag.REQUEST_DETAILS, this);
-            serverRequest.addTextField("username", Constants.USERNAME);
-            serverRequest.addTextField("password", Constants.PASSWORD);
-            serverRequest.execute();
-        } else {
-            // Get the list of pictures from saved state
-            String[] adapterItems = savedInstanceState.getStringArray("adapterItems");
-            if (adapterItems != null) {
-                mListAdapter.addAll(adapterItems);
-                mListAdapter.notifyDataSetChanged();
-            }
+        if (mRequestItem != null && mRequestItem.mImagesBefore != null) {
+            mListAdapter.addAll(mRequestItem.mImagesBefore);
+            mListAdapter.notifyDataSetChanged();
         }
 
         return view;
@@ -64,55 +53,18 @@ public class FragmentRequestDetails extends Fragment implements ServerRequest.On
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        String[] adapterItems = mListAdapter.getItems();
-        if (adapterItems != null) {
-            outState.putStringArray("adapterItems", adapterItems);
-        }
+
     }
 
-    @Override
-    public void serverResponse(Constants.ServerRequestTag tag, String responseData) {
-      if (tag == Constants.ServerRequestTag.REQUEST_DETAILS) {
-          mListAdapter.clear();
-          List<String> uris = extractUrisFromJSON(responseData);
-          if (uris != null) {
-              mListAdapter.addAll(uris);
-              mListAdapter.notifyDataSetChanged();
-          } else {
-              Log.e(LOG_TAG, "list of URIs is null");
-          }
-      } else {
-          Log.e(LOG_TAG, "serverResponse was called with unrecognized tag: " + tag.toString());
-      }
+    /**
+     * This method is used in order to pass a reference to RequestItem object to this fragment.
+     * TODO: this method should be removed in favor of setArguments(bundle) - RequestItem need to be serializable/parseable
+     * @param item
+     */
+    public void setRequestItem(RequestItem item) {
+        mRequestItem = item;
     }
 
-
-    private List<String> extractUrisFromJSON(String jsonData) {
-
-        ArrayList<String> urisList = null;
-
-        if (jsonData != null) {
-            try {
-                JSONObject jsonObj = new JSONObject(jsonData);
-
-                // Getting JSON Array
-                JSONArray uris = jsonObj.getJSONArray(JSON_TAG_URIS);
-
-                urisList = new ArrayList<String>(uris.length());
-
-                // Adding uris to the list
-                for (int i = 0; i < uris.length(); i++) {
-                    urisList.add(uris.getString(i));
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        } else {
-            Log.e(LOG_TAG,  "Couldn't get any data from the url");
-        }
-
-        return urisList;
-    }
 
     private static class ViewHolder {
         ImageView imageView;
