@@ -4,22 +4,18 @@ import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,10 +38,13 @@ public class FragmentRequestDetails extends Fragment {
         ListView listPictures = (ListView) view.findViewById(R.id.list_request_pictures);
         listPictures.setAdapter(mListAdapter);
 
-        if (mRequestItem != null && mRequestItem.mImagesBefore != null) {
-            mListAdapter.addAll(mRequestItem.mImagesBefore);
-            mListAdapter.notifyDataSetChanged();
+        if (mRequestItem == null) {
+            // TODO: handle this error somehow
+            return view;
         }
+
+
+        populateChildViewsFromRequestItem(view);
 
         return view;
     }
@@ -59,12 +58,35 @@ public class FragmentRequestDetails extends Fragment {
     /**
      * This method is used in order to pass a reference to RequestItem object to this fragment.
      * TODO: this method should be removed in favor of setArguments(bundle) - RequestItem need to be serializable/parseable
-     * @param item
      */
     public void setRequestItem(RequestItem item) {
         mRequestItem = item;
     }
 
+
+    private void populateChildViewsFromRequestItem(View view) {
+
+        if (mRequestItem.mOpenedBy != null) {
+            TextView openedBy = (TextView) view.findViewById(R.id.txt_opened_by);
+            openedBy.setText("Opened by: " + mRequestItem.mOpenedBy);
+        }
+
+        if (mRequestItem.mCreationDate != null) {
+            TextView creationDate = (TextView) view.findViewById(R.id.txt_creation_date);
+            creationDate.setText(mRequestItem.mCreationDate);
+        }
+
+        if (mRequestItem.mImagesBefore != null) {
+            mListAdapter.addAll(mRequestItem.mImagesBefore);
+            mListAdapter.notifyDataSetChanged();
+        }
+
+        if (mRequestItem.mNoteBefore != null) {
+            TextView commentBefore = (TextView) view.findViewById(R.id.txt_comment_before);
+            commentBefore.setLines(UtilMethods.countLines(mRequestItem.mNoteBefore));
+            commentBefore.setText(mRequestItem.mNoteBefore);
+        }
+    }
 
     private static class ViewHolder {
         ImageView imageView;
