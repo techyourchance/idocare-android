@@ -31,7 +31,6 @@ import java.util.List;
 public class FragmentHome extends Fragment implements ServerRequest.OnServerResponseCallback {
 
     private final static String LOG_TAG = "FragmentHome";
-    private final static String JSON_TAG_REQUESTS = "data";
 
    private RequestsListAdapter mListAdapter;
 
@@ -55,7 +54,6 @@ public class FragmentHome extends Fragment implements ServerRequest.OnServerResp
 
                 RequestItem item = (RequestItem) listPictures.getItemAtPosition(position);
 
-
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.addToBackStack(null);
                 FragmentRequestDetails f = new FragmentRequestDetails();
@@ -68,7 +66,13 @@ public class FragmentHome extends Fragment implements ServerRequest.OnServerResp
 
 
         // Fetch the requests from the server
-        getRequestsFromServer();
+        IDoCareApplication app = (IDoCareApplication) getActivity().getApplication();
+        if (app.getRequests() == null) {
+            getRequestsFromServer();
+        } else {
+            mListAdapter.addAll(app.getRequests());
+            mListAdapter.notifyDataSetChanged();
+        }
 
         return view;
     }
@@ -104,50 +108,16 @@ public class FragmentHome extends Fragment implements ServerRequest.OnServerResp
     @Override
     public void serverResponse(Constants.ServerRequestTag tag, String responseData) {
         if (tag == Constants.ServerRequestTag.GET_ALL_REQUESTS) {
-            mListAdapter.addAll(extractRequestsFromJSON(responseData));
+            List<RequestItem> requests = UtilMethods.extractRequestsFromJSON(responseData);
+            mListAdapter.addAll(requests);
             mListAdapter.notifyDataSetChanged();
+
+            // TODO: remove this workaround
+            IDoCareApplication app = (IDoCareApplication) getActivity().getApplication();
+            app.setRequests(requests);
         } else {
             Log.e(LOG_TAG, "serverResponse was called with unrecognized tag: " + tag.toString());
         }
-    }
-
-    private List<RequestItem> extractRequestsFromJSON(String jsonData) {
-
-        ArrayList<RequestItem> requestItemsList = new ArrayList<RequestItem>();
-
-        if (jsonData == null || jsonData.length() <= 0) {
-            Log.e(LOG_TAG, "jsonData is null or empty");
-            return requestItemsList;
-        }
-
-        try {
-            JSONObject jsonObj = new JSONObject(jsonData);
-
-            // Getting JSON Array
-            JSONArray requestsArray = jsonObj.getJSONArray(JSON_TAG_REQUESTS);
-
-            if (requestsArray != null && requestsArray.length() > 0) {
-
-                JSONObject request;
-                RequestItem requestItem;
-
-                for (int i = 0; i < requestsArray.length(); i++) {
-
-                    request = requestsArray.getJSONObject(i);
-                    requestItem = RequestItem.createRequestItem(request);
-
-                    if (requestItem != null) {
-                        requestItemsList.add(requestItem);
-                    } else {
-                        Log.e(LOG_TAG, "couldn't build request item!");
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return requestItemsList;
     }
 
     private static class ViewHolder {
