@@ -142,7 +142,7 @@ public class UtilMethods {
         bitmap = null;
 
         File file = new File(absPathToThePicture);
-        Log.d(LOG_TAG, absPathToThePicture + "  " + "Length: " + file.length() + "B");
+        Log.d(LOG_TAG, "Created new picture file of length " + file.length() + "B" + " at " + absPathToThePicture);
     }
 
     /**
