@@ -94,6 +94,7 @@ public class FragmentNewRequest extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.StartActivityTag.CAPTURE_PICTURE_FOR_NEW_REQUEST.ordinal()) {
             if (resultCode == Activity.RESULT_OK) {
+                UtilMethods.adjustCameraPicture(mCameraPictureAbsolutePath);
                 mListAdapter.add(mCameraPictureAbsolutePath);
                 mListAdapter.notifyDataSetChanged();
             } else {
@@ -104,6 +105,10 @@ public class FragmentNewRequest extends Fragment {
         }
     }
 
+    /**
+     * Create ACTION_IMAGE_CAPTURE intent with EXTRA_OUTPUT path and issue startActivityForResult()
+     * with this intent
+     */
     private void captureImageWithCamera() {
         String currDateTime =
                 new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss", Locale.getDefault()).format(new Date());
@@ -123,12 +128,9 @@ public class FragmentNewRequest extends Fragment {
 
     private void addNewRequest() {
 
-        // TODO: this method should send a proper request to the proper URL
-
         @SuppressWarnings("ConstantConditions")
         RatingBar rating = (RatingBar) getView().findViewById(R.id.ratingbar_rate);
         EditText edtComment = (EditText) getView().findViewById(R.id.edt_comment);
-
 
         ServerRequest serverRequest = new ServerRequest(Constants.ADD_REQUEST_URL);
 
