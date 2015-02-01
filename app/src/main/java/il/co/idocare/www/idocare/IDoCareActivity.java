@@ -38,6 +38,7 @@ public class IDoCareActivity extends Activity implements
         // TODO: alter the configuration of UIL according to our needs
         DisplayImageOptions defaultDisplayImageOptions = new DisplayImageOptions.Builder()
                 .cacheOnDisk(true)
+                .considerExifParams(true)
                 .build();
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
                 .defaultDisplayImageOptions(defaultDisplayImageOptions)

@@ -3,6 +3,7 @@ package il.co.idocare.www.idocare;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ExifInterface;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -122,10 +123,26 @@ public class UtilMethods {
 
         Log.d(LOG_TAG, "bitmap height: " + bitmap.getHeight() + "  " + "bitmap width: " + bitmap.getWidth());
 
+        // Get the EXIF parameters of the original JPEG
+        ExifInterface exifInterface = null;
+        try {
+            exifInterface = new ExifInterface(absPathToThePicture);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         OutputStream stream = null;
         try {
             stream = new FileOutputStream(absPathToThePicture);
-            if (!bitmap.compress(Bitmap.CompressFormat.JPEG, NEW_CAMERA_PICTURE_COMPRESSION_QUALITY, stream)) {
+            // Try to write the compressed bitmap to the stream
+            if (bitmap.compress(Bitmap.CompressFormat.JPEG, NEW_CAMERA_PICTURE_COMPRESSION_QUALITY, stream)) {
+                // Set EXIF attributes to the file
+                try {
+                    if (exifInterface != null) exifInterface.saveAttributes();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            } else {
                 Log.e(LOG_TAG, "couldn't compress picture from: " + absPathToThePicture);
             }
             try {
@@ -141,8 +158,9 @@ public class UtilMethods {
         bitmap.recycle();
         bitmap = null;
 
+        // Output the size of the file
         File file = new File(absPathToThePicture);
-        Log.d(LOG_TAG, "Created new picture file of length " + file.length() + "B" + " at " + absPathToThePicture);
+        Log.v(LOG_TAG, "Created new picture file of length " + file.length() + "B" + " at " + absPathToThePicture);
     }
 
     /**
