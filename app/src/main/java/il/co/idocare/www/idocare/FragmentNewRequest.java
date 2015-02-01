@@ -106,7 +106,7 @@ public class FragmentNewRequest extends Fragment {
     }
 
     /**
-     * Create ACTION_IMAGE_CAPTURE intent with EXTRA_OUTPUT path and issue startActivityForResult()
+     * Create ACTION_IMAGE_CAPTURE intent with EXTRA_OUTPUT path and call startActivityForResult()
      * with this intent
      */
     private void captureImageWithCamera() {
@@ -126,6 +126,10 @@ public class FragmentNewRequest extends Fragment {
     }
 
 
+    /**
+     * Create, populate and execute a new server request based on the contents of fragment's
+     * views
+     */
     private void addNewRequest() {
 
         @SuppressWarnings("ConstantConditions")
@@ -134,6 +138,7 @@ public class FragmentNewRequest extends Fragment {
 
         ServerRequest serverRequest = new ServerRequest(Constants.ADD_REQUEST_URL);
 
+        // TODO: field names should come from constants and the values should not be hardcoded
         serverRequest.addTextField("username", Constants.USERNAME);
         serverRequest.addTextField("password", Constants.PASSWORD);
         serverRequest.addTextField("openedBy", "666");
