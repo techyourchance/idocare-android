@@ -7,5 +7,10 @@
     <string name="btn_take_picture">Add photo</string>
     <string name="edt_comment_hint">Comment</string>
     <string name="menu_add_new_request_title">Add new request</string>
+    <string name="image_request_thumbnail_content_description">Cleanup request thumbnail</string>
+    <string name="text_request_thumbnail_loading">Loading picture</string>
+    <string name="text_request_thumbnail_failed">Load failed</string>
+    <string name="text_request_thumbnail_cancelled">Load cancelled</string>
+    <string name="text_request_thumbnail_no_picture">No photo</string>
 
 </resources>

@@ -1,5 +1,8 @@
 package il.co.idocare.www.idocare;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
 public class Constants {
 
 
@@ -14,6 +17,13 @@ public class Constants {
      */
     public enum StartActivityTag {CAPTURE_PICTURE_FOR_NEW_REQUEST}
 
+    // TODO: alter the configuration of UIL according to our needs
+    public final static DisplayImageOptions DEFAULT_DISPLAY_IMAGE_OPTIONS =
+            new DisplayImageOptions.Builder()
+            .cacheOnDisk(true)
+            .considerExifParams(true)
+            .build();
+
 
     // TODO: remove hardcoded username and password
     public final static String USERNAME = "admin";
@@ -26,9 +36,6 @@ public class Constants {
     public final static String GET_ALL_REQUESTS_URL = "http://dev-04.idocare.co.il/api-04/request";
 
 
-    // Names of fields of JSON objects returned in server responses
-    // TODO: maybe this shouldn't be placed in Constants?
-    public final static String PICTURES_HTTP_FIELD_NAME = "imagesBefore";
 
 
 

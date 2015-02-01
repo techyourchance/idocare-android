@@ -33,6 +33,12 @@ public class ServerRequest {
 
     private final static String LOG_TAG = "ServerRequest";
 
+
+    /**
+     * Name of JSON field which contain the list of pictures taken when the request was opened
+     */
+    private final static String NEW_REQUEST_PICTURES_HTTP_FIELD_NAME = "imagesBefore";
+
     /**
      * Http method selector enum
      */
@@ -294,7 +300,7 @@ public class ServerRequest {
 
                         if (pictureFile.exists()) {
                             multipartEntity.addBinaryBody(
-                                    Constants.PICTURES_HTTP_FIELD_NAME+"["+i+"]",
+                                    NEW_REQUEST_PICTURES_HTTP_FIELD_NAME+"["+i+"]",
                                     pictureFile, ContentType.create("image/jpeg"), name);
                         } else {
                             Log.e(LOG_TAG, "the picture file does not exist: " + pictureFile);

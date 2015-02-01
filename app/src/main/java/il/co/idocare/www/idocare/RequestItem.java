@@ -35,8 +35,17 @@ public class RequestItem {
             item.mNoteAfter = requestJSONObject.getString("note_after");
             item.mLat = requestJSONObject.getString("lat");
             item.mLong = requestJSONObject.getString("long");
-            item.mImagesBefore = requestJSONObject.getString("images_before").split(", ");
-            item.mImagesAfter= requestJSONObject.getString("images_after").split(", ");
+
+            if (!requestJSONObject.getString("images_before").equals("") &&
+                    !requestJSONObject.getString("images_before").equalsIgnoreCase("null")) {
+                item.mImagesBefore = requestJSONObject.getString("images_before").split(", ");
+            }
+
+            if (!requestJSONObject.getString("images_after").equals("") &&
+                    !requestJSONObject.getString("images_after").equalsIgnoreCase("null")) {
+                item.mImagesAfter= requestJSONObject.getString("images_after").split(", ");
+            }
+
             item.mPollutionLevel= requestJSONObject.getString("pollution_level");
 
         } catch (JSONException e) {
@@ -48,6 +57,6 @@ public class RequestItem {
     }
 
 
-    public RequestItem() {}
+    private RequestItem() {}
 
 }

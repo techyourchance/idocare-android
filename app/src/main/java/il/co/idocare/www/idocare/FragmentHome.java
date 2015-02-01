@@ -4,6 +4,7 @@ package il.co.idocare.www.idocare;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,12 +20,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -97,6 +96,9 @@ public class FragmentHome extends Fragment implements ServerRequest.OnServerResp
         }
     }
 
+    /**
+     * Create a new server request asking to fetch all requests and set its credentials
+     */
     private void getRequestsFromServer() {
         ServerRequest serverRequest = new ServerRequest(Constants.GET_ALL_REQUESTS_URL,
                 Constants.ServerRequestTag.GET_ALL_REQUESTS, this);
@@ -123,6 +125,7 @@ public class FragmentHome extends Fragment implements ServerRequest.OnServerResp
     private static class ViewHolder {
         TextView mTxtTitle;
         TextView mTxtRating;
+        TextView mTxtBeforeImage;
         ImageView mImageView;
     }
 
@@ -146,6 +149,7 @@ public class FragmentHome extends Fragment implements ServerRequest.OnServerResp
                 view = mInflater.inflate(R.layout.element_request_thumbnail, parent, false);
                 holder = new ViewHolder();
                 holder.mImageView = (ImageView) view.findViewById(R.id.image_request_thumbnail);
+                holder.mTxtBeforeImage = (TextView) view.findViewById(R.id.text_request_thumbnail);
                 holder.mTxtTitle = (TextView) view.findViewById(R.id.txt_title);
                 holder.mTxtRating = (TextView) view.findViewById(R.id.txt_rating);
                 view.setTag(holder);
@@ -155,14 +159,106 @@ public class FragmentHome extends Fragment implements ServerRequest.OnServerResp
 
             RequestItem request = getItem(position);
 
-            holder.mTxtTitle.setText(request.mOpenedBy + "@" + request.mCreationDate);
+            // Set title
+            holder.mTxtTitle.setText(request.mOpenedBy + "  @ " + request.mCreationDate);
 
             if (request.mImagesBefore != null && request.mImagesBefore.length > 0) {
-                ImageLoader.getInstance().displayImage(request.mImagesBefore[0], holder.mImageView);
-            }
 
+                ImageLoader.getInstance().displayImage(
+                        request.mImagesBefore[0],
+                        holder.mImageView,
+                        Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS,
+                        new RequestThumbnailLoadingListener(holder.mTxtBeforeImage,
+                                getResources().getString(R.string.text_request_thumbnail_loading),
+                                getResources().getString(R.string.text_request_thumbnail_failed),
+                                getResources().getString(R.string.text_request_thumbnail_cancelled)),
+                        new RequestThumbnailLoadingProgressListener(holder.mTxtBeforeImage,
+                                getResources().getString(R.string.text_request_thumbnail_loading)));
+
+            } else {
+                holder.mImageView.setVisibility(View.GONE);
+                holder.mTxtBeforeImage.setVisibility(View.VISIBLE);
+                holder.mTxtBeforeImage.setText(getResources().getString(R.string.text_request_thumbnail_no_picture));
+            }
             return view;
         }
 
+    }
+
+    /**
+     * ImageLoadingListener used for alternating between TextView and ImageView when
+     * request thumbnail is being loaded
+     */
+    private static class RequestThumbnailLoadingListener implements ImageLoadingListener {
+
+        TextView mTxtBeforeImage;
+        String mLoading;
+        String mFailed;
+        String mCancelled;
+
+        public RequestThumbnailLoadingListener(TextView txtBeforeImage, String loading,
+                                               String failed, String cancelled) {
+            mTxtBeforeImage = txtBeforeImage;
+            mLoading = loading;
+            mFailed = failed;
+            mCancelled = cancelled;
+        }
+
+
+        @Override
+        public void onLoadingStarted(String imageUri, View view) {
+            // Make TextView visible and set loading text
+            mTxtBeforeImage.setVisibility(View.VISIBLE);
+            mTxtBeforeImage.setText(mLoading);
+            // Hide the ImageView
+            view.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+            mTxtBeforeImage.setText(mFailed);
+        }
+
+        @Override
+        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+            // Hide TextView
+            mTxtBeforeImage.setVisibility(View.GONE);
+            // Show ImageView
+            view.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onLoadingCancelled(String imageUri, View view) {
+            mTxtBeforeImage.setText(mCancelled);
+        }
+    }
+
+    /**
+     * ImageLoadingProgressListener used to animate request thumbnail while the picture hasn't
+     * been loaded yet.
+     */
+    private static class RequestThumbnailLoadingProgressListener implements ImageLoadingProgressListener {
+
+        TextView mTxtBeforeImage;
+        String mLoadingText;
+        int mNumOfDots;
+
+        public RequestThumbnailLoadingProgressListener(TextView txtBeforeImage, String text) {
+            mTxtBeforeImage = txtBeforeImage;
+            mLoadingText = text;
+            mNumOfDots = 0;
+        }
+
+        @Override
+        public void onProgressUpdate(String imageUri, View view, int current, int total) {
+            // Add the required amount of dots to the end of loading string
+            String dot = ".";
+            String textWithDots = mLoadingText + new String(new char[mNumOfDots % 4]).replace("\0", dot);
+            // Set the new text and increase the "dot counter"
+            mTxtBeforeImage.setText(textWithDots);
+            mNumOfDots++;
+
+
+        }
     }
 }
