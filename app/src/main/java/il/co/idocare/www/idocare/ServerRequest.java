@@ -50,7 +50,6 @@ public class ServerRequest {
     private HttpMethod mHttpMethod;
     private Map<String, String> mRequestTextFields;
     private Map<String, String> mRequestPictures;
-    private HttpTask mHttpTask;
 
 
     /**
@@ -128,8 +127,8 @@ public class ServerRequest {
      * Execute this server request
      */
     public void execute() {
-        mHttpTask = new HttpTask(mTag, mHttpMethod, mCallback, mRequestTextFields, mRequestPictures);
-        mHttpTask.execute(mUrl);
+        HttpTask httpTask = new HttpTask(mTag, mHttpMethod, mCallback, mRequestTextFields, mRequestPictures);
+        httpTask.execute(mUrl);
 
     }
 
@@ -143,13 +142,12 @@ public class ServerRequest {
     public interface OnServerResponseCallback {
         /**
          * This method will be called by ServerRequest object once the server response is received
+         * @param responseStatusOk whether the status of the response was OK (2**)
          * @param tag the tag of the server request
          * @param responseData the body of the received http response
          */
-        public void serverResponse(Constants.ServerRequestTag tag, String responseData);
+        public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag, String responseData);
     }
-
-
 
     private class HttpTask extends AsyncTask<String, Void, String> {
 
@@ -161,6 +159,8 @@ public class ServerRequest {
         private Map<String, String> mPicturesMap;
         private OnServerResponseCallback mCallback;
         private Constants.ServerRequestTag mTag;
+
+        private boolean mResponseStatusOk = false;
 
         protected HttpTask (Constants.ServerRequestTag tag, HttpMethod httpMethod,
                             OnServerResponseCallback callback) {
@@ -238,6 +238,8 @@ public class ServerRequest {
 
                     if (httpResponse.getStatusLine().getStatusCode() == 200 ) {
 
+                        mResponseStatusOk = true;
+
                         String responseData = EntityUtils.toString(httpResponse.getEntity());
 
                         Log.d(LOG_TAG, "The content of the response is:\n" + responseData);
@@ -269,7 +271,7 @@ public class ServerRequest {
         @Override
         protected void onPostExecute(String responseData) {
             if (mCallback != null) {
-                mCallback.serverResponse(mTag, responseData);
+                mCallback.serverResponse(mResponseStatusOk, mTag, responseData);
             }
         }
 

@@ -12,5 +12,8 @@
     <string name="text_request_thumbnail_failed">Load failed</string>
     <string name="text_request_thumbnail_cancelled">Load cancelled</string>
     <string name="text_request_thumbnail_no_picture">No photo</string>
+    <string name="login_username_title">Username:</string>
+    <string name="login_password_title">Password:</string>
+    <string name="btn_login_text">Login</string>
 
 </resources>

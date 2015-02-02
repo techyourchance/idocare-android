@@ -1,6 +1,7 @@
 package il.co.idocare.www.idocare;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.util.List;
@@ -47,11 +48,15 @@ public class IDoCareApplication extends Application implements ServerRequest.OnS
 
         mRequestsUpdateScheduler.scheduleAtFixedRate (new Runnable() {
             public void run() {
-                    ServerRequest serverRequest = new ServerRequest(Constants.GET_ALL_REQUESTS_URL,
-                            Constants.ServerRequestTag.GET_ALL_REQUESTS, IDoCareApplication.this);
-                    serverRequest.addTextField("username", Constants.USERNAME);
-                    serverRequest.addTextField("password", Constants.PASSWORD);
-                    serverRequest.execute();
+                ServerRequest serverRequest = new ServerRequest(Constants.GET_ALL_REQUESTS_URL,
+                        Constants.ServerRequestTag.GET_ALL_REQUESTS, IDoCareApplication.this);
+
+                SharedPreferences prefs =
+                        getSharedPreferences(Constants.PREFERENCES_FILE, MODE_PRIVATE);
+                serverRequest.addTextField("username", prefs.getString("username", "no_username"));
+                serverRequest.addTextField("password", prefs.getString("password", "no_password"));
+
+                serverRequest.execute();
 
             }
         }, 30, 30, TimeUnit.SECONDS);
@@ -59,7 +64,7 @@ public class IDoCareApplication extends Application implements ServerRequest.OnS
 
 
     @Override
-    public void serverResponse(Constants.ServerRequestTag tag, String responseData) {
+    public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag, String responseData) {
         if (tag == Constants.ServerRequestTag.GET_ALL_REQUESTS) {
             List<RequestItem> requests = UtilMethods.extractRequestsFromJSON(responseData);
             setRequests(requests);

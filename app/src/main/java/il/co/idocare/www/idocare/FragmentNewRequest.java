@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -149,8 +150,10 @@ public class FragmentNewRequest extends Fragment {
         ServerRequest serverRequest = new ServerRequest(Constants.ADD_REQUEST_URL);
 
         // TODO: field names should come from constants and the values should not be hardcoded
-        serverRequest.addTextField("username", Constants.USERNAME);
-        serverRequest.addTextField("password", Constants.PASSWORD);
+        SharedPreferences prefs =
+                getActivity().getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
+        serverRequest.addTextField("username", prefs.getString("username", "no_username"));
+        serverRequest.addTextField("password", prefs.getString("password", "no_password"));
         serverRequest.addTextField("openedBy", "666");
         serverRequest.addTextField("lat", "10");
         serverRequest.addTextField("long", "10");

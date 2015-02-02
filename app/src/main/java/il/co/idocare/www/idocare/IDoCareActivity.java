@@ -2,7 +2,9 @@ package il.co.idocare.www.idocare;
 
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -30,9 +32,22 @@ public class IDoCareActivity extends Activity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction()
-                    .add(R.id.frame_contents, new FragmentHome())
-                    .commit();
+
+            SharedPreferences prefs = getSharedPreferences(Constants.PREFERENCES_FILE, MODE_PRIVATE);
+
+            if (prefs.contains("username") && prefs.contains("password")) {
+                // Go straight to home page if username and password exist
+                getFragmentManager().beginTransaction()
+                        .add(R.id.frame_contents, new FragmentHome())
+                        .commit();
+            } else {
+                // Hide action bar
+                if (getActionBar() != null) getActionBar().hide();
+                // Bring up login fragment
+                getFragmentManager().beginTransaction()
+                        .add(R.id.frame_contents, new FragmentLogin())
+                        .commit();
+            }
         }
 
         // TODO: alter the configuration of UIL according to our needs

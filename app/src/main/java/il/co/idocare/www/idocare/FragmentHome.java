@@ -4,6 +4,7 @@ package il.co.idocare.www.idocare;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -102,21 +104,28 @@ public class FragmentHome extends Fragment implements ServerRequest.OnServerResp
     private void getRequestsFromServer() {
         ServerRequest serverRequest = new ServerRequest(Constants.GET_ALL_REQUESTS_URL,
                 Constants.ServerRequestTag.GET_ALL_REQUESTS, this);
-        serverRequest.addTextField("username", Constants.USERNAME);
-        serverRequest.addTextField("password", Constants.PASSWORD);
+
+        SharedPreferences prefs =
+                getActivity().getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
+        serverRequest.addTextField("username", prefs.getString("username", "no_username"));
+        serverRequest.addTextField("password", prefs.getString("password", "no_password"));
         serverRequest.execute();
     }
 
     @Override
-    public void serverResponse(Constants.ServerRequestTag tag, String responseData) {
+    public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag, String responseData) {
         if (tag == Constants.ServerRequestTag.GET_ALL_REQUESTS) {
-            List<RequestItem> requests = UtilMethods.extractRequestsFromJSON(responseData);
-            mListAdapter.addAll(requests);
-            mListAdapter.notifyDataSetChanged();
+            if (responseStatusOk) {
+                List<RequestItem> requests = UtilMethods.extractRequestsFromJSON(responseData);
+                mListAdapter.addAll(requests);
+                mListAdapter.notifyDataSetChanged();
 
-            // TODO: remove this workaround
-            IDoCareApplication app = (IDoCareApplication) getActivity().getApplication();
-            app.setRequests(requests);
+                // TODO: remove this workaround
+                IDoCareApplication app = (IDoCareApplication) getActivity().getApplication();
+                app.setRequests(requests);
+            } else {
+                Toast.makeText(getActivity(), "Server request failed", Toast.LENGTH_LONG).show();
+            }
         } else {
             Log.e(LOG_TAG, "serverResponse was called with unrecognized tag: " + tag.toString());
         }

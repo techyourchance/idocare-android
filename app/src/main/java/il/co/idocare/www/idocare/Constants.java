@@ -17,6 +17,11 @@ public class Constants {
      */
     public enum StartActivityTag {CAPTURE_PICTURE_FOR_NEW_REQUEST}
 
+    /**
+     * Global app preferences file
+     */
+    public final static String PREFERENCES_FILE = "idocare_preferences";
+
     // TODO: alter the configuration of UIL according to our needs
     public final static DisplayImageOptions DEFAULT_DISPLAY_IMAGE_OPTIONS =
             new DisplayImageOptions.Builder()
@@ -25,9 +30,6 @@ public class Constants {
             .build();
 
 
-    // TODO: remove hardcoded username and password
-    public final static String USERNAME = "admin";
-    public final static String PASSWORD = "123456";
 
     // URLs used to issue requests to the server
     public final static String IMGLIST_URL = "http://dev-04.idocare.co.il/api-04/imglist";
