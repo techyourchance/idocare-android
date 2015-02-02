@@ -40,7 +40,7 @@ public class FragmentNewRequest extends Fragment {
 
 
     private NewRequestPicturesAdapter mListAdapter;
-    private String mCameraPictureAbsolutePath;
+    private String mLastCameraPicturePath;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,12 +69,18 @@ public class FragmentNewRequest extends Fragment {
 
 
         if (savedInstanceState != null) {
-            // Get the list of pictures from saved state
+            // Get the list of pictures from saved state and pass them to adapter
             String[] adapterItems = savedInstanceState.getStringArray("adapterItems");
             if (adapterItems != null) {
                 mListAdapter.addAll(adapterItems);
                 mListAdapter.notifyDataSetChanged();
             }
+
+            // Restore the last path to camera picture
+            if (savedInstanceState.getString("lastCameraPicturePath") != null) {
+                mLastCameraPicturePath = savedInstanceState.getString("lastCameraPicturePath");
+            }
+
         }
 
         return view;
@@ -88,14 +94,18 @@ public class FragmentNewRequest extends Fragment {
         if (adapterItems != null) {
             outState.putStringArray("adapterItems", adapterItems);
         }
+        // Save the absolute path of the last picture (otherwise we get NullPointerException when
+        // trying to access it in onActivityResult())
+        outState.putString("lastCameraPicturePath", mLastCameraPicturePath);
+
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.StartActivityTag.CAPTURE_PICTURE_FOR_NEW_REQUEST.ordinal()) {
             if (resultCode == Activity.RESULT_OK) {
-                UtilMethods.adjustCameraPicture(mCameraPictureAbsolutePath);
-                mListAdapter.add(mCameraPictureAbsolutePath);
+                UtilMethods.adjustCameraPicture(mLastCameraPicturePath);
+                mListAdapter.add(mLastCameraPicturePath);
                 mListAdapter.notifyDataSetChanged();
             } else {
                 // TODO: do we need anything here?
@@ -116,7 +126,7 @@ public class FragmentNewRequest extends Fragment {
         File outputFile = new File(getActivity()
                 .getExternalFilesDir(Environment.DIRECTORY_PICTURES), currDateTime + ".jpg");
 
-        mCameraPictureAbsolutePath = outputFile.getAbsolutePath();
+        mLastCameraPicturePath = outputFile.getAbsolutePath();
 
         Uri cameraPictureUri = Uri.fromFile(outputFile);
 
