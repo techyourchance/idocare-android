@@ -227,7 +227,6 @@ public class ServerRequest {
 
 
                 Log.d(LOG_TAG, "Executing http " + mHttpMethod.toString() + " to " + uri);
-                Log.v(LOG_TAG, "Entity contents:" + (httpEntity != null ? "\n" + httpEntityBody : " entity is null!"));
 
                 // Executing the request
                 try {

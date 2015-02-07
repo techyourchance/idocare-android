@@ -115,16 +115,15 @@ public class FragmentHome extends Fragment implements ServerRequest.OnServerResp
     @Override
     public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag, String responseData) {
         if (tag == Constants.ServerRequestTag.GET_ALL_REQUESTS) {
-            if (responseStatusOk) {
+            if (responseStatusOk && FragmentHome.this.isAdded()) {
                 List<RequestItem> requests = UtilMethods.extractRequestsFromJSON(responseData);
+
                 mListAdapter.addAll(requests);
                 mListAdapter.notifyDataSetChanged();
 
                 // TODO: remove this workaround
                 IDoCareApplication app = (IDoCareApplication) getActivity().getApplication();
                 app.setRequests(requests);
-            } else {
-                Toast.makeText(getActivity(), "Server request failed", Toast.LENGTH_LONG).show();
             }
         } else {
             Log.e(LOG_TAG, "serverResponse was called with unrecognized tag: " + tag.toString());

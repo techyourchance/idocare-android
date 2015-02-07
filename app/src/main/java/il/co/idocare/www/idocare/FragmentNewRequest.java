@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
 
+import com.google.android.gms.location.LocationServices;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
@@ -154,9 +156,15 @@ public class FragmentNewRequest extends Fragment {
                 getActivity().getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
         serverRequest.addTextField("username", prefs.getString("username", "no_username"));
         serverRequest.addTextField("password", prefs.getString("password", "no_password"));
-        serverRequest.addTextField("openedBy", "666");
-        serverRequest.addTextField("lat", "10");
-        serverRequest.addTextField("long", "10");
+        serverRequest.addTextField("openedBy", prefs.getString("password", "no_password"));
+
+        Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                ((IDoCareActivity)getActivity()).mGoogleApiClient);
+        if (lastLocation != null) {
+            serverRequest.addTextField("lat", String.valueOf(lastLocation.getLatitude()));
+            serverRequest.addTextField("long", String.valueOf(lastLocation.getLongitude()));
+        }
+
         serverRequest.addTextField("pollutionLevel", String.valueOf(rating.getRating()));
 
         if (edtComment.getText().toString().length() > 0) {
