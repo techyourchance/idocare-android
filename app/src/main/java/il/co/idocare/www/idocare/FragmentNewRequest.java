@@ -156,7 +156,7 @@ public class FragmentNewRequest extends Fragment {
                 getActivity().getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
         serverRequest.addTextField("username", prefs.getString("username", "no_username"));
         serverRequest.addTextField("password", prefs.getString("password", "no_password"));
-        serverRequest.addTextField("openedBy", prefs.getString("password", "no_password"));
+        serverRequest.addTextField("openedBy", prefs.getString("username", "no_username"));
 
         Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 ((IDoCareActivity)getActivity()).mGoogleApiClient);
