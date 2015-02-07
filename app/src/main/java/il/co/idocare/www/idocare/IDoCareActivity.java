@@ -2,37 +2,36 @@ package il.co.idocare.www.idocare;
 
 import android.app.Activity;
 import android.app.FragmentManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
+import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 
 public class IDoCareActivity extends Activity implements
         FragmentManager.OnBackStackChangedListener,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener,
+        ServerRequest.OnServerResponseCallback {
 
     private static final String LOG_TAG = "IDoCareActivity";
 
     protected GoogleApiClient mGoogleApiClient;
+
+    ScheduledExecutorService mRequestsUpdateScheduler;
+    ScheduledFuture mScheduledFuture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +71,12 @@ public class IDoCareActivity extends Activity implements
         super.onStart();
 
         if (mGoogleApiClient != null) mGoogleApiClient.connect();
+
+        // TODO: verify that this call resolves the missing UP button when the activity is restarted
+        onBackStackChanged();
+
+        // Start periodic updates of requests' cache
+        scheduleRequestsCacheUpdates();
     }
 
     @Override
@@ -79,6 +84,9 @@ public class IDoCareActivity extends Activity implements
         super.onStop();
 
         if (mGoogleApiClient != null) mGoogleApiClient.disconnect();
+
+        // Stop the updates of requests' cache
+        stopRequestsCacheUpdates();
     }
 
     @Override
@@ -133,5 +141,51 @@ public class IDoCareActivity extends Activity implements
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
+    }
+
+
+
+    /**
+     * Start periodical update of the list of the requests stored in application context. The
+     * application context was required in order to preserve the data when the activity is killed.
+     * TODO: this workaround should be replaced with DB+SyncAdapter scheme
+     */
+    private void scheduleRequestsCacheUpdates() {
+        if (mRequestsUpdateScheduler == null)
+            mRequestsUpdateScheduler = Executors.newSingleThreadScheduledExecutor();
+
+        final Runnable update = new Runnable() {
+            public void run() {
+                ServerRequest serverRequest = new ServerRequest(Constants.GET_ALL_REQUESTS_URL,
+                        Constants.ServerRequestTag.GET_ALL_REQUESTS, IDoCareActivity.this);
+
+                SharedPreferences prefs =
+                        getSharedPreferences(Constants.PREFERENCES_FILE, MODE_PRIVATE);
+                serverRequest.addTextField("username", prefs.getString("username", "no_username"));
+                serverRequest.addTextField("password", prefs.getString("password", "no_password"));
+
+                serverRequest.execute();
+            }
+        };
+
+        mScheduledFuture =
+                mRequestsUpdateScheduler.scheduleAtFixedRate (update, 30, 30, TimeUnit.SECONDS);
+    }
+
+    private void stopRequestsCacheUpdates() {
+//        if (mRequestsUpdateScheduler != null)
+//            mRequestsUpdateScheduler.shutdown();
+        if (mScheduledFuture != null) mScheduledFuture.cancel(false);
+    }
+
+
+    @Override
+    public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag, String responseData) {
+        if (tag == Constants.ServerRequestTag.GET_ALL_REQUESTS) {
+            List<RequestItem> requests = UtilMethods.extractRequestsFromJSON(responseData);
+            ((IDoCareApplication)getApplication()).setRequests(requests);
+        } else {
+            Log.e(LOG_TAG, "serverResponse was called with unrecognized tag: " + tag.toString());
+        }
     }
 }
