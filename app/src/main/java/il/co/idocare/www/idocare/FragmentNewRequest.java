@@ -37,13 +37,14 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class FragmentNewRequest extends Fragment {
+public class FragmentNewRequest extends IDoCareFragment {
 
     private final static String LOG_TAG = "FragmentNewRequest";
 
 
     private NewRequestPicturesAdapter mListAdapter;
     private String mLastCameraPicturePath;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -87,6 +88,17 @@ public class FragmentNewRequest extends Fragment {
         }
 
         return view;
+    }
+
+
+    @Override
+    public boolean isTopLevelFragment() {
+        return false;
+    }
+
+    @Override
+    public Class<? extends IDoCareFragment> getNavHierParentFragment() {
+        return FragmentHome.class;
     }
 
     @Override

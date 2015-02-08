@@ -29,11 +29,22 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListe
 import java.util.List;
 
 
-public class FragmentHome extends Fragment implements ServerRequest.OnServerResponseCallback {
+public class FragmentHome extends IDoCareFragment implements ServerRequest.OnServerResponseCallback {
 
     private final static String LOG_TAG = "FragmentHome";
 
    private RequestsListAdapter mListAdapter;
+
+
+    @Override
+    public boolean isTopLevelFragment() {
+        return true;
+    }
+
+    @Override
+    public Class<? extends IDoCareFragment> getNavHierParentFragment() {
+        return null;
+    }
 
 
     @Override
@@ -52,15 +63,13 @@ public class FragmentHome extends Fragment implements ServerRequest.OnServerResp
         listPictures.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-
+                // Get the selected item
                 RequestItem item = (RequestItem) listPictures.getItemAtPosition(position);
-
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.addToBackStack(null);
-                FragmentRequestDetails f = new FragmentRequestDetails();
-                f.setRequestItem(item);
-                ft.replace(R.id.frame_contents, f);
-                ft.commit();
+                // Create a bundle and put the selected item there
+                Bundle args = new Bundle();
+                args.putParcelable("requestItem", item);
+                // Replace with FragmentRequestDetails and pass the bundle as argument
+                replaceFragment(FragmentRequestDetails.class, true, args);
             }
         });
 
@@ -129,6 +138,7 @@ public class FragmentHome extends Fragment implements ServerRequest.OnServerResp
             Log.e(LOG_TAG, "serverResponse was called with unrecognized tag: " + tag.toString());
         }
     }
+
 
     private static class ViewHolder {
         TextView mTxtTitle;

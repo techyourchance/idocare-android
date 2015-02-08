@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class FragmentRequestDetails extends Fragment {
+public class FragmentRequestDetails extends IDoCareFragment {
 
     private final static String LOG_TAG = "FragmentRequestDetails";
 
@@ -38,11 +38,15 @@ public class FragmentRequestDetails extends Fragment {
         ListView listPictures = (ListView) view.findViewById(R.id.list_request_pictures);
         listPictures.setAdapter(mListAdapter);
 
+        Bundle args = getArguments();
+        if (args != null) {
+            mRequestItem = (RequestItem) args.getParcelable("requestItem");
+        }
+
         if (mRequestItem == null) {
             // TODO: handle this error somehow
             return view;
         }
-
 
         populateChildViewsFromRequestItem(view);
 
@@ -54,15 +58,6 @@ public class FragmentRequestDetails extends Fragment {
         super.onSaveInstanceState(outState);
 
     }
-
-    /**
-     * This method is used in order to pass a reference to RequestItem object to this fragment.
-     * TODO: this method should be removed in favor of setArguments(bundle) - RequestItem need to be serializable/parseable
-     */
-    public void setRequestItem(RequestItem item) {
-        mRequestItem = item;
-    }
-
 
     private void populateChildViewsFromRequestItem(View view) {
 
@@ -86,6 +81,16 @@ public class FragmentRequestDetails extends Fragment {
             commentBefore.setLines(UtilMethods.countLines(mRequestItem.mNoteBefore));
             commentBefore.setText(mRequestItem.mNoteBefore);
         }
+    }
+
+    @Override
+    public boolean isTopLevelFragment() {
+        return false;
+    }
+
+    @Override
+    public Class<? extends IDoCareFragment> getNavHierParentFragment() {
+        return FragmentHome.class;
     }
 
     private static class ViewHolder {

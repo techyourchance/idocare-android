@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
-public class FragmentLogin extends Fragment implements ServerRequest.OnServerResponseCallback {
+public class FragmentLogin extends IDoCareFragment implements ServerRequest.OnServerResponseCallback {
 
     private final static String LOG_TAG = "FragmentLogin";
 
@@ -48,6 +48,16 @@ public class FragmentLogin extends Fragment implements ServerRequest.OnServerRes
         return view;
     }
 
+
+    @Override
+    public boolean isTopLevelFragment() {
+        return true;
+    }
+
+    @Override
+    public Class<? extends IDoCareFragment> getNavHierParentFragment() {
+        return null;
+    }
 
     /**
      * Create a new server request asking to fetch all requests and set its credentials
@@ -112,4 +122,5 @@ public class FragmentLogin extends Fragment implements ServerRequest.OnServerRes
         prefs.edit().putString("username", mEdtUsername.getText().toString()).apply();
         prefs.edit().putString("password", mEdtPassword.getText().toString()).apply();
     }
+
 }

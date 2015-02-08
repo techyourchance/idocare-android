@@ -8,9 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.text.Layout;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -30,9 +28,8 @@ import java.util.concurrent.TimeUnit;
 
 
 public class IDoCareActivity extends Activity implements
+        IDoCareFragment.IDoCareFragmentCallback,
         FragmentManager.OnBackStackChangedListener,
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
         ServerRequest.OnServerResponseCallback {
 
     private static final String LOG_TAG = "IDoCareActivity";
@@ -120,12 +117,11 @@ public class IDoCareActivity extends Activity implements
         return true;
     }
 
-    /**
-     * Show a particular fragment
-     * TODO: maybe we need to preserve the state of the replaced fragments?
-     * @param claz the class of the fragment to be shown
-     */
-    protected void showFragment(Class<? extends Fragment> claz, boolean addToBackStack) {
+
+    // TODO: maybe we need to preserve the state of the replaced fragments?
+    @Override
+    public void replaceFragment(Class<? extends IDoCareFragment> claz, boolean addToBackStack,
+                                Bundle args) {
 
         Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -143,10 +139,13 @@ public class IDoCareActivity extends Activity implements
 
         try {
             newFragment = claz.newInstance();
+            if (args != null) newFragment.setArguments(args);
         } catch (InstantiationException e) {
             e.printStackTrace();
+            return;
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+            return;
         }
 
         if (addToBackStack) ft.addToBackStack(null);
@@ -165,8 +164,8 @@ public class IDoCareActivity extends Activity implements
         final ListView drawerList = (ListView) findViewById(R.id.drawer_contents);
 
         // Set the adapter for the list view
-        drawerList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1
-                , entries));
+        drawerList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
+                entries));
 
 
         drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -181,7 +180,7 @@ public class IDoCareActivity extends Activity implements
 
                     // TODO: populate other options too
                     case 0:
-                        showFragment(FragmentHome.class, true);
+                        IDoCareActivity.this.replaceFragment(FragmentHome.class, true, null);
                         break;
                     case 1:
                         break;
@@ -212,29 +211,16 @@ public class IDoCareActivity extends Activity implements
         ImageLoader.getInstance().init(config);
     }
 
+    /**
+     * Initialize the client which will be used to connect to Google Play Services
+     */
     private void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
     }
 
 
-    @Override
-    public void onConnected(Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-
-    }
 
 
     /**

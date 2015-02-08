@@ -1,11 +1,16 @@
 package il.co.idocare.www.idocare;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class RequestItem {
+public class RequestItem implements Parcelable {
 
+    private final static String LOG_TAG = "RequestItem";
 
     public String mId;
     public String mOpenedBy;
@@ -23,6 +28,7 @@ public class RequestItem {
 
     public static RequestItem createRequestItem(JSONObject requestJSONObject) {
         RequestItem item = new RequestItem();
+        // TODO: field names in JSON should come from constants
 
         try {
             item.mId = requestJSONObject.getString("id");
@@ -57,6 +63,62 @@ public class RequestItem {
     }
 
 
-    private RequestItem() {}
+    public RequestItem(Parcel source) {
+        if (!RequestItem.class.isAssignableFrom(source.getClass())) {
+            Log.e(LOG_TAG, "the Parcel provided to the constructor is not of type RequestItem");
+            return;
+        }
 
+        mId = source.readString();
+        mOpenedBy = source.readString();
+        mPickedUpBy = source.readString();
+        mCreationDate = source.readString();
+        mPickedUpDate = source.readString();
+        mCloseDate = source.readString();
+        mNoteBefore = source.readString();
+        mNoteAfter = source.readString();
+        mLat = source.readString();
+        mLong = source.readString();
+        source.readStringArray(mImagesBefore);
+        source.readStringArray(mImagesAfter);
+        mPollutionLevel= source.readString();
+        
+    }
+
+    private RequestItem(){}
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int i) {
+        dest.writeString(mId);
+        dest.writeString(mOpenedBy);
+        dest.writeString(mPickedUpBy);
+        dest.writeString(mCreationDate);
+        dest.writeString(mPickedUpDate);
+        dest.writeString(mCloseDate);
+        dest.writeString(mNoteBefore);
+        dest.writeString(mNoteAfter);
+        dest.writeString(mLat);
+        dest.writeString(mLong);
+        dest.writeStringArray(mImagesBefore);
+        dest.writeStringArray(mImagesAfter);
+        dest.writeString(mPollutionLevel);
+    }
+
+
+    public static final Creator<RequestItem> CREATOR = new Creator<RequestItem>() {
+        @Override
+        public RequestItem[] newArray(int size) {
+            return new RequestItem[size];
+        }
+
+        @Override
+        public RequestItem createFromParcel(Parcel source) {
+            return new RequestItem(source);
+        }
+    };
 }
