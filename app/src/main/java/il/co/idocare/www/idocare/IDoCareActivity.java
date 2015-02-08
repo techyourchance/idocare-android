@@ -9,6 +9,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -39,6 +41,11 @@ public class IDoCareActivity extends Activity implements
     ScheduledExecutorService mRequestsUpdateScheduler;
     ScheduledFuture mScheduledFuture;
 
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Activity lifecycle management
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +55,7 @@ public class IDoCareActivity extends Activity implements
 
         buildGoogleApiClient();
 
-        initNavigationDrawer();
+        setupDrawer();
 
         // This callback will be used to show/hide up (back) button in actionbar
         getFragmentManager().addOnBackStackChangedListener(this);
@@ -103,6 +110,28 @@ public class IDoCareActivity extends Activity implements
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        boolean actionsVisibility = !drawerLayout.isDrawerVisible(Gravity.START);
+
+        for(int i=0;i<menu.size();i++){
+            menu.getItem(i).setVisible(actionsVisibility);
+        }
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    // End of activity lifecycle management
+    //
+    // ---------------------------------------------------------------------------------------------
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Back stack management
+
+
+    @Override
     public void onBackStackChanged() {
         if (getActionBar() != null) {
             // Enable Up button only  if there are entries in the back stack
@@ -117,6 +146,13 @@ public class IDoCareActivity extends Activity implements
         return true;
     }
 
+    // End of back stack management
+    //
+    // ---------------------------------------------------------------------------------------------
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Fragments management
 
     // TODO: maybe we need to preserve the state of the replaced fragments?
     @Override
@@ -135,7 +171,7 @@ public class IDoCareActivity extends Activity implements
         }
 
         // Create new fragment
-        Fragment newFragment = null;
+        Fragment newFragment;
 
         try {
             newFragment = claz.newInstance();
@@ -155,10 +191,33 @@ public class IDoCareActivity extends Activity implements
 
     }
 
+
+
+    // End of fragments management
+    //
+    // ---------------------------------------------------------------------------------------------
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Navigation drawer management
+
+
+
+
     /**
      * Initiate the navigation drawer
      */
-    private void initNavigationDrawer() {
+    private void setupDrawer() {
+
+        setupDrawerListView();
+
+        setupDrawerAndActionBarDependencies();
+
+    }
+
+
+    private void setupDrawerListView() {
+
         String[] entries = getResources().getStringArray(R.array.drawer_entries);
         final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         final ListView drawerList = (ListView) findViewById(R.id.drawer_contents);
@@ -166,7 +225,6 @@ public class IDoCareActivity extends Activity implements
         // Set the adapter for the list view
         drawerList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
                 entries));
-
 
         drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -182,12 +240,8 @@ public class IDoCareActivity extends Activity implements
                     case 0:
                         IDoCareActivity.this.replaceFragment(FragmentHome.class, true, null);
                         break;
-                    case 1:
-                        break;
-                    case 2:
-                        break;
-                    case 3:
-                        break;
+                    default:
+                        return;
                 }
 
                 // Clear back-stack
@@ -196,8 +250,38 @@ public class IDoCareActivity extends Activity implements
 
             }
         });
-
     }
+
+    private void setupDrawerAndActionBarDependencies() {
+
+        final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        drawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
+
+            @Override
+            public void onDrawerSlide(View view, float v) {
+                invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onDrawerOpened(View view) {
+
+            }
+
+            @Override
+            public void onDrawerClosed(View view) {
+                invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onDrawerStateChanged(int state) {
+            }
+        });
+    }
+
+    // End of navigation drawer management
+    //
+    // ---------------------------------------------------------------------------------------------
 
 
     /**

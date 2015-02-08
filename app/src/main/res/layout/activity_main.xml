@@ -7,10 +7,15 @@
     android:layout_height="match_parent">
 
     <!-- The main content view -->
+    <!--
+    Setting clickable to true in order to resolve bug with Navigation Drawer:
+    http://stackoverflow.com/questions/18044277/android-navigation-drawer-bug-using-the-sample
+    -->
     <FrameLayout
         android:id="@+id/frame_contents"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:clickable="true"/>
 
     <!-- The navigation drawer -->
     <ListView
