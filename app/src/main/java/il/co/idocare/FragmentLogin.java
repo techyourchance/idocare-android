@@ -1,4 +1,4 @@
-package il.co.idocare.www.idocare;
+package il.co.idocare;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
