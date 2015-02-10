@@ -31,25 +31,42 @@ import ch.boye.httpclientandroidlib.util.EntityUtils;
 
 public class ServerRequest {
 
-    private final static String LOG_TAG = "ServerRequest";
-
 
     /**
-     * Name of JSON field which contain the list of pictures taken when the request was opened
+     * Classes implementing this interface are eligible to be used as callback targets once
+     * server response for a particular request is received
      */
-    private final static String NEW_REQUEST_PICTURES_HTTP_FIELD_NAME = "imagesBefore";
+    public interface OnServerResponseCallback {
+        /**
+         * This method will be called by ServerRequest object once the server response is received
+         * @param responseStatusOk whether the status of the response was OK (2**)
+         * @param tag the tag of the server request
+         * @param responseData the body of the received http response
+         */
+        public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag, String responseData);
+    }
+
+    private final static String LOG_TAG = "ServerRequest";
 
     /**
      * Http method selector enum
      */
     public enum HttpMethod { GET, POST }
 
-    private Constants.ServerRequestTag mTag;
-    private String mUrl;
-    private OnServerResponseCallback mCallback;
-    private HttpMethod mHttpMethod;
-    private Map<String, String> mRequestTextFields;
-    private Map<String, String> mRequestPictures;
+    Constants.ServerRequestTag mTag;
+    String mUrl;
+    OnServerResponseCallback mCallback;
+    HttpMethod mHttpMethod;
+
+    /**
+     * Text fields to be added to HTTP request
+     */
+    Map<String, String> mRequestTextFields;
+
+    /**
+     * Images fields to be added to HTTP request
+     */
+    Map<String, Map<String, String>> mRequestPicturesFields;
 
 
     /**
@@ -72,7 +89,7 @@ public class ServerRequest {
         mCallback = callback;
         mHttpMethod = HttpMethod.POST;
         mRequestTextFields = new HashMap<String, String>();
-        mRequestPictures = new HashMap<String, String>();
+        mRequestPicturesFields = new HashMap<String, Map<String, String>>();
 
         Log.d(LOG_TAG, "creating new server request:"
                 + "\nURL: "         + (mUrl != null ? mUrl : "null")
@@ -82,25 +99,9 @@ public class ServerRequest {
     }
 
     /**
-     * Set an object whos callback method should be called upon server response
-     * @param callback callback object to be used when the response is available
-     */
-    public void setOnServerResponseCallback (OnServerResponseCallback callback) {
-        mCallback = callback;
-    }
-
-    /**
-     * Set http method to be used for this server request. Default value is POST
-     * @param httpMethod
-     */
-    public void setHttpMethod (HttpMethod httpMethod) {
-        mHttpMethod = httpMethod;
-    }
-
-    /**
      * Add text name/value pair to this server request
-     * @param fieldName
-     * @param fieldValue
+     * @param fieldName name of HTTP field this text should be passed in
+     * @param fieldValue the text to be passed
      */
     public void addTextField (String fieldName, String fieldValue) {
         if (!mRequestTextFields.containsKey(fieldName)) {
@@ -110,44 +111,48 @@ public class ServerRequest {
         }
     }
 
+
     /**
      * Add picture to this server request
-     * @param name
-     * @param uri
+     * @param fieldName name of HTTP field this picture should be passed in
+     * @param pictureName the name of the picture
+     * @param uri local URI of the ficture
      */
-    public void addPicture (String name, String uri) {
-        if (!mRequestPictures.containsKey(name)) {
-            mRequestPictures.put(name, uri);
+    public void addPicture (String fieldName, String pictureName, String uri) {
+        Map<String, String> fieldMap;
+
+        if (mRequestPicturesFields.containsKey(fieldName)) {
+            fieldMap = mRequestPicturesFields.get(fieldName);
         } else {
-            Log.e(LOG_TAG, "aborting an overwrite of the existing picture: " + name);
+            fieldMap = new HashMap<String, String>();
+            mRequestPicturesFields.put(fieldName, fieldMap);
         }
+
+
+        // Report if there was name collision
+        if (fieldMap.containsKey(pictureName))
+            Log.e(LOG_TAG, "An existing picture was overwritten. Field: " + fieldName
+                        + " Name: " + pictureName);
+
+        fieldMap.put(pictureName, uri);
     }
 
     /**
      * Execute this server request
      */
     public void execute() {
-        HttpTask httpTask = new HttpTask(mTag, mHttpMethod, mCallback, mRequestTextFields, mRequestPictures);
+        HttpTask httpTask = new HttpTask(mTag, mHttpMethod, mCallback,
+                mRequestTextFields, mRequestPicturesFields);
         httpTask.execute(mUrl);
-
     }
 
 
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Inner classes
+    //
+    // ---------------------------------------------------------------------------------------------
 
-
-    /**
-     * Classes implementing this interface are eligible to be used as callback targets once
-     * server response for a particular request is received
-     */
-    public interface OnServerResponseCallback {
-        /**
-         * This method will be called by ServerRequest object once the server response is received
-         * @param responseStatusOk whether the status of the response was OK (2**)
-         * @param tag the tag of the server request
-         * @param responseData the body of the received http response
-         */
-        public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag, String responseData);
-    }
 
     private class HttpTask extends AsyncTask<String, Void, String> {
 
@@ -156,7 +161,7 @@ public class ServerRequest {
 
         private HttpMethod mHttpMethod;
         private Map<String, String> mTextFieldsMap;
-        private Map<String, String> mPicturesMap;
+        private Map<String, Map<String, String>> mPicturesFieldsMap;
         private OnServerResponseCallback mCallback;
         private Constants.ServerRequestTag mTag;
 
@@ -175,12 +180,12 @@ public class ServerRequest {
 
         protected HttpTask (Constants.ServerRequestTag tag, HttpMethod httpMethod,
                             OnServerResponseCallback callback, Map<String, String> textFieldsMap,
-                            Map<String, String> picturesMap) {
+                            Map<String, Map<String, String>> picturesMap) {
             mTag = tag;
             mHttpMethod = httpMethod;
             mCallback = callback;
             mTextFieldsMap = textFieldsMap;
-            mPicturesMap = picturesMap;
+            mPicturesFieldsMap = picturesMap;
         }
 
         @Override
@@ -282,27 +287,32 @@ public class ServerRequest {
             HttpEntity httpEntity = null;
 
             // Use multipart body if pictures should be attached
-            boolean isMultipart = (mPicturesMap != null && mPicturesMap.size() > 0);
+            boolean isMultipart = (mPicturesFieldsMap != null && mPicturesFieldsMap.size() > 0);
 
             if (isMultipart ) {
                 MultipartEntityBuilder multipartEntity = MultipartEntityBuilder.create();
 
+                // Create text fields
                 if (mTextFieldsMap != null) {
                     for (String name : mTextFieldsMap.keySet()) {
                         multipartEntity.addPart(name, new StringBody(mTextFieldsMap.get(name), ContentType.TEXT_PLAIN));
                     }
                 }
 
-                if (mPicturesMap != null) {
-                    int i =0;
-                    for (String name : mPicturesMap.keySet()) {
-                        String uri = mPicturesMap.get(name);
-                        File pictureFile = new File(uri);
+
+                // For each field name
+                for (String fieldName : mPicturesFieldsMap.keySet()) {
+                    int i = 0;
+                    Map<String, String> field = mPicturesFieldsMap.get(fieldName);
+                    // For each picture in the field
+                    for (String pictureName : field.keySet()) {
+                        String pictureUri = field.get(pictureName);
+                        File pictureFile = new File(pictureUri);
 
                         if (pictureFile.exists()) {
                             multipartEntity.addBinaryBody(
-                                    NEW_REQUEST_PICTURES_HTTP_FIELD_NAME+"["+i+"]",
-                                    pictureFile, ContentType.create("image/jpeg"), name);
+                                    fieldName + "[" + i + "]",
+                                    pictureFile, ContentType.create("image/jpeg"), pictureName);
                         } else {
                             Log.e(LOG_TAG, "the picture file does not exist: " + pictureFile);
                         }

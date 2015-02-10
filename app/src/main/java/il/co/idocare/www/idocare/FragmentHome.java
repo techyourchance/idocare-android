@@ -1,7 +1,6 @@
 package il.co.idocare.www.idocare;
 
 
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -19,7 +18,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -99,7 +97,7 @@ public class FragmentHome extends IDoCareFragment implements ServerRequest.OnSer
             case R.id.menu_add_new_request:
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.addToBackStack(null);
-                ft.replace(R.id.frame_contents, new FragmentNewRequest());
+                ft.replace(R.id.frame_contents, new FragmentNewAndCloseRequest());
                 ft.commit();
                 return true;
             default:
@@ -149,7 +147,7 @@ public class FragmentHome extends IDoCareFragment implements ServerRequest.OnSer
 
     private class RequestsListAdapter extends ArrayAdapter<RequestItem> {
 
-        private final static String LOG_TAG = "NewRequestPicturesAdapter";
+        private final static String LOG_TAG = "NewPicturesAdapter";
 
         private LayoutInflater mInflater;
 

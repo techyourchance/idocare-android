@@ -1,7 +1,6 @@
 package il.co.idocare.www.idocare;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,57 +36,105 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class FragmentNewRequest extends IDoCareFragment {
+public class FragmentNewAndCloseRequest extends IDoCareFragment {
 
-    private final static String LOG_TAG = "FragmentNewRequest";
+    private final static String LOG_TAG = "FragmentNewAndCloseRequest";
 
 
-    private NewRequestPicturesAdapter mListAdapter;
-    private String mLastCameraPicturePath;
+    /**
+     * Names of JSON fields which contain lists of pictures
+     */
+    private final static String NEW_REQUEST_PICTURES_HTTP_FIELD_NAME = "imagesBefore";
+    private final static String CLOSE_REQUEST_PICTURES_HTTP_FIELD_NAME = "imagesAfter";
+
+
+    NewPicturesAdapter mListAdapter;
+    String mLastCameraPicturePath;
+    boolean mIsCloseRequestType;
+    String mRequestId;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_new_request, container, false);
 
+        // Whether New Request or Close Request layout and functionality
+        Bundle args = getArguments();
+        if (args != null) {
+            mIsCloseRequestType = args.getBoolean("isCloseRequestType");
+            mRequestId = args.getString("requestId");
+        } else {
+            mIsCloseRequestType = false;
+        }
 
-        mListAdapter = new NewRequestPicturesAdapter(getActivity(), 0);
+        // Make all the initiations which are required by fragment's child views
+        initiateTheViews(view);
+
+        // Restore state from bundle (if required)
+        restoreSavedStateIfNeeded(view, savedInstanceState);
+
+        return view;
+    }
+
+    /**
+     * This method makes all the initiations of the child views of this fragment
+     * @param view
+     */
+    private void initiateTheViews(View view) {
+
+        mListAdapter = new NewPicturesAdapter(getActivity(), 0);
         ListView listPictures = (ListView) view.findViewById(R.id.list_pictures);
         listPictures.setAdapter(mListAdapter);
 
-        Button btnAddNewImage = (Button) view.findViewById(R.id.btn_take_picture);
-        btnAddNewImage.setOnClickListener(new View.OnClickListener() {
+        Button btnTakePicture = (Button) view.findViewById(R.id.btn_take_picture);
+        btnTakePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                captureImageWithCamera();
+                takePictureWithCamera();
             }
         });
 
-        Button btnAddNewRequest = (Button) view.findViewById(R.id.btn_add_new_request);
-        btnAddNewRequest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addNewRequest();
-            }
-        });
+        Button btnAddOrCloseRequest = (Button) view.findViewById(R.id.btn_add_or_close_request);
 
+        if (mIsCloseRequestType) {
+            // "Close request" functionality
+            btnAddOrCloseRequest.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    closeRequest();
+                }
+            });
+            btnAddOrCloseRequest.setText(getActivity().getResources()
+                    .getString(R.string.btn_close_request));
+            view.findViewById(R.id.ratingbar_rate).setVisibility(View.GONE);
+        } else {
+            // "Add new request" functionality
+            btnAddOrCloseRequest.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    addNewRequest();
+                }
+            });
+            btnAddOrCloseRequest.setText(getActivity().getResources()
+                    .getString(R.string.btn_add_new_request));
+        }
+    }
 
-        if (savedInstanceState != null) {
-            // Get the list of pictures from saved state and pass them to adapter
-            String[] adapterItems = savedInstanceState.getStringArray("adapterItems");
-            if (adapterItems != null) {
-                mListAdapter.addAll(adapterItems);
-                mListAdapter.notifyDataSetChanged();
-            }
+    private void restoreSavedStateIfNeeded(View view, Bundle savedInstanceState) {
 
-            // Restore the last path to camera picture
-            if (savedInstanceState.getString("lastCameraPicturePath") != null) {
-                mLastCameraPicturePath = savedInstanceState.getString("lastCameraPicturePath");
-            }
+        if (savedInstanceState == null) return;
 
+        // Get the list of pictures from saved state and pass them to adapter
+        String[] adapterItems = savedInstanceState.getStringArray("adapterItems");
+        if (adapterItems != null) {
+            mListAdapter.addAll(adapterItems);
+            mListAdapter.notifyDataSetChanged();
         }
 
-        return view;
+        // Restore the last path to camera picture
+        if (savedInstanceState.getString("lastCameraPicturePath") != null) {
+            mLastCameraPicturePath = savedInstanceState.getString("lastCameraPicturePath");
+        }
     }
 
 
@@ -134,7 +181,7 @@ public class FragmentNewRequest extends IDoCareFragment {
      * Create ACTION_IMAGE_CAPTURE intent with EXTRA_OUTPUT path and call startActivityForResult()
      * with this intent
      */
-    private void captureImageWithCamera() {
+    private void takePictureWithCamera() {
         String currDateTime =
                 new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss", Locale.getDefault()).format(new Date());
 
@@ -152,12 +199,16 @@ public class FragmentNewRequest extends IDoCareFragment {
 
 
     /**
-     * Create, populate and execute a new server request based on the contents of fragment's
-     * views
+     * Create, populate and execute a new server request of type "add new request" based
+     * on the contents of fragment's views
      */
     private void addNewRequest() {
 
-        @SuppressWarnings("ConstantConditions")
+        if (getView() == null) {
+            Log.e(LOG_TAG, "getView() returned null");
+            return;
+        }
+
         RatingBar rating = (RatingBar) getView().findViewById(R.id.ratingbar_rate);
         EditText edtComment = (EditText) getView().findViewById(R.id.edt_comment);
 
@@ -184,24 +235,62 @@ public class FragmentNewRequest extends IDoCareFragment {
         }
 
         for (int i = 0; i < mListAdapter.getCount(); i++) {
-            serverRequest.addPicture("picture" + String.valueOf(i) + ".jpg", mListAdapter.getItem(i));
+            serverRequest.addPicture(NEW_REQUEST_PICTURES_HTTP_FIELD_NAME,
+                    "picture" + String.valueOf(i) + ".jpg", mListAdapter.getItem(i));
         }
 
         serverRequest.execute();
     }
 
+    /**
+     * Create, populate and execute a new server request of type "close equest" based
+     * on the contents of fragment's views
+     */
+    private void closeRequest() {
+
+        if (getView() == null) {
+            Log.e(LOG_TAG, "getView() returned null");
+            return;
+        }
+
+        EditText edtComment = (EditText) getView().findViewById(R.id.edt_comment);
+
+        ServerRequest serverRequest = new ServerRequest(Constants.CLOSE_REQUEST_URL);
+
+        // TODO: field names should come from constants and the values should not be hardcoded
+        SharedPreferences prefs =
+                getActivity().getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
+        serverRequest.addTextField("username", prefs.getString("username", "no_username"));
+        serverRequest.addTextField("password", prefs.getString("password", "no_password"));
+        serverRequest.addTextField("requestId", mRequestId);
+
+
+        if (edtComment.getText().toString().length() > 0) {
+            serverRequest.addTextField("noteAfter", edtComment.getText().toString());
+        }
+
+        for (int i = 0; i < mListAdapter.getCount(); i++) {
+            serverRequest.addPicture(CLOSE_REQUEST_PICTURES_HTTP_FIELD_NAME,
+                    "picture" + String.valueOf(i) + ".jpg", mListAdapter.getItem(i));
+        }
+
+        serverRequest.execute();
+
+    }
+
+
     private static class ViewHolder {
         ImageView imageView;
     }
 
-    private class NewRequestPicturesAdapter extends ArrayAdapter<String> {
+    private class NewPicturesAdapter extends ArrayAdapter<String> {
 
-        private final static String LOG_TAG = "NewRequestPicturesAdapter";
+        private final static String LOG_TAG = "NewPicturesAdapter";
 
         private LayoutInflater mInflater;
         private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 
-        public NewRequestPicturesAdapter(Context context, int resource) {
+        public NewPicturesAdapter(Context context, int resource) {
             super(context, resource);
             mInflater = LayoutInflater.from(context);
         }

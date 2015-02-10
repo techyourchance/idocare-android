@@ -224,7 +224,6 @@ public class FragmentRequestDetails extends IDoCareFragment {
 
     private void pickupRequest() {
 
-
         ServerRequest serverRequest = new ServerRequest(Constants.PICKUP_REQUEST_URL,
                 Constants.ServerRequestTag.PICKUP_REQUEST, null);
 
@@ -241,8 +240,10 @@ public class FragmentRequestDetails extends IDoCareFragment {
     }
 
     private void closeRequest() {
-
-        // TODO: write this method
+        Bundle args = new Bundle();
+        args.putBoolean("isCloseRequestType", true);
+        args.putString("requestId", mRequestItem.mId);
+        replaceFragment(FragmentNewAndCloseRequest.class, true, args);
     }
 
     private static class ViewHolder {
