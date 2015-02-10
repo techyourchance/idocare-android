@@ -1,54 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:padding="@dimen/fragment_default_padding">
+    android:layout_width="match_parent">
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/border_background"
-        android:padding="@dimen/text_view_default_padding">
+        android:gravity="center_horizontal"
+        android:padding="@dimen/fragment_default_padding">
 
-        <TextView
-            android:id="@+id/txt_opened_by"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="start"/>
+        <LinearLayout
+            android:id="@+id/layout_new_request"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/txt_creation_date"
-            android:layout_weight="1"
-            android:layout_width="0dp"
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_background"
+                android:padding="@dimen/text_view_default_padding">
+
+                <TextView
+                    android:id="@+id/txt_opened_by"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"/>
+
+                <TextView
+                    android:id="@+id/txt_creation_date"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"/>
+
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/list_new_request_pictures"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="@dimen/fragment_default_margin"
+                android:layout_marginBottom="@dimen/fragment_default_margin"/>
+
+            <TextView
+                android:id="@+id/txt_comment_before"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/comments_text_size"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_closed_request"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_background"
+                android:padding="@dimen/text_view_default_padding">
+
+                <TextView
+                    android:id="@+id/txt_closed_by"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"/>
+
+                <TextView
+                    android:id="@+id/txt_close_date"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"/>
+
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/list_closed_request_pictures"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="@dimen/fragment_default_margin"
+                android:layout_marginBottom="@dimen/fragment_default_margin"/>
+
+            <TextView
+                android:id="@+id/txt_comment_after"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/comments_text_size"/>
+
+        </LinearLayout>
+
+
+
+        <Button
+            android:id="@+id/btn_pickup_or_close_request"
+            android:text="@string/btn_pickup_request"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="end"/>
+            android:layout_marginTop="@dimen/fragment_default_margin"/>
 
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/list_request_pictures"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="@dimen/fragment_default_margin"
-        android:layout_marginBottom="@dimen/fragment_default_margin"/>
 
-    <TextView
-        android:id="@+id/txt_comment_before"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/comments_text_size"/>
 
-    <Button
-        android:id="@+id/btn_pickup_request"
-        android:text="@string/btn_pickup_request"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/fragment_default_margin"/>
-
-</LinearLayout>
+</ScrollView>

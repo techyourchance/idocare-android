@@ -1,13 +1,17 @@
 package il.co.idocare.www.idocare;
 
-import android.app.Fragment;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -26,17 +30,14 @@ public class FragmentRequestDetails extends IDoCareFragment {
 
     private final static String LOG_TAG = "FragmentRequestDetails";
 
-    RequestPicturesAdapter mListAdapter;
     RequestItem mRequestItem;
+    boolean mIsClosed;
+    boolean mIsPickedUp;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_request_details, container, false);
-
-        mListAdapter = new RequestPicturesAdapter(getActivity(), 0);
-        ListView listPictures = (ListView) view.findViewById(R.id.list_request_pictures);
-        listPictures.setAdapter(mListAdapter);
 
         Bundle args = getArguments();
         if (args != null) {
@@ -48,10 +49,33 @@ public class FragmentRequestDetails extends IDoCareFragment {
             return view;
         }
 
+        mIsClosed = mRequestItem.mCloseDate.length() > 0 &&
+                !mRequestItem.mCloseDate.equals("null");
+        mIsPickedUp = mRequestItem.mPickedUpDate.length() > 0 &&
+                !mRequestItem.mPickedUpDate.equals("null");
+
+
+        Log.v(LOG_TAG, "Request details:"
+                + "\nCreated by " + mRequestItem.mOpenedBy + " at " + mRequestItem.mCreationDate
+                + "\nPicked up by " + mRequestItem.mPickedUpBy + " at " + mRequestItem.mPickedUpDate
+                + "\nClosed by " + mRequestItem.mPickedUpBy + " at " + mRequestItem.mCloseDate);
+
+
         populateChildViewsFromRequestItem(view);
 
         return view;
     }
+
+    @Override
+    public boolean isTopLevelFragment() {
+        return false;
+    }
+
+    @Override
+    public Class<? extends IDoCareFragment> getNavHierParentFragment() {
+        return FragmentHome.class;
+    }
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -59,7 +83,32 @@ public class FragmentRequestDetails extends IDoCareFragment {
 
     }
 
+    /**
+     * Decide which of the views in this fragment should be visible and populate them with
+     * data from the RequestItem object.
+     * @param view root view of the fragment
+     */
     private void populateChildViewsFromRequestItem(View view) {
+
+        // Handle the views related to initial request
+        populateRequestViewsFromRequestItem(view);
+        // Handle the views related to pickup info
+        populateClosedViewsFromRequestItem(view);
+        // Handle the button functionality
+        populatePickupCloseButtonFromRequestItem(view);
+
+    }
+
+    /**
+     * Handle the views describing the initial request
+     * @param view root view of the fragment
+     */
+    private void populateRequestViewsFromRequestItem(View view) {
+
+
+        RequestPicturesAdapter listAdapter = new RequestPicturesAdapter(getActivity(), 0);
+        ListView listPictures = (ListView) view.findViewById(R.id.list_new_request_pictures);
+        listPictures.setAdapter(listAdapter);
 
         if (mRequestItem.mOpenedBy != null) {
             TextView openedBy = (TextView) view.findViewById(R.id.txt_opened_by);
@@ -72,8 +121,8 @@ public class FragmentRequestDetails extends IDoCareFragment {
         }
 
         if (mRequestItem.mImagesBefore != null) {
-            mListAdapter.addAll(mRequestItem.mImagesBefore);
-            mListAdapter.notifyDataSetChanged();
+            listAdapter.addAll(mRequestItem.mImagesBefore);
+            listAdapter.notifyDataSetChanged();
         }
 
         if (mRequestItem.mNoteBefore != null) {
@@ -81,16 +130,119 @@ public class FragmentRequestDetails extends IDoCareFragment {
             commentBefore.setLines(UtilMethods.countLines(mRequestItem.mNoteBefore));
             commentBefore.setText(mRequestItem.mNoteBefore);
         }
+
     }
 
-    @Override
-    public boolean isTopLevelFragment() {
-        return false;
+    /**
+     * Handle the views describing the info about request's closure
+     * @param view root view of the fragment
+     */
+    private void populateClosedViewsFromRequestItem(View view) {
+
+
+        if (!mIsClosed) {
+            // If the request is not closed then hide the "closed" layout altogether
+            view.findViewById(R.id.layout_closed_request).setVisibility(View.GONE);
+            return;
+        }
+
+        RequestPicturesAdapter listAdapter = new RequestPicturesAdapter(getActivity(), 0);
+        ListView listPictures = (ListView) view.findViewById(R.id.list_closed_request_pictures);
+        listPictures.setAdapter(listAdapter);
+
+
+        // Populate the views concerning "closure" details
+
+        if (mRequestItem.mPickedUpBy != null) {
+            // Assuming that the user who closed the request is the same one who picked it up
+            TextView closedBy = (TextView) view.findViewById(R.id.txt_closed_by);
+            closedBy.setText("Closed by: " + mRequestItem.mPickedUpBy);
+        }
+
+        if (mRequestItem.mCloseDate != null) {
+            TextView closeDate = (TextView) view.findViewById(R.id.txt_close_date);
+            closeDate.setText(mRequestItem.mCloseDate);
+        }
+
+        if (mRequestItem.mImagesAfter != null) {
+            listAdapter.addAll(mRequestItem.mImagesAfter);
+            listAdapter.notifyDataSetChanged();
+        }
+
+        if (mRequestItem.mNoteAfter != null) {
+            TextView commentAfter = (TextView) view.findViewById(R.id.txt_comment_after);
+            commentAfter.setLines(UtilMethods.countLines(mRequestItem.mNoteAfter));
+            commentAfter.setText(mRequestItem.mNoteAfter);
+        }
+
+
     }
 
-    @Override
-    public Class<? extends IDoCareFragment> getNavHierParentFragment() {
-        return FragmentHome.class;
+    /**
+     * Handle the view of the button
+     * @param view root view of the fragment
+     */
+    private void populatePickupCloseButtonFromRequestItem(View view) {
+
+        String myUsername =
+                getActivity().getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
+                .getString("username", "no_username");
+
+        Button button = (Button) view.findViewById(R.id.btn_pickup_or_close_request);
+
+        if (mIsClosed) {
+            // No need for button if the request is closed
+            button.setVisibility(View.GONE);
+        }
+        else if (mIsPickedUp) {
+            if (mRequestItem.mPickedUpBy.equals(myUsername)) {
+                // The request was picked up by the current user - he can close it
+                button.setText(getActivity().getResources().getString(R.string.btn_close_request));
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        closeRequest();
+                    }
+                });
+            } else {
+                // The request was picked up by another user - hide the "close" button
+                button.setVisibility(View.GONE);
+            }
+        }
+        else {
+            // The request is open and the current user can pick it up
+            button.setText(getActivity().getResources().getString(R.string.btn_pickup_request));
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    pickupRequest();
+                }
+            });
+        }
+
+    }
+
+    private void pickupRequest() {
+
+
+        ServerRequest serverRequest = new ServerRequest(Constants.PICKUP_REQUEST_URL,
+                Constants.ServerRequestTag.PICKUP_REQUEST, null);
+
+        // TODO: field names should come from constants and the values should not be hardcoded
+        SharedPreferences prefs =
+                getActivity().getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
+        serverRequest.addTextField("username", prefs.getString("username", "no_username"));
+        serverRequest.addTextField("password", prefs.getString("password", "no_password"));
+        serverRequest.addTextField("requestId", mRequestItem.mId);
+        serverRequest.addTextField("pickedUpBy", prefs.getString("username", "no_username"));
+
+        serverRequest.execute();
+
+    }
+
+    private void closeRequest() {
+
+        // TODO: write this method
     }
 
     private static class ViewHolder {

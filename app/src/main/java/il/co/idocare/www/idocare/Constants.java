@@ -9,7 +9,8 @@ public class Constants {
     /**
      * This enum is used in order to relate HTTP response to a particular HTTP request
      */
-    public enum ServerRequestTag {REQUEST_DETAILS, NEW_REQUEST, GET_ALL_REQUESTS}
+    public enum ServerRequestTag {GET_ALL_REQUESTS, REQUEST_DETAILS, NEW_REQUEST,
+        PICKUP_REQUEST, CLOSE_REQUEST}
 
     /**
      * This enum (its ordinal() values) is used with startActivityForResult() and
@@ -34,8 +35,10 @@ public class Constants {
     // URLs used to issue requests to the server
     public final static String IMGLIST_URL = "http://dev-04.idocare.co.il/api-04/imglist";
     public final static String IMGTEST_URL = "http://dev-04.idocare.co.il/api-04/imgtest";
-    public final static String ADD_REQUEST_URL = "http://dev-04.idocare.co.il/api-04/request/add";
     public final static String GET_ALL_REQUESTS_URL = "http://dev-04.idocare.co.il/api-04/request";
+    public final static String ADD_REQUEST_URL = "http://dev-04.idocare.co.il/api-04/request/add";
+    public final static String PICKUP_REQUEST_URL = "http://dev-04.idocare.co.il/api-04/request/pickup";
+    public final static String CLOSE_REQUEST_URL = "http://dev-04.idocare.co.il/api-04/request/close";
 
 
 
