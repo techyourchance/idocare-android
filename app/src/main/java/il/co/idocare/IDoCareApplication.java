@@ -1,13 +1,10 @@
 package il.co.idocare;
 
 import android.app.Application;
-import android.content.SharedPreferences;
-import android.util.Log;
 
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+
+import il.co.idocare.pojos.RequestItem;
 
 public class IDoCareApplication extends Application {
 

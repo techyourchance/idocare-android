@@ -1,4 +1,4 @@
-package il.co.idocare;
+package il.co.idocare.controllers.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;

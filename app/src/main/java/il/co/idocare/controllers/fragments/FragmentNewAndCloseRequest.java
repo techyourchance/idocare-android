@@ -1,4 +1,4 @@
-package il.co.idocare;
+package il.co.idocare.controllers.fragments;
 
 import android.app.Activity;
 import android.content.Context;
@@ -34,6 +34,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import il.co.idocare.Constants;
+import il.co.idocare.R;
+import il.co.idocare.ServerRequest;
+import il.co.idocare.utils.UtilMethods;
+import il.co.idocare.controllers.activities.IDoCareActivity;
 
 
 public class FragmentNewAndCloseRequest extends IDoCareFragment {

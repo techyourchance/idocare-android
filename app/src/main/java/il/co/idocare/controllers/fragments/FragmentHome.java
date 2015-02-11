@@ -1,4 +1,4 @@
-package il.co.idocare;
+package il.co.idocare.controllers.fragments;
 
 
 import android.app.FragmentTransaction;
@@ -25,6 +25,13 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 
 import java.util.List;
+
+import il.co.idocare.Constants;
+import il.co.idocare.IDoCareApplication;
+import il.co.idocare.R;
+import il.co.idocare.pojos.RequestItem;
+import il.co.idocare.ServerRequest;
+import il.co.idocare.utils.UtilMethods;
 
 
 public class FragmentHome extends IDoCareFragment implements ServerRequest.OnServerResponseCallback {

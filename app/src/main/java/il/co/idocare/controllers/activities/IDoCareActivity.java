@@ -1,4 +1,4 @@
-package il.co.idocare;
+package il.co.idocare.controllers.activities;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -16,7 +16,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -28,6 +27,16 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import il.co.idocare.Constants;
+import il.co.idocare.controllers.fragments.FragmentHome;
+import il.co.idocare.controllers.fragments.FragmentLogin;
+import il.co.idocare.IDoCareApplication;
+import il.co.idocare.controllers.fragments.IDoCareFragment;
+import il.co.idocare.R;
+import il.co.idocare.pojos.RequestItem;
+import il.co.idocare.ServerRequest;
+import il.co.idocare.utils.UtilMethods;
+
 
 public class IDoCareActivity extends Activity implements
         IDoCareFragment.IDoCareFragmentCallback,
@@ -36,7 +45,7 @@ public class IDoCareActivity extends Activity implements
 
     private static final String LOG_TAG = "IDoCareActivity";
 
-    protected GoogleApiClient mGoogleApiClient;
+    public GoogleApiClient mGoogleApiClient;
 
     ScheduledExecutorService mRequestsUpdateScheduler;
     ScheduledFuture mScheduledFuture;

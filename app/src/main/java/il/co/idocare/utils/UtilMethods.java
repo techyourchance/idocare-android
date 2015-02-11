@@ -1,4 +1,4 @@
-package il.co.idocare;
+package il.co.idocare.utils;
 
 
 import android.graphics.Bitmap;
@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import il.co.idocare.pojos.RequestItem;
 
 public class UtilMethods {
 

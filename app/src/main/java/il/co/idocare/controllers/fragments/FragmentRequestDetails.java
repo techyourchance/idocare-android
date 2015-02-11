@@ -1,17 +1,15 @@
-package il.co.idocare;
+package il.co.idocare.controllers.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -24,6 +22,12 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import il.co.idocare.Constants;
+import il.co.idocare.R;
+import il.co.idocare.pojos.RequestItem;
+import il.co.idocare.ServerRequest;
+import il.co.idocare.utils.UtilMethods;
 
 
 public class FragmentRequestDetails extends IDoCareFragment {

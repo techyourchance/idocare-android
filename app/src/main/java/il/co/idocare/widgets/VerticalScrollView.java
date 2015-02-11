@@ -1,4 +1,4 @@
-package il.co.idocare;
+package il.co.idocare.widgets;
 
 import android.content.Context;
 import android.util.AttributeSet;

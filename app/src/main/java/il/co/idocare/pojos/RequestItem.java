@@ -1,4 +1,4 @@
-package il.co.idocare;
+package il.co.idocare.pojos;
 
 
 import android.os.Parcel;

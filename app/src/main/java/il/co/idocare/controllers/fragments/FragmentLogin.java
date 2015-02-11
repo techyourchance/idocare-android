@@ -1,6 +1,5 @@
-package il.co.idocare;
+package il.co.idocare.controllers.fragments;
 
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,13 +9,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.List;
+import il.co.idocare.Constants;
+import il.co.idocare.IDoCareApplication;
+import il.co.idocare.R;
+import il.co.idocare.ServerRequest;
+import il.co.idocare.utils.UtilMethods;
 
 public class FragmentLogin extends IDoCareFragment implements ServerRequest.OnServerResponseCallback {
 
