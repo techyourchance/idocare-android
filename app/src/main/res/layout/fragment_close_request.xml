@@ -12,7 +12,7 @@
     <include layout="@layout/element_camera_control" />
     
     <EditText
-        android:id="@+id/edt_note_before"
+        android:id="@+id/edt_note_after"
         android:hint="@string/edt_comment_hint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,19 +20,9 @@
         android:lines="1"
         android:maxLines="2"/>
 
-    <RatingBar
-        android:id="@+id/ratingbar_pollution_level"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/fragment_default_margin"
-        android:numStars="5"
-        android:stepSize="1"
-        android:rating="2"
-        style="?android:attr/ratingBarStyle"/>
-
     <Button
-        android:id="@+id/btn_add_new_request"
-        android:text="@string/btn_add_new_request"
+        android:id="@+id/btn_close_request"
+        android:text="@string/btn_close_request"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fragment_default_margin"/>

@@ -41,6 +41,32 @@ public class Constants {
     public final static String CLOSE_REQUEST_URL = "http://dev-04.idocare.co.il/api-04/request/close";
 
 
+    /**
+     * Various message types that might be passed between MVC components.<br>
+     * Prefix values:<br>
+     *     M_ - messages originating in MVC Models<br>
+     *     V_ - messages originating in MVC Views<br>
+     *     C_ - messages originating in MVC Controllers<br>
+     * Implementation note: the members of this enum might be used as regular enums are used, or
+     * might be referenced/compared by their {@link Enum#ordinal()} value.
+     *
+     */
+    public enum MessageType {
+        V_REQUEST_ITEM_CLICKED,
+        V_LOGIN_BUTTON_CLICK,
+        V_ADD_NEW_REQUEST_BUTTON_CLICKED,
+        V_CLOSE_REQUEST_BUTTON_CLICKED,
+        V_PICKUP_REQUEST_BUTTON_CLICKED,
+        V_TAKE_PICTURE_BUTTON_CLICKED,
+
+        C_AUTHENTICATION_INITIATED,
+        C_AUTHENTICATION_COMPLETED,
+    }
+
+    /**
+     * This array is required in order to use MessageType enum in switch-case comparisons.
+     */
+    public static final MessageType[] MESSAGE_TYPE_VALUES = MessageType.values();
 
 
 

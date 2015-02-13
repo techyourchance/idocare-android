@@ -103,8 +103,16 @@
 
 
         <Button
-            android:id="@+id/btn_pickup_or_close_request"
+            android:id="@+id/btn_pickup_request"
             android:text="@string/btn_pickup_request"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/fragment_default_margin"/>
+
+
+        <Button
+            android:id="@+id/btn_close_request"
+            android:text="@string/btn_close_request"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/fragment_default_margin"/>

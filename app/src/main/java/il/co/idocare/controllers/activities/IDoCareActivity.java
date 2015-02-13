@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -31,7 +32,7 @@ import il.co.idocare.Constants;
 import il.co.idocare.controllers.fragments.FragmentHome;
 import il.co.idocare.controllers.fragments.FragmentLogin;
 import il.co.idocare.IDoCareApplication;
-import il.co.idocare.controllers.fragments.IDoCareFragment;
+import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.R;
 import il.co.idocare.pojos.RequestItem;
 import il.co.idocare.ServerRequest;
@@ -39,11 +40,13 @@ import il.co.idocare.utils.UtilMethods;
 
 
 public class IDoCareActivity extends Activity implements
-        IDoCareFragment.IDoCareFragmentCallback,
+        AbstractFragment.IDoCareFragmentCallback,
         FragmentManager.OnBackStackChangedListener,
         ServerRequest.OnServerResponseCallback {
 
     private static final String LOG_TAG = "IDoCareActivity";
+
+    private static Context sContext;
 
     public GoogleApiClient mGoogleApiClient;
 
@@ -165,7 +168,7 @@ public class IDoCareActivity extends Activity implements
 
     // TODO: maybe we need to preserve the state of the replaced fragments?
     @Override
-    public void replaceFragment(Class<? extends IDoCareFragment> claz, boolean addToBackStack,
+    public void replaceFragment(Class<? extends AbstractFragment> claz, boolean addToBackStack,
                                 Bundle args) {
 
         Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);

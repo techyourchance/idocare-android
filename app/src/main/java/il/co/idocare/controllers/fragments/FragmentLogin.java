@@ -1,52 +1,40 @@
 package il.co.idocare.controllers.fragments;
 
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.method.KeyListener;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import il.co.idocare.Constants;
+import il.co.idocare.Constants.MessageType;
 import il.co.idocare.IDoCareApplication;
-import il.co.idocare.R;
 import il.co.idocare.ServerRequest;
 import il.co.idocare.utils.UtilMethods;
+import il.co.idocare.views.LoginViewMVC;
 
-public class FragmentLogin extends IDoCareFragment implements ServerRequest.OnServerResponseCallback {
+public class FragmentLogin extends AbstractFragment implements ServerRequest.OnServerResponseCallback {
 
     private final static String LOG_TAG = "FragmentLogin";
 
-    private boolean mFetchingFromServer = false;
+    LoginViewMVC mViewMVCLogin;
 
-    Button mBtnLogin;
-    EditText mEdtUsername;
-    EditText mEdtPassword;
+    Bundle mLoginBundle;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_login, container, false);
+        mViewMVCLogin = new LoginViewMVC(inflater, container);
+        // Provide inbox Handler to the MVC View
+        mViewMVCLogin.addOutboxHandler(getInboxHandler());
+        // Add MVC View's Handler to the set of outbox Handlers
+        addOutboxHandler(mViewMVCLogin.getInboxHandler());
 
-
-        mBtnLogin = (Button) view.findViewById(R.id.btn_login);
-        mBtnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mBtnLogin.setEnabled(false);
-                getRequestsFromServer();
-            }
-        });
-
-        mEdtUsername = (EditText) view.findViewById(R.id.edt_login_username);
-        mEdtPassword = (EditText) view.findViewById(R.id.edt_login_password);
-
-        return view;
+        return mViewMVCLogin.getRootView();
     }
 
 
@@ -56,8 +44,23 @@ public class FragmentLogin extends IDoCareFragment implements ServerRequest.OnSe
     }
 
     @Override
-    public Class<? extends IDoCareFragment> getNavHierParentFragment() {
+    public Class<? extends AbstractFragment> getNavHierParentFragment() {
         return null;
+    }
+
+    @Override
+    protected void handleMessage(Message msg) {
+
+        // TODO: complete this method
+        switch (Constants.MESSAGE_TYPE_VALUES[msg.what]) {
+            case V_LOGIN_BUTTON_CLICK:
+                getRequestsFromServer();
+                break;
+            default:
+                Log.w(LOG_TAG, "Message of type "
+                        + Constants.MESSAGE_TYPE_VALUES[msg.what].toString() + " wasn't consumed");
+        }
+
     }
 
     /**
@@ -65,20 +68,17 @@ public class FragmentLogin extends IDoCareFragment implements ServerRequest.OnSe
      * // TODO: this should be removed in favor of complete auth mechanism
      */
     private void getRequestsFromServer() {
+
+        mLoginBundle = mViewMVCLogin.getViewState();
+
         ServerRequest serverRequest = new ServerRequest(Constants.GET_ALL_REQUESTS_URL,
                 Constants.ServerRequestTag.GET_ALL_REQUESTS, this);
 
-
-        serverRequest.addTextField("username", mEdtUsername.getText().toString());
-        serverRequest.addTextField("password", mEdtPassword.getText().toString());
+        serverRequest.addTextField("username", mLoginBundle.getString("username"));
+        serverRequest.addTextField("password", mLoginBundle.getString("password"));
         serverRequest.execute();
 
-        // Disable UI components
-        mEdtUsername.setTag(mEdtUsername.getKeyListener());
-        mEdtUsername.setKeyListener(null);
-
-        mEdtPassword.setTag(mEdtPassword.getKeyListener());
-        mEdtPassword.setKeyListener(null);
+        notifyOutboxHandlers(MessageType.C_AUTHENTICATION_INITIATED.ordinal(), 0, 0, null);
 
     }
 
@@ -99,17 +99,10 @@ public class FragmentLogin extends IDoCareFragment implements ServerRequest.OnSe
                 if (getActivity().getActionBar() != null) getActivity().getActionBar().show();
 
                 // Switch to FragmentHome
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.frame_contents, new FragmentHome());
-                ft.commit();
+                replaceFragment(FragmentHome.class, false, null);
             } else {
                 Toast.makeText(getActivity(), "Incorrect username and/or password", Toast.LENGTH_LONG).show();
 
-                mEdtUsername.setKeyListener((KeyListener) mEdtUsername.getTag());
-                mEdtUsername.clearComposingText();
-                mEdtPassword.setKeyListener((KeyListener) mEdtPassword.getTag());
-                mEdtPassword.clearComposingText();
-                mBtnLogin.setEnabled(true);
             }
         } else {
             Log.e(LOG_TAG, "serverResponse was called with unrecognized tag: " + tag.toString());
@@ -120,8 +113,10 @@ public class FragmentLogin extends IDoCareFragment implements ServerRequest.OnSe
         SharedPreferences prefs =
                 getActivity().getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
 
-        prefs.edit().putString("username", mEdtUsername.getText().toString()).apply();
-        prefs.edit().putString("password", mEdtPassword.getText().toString()).apply();
+        prefs.edit().putString("username", mLoginBundle.getString("username")).apply();
+        prefs.edit().putString("password", mLoginBundle.getString("password")).apply();
+
+        mLoginBundle = null;
     }
 
 }

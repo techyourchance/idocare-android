@@ -31,4 +31,5 @@ public class IDoCareApplication extends Application {
     public synchronized void setRequests(List<RequestItem> requestItems) {
         mRequestItems = requestItems;
     }
+
 }

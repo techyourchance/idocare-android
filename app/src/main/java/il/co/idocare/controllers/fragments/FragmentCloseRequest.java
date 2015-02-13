@@ -9,17 +9,16 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RatingBar;
 
 import com.google.android.gms.location.LocationServices;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -38,95 +37,61 @@ import java.util.Locale;
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.ServerRequest;
-import il.co.idocare.utils.UtilMethods;
 import il.co.idocare.controllers.activities.IDoCareActivity;
+import il.co.idocare.utils.UtilMethods;
+import il.co.idocare.views.CloseRequestViewMVC;
+import il.co.idocare.views.NewRequestViewMVC;
 
 
-public class FragmentNewAndCloseRequest extends IDoCareFragment {
+public class FragmentCloseRequest extends AbstractFragment {
 
-    private final static String LOG_TAG = "FragmentNewAndCloseRequest";
+    private final static String LOG_TAG = "FragmentCloseRequest";
 
 
     /**
      * Names of JSON fields which contain lists of pictures
      */
-    private final static String NEW_REQUEST_PICTURES_HTTP_FIELD_NAME = "imagesBefore";
     private final static String CLOSE_REQUEST_PICTURES_HTTP_FIELD_NAME = "imagesAfter";
 
 
+    CloseRequestViewMVC mCloseRequestViewMVC;
+
     NewPicturesAdapter mListAdapter;
     String mLastCameraPicturePath;
-    boolean mIsCloseRequestType;
     String mRequestId;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_new_request, container, false);
+        mCloseRequestViewMVC = new CloseRequestViewMVC(inflater, container);
+        // Provide inbox Handler to the MVC View
+        mCloseRequestViewMVC.addOutboxHandler(getInboxHandler());
+        // Add MVC View's Handler to the set of outbox Handlers
+        addOutboxHandler(mCloseRequestViewMVC.getInboxHandler());
+
 
         // Whether New Request or Close Request layout and functionality
         Bundle args = getArguments();
         if (args != null) {
-            mIsCloseRequestType = args.getBoolean("isCloseRequestType");
             mRequestId = args.getString("requestId");
-        } else {
-            mIsCloseRequestType = false;
         }
-
-        // Make all the initiations which are required by fragment's child views
-        initiateTheViews(view);
-
-        // Restore state from bundle (if required)
-        restoreSavedStateIfNeeded(view, savedInstanceState);
-
-        return view;
-    }
-
-    /**
-     * This method makes all the initiations of the child views of this fragment
-     * @param view
-     */
-    private void initiateTheViews(View view) {
+        if (mRequestId == null) {
+            Log.e(LOG_TAG, "Request ID wasn't provided in arguments");
+        }
 
         mListAdapter = new NewPicturesAdapter(getActivity(), 0);
-        ListView listPictures = (ListView) view.findViewById(R.id.list_pictures);
+        ListView listPictures =
+                (ListView) mCloseRequestViewMVC.getRootView().findViewById(R.id.list_pictures);
         listPictures.setAdapter(mListAdapter);
 
-        Button btnTakePicture = (Button) view.findViewById(R.id.btn_take_picture);
-        btnTakePicture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                takePictureWithCamera();
-            }
-        });
+        // Restore state from bundle (if required)
+        restoreSavedStateIfNeeded(savedInstanceState);
 
-        Button btnAddOrCloseRequest = (Button) view.findViewById(R.id.btn_add_or_close_request);
-
-        if (mIsCloseRequestType) {
-            // "Close request" functionality
-            btnAddOrCloseRequest.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    closeRequest();
-                }
-            });
-            btnAddOrCloseRequest.setText(getActivity().getResources()
-                    .getString(R.string.btn_close_request));
-            view.findViewById(R.id.ratingbar_rate).setVisibility(View.GONE);
-        } else {
-            // "Add new request" functionality
-            btnAddOrCloseRequest.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    addNewRequest();
-                }
-            });
-            btnAddOrCloseRequest.setText(getActivity().getResources()
-                    .getString(R.string.btn_add_new_request));
-        }
+        return mCloseRequestViewMVC.getRootView();
     }
 
-    private void restoreSavedStateIfNeeded(View view, Bundle savedInstanceState) {
+
+    private void restoreSavedStateIfNeeded(Bundle savedInstanceState) {
 
         if (savedInstanceState == null) return;
 
@@ -150,8 +115,23 @@ public class FragmentNewAndCloseRequest extends IDoCareFragment {
     }
 
     @Override
-    public Class<? extends IDoCareFragment> getNavHierParentFragment() {
+    public Class<? extends AbstractFragment> getNavHierParentFragment() {
         return FragmentHome.class;
+    }
+
+    @Override
+    protected void handleMessage(Message msg) {
+        switch (Constants.MESSAGE_TYPE_VALUES[msg.what]) {
+            case V_CLOSE_REQUEST_BUTTON_CLICKED:
+                closeRequest();
+                break;
+            case V_TAKE_PICTURE_BUTTON_CLICKED:
+                takePictureWithCamera();
+                break;
+            default:
+                Log.w(LOG_TAG, "Message of type "
+                        + Constants.MESSAGE_TYPE_VALUES[msg.what].toString() + " wasn't consumed");
+        }
     }
 
     @Override
@@ -203,63 +183,12 @@ public class FragmentNewAndCloseRequest extends IDoCareFragment {
         startActivityForResult(intent, Constants.StartActivityTag.CAPTURE_PICTURE_FOR_NEW_REQUEST.ordinal());
     }
 
-
     /**
-     * Create, populate and execute a new server request of type "add new request" based
-     * on the contents of fragment's views
-     */
-    private void addNewRequest() {
-
-        if (getView() == null) {
-            Log.e(LOG_TAG, "getView() returned null");
-            return;
-        }
-
-        RatingBar rating = (RatingBar) getView().findViewById(R.id.ratingbar_rate);
-        EditText edtComment = (EditText) getView().findViewById(R.id.edt_comment);
-
-        ServerRequest serverRequest = new ServerRequest(Constants.ADD_REQUEST_URL);
-
-        // TODO: field names should come from constants and the values should not be hardcoded
-        SharedPreferences prefs =
-                getActivity().getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
-        serverRequest.addTextField("username", prefs.getString("username", "no_username"));
-        serverRequest.addTextField("password", prefs.getString("password", "no_password"));
-        serverRequest.addTextField("openedBy", prefs.getString("username", "no_username"));
-
-        Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                ((IDoCareActivity)getActivity()).mGoogleApiClient);
-        if (lastLocation != null) {
-            serverRequest.addTextField("lat", String.valueOf(lastLocation.getLatitude()));
-            serverRequest.addTextField("long", String.valueOf(lastLocation.getLongitude()));
-        }
-
-        serverRequest.addTextField("pollutionLevel", String.valueOf(rating.getRating()));
-
-        if (edtComment.getText().toString().length() > 0) {
-            serverRequest.addTextField("noteBefore", edtComment.getText().toString());
-        }
-
-        for (int i = 0; i < mListAdapter.getCount(); i++) {
-            serverRequest.addPicture(NEW_REQUEST_PICTURES_HTTP_FIELD_NAME,
-                    "picture" + String.valueOf(i) + ".jpg", mListAdapter.getItem(i));
-        }
-
-        serverRequest.execute();
-    }
-
-    /**
-     * Create, populate and execute a new server request of type "close equest" based
+     * Create, populate and execute a new server request of type "close request" based
      * on the contents of fragment's views
      */
     private void closeRequest() {
-
-        if (getView() == null) {
-            Log.e(LOG_TAG, "getView() returned null");
-            return;
-        }
-
-        EditText edtComment = (EditText) getView().findViewById(R.id.edt_comment);
+        Bundle closeRequestBundle = mCloseRequestViewMVC.getViewState();
 
         ServerRequest serverRequest = new ServerRequest(Constants.CLOSE_REQUEST_URL);
 
@@ -271,8 +200,8 @@ public class FragmentNewAndCloseRequest extends IDoCareFragment {
         serverRequest.addTextField("requestId", mRequestId);
 
 
-        if (edtComment.getText().toString().length() > 0) {
-            serverRequest.addTextField("noteAfter", edtComment.getText().toString());
+        if (closeRequestBundle.getString("noteAfter").length() > 0) {
+            serverRequest.addTextField("noteAfter", closeRequestBundle.getString("noteAfter"));
         }
 
         for (int i = 0; i < mListAdapter.getCount(); i++) {

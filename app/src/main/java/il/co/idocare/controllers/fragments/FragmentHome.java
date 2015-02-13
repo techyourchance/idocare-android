@@ -1,11 +1,11 @@
 package il.co.idocare.controllers.fragments;
 
 
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,13 +32,16 @@ import il.co.idocare.R;
 import il.co.idocare.pojos.RequestItem;
 import il.co.idocare.ServerRequest;
 import il.co.idocare.utils.UtilMethods;
+import il.co.idocare.views.HomeViewMVC;
 
 
-public class FragmentHome extends IDoCareFragment implements ServerRequest.OnServerResponseCallback {
+public class FragmentHome extends AbstractFragment implements ServerRequest.OnServerResponseCallback {
 
     private final static String LOG_TAG = "FragmentHome";
 
-   private RequestsListAdapter mListAdapter;
+    RequestsListAdapter mListAdapter;
+    HomeViewMVC mViewMVCHome;
+
 
 
     @Override
@@ -47,23 +50,32 @@ public class FragmentHome extends IDoCareFragment implements ServerRequest.OnSer
     }
 
     @Override
-    public Class<? extends IDoCareFragment> getNavHierParentFragment() {
+    public Class<? extends AbstractFragment> getNavHierParentFragment() {
         return null;
+    }
+
+    @Override
+    protected void handleMessage(Message msg) {
+        // TODO: implement this method
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        mViewMVCHome = new HomeViewMVC(inflater, container);
+        // Provide inbox Handler to the MVC View
+        mViewMVCHome.addOutboxHandler(getInboxHandler());
+        // Add MVC View's Handler to the set of outbox Handlers
+        addOutboxHandler(mViewMVCHome.getInboxHandler());
 
         // This is required for automatic refresh of action bar options upon fragment's loading
         setHasOptionsMenu(true);
 
         mListAdapter = new RequestsListAdapter(getActivity(), 0);
-        final ListView listPictures = (ListView) view.findViewById(R.id.list_requests_thumbnails);
+        final ListView listPictures =
+                (ListView) mViewMVCHome.getRootView().findViewById(R.id.list_requests_thumbnails);
         listPictures.setAdapter(mListAdapter);
-
-
 
         listPictures.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
@@ -79,7 +91,6 @@ public class FragmentHome extends IDoCareFragment implements ServerRequest.OnSer
         });
 
 
-
         // Fetch the requests from the server
         IDoCareApplication app = (IDoCareApplication) getActivity().getApplication();
         if (app.getRequests() == null) {
@@ -89,7 +100,7 @@ public class FragmentHome extends IDoCareFragment implements ServerRequest.OnSer
             mListAdapter.notifyDataSetChanged();
         }
 
-        return view;
+        return mViewMVCHome.getRootView();
     }
 
     @Override
@@ -102,10 +113,7 @@ public class FragmentHome extends IDoCareFragment implements ServerRequest.OnSer
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add_new_request:
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.addToBackStack(null);
-                ft.replace(R.id.frame_contents, new FragmentNewAndCloseRequest());
-                ft.commit();
+                replaceFragment(FragmentNewRequest.class, true, null);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
