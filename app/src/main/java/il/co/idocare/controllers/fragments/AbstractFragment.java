@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import il.co.idocare.controllers.ControllerMVC;
+import il.co.idocare.handlermessaging.HandlerMessagingMaster;
+import il.co.idocare.handlermessaging.HandlerMessagingSlave;
 
 
 /**
@@ -18,7 +20,10 @@ import il.co.idocare.controllers.ControllerMVC;
  * to the app.<br>
  * Fragments of this app should extend this class.
  */
-public abstract class AbstractFragment extends Fragment implements ControllerMVC {
+public abstract class AbstractFragment extends Fragment implements
+        ControllerMVC,
+        HandlerMessagingMaster,
+        HandlerMessagingSlave {
 
     IDoCareFragmentCallback mCallback;
 
@@ -124,7 +129,6 @@ public abstract class AbstractFragment extends Fragment implements ControllerMVC
                 msg.sendToTarget();
             }
         }
-
     }
 
 

@@ -7,6 +7,8 @@ import android.os.Message;
 import java.util.ArrayList;
 import java.util.List;
 
+import il.co.idocare.handlermessaging.HandlerMessagingMaster;
+import il.co.idocare.handlermessaging.HandlerMessagingSlave;
 import il.co.idocare.models.ModelMVC;
 
 /**
@@ -14,7 +16,10 @@ import il.co.idocare.models.ModelMVC;
  * specific to the app<br>
  * MVC Views of this app should extend this class.
  */
-public abstract class AbstractViewMVC implements ViewMVC {
+public abstract class AbstractViewMVC implements
+        ViewMVC,
+        HandlerMessagingMaster,
+        HandlerMessagingSlave {
 
     Handler mInboxHandler;
     final List<Handler> mOutboxHandlers = new ArrayList<Handler>();
@@ -76,21 +81,6 @@ public abstract class AbstractViewMVC implements ViewMVC {
             }
         }
 
-    }
-
-    @Override
-    public void bindModel(ModelMVC model) {
-        mModelMVC = model;
-    }
-
-    @Override
-    public ModelMVC getBoundModel() {
-        return mModelMVC;
-    }
-
-    @Override
-    public void unbindModel() {
-        mModelMVC = null;
     }
 
     // End of MVC View methods
