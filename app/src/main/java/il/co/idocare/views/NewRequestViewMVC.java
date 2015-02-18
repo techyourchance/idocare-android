@@ -63,8 +63,10 @@ public class NewRequestViewMVC extends AbstractViewMVC {
     @Override
     public Bundle getViewState() {
         Bundle bundle = new Bundle();
-        bundle.putString("noteBefore", mEdtNoteBefore.getText().toString());
-        bundle.putString("pollutionLevel", String.valueOf(mRatingbarPollutionLevel.getRating()));
+        bundle.putString(Constants.FieldName.CREATED_COMMENT.getValue(),
+                mEdtNoteBefore.getText().toString());
+        bundle.putString(Constants.FieldName.CREATED_POLLUTION_LEVEL.getValue(),
+                String.valueOf(mRatingbarPollutionLevel.getRating()));
         return bundle;
     }
 }

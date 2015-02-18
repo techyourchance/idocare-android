@@ -50,7 +50,7 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         mContext = context;
 
         mLayoutNewRequest = (LinearLayout) mRootView.findViewById(R.id.layout_new_request);
-        mLayoutClosedRequest = (LinearLayout) mRootView.findViewById(R.id.layout_closed_request);
+        mLayoutClosedRequest = (LinearLayout) mRootView.findViewById(R.id.layout_request_closed);
         mBtnPickupRequest = (Button) mRootView.findViewById(R.id.btn_pickup_request);
         mBtnCloseRequest = (Button) mRootView.findViewById(R.id.btn_close_request);
 
@@ -82,10 +82,8 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
     public void populateChildViewsFromRequestItem(RequestItem requestItem) {
 
 
-        boolean isClosed = requestItem.mCloseDate.length() > 0 &&
-                !requestItem.mCloseDate.equals("null");
-        boolean isPickedUp = requestItem.mPickedUpDate.length() > 0 &&
-                !requestItem.mPickedUpDate.equals("null");
+        boolean isClosed = requestItem.mClosedBy != null;
+        boolean isPickedUp = requestItem.mPickedUpBy != null;
 
 
         // Handle the views related to initial request
@@ -110,25 +108,25 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         ListView listPictures = (ListView) mRootView.findViewById(R.id.list_new_request_pictures);
         listPictures.setAdapter(listAdapter);
 
-        if (requestItem.mOpenedBy != null) {
-            TextView openedBy = (TextView) mRootView.findViewById(R.id.txt_opened_by);
-            openedBy.setText("Opened by: " + requestItem.mOpenedBy);
+        if (requestItem.mCreatedBy != null) {
+            TextView createdBy = (TextView) mRootView.findViewById(R.id.txt_created_by);
+            createdBy.setText("Created by: " + requestItem.mCreatedBy.mNickname);
         }
 
-        if (requestItem.mCreationDate != null) {
-            TextView creationDate = (TextView) mRootView.findViewById(R.id.txt_creation_date);
-            creationDate.setText(requestItem.mCreationDate);
+        if (requestItem.mCreatedAt != null) {
+            TextView createdAt = (TextView) mRootView.findViewById(R.id.txt_created_at);
+            createdAt.setText(requestItem.mCreatedAt);
         }
 
-        if (requestItem.mImagesBefore != null) {
-            listAdapter.addAll(requestItem.mImagesBefore);
+        if (requestItem.mCreatedPictures != null) {
+            listAdapter.addAll(requestItem.mCreatedPictures);
             listAdapter.notifyDataSetChanged();
         }
 
-        if (requestItem.mNoteBefore != null) {
-            TextView commentBefore = (TextView) mRootView.findViewById(R.id.txt_comment_before);
-            commentBefore.setLines(UtilMethods.countLines(requestItem.mNoteBefore));
-            commentBefore.setText(requestItem.mNoteBefore);
+        if (requestItem.mCreatedComment != null) {
+            TextView commentBefore = (TextView) mRootView.findViewById(R.id.txt_created_comment);
+            commentBefore.setLines(UtilMethods.countLines(requestItem.mCreatedComment));
+            commentBefore.setText(requestItem.mCreatedComment);
         }
 
     }
@@ -142,37 +140,36 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
 
         if (!isClosed) {
             // If the request is not closed then hide the "closed" layout altogether
-            mRootView.findViewById(R.id.layout_closed_request).setVisibility(View.GONE);
+            mRootView.findViewById(R.id.layout_request_closed).setVisibility(View.GONE);
             return;
         }
 
         RequestPicturesAdapter listAdapter = new RequestPicturesAdapter(mContext, 0);
-        ListView listPictures = (ListView) mRootView.findViewById(R.id.list_closed_request_pictures);
+        ListView listPictures = (ListView) mRootView.findViewById(R.id.list_request_closed_pictures);
         listPictures.setAdapter(listAdapter);
 
 
         // Populate the views concerning "closure" details
 
-        if (requestItem.mPickedUpBy != null) {
-            // Assuming that the user who closed the request is the same one who picked it up
+        if (requestItem.mClosedBy != null) {
             TextView closedBy = (TextView) mRootView.findViewById(R.id.txt_closed_by);
-            closedBy.setText("Closed by: " + requestItem.mPickedUpBy);
+            closedBy.setText("Closed by: " + requestItem.mClosedBy.mNickname);
         }
 
-        if (requestItem.mCloseDate != null) {
-            TextView closeDate = (TextView) mRootView.findViewById(R.id.txt_close_date);
-            closeDate.setText(requestItem.mCloseDate);
+        if (requestItem.mClosedAt != null) {
+            TextView closedAt = (TextView) mRootView.findViewById(R.id.txt_closed_at);
+            closedAt.setText(requestItem.mClosedAt);
         }
 
-        if (requestItem.mImagesAfter != null) {
-            listAdapter.addAll(requestItem.mImagesAfter);
+        if (requestItem.mClosedPictures != null) {
+            listAdapter.addAll(requestItem.mClosedPictures);
             listAdapter.notifyDataSetChanged();
         }
 
-        if (requestItem.mNoteAfter != null) {
-            TextView commentAfter = (TextView) mRootView.findViewById(R.id.txt_comment_after);
-            commentAfter.setLines(UtilMethods.countLines(requestItem.mNoteAfter));
-            commentAfter.setText(requestItem.mNoteAfter);
+        if (requestItem.mClosedComment != null) {
+            TextView closedComment = (TextView) mRootView.findViewById(R.id.txt_closed_comment);
+            closedComment.setLines(UtilMethods.countLines(requestItem.mClosedComment));
+            closedComment.setText(requestItem.mClosedComment);
         }
 
 
@@ -184,10 +181,6 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
      */
     private void populatePickupButtonFromRequestItem(RequestItem requestItem, boolean isPickedUp,
                                                      boolean isClosed) {
-
-        String myUsername =
-                mContext.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
-                        .getString("username", "no_username");
 
         Button btnPickupRequest = (Button) mRootView.findViewById(R.id.btn_pickup_request);
 
@@ -213,13 +206,15 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
     private void populateCloseButtonFromRequestItem(RequestItem requestItem, boolean isPickedUp,
                                                      boolean isClosed) {
 
-        String myUsername =
-                mContext.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
-                        .getString("username", "no_username");
+
+        long myId = mContext.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
+                .getLong(Constants.FieldName.USER_ID.getValue(), 0);
+
+        boolean isPickedUpByMe = isPickedUp && requestItem.mPickedUpBy.mId == myId;
 
         Button btnCloseRequest = (Button) mRootView.findViewById(R.id.btn_close_request);
 
-        if (isPickedUp && !isClosed) {
+        if (isPickedUpByMe && !isClosed) {
             btnCloseRequest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

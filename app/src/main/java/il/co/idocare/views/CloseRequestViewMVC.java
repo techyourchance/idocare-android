@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RatingBar;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
@@ -22,12 +21,12 @@ public class CloseRequestViewMVC extends AbstractViewMVC {
 
     View mRootView;
 
-    EditText mEdtNoteAfter;
+    EditText mEdtClosedComment;
 
     public CloseRequestViewMVC(LayoutInflater inflater, ViewGroup container) {
         mRootView = inflater.inflate(R.layout.fragment_close_request, container, false);
 
-        mEdtNoteAfter = (EditText) mRootView.findViewById(R.id.edt_note_after);
+        mEdtClosedComment = (EditText) mRootView.findViewById(R.id.edt_note_after);
 
         Button btnTakePicture = (Button) mRootView.findViewById(R.id.btn_take_picture);
         btnTakePicture.setOnClickListener(new View.OnClickListener() {
@@ -61,7 +60,8 @@ public class CloseRequestViewMVC extends AbstractViewMVC {
     @Override
     public Bundle getViewState() {
         Bundle bundle = new Bundle();
-        bundle.putString("noteAfter", mEdtNoteAfter.getText().toString());
+        bundle.putString(Constants.FieldName.CLOSED_COMMENT.getValue(),
+                mEdtClosedComment.getText().toString());
         return bundle;
     }
 }

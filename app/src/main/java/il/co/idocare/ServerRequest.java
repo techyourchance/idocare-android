@@ -58,6 +58,12 @@ public class ServerRequest {
     OnServerResponseCallback mCallback;
     HttpMethod mHttpMethod;
 
+
+    /**
+     * Headers to be added to HTTP request
+     */
+    Map<String, String> mRequestHeaders;
+
     /**
      * Text fields to be added to HTTP request
      */
@@ -88,6 +94,7 @@ public class ServerRequest {
         mTag = tag;
         mCallback = callback;
         mHttpMethod = HttpMethod.POST;
+        mRequestHeaders = new HashMap<String, String>();
         mRequestTextFields = new HashMap<String, String>();
         mRequestPicturesFields = new HashMap<String, Map<String, String>>();
 
@@ -135,6 +142,15 @@ public class ServerRequest {
                         + " Name: " + pictureName);
 
         fieldMap.put(pictureName, uri);
+    }
+
+    /**
+     * Add custom header to this HTTP request
+     * @param name header name
+     * @param value header value
+     */
+    public void addHeader(String name, String value) {
+        mRequestHeaders.put(name, value);
     }
 
     /**
@@ -214,6 +230,11 @@ public class ServerRequest {
                     case POST:
                         httpRequest = new HttpPost(uri);
                         break;
+                }
+
+                // Adding headers
+                for( String headerName : mRequestHeaders.keySet()) {
+                    httpRequest.addHeader(headerName, mRequestHeaders.get(headerName));
                 }
 
                 // Adding an entity (if required)
@@ -334,6 +355,8 @@ public class ServerRequest {
                     e.printStackTrace();
                 }
             }
+
+
             return httpEntity;
         }
 

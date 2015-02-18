@@ -86,9 +86,9 @@ public class LoginViewMVC extends AbstractViewMVC {
 
     private void authenticationCompleted() {
         mEdtUsername.setKeyListener((KeyListener) mEdtUsername.getTag());
-        mEdtUsername.clearComposingText();
+        mEdtUsername.setText("");
         mEdtPassword.setKeyListener((KeyListener) mEdtPassword.getTag());
-        mEdtPassword.clearComposingText();
+        mEdtPassword.setText("");
         mBtnLogin.setEnabled(true);
     }
 }

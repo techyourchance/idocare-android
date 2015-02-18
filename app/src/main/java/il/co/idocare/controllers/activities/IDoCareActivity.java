@@ -41,8 +41,7 @@ import il.co.idocare.utils.UtilMethods;
 
 public class IDoCareActivity extends Activity implements
         AbstractFragment.IDoCareFragmentCallback,
-        FragmentManager.OnBackStackChangedListener,
-        ServerRequest.OnServerResponseCallback {
+        FragmentManager.OnBackStackChangedListener {
 
     private static final String LOG_TAG = "IDoCareActivity";
 
@@ -76,8 +75,9 @@ public class IDoCareActivity extends Activity implements
         if (savedInstanceState == null) {
             SharedPreferences prefs = getSharedPreferences(Constants.PREFERENCES_FILE, MODE_PRIVATE);
 
-            if (prefs.contains("username") && prefs.contains("password")) {
-                // Go straight to home page if username and password exist
+            if (prefs.contains(Constants.FieldName.USER_ID.getValue()) &&
+                    prefs.contains(Constants.FieldName.USER_PUBLIC_KEY.getValue())) {
+                // Go straight to home page if user ID and public key exist
                 getFragmentManager().beginTransaction()
                         .add(R.id.frame_contents, new FragmentHome())
                         .commit();
@@ -103,7 +103,7 @@ public class IDoCareActivity extends Activity implements
         onBackStackChanged();
 
         // Start periodic updates of requests' cache
-        scheduleRequestsCacheUpdates();
+        //scheduleRequestsCacheUpdates();
     }
 
     @Override
@@ -112,8 +112,6 @@ public class IDoCareActivity extends Activity implements
 
         if (mGoogleApiClient != null) mGoogleApiClient.disconnect();
 
-        // Stop the updates of requests' cache
-        stopRequestsCacheUpdates();
     }
 
     @Override
@@ -315,57 +313,5 @@ public class IDoCareActivity extends Activity implements
                 .addApi(LocationServices.API)
                 .build();
     }
-
-
-
-
-    /**
-     * Start periodical update of the list of the requests stored in application context. The
-     * application context was required in order to preserve the data when the activity is killed.
-     * TODO: this workaround should be replaced with DB+SyncAdapter scheme
-     */
-    private void scheduleRequestsCacheUpdates() {
-        if (mRequestsUpdateScheduler == null)
-            mRequestsUpdateScheduler = Executors.newSingleThreadScheduledExecutor();
-
-        final Runnable update = new Runnable() {
-            public void run() {
-                ServerRequest serverRequest = new ServerRequest(Constants.GET_ALL_REQUESTS_URL,
-                        Constants.ServerRequestTag.GET_ALL_REQUESTS, IDoCareActivity.this);
-
-                SharedPreferences prefs =
-                        getSharedPreferences(Constants.PREFERENCES_FILE, MODE_PRIVATE);
-                serverRequest.addTextField("username", prefs.getString("username", "no_username"));
-                serverRequest.addTextField("password", prefs.getString("password", "no_password"));
-
-                serverRequest.execute();
-            }
-        };
-
-        mScheduledFuture =
-                mRequestsUpdateScheduler.scheduleAtFixedRate (update, 30, 30, TimeUnit.SECONDS);
-    }
-
-    /**
-     * Stop updates of requests' cache
-     */
-    private void stopRequestsCacheUpdates() {
-        if (mScheduledFuture != null) mScheduledFuture.cancel(false);
-    }
-
-
-    @Override
-    public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag, String responseData) {
-        if (tag == Constants.ServerRequestTag.GET_ALL_REQUESTS) {
-            List<RequestItem> requests = UtilMethods.extractRequestsFromJSON(responseData);
-            ((IDoCareApplication)getApplication()).setRequests(requests);
-        } else {
-            Log.e(LOG_TAG, "serverResponse was called with unrecognized tag: " + tag.toString());
-        }
-    }
-
-
-
-
 
 }

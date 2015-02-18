@@ -8,84 +8,67 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import il.co.idocare.Constants.FieldName;
+
 public class RequestItem implements Parcelable {
 
     private final static String LOG_TAG = "RequestItem";
 
-    public String mId;
-    public String mOpenedBy;
-    public String mPickedUpBy;
-    public String mCreationDate;
-    public String mPickedUpDate;
-    public String mCloseDate;
-    public String mNoteBefore;
-    public String mNoteAfter;
-    public String mLat;
-    public String mLong;
-    public String[] mImagesBefore;
-    public String[] mImagesAfter;
-    public String mPollutionLevel;
+    public long mId;
+    public UserItem mCreatedBy;
+    public String mCreatedAt;
+    public String mCreatedComment;
+    public String[] mCreatedPictures;
+    public double mLat;
+    public double mLong;
+    public int mCreatedPollutionLevel;
+    public UserItem mPickedUpBy;
+    public String mPickedUpAt;
+    public UserItem mClosedBy;
+    public String mClosedAt;
+    public String mClosedComment;
+    public String[] mClosedPictures;
 
-    public static RequestItem createRequestItem(JSONObject requestJSONObject) {
-        RequestItem item = new RequestItem();
-        // TODO: field names in JSON should come from constants
 
-        try {
-            item.mId = requestJSONObject.getString("id");
-            item.mOpenedBy = requestJSONObject.getString("opened_by");
-            item.mPickedUpBy = requestJSONObject.getString("picked_up_by");
-            item.mCreationDate = requestJSONObject.getString("creation_date");
-            item.mPickedUpDate = requestJSONObject.getString("picked_up_date");
-            item.mCloseDate = requestJSONObject.getString("close_date");
-            item.mNoteBefore = requestJSONObject.getString("note_before");
-            item.mNoteAfter = requestJSONObject.getString("note_after");
-            item.mLat = requestJSONObject.getString("lat");
-            item.mLong = requestJSONObject.getString("long");
 
-            if (!requestJSONObject.getString("images_before").equals("") &&
-                    !requestJSONObject.getString("images_before").equalsIgnoreCase("null")) {
-                item.mImagesBefore = requestJSONObject.getString("images_before").split(", ");
-            }
-
-            if (!requestJSONObject.getString("images_after").equals("") &&
-                    !requestJSONObject.getString("images_after").equalsIgnoreCase("null")) {
-                item.mImagesAfter= requestJSONObject.getString("images_after").split(", ");
-            }
-
-            item.mPollutionLevel= requestJSONObject.getString("pollution_level");
-
-        } catch (JSONException e) {
-            item = null;
-            e.printStackTrace();
-        }
-
-        return item;
+    public static RequestItem createRequestItem(long id) {
+        return new RequestItem(id);
     }
 
+    private RequestItem (
+            long id,
+            UserItem createdBy,
+            String createdAt,
+            String createdComment,
+            String[] createdPictures,
+            double latitude,
+            double longitude,
+            int createdPollutionLevel,
+            UserItem pickedUpBy,
+            String pickedUpAt,
+            UserItem closedBy,
+            String closedAt,
+            String closedComment,
+            String[] closedPictures) {
 
-    public RequestItem(Parcel source) {
-        if (!RequestItem.class.isAssignableFrom(source.getClass())) {
-            Log.e(LOG_TAG, "the Parcel provided to the constructor is not of type RequestItem");
-            return;
-        }
-
-        mId = source.readString();
-        mOpenedBy = source.readString();
-        mPickedUpBy = source.readString();
-        mCreationDate = source.readString();
-        mPickedUpDate = source.readString();
-        mCloseDate = source.readString();
-        mNoteBefore = source.readString();
-        mNoteAfter = source.readString();
-        mLat = source.readString();
-        mLong = source.readString();
-        source.readStringArray(mImagesBefore);
-        source.readStringArray(mImagesAfter);
-        mPollutionLevel= source.readString();
-        
+        mId = id;
+        mCreatedBy = createdBy;
+        mCreatedComment = createdComment;
+        mCreatedPictures = createdPictures;
+        mLat = latitude;
+        mLong = longitude;
+        mCreatedPollutionLevel = createdPollutionLevel;
+        mPickedUpBy = pickedUpBy;
+        mPickedUpAt = mPickedUpAt;
+        mClosedBy = closedBy;
+        mClosedAt = closedAt;
+        mClosedComment = closedComment;
+        mClosedPictures = closedPictures;
     }
 
-    private RequestItem(){}
+    private RequestItem(long id) {
+        mId = id;
+    }
 
     @Override
     public int describeContents() {
@@ -94,19 +77,22 @@ public class RequestItem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int i) {
-        dest.writeString(mId);
-        dest.writeString(mOpenedBy);
-        dest.writeString(mPickedUpBy);
-        dest.writeString(mCreationDate);
-        dest.writeString(mPickedUpDate);
-        dest.writeString(mCloseDate);
-        dest.writeString(mNoteBefore);
-        dest.writeString(mNoteAfter);
-        dest.writeString(mLat);
-        dest.writeString(mLong);
-        dest.writeStringArray(mImagesBefore);
-        dest.writeStringArray(mImagesAfter);
-        dest.writeString(mPollutionLevel);
+        dest.writeLong(mId);
+        dest.writeParcelable(mCreatedBy, 0);
+        dest.writeString(mCreatedAt);
+        dest.writeString(mCreatedComment);
+        dest.writeStringArray(mCreatedPictures);
+        dest.writeDouble(mLat);
+        dest.writeDouble(mLong);
+        dest.writeInt(mCreatedPollutionLevel);
+
+        dest.writeParcelable(mPickedUpBy, 0);
+        dest.writeString(mPickedUpAt);
+
+        dest.writeParcelable(mClosedBy, 0);
+        dest.writeString(mClosedAt);
+        dest.writeString(mClosedComment);
+        dest.writeStringArray(mClosedPictures);
     }
 
 
@@ -118,7 +104,105 @@ public class RequestItem implements Parcelable {
 
         @Override
         public RequestItem createFromParcel(Parcel source) {
-            return new RequestItem(source);
+            return createRequestItem(source.readLong())
+                    .setCreatedBy((UserItem) source.readParcelable(UserItem.class.getClassLoader()))
+                    .setCreatedAt(source.readString())
+                    .setCreatedComment(source.readString())
+                    .setCreatedPictures(source.createStringArray())
+                    .setLatitude(source.readDouble())
+                    .setLongitude(source.readDouble())
+                    .setCreatedPollutionLevel(source.readInt())
+                    .setPickedUpBy((UserItem) source.readParcelable(UserItem.class.getClassLoader()))
+                    .setPickedUpAt(source.readString())
+                    .setClosedBy((UserItem) source.readParcelable(UserItem.class.getClassLoader()))
+                    .setClosedAt(source.readString())
+                    .setClosedComment(source.readString())
+                    .setClosedPictures(source.createStringArray());
         }
     };
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Setters
+
+    public RequestItem setCreatedBy(UserItem user) {
+        mCreatedBy = user;
+        return this;
+    }
+
+
+    public RequestItem setCreatedAt(String date) {
+        mCreatedAt = date;
+        return this;
+    }
+
+    public RequestItem setLatitude(double latitude) {
+        mLat = latitude;
+        return  this;
+    }
+
+    public RequestItem setLongitude(double longitude) {
+        mLong = longitude;
+        return this;
+    }
+
+
+    public RequestItem setCreatedPollutionLevel(int pollutionLevel) {
+        mCreatedPollutionLevel = pollutionLevel;
+        return this;
+    }
+
+
+    public RequestItem setCreatedComment(String comment) {
+        mCreatedComment = comment;
+        return this;
+    }
+
+
+    public RequestItem setCreatedPictures(String[] pictures) {
+        mCreatedPictures = pictures;
+        return this;
+    }
+
+    public RequestItem setPickedUpBy(UserItem user) {
+        mPickedUpBy = user;
+        return this;
+    }
+
+    public RequestItem setPickedUpAt(String date) {
+        mPickedUpAt = date;
+        return this;
+    }
+
+
+    public RequestItem setClosedBy(UserItem user) {
+        mClosedBy = user;
+        return this;
+    }
+
+    public RequestItem setClosedAt(String date) {
+        mClosedAt = date;
+        return this;
+    }
+
+
+    public RequestItem setClosedComment(String comment) {
+        mClosedComment = comment;
+        return this;
+    }
+
+
+    public RequestItem setClosedPictures(String[] pictures) {
+        mClosedPictures = pictures;
+        return this;
+    }
+
+
+
+
+
+
+
+
 }

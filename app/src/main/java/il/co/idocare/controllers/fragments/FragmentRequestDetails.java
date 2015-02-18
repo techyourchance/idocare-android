@@ -2,33 +2,17 @@ package il.co.idocare.controllers.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
-
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import il.co.idocare.Constants;
-import il.co.idocare.R;
 import il.co.idocare.pojos.RequestItem;
 import il.co.idocare.ServerRequest;
-import il.co.idocare.utils.UtilMethods;
+import il.co.idocare.utils.IDoCareHttpUtils;
 import il.co.idocare.views.RequestDetailsViewMVC;
 
 
@@ -62,9 +46,9 @@ public class FragmentRequestDetails extends AbstractFragment {
         }
 
         Log.v(LOG_TAG, "Request details:"
-                + "\nCreated by " + mRequestItem.mOpenedBy + " at " + mRequestItem.mCreationDate
-                + "\nPicked up by " + mRequestItem.mPickedUpBy + " at " + mRequestItem.mPickedUpDate
-                + "\nClosed by " + mRequestItem.mPickedUpBy + " at " + mRequestItem.mCloseDate);
+                + "\nCreated by " + mRequestItem.mCreatedBy + " at " + mRequestItem.mCreatedAt
+                + "\nPicked up by " + mRequestItem.mPickedUpBy + " at " + mRequestItem.mPickedUpAt
+                + "\nClosed by " + mRequestItem.mPickedUpBy + " at " + mRequestItem.mClosedAt);
 
 
         mRequestDetailsViewMVC.populateChildViewsFromRequestItem(mRequestItem);
@@ -110,13 +94,9 @@ public class FragmentRequestDetails extends AbstractFragment {
         ServerRequest serverRequest = new ServerRequest(Constants.PICKUP_REQUEST_URL,
                 Constants.ServerRequestTag.PICKUP_REQUEST, null);
 
-        // TODO: field names should come from constants and the values should not be hardcoded
-        SharedPreferences prefs =
-                getActivity().getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
-        serverRequest.addTextField("username", prefs.getString("username", "no_username"));
-        serverRequest.addTextField("password", prefs.getString("password", "no_password"));
-        serverRequest.addTextField("requestId", mRequestItem.mId);
-        serverRequest.addTextField("pickedUpBy", prefs.getString("username", "no_username"));
+        IDoCareHttpUtils.addStandardHeaders(getActivity(), serverRequest);
+        serverRequest.addTextField(Constants.FieldName.REQUEST_ID.getValue(),
+                String.valueOf(mRequestItem.mId));
 
         serverRequest.execute();
 
@@ -124,7 +104,7 @@ public class FragmentRequestDetails extends AbstractFragment {
 
     private void closeRequest() {
         Bundle args = new Bundle();
-        args.putString("requestId", mRequestItem.mId);
+        args.putLong(Constants.FieldName.REQUEST_ID.getValue(), mRequestItem.mId);
         replaceFragment(FragmentCloseRequest.class, true, args);
     }
 

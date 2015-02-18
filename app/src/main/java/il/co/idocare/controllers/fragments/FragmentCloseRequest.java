@@ -3,9 +3,7 @@ package il.co.idocare.controllers.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,11 +14,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-import com.google.android.gms.location.LocationServices;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
@@ -35,12 +31,12 @@ import java.util.List;
 import java.util.Locale;
 
 import il.co.idocare.Constants;
+import il.co.idocare.Constants.FieldName;
 import il.co.idocare.R;
 import il.co.idocare.ServerRequest;
-import il.co.idocare.controllers.activities.IDoCareActivity;
+import il.co.idocare.utils.IDoCareHttpUtils;
 import il.co.idocare.utils.UtilMethods;
 import il.co.idocare.views.CloseRequestViewMVC;
-import il.co.idocare.views.NewRequestViewMVC;
 
 
 public class FragmentCloseRequest extends AbstractFragment {
@@ -48,17 +44,12 @@ public class FragmentCloseRequest extends AbstractFragment {
     private final static String LOG_TAG = "FragmentCloseRequest";
 
 
-    /**
-     * Names of JSON fields which contain lists of pictures
-     */
-    private final static String CLOSE_REQUEST_PICTURES_HTTP_FIELD_NAME = "imagesAfter";
-
 
     CloseRequestViewMVC mCloseRequestViewMVC;
 
     NewPicturesAdapter mListAdapter;
     String mLastCameraPicturePath;
-    String mRequestId;
+    long mRequestId;
 
 
     @Override
@@ -73,10 +64,9 @@ public class FragmentCloseRequest extends AbstractFragment {
         // Whether New Request or Close Request layout and functionality
         Bundle args = getArguments();
         if (args != null) {
-            mRequestId = args.getString("requestId");
-        }
-        if (mRequestId == null) {
-            Log.e(LOG_TAG, "Request ID wasn't provided in arguments");
+            mRequestId = args.getLong(Constants.FieldName.REQUEST_ID.getValue());
+        } else {
+            Log.e(LOG_TAG, "no arguments set for CloseRequestFragment");
         }
 
         mListAdapter = new NewPicturesAdapter(getActivity(), 0);
@@ -192,20 +182,20 @@ public class FragmentCloseRequest extends AbstractFragment {
 
         ServerRequest serverRequest = new ServerRequest(Constants.CLOSE_REQUEST_URL);
 
-        // TODO: field names should come from constants and the values should not be hardcoded
-        SharedPreferences prefs =
-                getActivity().getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
-        serverRequest.addTextField("username", prefs.getString("username", "no_username"));
-        serverRequest.addTextField("password", prefs.getString("password", "no_password"));
-        serverRequest.addTextField("requestId", mRequestId);
+        IDoCareHttpUtils.addStandardHeaders(getActivity(), serverRequest);
 
+        // Set request ID
+        serverRequest.addTextField(FieldName.REQUEST_ID.getValue(), String.valueOf(mRequestId));
 
-        if (closeRequestBundle.getString("noteAfter").length() > 0) {
-            serverRequest.addTextField("noteAfter", closeRequestBundle.getString("noteAfter"));
+        // Set closed comment
+        if (closeRequestBundle.getString(FieldName.CLOSED_COMMENT.getValue()).length() > 0) {
+            serverRequest.addTextField(FieldName.CLOSED_COMMENT.getValue(),
+                    closeRequestBundle.getString(FieldName.CLOSED_COMMENT.getValue()));
         }
 
+        // Set closed pictures
         for (int i = 0; i < mListAdapter.getCount(); i++) {
-            serverRequest.addPicture(CLOSE_REQUEST_PICTURES_HTTP_FIELD_NAME,
+            serverRequest.addPicture(FieldName.CLOSED_PICTURES.getValue(),
                     "picture" + String.valueOf(i) + ".jpg", mListAdapter.getItem(i));
         }
 

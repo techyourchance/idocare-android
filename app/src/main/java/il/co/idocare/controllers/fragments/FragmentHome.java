@@ -2,7 +2,6 @@ package il.co.idocare.controllers.fragments;
 
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Message;
@@ -24,14 +23,17 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.List;
 
 import il.co.idocare.Constants;
-import il.co.idocare.IDoCareApplication;
 import il.co.idocare.R;
 import il.co.idocare.pojos.RequestItem;
 import il.co.idocare.ServerRequest;
-import il.co.idocare.utils.UtilMethods;
+import il.co.idocare.utils.IDoCareHttpUtils;
+import il.co.idocare.utils.IDoCareJSONUtils;
 import il.co.idocare.views.HomeViewMVC;
 
 
@@ -42,22 +44,6 @@ public class FragmentHome extends AbstractFragment implements ServerRequest.OnSe
     RequestsListAdapter mListAdapter;
     HomeViewMVC mViewMVCHome;
 
-
-
-    @Override
-    public boolean isTopLevelFragment() {
-        return true;
-    }
-
-    @Override
-    public Class<? extends AbstractFragment> getNavHierParentFragment() {
-        return null;
-    }
-
-    @Override
-    protected void handleMessage(Message msg) {
-        // TODO: implement this method
-    }
 
 
     @Override
@@ -91,17 +77,28 @@ public class FragmentHome extends AbstractFragment implements ServerRequest.OnSe
         });
 
 
-        // Fetch the requests from the server
-        IDoCareApplication app = (IDoCareApplication) getActivity().getApplication();
-        if (app.getRequests() == null) {
-            getRequestsFromServer();
-        } else {
-            mListAdapter.addAll(app.getRequests());
-            mListAdapter.notifyDataSetChanged();
-        }
+        getRequestsFromServer();
 
         return mViewMVCHome.getRootView();
     }
+
+
+
+    @Override
+    public boolean isTopLevelFragment() {
+        return true;
+    }
+
+    @Override
+    public Class<? extends AbstractFragment> getNavHierParentFragment() {
+        return null;
+    }
+
+    @Override
+    protected void handleMessage(Message msg) {
+        // TODO: implement this method
+    }
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -127,25 +124,47 @@ public class FragmentHome extends AbstractFragment implements ServerRequest.OnSe
         ServerRequest serverRequest = new ServerRequest(Constants.GET_ALL_REQUESTS_URL,
                 Constants.ServerRequestTag.GET_ALL_REQUESTS, this);
 
-        SharedPreferences prefs =
-                getActivity().getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
-        serverRequest.addTextField("username", prefs.getString("username", "no_username"));
-        serverRequest.addTextField("password", prefs.getString("password", "no_password"));
+        IDoCareHttpUtils.addStandardHeaders(getActivity(), serverRequest);
+
         serverRequest.execute();
     }
 
     @Override
     public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag, String responseData) {
         if (tag == Constants.ServerRequestTag.GET_ALL_REQUESTS) {
-            if (responseStatusOk && FragmentHome.this.isAdded()) {
-                List<RequestItem> requests = UtilMethods.extractRequestsFromJSON(responseData);
+            if (responseStatusOk && FragmentHome.this.isAdded() &&
+                    IDoCareJSONUtils.verifySuccessfulStatus(responseData)) {
 
-                mListAdapter.addAll(requests);
+                JSONArray requestsArray;
+                try {
+                    requestsArray = IDoCareJSONUtils.extractDataJSONArray(responseData);
+                } catch (JSONException e) {
+                    Log.e(LOG_TAG, "error in parsing of the response data");
+                    e.printStackTrace();
+                    return;
+                }
+
+                RequestItem requestItem;
+
+                for (int i=0; i<requestsArray.length(); i++) {
+
+                    try {
+                        // Try to parse element at position i as JSON object and create RequestItem
+                        requestItem = IDoCareJSONUtils
+                                .extractRequestItemFromJSONObject(requestsArray.getJSONObject(i));
+                    } catch (JSONException e) {
+                        Log.e(LOG_TAG, "Exception when parsing JSON object at position: "
+                                + String.valueOf(i) + ". The contents of JSON string:\n"
+                                + requestsArray.optString(i));
+                        e.printStackTrace();
+                        continue;
+                    }
+
+                    // Add the created RequestItem everything was fine
+                    if (requestItem != null) mListAdapter.add(requestItem);
+
+                }
                 mListAdapter.notifyDataSetChanged();
-
-                // TODO: remove this workaround
-                IDoCareApplication app = (IDoCareApplication) getActivity().getApplication();
-                app.setRequests(requests);
             }
         } else {
             Log.e(LOG_TAG, "serverResponse was called with unrecognized tag: " + tag.toString());
@@ -191,12 +210,12 @@ public class FragmentHome extends AbstractFragment implements ServerRequest.OnSe
             RequestItem request = getItem(position);
 
             // Set title
-            holder.mTxtTitle.setText(request.mOpenedBy + "  @ " + request.mCreationDate);
+            holder.mTxtTitle.setText(request.mCreatedBy.mNickname + " @ " + request.mCreatedAt);
 
-            if (request.mImagesBefore != null && request.mImagesBefore.length > 0) {
+            if (request.mCreatedPictures != null && request.mCreatedPictures.length > 0) {
 
                 ImageLoader.getInstance().displayImage(
-                        request.mImagesBefore[0],
+                        request.mCreatedPictures[0],
                         holder.mImageView,
                         Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS,
                         new RequestThumbnailLoadingListener(holder.mTxtBeforeImage,

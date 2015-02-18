@@ -3,7 +3,6 @@ package il.co.idocare.controllers.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
@@ -37,6 +36,7 @@ import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.ServerRequest;
 import il.co.idocare.controllers.activities.IDoCareActivity;
+import il.co.idocare.utils.IDoCareHttpUtils;
 import il.co.idocare.utils.UtilMethods;
 import il.co.idocare.views.NewRequestViewMVC;
 
@@ -44,13 +44,6 @@ import il.co.idocare.views.NewRequestViewMVC;
 public class FragmentNewRequest extends AbstractFragment {
 
     private final static String LOG_TAG = "FragmentNewRequest";
-
-
-    /**
-     * Names of JSON fields which contain lists of pictures
-     */
-    private final static String NEW_REQUEST_PICTURES_HTTP_FIELD_NAME = "imagesBefore";
-
 
     NewRequestViewMVC mViewMVCNewRequest;
 
@@ -182,28 +175,28 @@ public class FragmentNewRequest extends AbstractFragment {
 
         ServerRequest serverRequest = new ServerRequest(Constants.ADD_REQUEST_URL);
 
-        // TODO: field names should come from constants and the values should not be hardcoded
-        SharedPreferences prefs =
-                getActivity().getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
-        serverRequest.addTextField("username", prefs.getString("username", "no_username"));
-        serverRequest.addTextField("password", prefs.getString("password", "no_password"));
-        serverRequest.addTextField("openedBy", prefs.getString("username", "no_username"));
+        IDoCareHttpUtils.addStandardHeaders(getActivity(), serverRequest);
+
 
         Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 ((IDoCareActivity)getActivity()).mGoogleApiClient);
         if (lastLocation != null) {
-            serverRequest.addTextField("lat", String.valueOf(lastLocation.getLatitude()));
-            serverRequest.addTextField("long", String.valueOf(lastLocation.getLongitude()));
+            serverRequest.addTextField(Constants.FieldName.LATITUDE.getValue(),
+                    String.valueOf(lastLocation.getLatitude()));
+            serverRequest.addTextField(Constants.FieldName.LONGITUDE.getValue(),
+                    String.valueOf(lastLocation.getLongitude()));
         }
 
-        serverRequest.addTextField("pollutionLevel", bundleNewRequest.getString("pollutionLevel"));
+        serverRequest.addTextField(Constants.FieldName.CREATED_POLLUTION_LEVEL.getValue(),
+                bundleNewRequest.getString(Constants.FieldName.CREATED_POLLUTION_LEVEL.getValue()));
 
-        if (bundleNewRequest.getString("noteBefore").length() > 0) {
-            serverRequest.addTextField("noteBefore", bundleNewRequest.getString("noteBefore"));
+        if (bundleNewRequest.getString(Constants.FieldName.CREATED_COMMENT.getValue()).length() > 0) {
+            serverRequest.addTextField(Constants.FieldName.CREATED_COMMENT.getValue(),
+                    bundleNewRequest.getString(Constants.FieldName.CREATED_COMMENT.getValue()));
         }
 
         for (int i = 0; i < mListAdapter.getCount(); i++) {
-            serverRequest.addPicture(NEW_REQUEST_PICTURES_HTTP_FIELD_NAME,
+            serverRequest.addPicture(Constants.FieldName.CREATED_PICTURES.getValue(),
                     "picture" + String.valueOf(i) + ".jpg", mListAdapter.getItem(i));
         }
 

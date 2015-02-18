@@ -1,6 +1,8 @@
 package il.co.idocare.utils;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
@@ -15,18 +17,22 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
+import il.co.idocare.Constants;
+import il.co.idocare.Constants.HttpHeader;
+import il.co.idocare.Constants.FieldName;
+import il.co.idocare.ServerRequest;
 import il.co.idocare.pojos.RequestItem;
 
 public class UtilMethods {
 
     private final static String LOG_TAG = "UtilMethods";
-
-
-    private final static String JSON_TAG_REQUESTS = "data";
-
 
     // Target size of new images captured inside the app
     public final static int NEW_CAMERA_PICTURE_WIDTH = 1024;
@@ -51,51 +57,6 @@ public class UtilMethods {
         return lines;
     }
 
-
-    /**
-     * This method parses the JSON formatted text obtained from the server and extract the
-     * details of the requests embedded in that text
-     * @param jsonData
-     * @return
-     */
-    public static List<RequestItem> extractRequestsFromJSON(String jsonData) {
-
-        ArrayList<RequestItem> requestItemsList = new ArrayList<RequestItem>();
-
-        if (jsonData == null || jsonData.length() <= 0) {
-            Log.e(LOG_TAG, "jsonData is null or empty");
-            return requestItemsList;
-        }
-
-        try {
-            JSONObject jsonObj = new JSONObject(jsonData);
-
-            // Getting JSON Array
-            JSONArray requestsArray = jsonObj.getJSONArray(JSON_TAG_REQUESTS);
-
-            if (requestsArray != null && requestsArray.length() > 0) {
-
-                JSONObject request;
-                RequestItem requestItem;
-
-                for (int i = 0; i < requestsArray.length(); i++) {
-
-                    request = requestsArray.getJSONObject(i);
-                    requestItem = RequestItem.createRequestItem(request);
-
-                    if (requestItem != null) {
-                        requestItemsList.add(requestItem);
-                    } else {
-                        Log.e(LOG_TAG, "couldn't build request item!");
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return requestItemsList;
-    }
 
     /**
      * Adjust the raw JPEG picture taken by the camera. The adjustments are:<br>
@@ -197,4 +158,5 @@ public class UtilMethods {
 
         return inSampleSize;
     }
+
 }

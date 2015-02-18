@@ -4,16 +4,23 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Message;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+
 import il.co.idocare.Constants;
+import il.co.idocare.Constants.FieldName;
 import il.co.idocare.Constants.MessageType;
-import il.co.idocare.IDoCareApplication;
 import il.co.idocare.ServerRequest;
+import il.co.idocare.utils.IDoCareJSONUtils;
 import il.co.idocare.utils.UtilMethods;
 import il.co.idocare.views.LoginViewMVC;
 
@@ -50,32 +57,43 @@ public class FragmentLogin extends AbstractFragment implements ServerRequest.OnS
 
     @Override
     protected void handleMessage(Message msg) {
-
-        // TODO: complete this method
         switch (Constants.MESSAGE_TYPE_VALUES[msg.what]) {
             case V_LOGIN_BUTTON_CLICK:
-                getRequestsFromServer();
+                sendLoginRequest();
                 break;
             default:
                 Log.w(LOG_TAG, "Message of type "
                         + Constants.MESSAGE_TYPE_VALUES[msg.what].toString() + " wasn't consumed");
         }
-
     }
 
     /**
-     * Create a new server request asking to fetch all requests and set its credentials
-     * // TODO: this should be removed in favor of complete auth mechanism
+     * Initiate login server request
      */
-    private void getRequestsFromServer() {
+    private void sendLoginRequest() {
 
         mLoginBundle = mViewMVCLogin.getViewState();
 
-        ServerRequest serverRequest = new ServerRequest(Constants.GET_ALL_REQUESTS_URL,
-                Constants.ServerRequestTag.GET_ALL_REQUESTS, this);
+        ServerRequest serverRequest = new ServerRequest(Constants.LOGIN_URL,
+                Constants.ServerRequestTag.LOGIN, this);
 
-        serverRequest.addTextField("username", mLoginBundle.getString("username"));
-        serverRequest.addTextField("password", mLoginBundle.getString("password"));
+        byte[] usernameBytes;
+        byte[] passwordBytes;
+        try {
+            usernameBytes = ("fuckyouhackers" + mLoginBundle.getString("username")).getBytes("UTF-8");
+            passwordBytes = ("fuckyouhackers" + mLoginBundle.getString("password")).getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e ) {
+            // Really? Not supporting UTF-8???
+            return;
+        }
+
+        serverRequest.addHeader(Constants.HttpHeader.USER_USERNAME.getValue(),
+                Base64.encodeToString(usernameBytes, Base64.NO_WRAP));
+
+        serverRequest.addTextField(FieldName.PASSWORD.getValue(),
+                Base64.encodeToString(passwordBytes, Base64.NO_WRAP));
+
+
         serverRequest.execute();
 
         notifyOutboxHandlers(MessageType.C_AUTHENTICATION_INITIATED.ordinal(), 0, 0, null);
@@ -83,40 +101,43 @@ public class FragmentLogin extends AbstractFragment implements ServerRequest.OnS
     }
 
 
-    // TODO: this should be removed in favor of complete auth mechanism
     @Override
     public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag, String responseData) {
-        if (tag == Constants.ServerRequestTag.GET_ALL_REQUESTS) {
-
-            if (responseStatusOk) {
-                // Set the obtained requests such that FragmentHome will be able to use them
-                IDoCareApplication app = (IDoCareApplication) getActivity().getApplication();
-                app.setRequests(UtilMethods.extractRequestsFromJSON(responseData));
-
-                storeCredentials();
-
-                // Show the action bar
-                if (getActivity().getActionBar() != null) getActivity().getActionBar().show();
-
-                // Switch to FragmentHome
+        if (tag == Constants.ServerRequestTag.LOGIN) {
+            if (responseStatusOk && processResponseAndStoreCredentials(responseData)) {
                 replaceFragment(FragmentHome.class, false, null);
             } else {
+                notifyOutboxHandlers(MessageType.C_AUTHENTICATION_COMPLETED.ordinal(), 0, 0, null);
                 Toast.makeText(getActivity(), "Incorrect username and/or password", Toast.LENGTH_LONG).show();
-
             }
         } else {
             Log.e(LOG_TAG, "serverResponse was called with unrecognized tag: " + tag.toString());
         }
     }
 
-    private void storeCredentials() {
-        SharedPreferences prefs =
-                getActivity().getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
+    private boolean processResponseAndStoreCredentials(String jsonData) {
+        try {
 
-        prefs.edit().putString("username", mLoginBundle.getString("username")).apply();
-        prefs.edit().putString("password", mLoginBundle.getString("password")).apply();
+            if (!IDoCareJSONUtils.verifySuccessfulStatus(jsonData)) {
+                Log.i(LOG_TAG, "Unsuccessful login attempt");
+                return false;
+            }
 
-        mLoginBundle = null;
+            JSONObject dataObj = IDoCareJSONUtils.extractDataJSONObject(jsonData);
+            long userId = dataObj.getLong(FieldName.USER_ID.getValue());
+            String publicKey = dataObj.getString(FieldName.USER_PUBLIC_KEY.getValue());
+
+            SharedPreferences prefs =
+                    getActivity().getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
+
+            prefs.edit().putLong(FieldName.USER_ID.getValue(), userId).apply();
+            prefs.edit().putString(FieldName.USER_PUBLIC_KEY.getValue(), publicKey).apply();
+            return true;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+            // TODO: handle this error...
+        }
     }
 
 }
