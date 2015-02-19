@@ -1,7 +1,5 @@
 package il.co.idocare.controllers.fragments;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
@@ -16,9 +14,9 @@ import il.co.idocare.utils.IDoCareHttpUtils;
 import il.co.idocare.views.RequestDetailsViewMVC;
 
 
-public class FragmentRequestDetails extends AbstractFragment {
+public class RequestDetailsFragment extends AbstractFragment {
 
-    private final static String LOG_TAG = "FragmentRequestDetails";
+    private final static String LOG_TAG = "RequestDetailsFragment";
 
     RequestDetailsViewMVC mRequestDetailsViewMVC;
 
@@ -63,7 +61,7 @@ public class FragmentRequestDetails extends AbstractFragment {
 
     @Override
     public Class<? extends AbstractFragment> getNavHierParentFragment() {
-        return FragmentHome.class;
+        return HomeFragment.class;
     }
 
     @Override
@@ -105,7 +103,7 @@ public class FragmentRequestDetails extends AbstractFragment {
     private void closeRequest() {
         Bundle args = new Bundle();
         args.putLong(Constants.FieldName.REQUEST_ID.getValue(), mRequestItem.mId);
-        replaceFragment(FragmentCloseRequest.class, true, args);
+        replaceFragment(CloseRequestFragment.class, true, args);
     }
 
 

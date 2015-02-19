@@ -22,21 +22,14 @@ import com.google.android.gms.location.LocationServices;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
-import java.util.List;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 import il.co.idocare.Constants;
-import il.co.idocare.controllers.fragments.FragmentHome;
-import il.co.idocare.controllers.fragments.FragmentLogin;
-import il.co.idocare.IDoCareApplication;
+import il.co.idocare.controllers.fragments.HomeFragment;
+import il.co.idocare.controllers.fragments.LoginFragment;
 import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.R;
-import il.co.idocare.pojos.RequestItem;
-import il.co.idocare.ServerRequest;
-import il.co.idocare.utils.UtilMethods;
 
 
 public class IDoCareActivity extends Activity implements
@@ -79,14 +72,14 @@ public class IDoCareActivity extends Activity implements
                     prefs.contains(Constants.FieldName.USER_PUBLIC_KEY.getValue())) {
                 // Go straight to home page if user ID and public key exist
                 getFragmentManager().beginTransaction()
-                        .add(R.id.frame_contents, new FragmentHome())
+                        .add(R.id.frame_contents, new HomeFragment())
                         .commit();
             } else {
                 // Hide action bar
                 if (getActionBar() != null) getActionBar().hide();
                 // Bring up login fragment
                 getFragmentManager().beginTransaction()
-                        .add(R.id.frame_contents, new FragmentLogin())
+                        .add(R.id.frame_contents, new LoginFragment())
                         .commit();
             }
         }
@@ -248,7 +241,7 @@ public class IDoCareActivity extends Activity implements
 
                     // TODO: populate other options too
                     case 0:
-                        IDoCareActivity.this.replaceFragment(FragmentHome.class, true, null);
+                        IDoCareActivity.this.replaceFragment(HomeFragment.class, true, null);
                         break;
                     default:
                         return;

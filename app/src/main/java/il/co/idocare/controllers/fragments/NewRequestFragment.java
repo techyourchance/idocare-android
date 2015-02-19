@@ -41,9 +41,9 @@ import il.co.idocare.utils.UtilMethods;
 import il.co.idocare.views.NewRequestViewMVC;
 
 
-public class FragmentNewRequest extends AbstractFragment {
+public class NewRequestFragment extends AbstractFragment {
 
-    private final static String LOG_TAG = "FragmentNewRequest";
+    private final static String LOG_TAG = "NewRequestFragment";
 
     NewRequestViewMVC mViewMVCNewRequest;
 
@@ -97,7 +97,7 @@ public class FragmentNewRequest extends AbstractFragment {
 
     @Override
     public Class<? extends AbstractFragment> getNavHierParentFragment() {
-        return FragmentHome.class;
+        return HomeFragment.class;
     }
 
     @Override

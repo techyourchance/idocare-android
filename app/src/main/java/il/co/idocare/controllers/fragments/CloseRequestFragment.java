@@ -39,9 +39,9 @@ import il.co.idocare.utils.UtilMethods;
 import il.co.idocare.views.CloseRequestViewMVC;
 
 
-public class FragmentCloseRequest extends AbstractFragment {
+public class CloseRequestFragment extends AbstractFragment {
 
-    private final static String LOG_TAG = "FragmentCloseRequest";
+    private final static String LOG_TAG = "CloseRequestFragment";
 
 
 
@@ -106,7 +106,7 @@ public class FragmentCloseRequest extends AbstractFragment {
 
     @Override
     public Class<? extends AbstractFragment> getNavHierParentFragment() {
-        return FragmentHome.class;
+        return HomeFragment.class;
     }
 
     @Override

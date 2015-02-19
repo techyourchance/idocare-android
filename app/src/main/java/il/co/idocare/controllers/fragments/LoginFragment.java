@@ -21,12 +21,11 @@ import il.co.idocare.Constants.FieldName;
 import il.co.idocare.Constants.MessageType;
 import il.co.idocare.ServerRequest;
 import il.co.idocare.utils.IDoCareJSONUtils;
-import il.co.idocare.utils.UtilMethods;
 import il.co.idocare.views.LoginViewMVC;
 
-public class FragmentLogin extends AbstractFragment implements ServerRequest.OnServerResponseCallback {
+public class LoginFragment extends AbstractFragment implements ServerRequest.OnServerResponseCallback {
 
-    private final static String LOG_TAG = "FragmentLogin";
+    private final static String LOG_TAG = "LoginFragment";
 
     LoginViewMVC mViewMVCLogin;
 
@@ -105,7 +104,7 @@ public class FragmentLogin extends AbstractFragment implements ServerRequest.OnS
     public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag, String responseData) {
         if (tag == Constants.ServerRequestTag.LOGIN) {
             if (responseStatusOk && processResponseAndStoreCredentials(responseData)) {
-                replaceFragment(FragmentHome.class, false, null);
+                replaceFragment(HomeFragment.class, false, null);
             } else {
                 notifyOutboxHandlers(MessageType.C_AUTHENTICATION_COMPLETED.ordinal(), 0, 0, null);
                 Toast.makeText(getActivity(), "Incorrect username and/or password", Toast.LENGTH_LONG).show();

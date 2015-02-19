@@ -26,8 +26,6 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListe
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.util.List;
-
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.pojos.RequestItem;
@@ -37,9 +35,9 @@ import il.co.idocare.utils.IDoCareJSONUtils;
 import il.co.idocare.views.HomeViewMVC;
 
 
-public class FragmentHome extends AbstractFragment implements ServerRequest.OnServerResponseCallback {
+public class HomeFragment extends AbstractFragment implements ServerRequest.OnServerResponseCallback {
 
-    private final static String LOG_TAG = "FragmentHome";
+    private final static String LOG_TAG = "HomeFragment";
 
     RequestsListAdapter mListAdapter;
     HomeViewMVC mViewMVCHome;
@@ -71,8 +69,8 @@ public class FragmentHome extends AbstractFragment implements ServerRequest.OnSe
                 // Create a bundle and put the selected item there
                 Bundle args = new Bundle();
                 args.putParcelable("requestItem", item);
-                // Replace with FragmentRequestDetails and pass the bundle as argument
-                replaceFragment(FragmentRequestDetails.class, true, args);
+                // Replace with RequestDetailsFragment and pass the bundle as argument
+                replaceFragment(RequestDetailsFragment.class, true, args);
             }
         });
 
@@ -110,7 +108,7 @@ public class FragmentHome extends AbstractFragment implements ServerRequest.OnSe
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add_new_request:
-                replaceFragment(FragmentNewRequest.class, true, null);
+                replaceFragment(NewRequestFragment.class, true, null);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -132,7 +130,7 @@ public class FragmentHome extends AbstractFragment implements ServerRequest.OnSe
     @Override
     public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag, String responseData) {
         if (tag == Constants.ServerRequestTag.GET_ALL_REQUESTS) {
-            if (responseStatusOk && FragmentHome.this.isAdded() &&
+            if (responseStatusOk && HomeFragment.this.isAdded() &&
                     IDoCareJSONUtils.verifySuccessfulStatus(responseData)) {
 
                 JSONArray requestsArray;
