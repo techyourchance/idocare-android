@@ -8,4 +8,6 @@
     <dimen name="comments_text_size">20sp</dimen>
     <dimen name="image_request_thumbnail_height">150dp</dimen>
     <dimen name="drawer_width">240dp</dimen>
+    <dimen name="login_fragment_padding">30dp</dimen>
+    <dimen name="login_fragment_login_btn_padding">40dp</dimen>
 </resources>

@@ -30,6 +30,7 @@ import il.co.idocare.controllers.fragments.HomeFragment;
 import il.co.idocare.controllers.fragments.LoginFragment;
 import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.R;
+import il.co.idocare.controllers.fragments.NewRequestFragment;
 
 
 public class IDoCareActivity extends Activity implements
@@ -75,8 +76,6 @@ public class IDoCareActivity extends Activity implements
                         .add(R.id.frame_contents, new HomeFragment())
                         .commit();
             } else {
-                // Hide action bar
-                if (getActionBar() != null) getActionBar().hide();
                 // Bring up login fragment
                 getFragmentManager().beginTransaction()
                         .add(R.id.frame_contents, new LoginFragment())
@@ -221,7 +220,7 @@ public class IDoCareActivity extends Activity implements
 
     private void setupDrawerListView() {
 
-        String[] entries = getResources().getStringArray(R.array.drawer_entries);
+        final String[] entries = getResources().getStringArray(R.array.drawer_entries);
         final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         final ListView drawerList = (ListView) findViewById(R.id.drawer_contents);
 
@@ -237,14 +236,20 @@ public class IDoCareActivity extends Activity implements
                 drawerList.setItemChecked(position, true);
                 drawerLayout.closeDrawer(drawerList);
 
-                switch (position) {
+                String chosenEntry = entries[position];
 
-                    // TODO: populate other options too
-                    case 0:
-                        IDoCareActivity.this.replaceFragment(HomeFragment.class, true, null);
-                        break;
-                    default:
-                        return;
+                // Can't do switch/case on Strings :(
+                if (chosenEntry.equals(getResources().getString(R.string.drawer_entry_home))) {
+                    replaceFragment(HomeFragment.class, false, null);
+                }
+                else if (chosenEntry.equals(getResources().getString(R.string.drawer_entry_new_request))) {
+                    replaceFragment(NewRequestFragment.class, false, null);
+                }
+                else if (chosenEntry.equals(getResources().getString(R.string.drawer_entry_logout))) {
+                    IDoCareActivity.this.logOutCurrentUser();
+                }
+                else {
+                    Log.e(LOG_TAG, "drawer entry \"" + chosenEntry + "\" has no functionality");
                 }
 
                 // Clear back-stack
@@ -285,6 +290,27 @@ public class IDoCareActivity extends Activity implements
     // End of navigation drawer management
     //
     // ---------------------------------------------------------------------------------------------
+
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // User session management
+
+    private void logOutCurrentUser() {
+        SharedPreferences prefs =
+                getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
+
+        prefs.edit().remove(Constants.FieldName.USER_ID.getValue()).apply();
+        prefs.edit().remove(Constants.FieldName.USER_PUBLIC_KEY.getValue()).commit();
+        replaceFragment(LoginFragment.class, false, null);
+
+    }
+
+    // End of user session management
+    //
+    // ---------------------------------------------------------------------------------------------
+
 
 
     /**

@@ -5,47 +5,43 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/fragment_default_margin"
-    android:gravity="center">
-
-
-
-    <TextView
+    android:padding="@dimen/login_fragment_padding"
+    android:gravity="bottom|center_horizontal"
+    android:background="@drawable/gradient_background">
+    
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/login_username_title"/>
+        android:src="@drawable/ic_logo_large"
+        android:contentDescription="@string/img_logo_accessibility"
+        android:layout_marginBottom="30dp"/>
+
 
     <EditText
         android:id="@+id/edt_login_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:lines="1"
-        android:inputType="textPersonName"/>
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="60dp" />
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/login_password_title"/>
+        android:inputType="textPersonName"
+        android:hint="@string/login_username_title"/>
 
     <EditText
         android:id="@+id/edt_login_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:lines="1"
-        android:inputType="textPassword"/>
+        android:inputType="textPassword"
+        android:hint="@string/login_password_title"/>
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="30dp" />
     <Button
         android:id="@+id/btn_login"
         android:text="@string/btn_login_text"
+        android:textColor="@android:color/white"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/login_fragment_login_btn_padding"
+        android:paddingRight="@dimen/login_fragment_login_btn_padding"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/login_button_gradient_background"/>
 
 </LinearLayout>

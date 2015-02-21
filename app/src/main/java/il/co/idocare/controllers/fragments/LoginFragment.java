@@ -40,6 +40,10 @@ public class LoginFragment extends AbstractFragment implements ServerRequest.OnS
         // Add MVC View's Handler to the set of outbox Handlers
         addOutboxHandler(mViewMVCLogin.getInboxHandler());
 
+
+        // Hide action bar
+        if (getActivity().getActionBar() != null) getActivity().getActionBar().hide();
+
         return mViewMVCLogin.getRootView();
     }
 
@@ -104,6 +108,8 @@ public class LoginFragment extends AbstractFragment implements ServerRequest.OnS
     public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag, String responseData) {
         if (tag == Constants.ServerRequestTag.LOGIN) {
             if (responseStatusOk && processResponseAndStoreCredentials(responseData)) {
+                // Show action bar
+                if (getActivity().getActionBar() != null) getActivity().getActionBar().show();
                 replaceFragment(HomeFragment.class, false, null);
             } else {
                 notifyOutboxHandlers(MessageType.C_AUTHENTICATION_COMPLETED.ordinal(), 0, 0, null);

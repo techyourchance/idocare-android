@@ -2,10 +2,20 @@
 <resources>
 
     <string-array name="drawer_entries">
-        <item>Home</item>
-        <item>Articles</item>
-        <item>Settings</item>
-        <item>About</item>
+        <item>@string/drawer_entry_my</item>
+        <item>@string/drawer_entry_new_request</item>
+        <item>@string/drawer_entry_map</item>
+        <item>@string/drawer_entry_articles</item>
+        <item>@string/drawer_entry_home</item>
+        <item>@string/drawer_entry_settings</item>
+        <item>@string/drawer_entry_logout</item>
     </string-array>
 
+    <string name="drawer_entry_my">Assigned to me</string>
+    <string name="drawer_entry_new_request">New request</string>
+    <string name="drawer_entry_map">Map</string>
+    <string name="drawer_entry_articles">Articles</string>
+    <string name="drawer_entry_home">Home</string>
+    <string name="drawer_entry_settings">Settings</string>
+    <string name="drawer_entry_logout">Log out</string>
 </resources>
