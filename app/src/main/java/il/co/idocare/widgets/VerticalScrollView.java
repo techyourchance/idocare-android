@@ -9,6 +9,7 @@ import android.widget.ScrollView;
 /**
  * This ScrollView does not prevent from child views to handle touch events (e.g. if ListView
  * is used inside this scroll view then this ListView will still be scrollable)
+ * TODO: this class might not be needed - review its usages!
  */
 public class VerticalScrollView extends ScrollView {
 

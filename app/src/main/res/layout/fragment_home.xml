@@ -3,12 +3,16 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:layout_margin="@dimen/fragment_default_margin">
+    android:gravity="center_horizontal">
 
     <ListView
         android:id="@+id/list_requests_thumbnails"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        android:clipToPadding="false"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="10.0dp"
+        android:background="@drawable/gradient_background"/>
 
 </LinearLayout>

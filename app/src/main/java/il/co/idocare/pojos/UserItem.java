@@ -62,4 +62,20 @@ public class UserItem implements Parcelable {
         mNickname = nickname;
         return this;
     }
+
+
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Getters
+
+
+    public long getId() {
+        return mId;
+    }
+
+    public String getNickname() {
+        return mNickname;
+    }
 }

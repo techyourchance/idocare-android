@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/txt_request_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:paddingLeft="@dimen/text_view_default_padding"
+        android:paddingStart="@dimen/text_view_default_padding"
+        android:paddingRight="@dimen/text_view_default_padding"
+        android:paddingEnd="@dimen/text_view_default_padding"
+        android:gravity="start"/>
+
+    <TextView
+        android:id="@+id/txt_request_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/txt_request_status"
+        android:layout_toEndOf="@id/txt_request_status"
+        android:paddingLeft="@dimen/text_view_default_padding"
+        android:paddingStart="@dimen/text_view_default_padding"
+        android:paddingRight="@dimen/text_view_default_padding"
+        android:paddingEnd="@dimen/text_view_default_padding"
+        android:gravity="end"/>
+
+    <ImageView
+        android:id="@+id/img_request_thumbnail"
+        android:layout_width="@dimen/image_request_thumbnail_dimen"
+        android:layout_height="@dimen/image_request_thumbnail_dimen"
+        android:padding="10dp"
+        android:layout_below="@id/txt_request_status"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:contentDescription="@string/img_request_thumbnail_accessibility"/>
+
+
+    <TextView
+        android:id="@+id/txt_no_request_thumbnail_picture"
+        android:layout_width="@dimen/image_request_thumbnail_dimen"
+        android:layout_height="@dimen/image_request_thumbnail_dimen"
+        android:padding="10dp"
+        android:layout_below="@id/txt_request_status"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/txt_created_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_request_status"
+        android:layout_toRightOf="@id/img_request_thumbnail"
+        android:layout_toEndOf="@id/img_request_thumbnail"/>
+
+
+    <TextView
+        android:id="@+id/txt_created_by"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txt_created_comment"
+        android:layout_toRightOf="@id/img_request_thumbnail"
+        android:layout_toEndOf="@id/img_request_thumbnail"/>
+
+    <TextView
+        android:id="@id/txt_created_at"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@id/img_request_thumbnail"
+        android:layout_toEndOf="@id/img_request_thumbnail"/>
+
+
+
+    <!-- TODO: implement star for rating -->
+
+    <TextView
+        android:id="@+id/txt_created_votes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+
+</merge>

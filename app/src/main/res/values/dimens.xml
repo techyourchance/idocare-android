@@ -6,8 +6,9 @@
     <dimen name="list_pictures_padding_vertical">10dp</dimen>
     <dimen name="text_view_default_padding">5dp</dimen>
     <dimen name="comments_text_size">20sp</dimen>
-    <dimen name="image_request_thumbnail_height">150dp</dimen>
+    <dimen name="image_request_thumbnail_dimen">100dp</dimen>
     <dimen name="drawer_width">240dp</dimen>
     <dimen name="login_fragment_padding">30dp</dimen>
     <dimen name="login_fragment_login_btn_padding">40dp</dimen>
+    <dimen name="border_background_width">1dip</dimen>
 </resources>

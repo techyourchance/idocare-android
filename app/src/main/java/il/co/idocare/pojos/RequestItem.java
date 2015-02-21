@@ -200,9 +200,64 @@ public class RequestItem implements Parcelable {
 
 
 
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Getters
 
 
+    public long getId() {
+        return mId;
+    }
 
+    public UserItem getCreatedBy() {
+        return mCreatedBy;
+    }
 
+    public String getCreatedAt() {
+        return mCreatedAt;
+    }
 
+    public String getCreatedComment() {
+        return mCreatedComment;
+    }
+
+    public String[] getCreatedPictures() {
+        return mCreatedPictures;
+    }
+
+    public double getLat() {
+        return mLat;
+    }
+
+    public double getLong() {
+        return mLong;
+    }
+
+    public int getCreatedPollutionLevel() {
+        return mCreatedPollutionLevel;
+    }
+
+    public UserItem getPickedUpBy() {
+        return mPickedUpBy;
+    }
+
+    public String getPickedUpAt() {
+        return mPickedUpAt;
+    }
+
+    public UserItem getClosedBy() {
+        return mClosedBy;
+    }
+
+    public String getClosedAt() {
+        return mClosedAt;
+    }
+
+    public String getClosedComment() {
+        return mClosedComment;
+    }
+
+    public String[] getClosedPictures() {
+        return mClosedPictures;
+    }
 }

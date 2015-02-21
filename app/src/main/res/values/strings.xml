@@ -17,5 +17,10 @@
     <string name="login_password_title">Password:</string>
     <string name="btn_login_text">Log in</string>
     <string name="img_logo_accessibility">IDoCare logo</string>
+    <string name="img_grass_accessibility">Grass picture</string>
+    <string name="img_request_thumbnail_accessibility">Request thumbnail picture</string>
+    <string name="txt_new_request_title">NEW REQUEST</string>
+    <string name="txt_picked_up_request_title">IN PROGRESS</string>
+    <string name="txt_closed_request_title">DONE</string>
 
 </resources>

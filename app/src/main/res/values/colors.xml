@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="new_request_status">#D32027</color>
+    <color name="picked_up_request_status">#FBB03B</color>
+    <color name="closed_request_status">#8BC53F</color>
+
+    
+</resources>

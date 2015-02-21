@@ -34,7 +34,7 @@
     <ImageView
         android:id="@+id/image_request_thumbnail"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/image_request_thumbnail_height"
+        android:layout_height="@dimen/image_request_thumbnail_dimen"
         android:layout_margin="@dimen/fragment_default_margin"
         android:visibility="gone"
         android:contentDescription="@string/image_request_thumbnail_content_description" />
@@ -42,7 +42,7 @@
     <TextView
         android:id="@+id/text_request_thumbnail"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/image_request_thumbnail_height"
+        android:layout_height="@dimen/image_request_thumbnail_dimen"
         android:layout_margin="@dimen/fragment_default_margin"
         android:visibility="visible"
         android:gravity="center"/>
