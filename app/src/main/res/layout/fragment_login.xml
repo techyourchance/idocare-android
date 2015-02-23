@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:padding="@dimen/login_fragment_padding"
     android:gravity="bottom|center_horizontal"
-    android:background="@drawable/gradient_background">
+    android:background="@drawable/default_fragment_background">
     
     <ImageView
         android:layout_width="wrap_content"
@@ -42,6 +42,6 @@
         android:paddingLeft="@dimen/login_fragment_login_btn_padding"
         android:paddingRight="@dimen/login_fragment_login_btn_padding"
         android:layout_marginTop="20dp"
-        android:background="@drawable/login_button_gradient_background"/>
+        android:background="@drawable/login_button_background"/>
 
 </LinearLayout>
