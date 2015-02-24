@@ -31,6 +31,7 @@ import il.co.idocare.controllers.fragments.LoginFragment;
 import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.R;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
+import il.co.idocare.models.RequestsMVCModel;
 
 
 public class IDoCareActivity extends Activity implements
@@ -39,13 +40,10 @@ public class IDoCareActivity extends Activity implements
 
     private static final String LOG_TAG = "IDoCareActivity";
 
-    private static Context sContext;
 
     public GoogleApiClient mGoogleApiClient;
 
-    ScheduledExecutorService mRequestsUpdateScheduler;
-    ScheduledFuture mScheduledFuture;
-
+    private RequestsMVCModel mRequestsModel;
 
     // ---------------------------------------------------------------------------------------------
     //
@@ -55,6 +53,8 @@ public class IDoCareActivity extends Activity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        initRequestsModel();
 
         initUniversalImageLoader();
 
@@ -194,6 +194,11 @@ public class IDoCareActivity extends Activity implements
     }
 
 
+    @Override
+    public RequestsMVCModel getRequestsModel() {
+        return mRequestsModel;
+    }
+
 
     // End of fragments management
     //
@@ -331,6 +336,11 @@ public class IDoCareActivity extends Activity implements
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
                 .build();
+    }
+
+    private void initRequestsModel() {
+        mRequestsModel = new RequestsMVCModel(this);
+        mRequestsModel.initialize();
     }
 
 }

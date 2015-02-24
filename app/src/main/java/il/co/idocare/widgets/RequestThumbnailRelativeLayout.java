@@ -21,9 +21,10 @@ import il.co.idocare.R;
 import il.co.idocare.pojos.RequestItem;
 
 /**
- * Created by Vasiliy on 2/21/2015.
+ * This is the top level View which should be used as a "thumbnail" for requests
+ * when they are displayed in a list.
  */
-public class RequestThumbnailLayout extends RelativeLayout {
+public class RequestThumbnailRelativeLayout extends RelativeLayout {
 
 
     private TextView mTxtRequestStatus;
@@ -40,17 +41,17 @@ public class RequestThumbnailLayout extends RelativeLayout {
 
 
 
-    public RequestThumbnailLayout(Context context) {
+    public RequestThumbnailRelativeLayout(Context context) {
         super(context);
         init(context);
     }
 
-    public RequestThumbnailLayout(Context context, AttributeSet attrs) {
+    public RequestThumbnailRelativeLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public RequestThumbnailLayout(Context context, AttributeSet attrs, int defStyle) {
+    public RequestThumbnailRelativeLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context);
     }

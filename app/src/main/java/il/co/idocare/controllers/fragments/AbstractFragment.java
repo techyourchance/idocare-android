@@ -13,6 +13,7 @@ import java.util.List;
 import il.co.idocare.controllers.ControllerMVC;
 import il.co.idocare.handlermessaging.HandlerMessagingMaster;
 import il.co.idocare.handlermessaging.HandlerMessagingSlave;
+import il.co.idocare.models.RequestsMVCModel;
 
 
 /**
@@ -72,6 +73,14 @@ public abstract class AbstractFragment extends Fragment implements
         mCallback.replaceFragment(claz, addToBackStack, args);
     }
 
+
+    /**
+     * TODO: complete javadoc
+     * @return
+     */
+    public RequestsMVCModel getRequestsModel() {
+        return mCallback.getRequestsModel();
+    }
 
     // ---------------------------------------------------------------------------------------------
     //
@@ -154,6 +163,12 @@ public abstract class AbstractFragment extends Fragment implements
          */
         public void replaceFragment(Class<? extends AbstractFragment> claz, boolean addToBackStack,
                                     Bundle args);
+
+        /**
+         * TODO: complete javadoc
+         * @return
+         */
+        public RequestsMVCModel getRequestsModel();
     }
 
 

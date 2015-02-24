@@ -166,4 +166,34 @@ public class IDoCareJSONUtils {
     }
 
 
+    /**
+     * Parse JSON Array into list of RequestItem objects
+     * @param jsonArray the array to parse
+     * @return list of created RequestItem objects, or null if the argument is null
+     * @throws JSONException in case the elements of the argument JSON array can not be
+     *         parsed as request JSON objects
+     */
+    public static List<RequestItem> extractRequestItemsFromJSONArray(JSONArray jsonArray)
+            throws JSONException {
+
+        if (jsonArray == null) return null;
+
+        List<RequestItem> requests = new ArrayList<RequestItem>(jsonArray.length());
+
+        RequestItem requestItem;
+
+        for (int i=0; i<jsonArray.length(); i++) {
+
+            requestItem = IDoCareJSONUtils
+                    .extractRequestItemFromJSONObject(jsonArray.getJSONObject(i));
+
+            // Add the created RequestItem if everything was fine
+            if (requestItem != null) requests.add(requestItem);
+
+        }
+
+        return requests;
+    }
+
+
 }
