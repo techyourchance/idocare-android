@@ -10,24 +10,27 @@ import org.json.JSONObject;
 
 import il.co.idocare.Constants.FieldName;
 
-public class RequestItem implements Parcelable {
+/**
+ * This object contains data about a single request (users involved, state, location, etc)
+ */
+public class RequestItem {
 
     private final static String LOG_TAG = "RequestItem";
 
-    public long mId;
-    public UserItem mCreatedBy;
-    public String mCreatedAt;
-    public String mCreatedComment;
-    public String[] mCreatedPictures;
-    public double mLat;
-    public double mLong;
-    public int mCreatedPollutionLevel;
-    public UserItem mPickedUpBy;
-    public String mPickedUpAt;
-    public UserItem mClosedBy;
-    public String mClosedAt;
-    public String mClosedComment;
-    public String[] mClosedPictures;
+    private long mId;
+    private UserItem mCreatedBy;
+    private String mCreatedAt;
+    private String mCreatedComment;
+    private String[] mCreatedPictures;
+    private double mLat;
+    private double mLong;
+    private int mCreatedPollutionLevel;
+    private UserItem mPickedUpBy;
+    private String mPickedUpAt;
+    private UserItem mClosedBy;
+    private String mClosedAt;
+    private String mClosedComment;
+    private String[] mClosedPictures;
 
 
 
@@ -69,58 +72,6 @@ public class RequestItem implements Parcelable {
     private RequestItem(long id) {
         mId = id;
     }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int i) {
-        dest.writeLong(mId);
-        dest.writeParcelable(mCreatedBy, 0);
-        dest.writeString(mCreatedAt);
-        dest.writeString(mCreatedComment);
-        dest.writeStringArray(mCreatedPictures);
-        dest.writeDouble(mLat);
-        dest.writeDouble(mLong);
-        dest.writeInt(mCreatedPollutionLevel);
-
-        dest.writeParcelable(mPickedUpBy, 0);
-        dest.writeString(mPickedUpAt);
-
-        dest.writeParcelable(mClosedBy, 0);
-        dest.writeString(mClosedAt);
-        dest.writeString(mClosedComment);
-        dest.writeStringArray(mClosedPictures);
-    }
-
-
-    public static final Creator<RequestItem> CREATOR = new Creator<RequestItem>() {
-        @Override
-        public RequestItem[] newArray(int size) {
-            return new RequestItem[size];
-        }
-
-        @Override
-        public RequestItem createFromParcel(Parcel source) {
-            return createRequestItem(source.readLong())
-                    .setCreatedBy((UserItem) source.readParcelable(UserItem.class.getClassLoader()))
-                    .setCreatedAt(source.readString())
-                    .setCreatedComment(source.readString())
-                    .setCreatedPictures(source.createStringArray())
-                    .setLatitude(source.readDouble())
-                    .setLongitude(source.readDouble())
-                    .setCreatedPollutionLevel(source.readInt())
-                    .setPickedUpBy((UserItem) source.readParcelable(UserItem.class.getClassLoader()))
-                    .setPickedUpAt(source.readString())
-                    .setClosedBy((UserItem) source.readParcelable(UserItem.class.getClassLoader()))
-                    .setClosedAt(source.readString())
-                    .setClosedComment(source.readString())
-                    .setClosedPictures(source.createStringArray());
-        }
-    };
-
 
     // ---------------------------------------------------------------------------------------------
     //

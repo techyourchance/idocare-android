@@ -9,9 +9,9 @@ import org.json.JSONObject;
 import il.co.idocare.Constants;
 
 /**
- * Created by Vasiliy on 2/17/2015.
+ * Object containing data about registered users
  */
-public class UserItem implements Parcelable {
+public class UserItem {
 
     public long mId;
     public String mNickname;
@@ -28,31 +28,6 @@ public class UserItem implements Parcelable {
         mId = id;
     }
 
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int i) {
-        dest.writeLong(mId);
-        dest.writeString(mNickname);
-    }
-
-
-    public static final Creator<UserItem> CREATOR = new Creator<UserItem>() {
-        @Override
-        public UserItem[] newArray(int size) {
-            return new UserItem[size];
-        }
-
-        @Override
-        public UserItem createFromParcel(Parcel source) {
-            return createUserItem(source.readLong())
-                    .setNickname(source.readString());
-        }
-    };
 
     // ---------------------------------------------------------------------------------------------
     //

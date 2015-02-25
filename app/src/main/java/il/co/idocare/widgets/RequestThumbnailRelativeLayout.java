@@ -150,10 +150,10 @@ public class RequestThumbnailRelativeLayout extends RelativeLayout {
         mImgRequestThumbnail.setVisibility(View.GONE);
         mTxtNoRequestThumbnailPicture.setVisibility(View.VISIBLE);
 
-        if (request.mCreatedPictures != null && request.mCreatedPictures.length > 0) {
+        if (request.getCreatedPictures() != null && request.getCreatedPictures().length > 0) {
 
             ImageLoader.getInstance().displayImage(
-                    request.mCreatedPictures[0],
+                    request.getCreatedPictures()[0],
                     mImgRequestThumbnail,
                     Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS,
                     new RequestThumbnailLoadingListener(mTxtNoRequestThumbnailPicture,

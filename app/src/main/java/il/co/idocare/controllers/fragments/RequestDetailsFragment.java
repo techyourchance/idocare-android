@@ -35,19 +35,14 @@ public class RequestDetailsFragment extends AbstractFragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            mRequestItem = (RequestItem) args.getParcelable("requestItem");
+            mRequestItem = getRequestsModel().
+                    getRequest(args.getLong(Constants.FieldName.REQUEST_ID.getValue()));
         }
 
         if (mRequestItem == null) {
             // TODO: handle this error somehow
             return mRequestDetailsViewMVC.getRootView();
         }
-
-        Log.v(LOG_TAG, "Request details:"
-                + "\nCreated by " + mRequestItem.mCreatedBy + " at " + mRequestItem.mCreatedAt
-                + "\nPicked up by " + mRequestItem.mPickedUpBy + " at " + mRequestItem.mPickedUpAt
-                + "\nClosed by " + mRequestItem.mPickedUpBy + " at " + mRequestItem.mClosedAt);
-
 
         mRequestDetailsViewMVC.populateChildViewsFromRequestItem(mRequestItem);
 
@@ -94,7 +89,7 @@ public class RequestDetailsFragment extends AbstractFragment {
 
         IDoCareHttpUtils.addStandardHeaders(getActivity(), serverRequest);
         serverRequest.addTextField(Constants.FieldName.REQUEST_ID.getValue(),
-                String.valueOf(mRequestItem.mId));
+                String.valueOf(mRequestItem.getId()));
 
         serverRequest.execute();
 
@@ -102,7 +97,7 @@ public class RequestDetailsFragment extends AbstractFragment {
 
     private void closeRequest() {
         Bundle args = new Bundle();
-        args.putLong(Constants.FieldName.REQUEST_ID.getValue(), mRequestItem.mId);
+        args.putLong(Constants.FieldName.REQUEST_ID.getValue(), mRequestItem.getId());
         replaceFragment(CloseRequestFragment.class, true, args);
     }
 

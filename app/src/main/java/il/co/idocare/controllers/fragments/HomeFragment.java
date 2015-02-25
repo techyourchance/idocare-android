@@ -61,9 +61,9 @@ public class HomeFragment extends AbstractFragment {
                                     int position, long id) {
                 // Get the selected item
                 RequestItem item = (RequestItem) listPictures.getItemAtPosition(position);
-                // Create a bundle and put the selected item there
+                // Create a bundle and put the id of the selected item there
                 Bundle args = new Bundle();
-                args.putParcelable("requestItem", item);
+                args.putLong(Constants.FieldName.REQUEST_ID.getValue(), item.getId());
                 // Replace with RequestDetailsFragment and pass the bundle as argument
                 replaceFragment(RequestDetailsFragment.class, true, args);
             }

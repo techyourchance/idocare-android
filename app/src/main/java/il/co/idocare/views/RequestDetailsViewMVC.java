@@ -82,8 +82,8 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
     public void populateChildViewsFromRequestItem(RequestItem requestItem) {
 
 
-        boolean isClosed = requestItem.mClosedBy != null;
-        boolean isPickedUp = requestItem.mPickedUpBy != null;
+        boolean isClosed = requestItem.getClosedBy() != null;
+        boolean isPickedUp = requestItem.getPickedUpBy() != null;
 
 
         // Handle the views related to initial request
@@ -108,25 +108,25 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         ListView listPictures = (ListView) mRootView.findViewById(R.id.list_new_request_pictures);
         listPictures.setAdapter(listAdapter);
 
-        if (requestItem.mCreatedBy != null) {
+        if (requestItem.getCreatedBy() != null) {
             TextView createdBy = (TextView) mRootView.findViewById(R.id.txt_created_by);
-            createdBy.setText("Created by: " + requestItem.mCreatedBy.mNickname);
+            createdBy.setText("Created by: " + requestItem.getCreatedBy().mNickname);
         }
 
-        if (requestItem.mCreatedAt != null) {
+        if (requestItem.getCreatedAt() != null) {
             TextView createdAt = (TextView) mRootView.findViewById(R.id.txt_created_at);
-            createdAt.setText(requestItem.mCreatedAt);
+            createdAt.setText(requestItem.getCreatedAt());
         }
 
-        if (requestItem.mCreatedPictures != null) {
-            listAdapter.addAll(requestItem.mCreatedPictures);
+        if (requestItem.getCreatedPictures() != null) {
+            listAdapter.addAll(requestItem.getCreatedPictures());
             listAdapter.notifyDataSetChanged();
         }
 
-        if (requestItem.mCreatedComment != null) {
+        if (requestItem.getCreatedComment() != null) {
             TextView commentBefore = (TextView) mRootView.findViewById(R.id.txt_created_comment);
-            commentBefore.setLines(UtilMethods.countLines(requestItem.mCreatedComment));
-            commentBefore.setText(requestItem.mCreatedComment);
+            commentBefore.setLines(UtilMethods.countLines(requestItem.getCreatedComment()));
+            commentBefore.setText(requestItem.getCreatedComment());
         }
 
     }
@@ -151,25 +151,25 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
 
         // Populate the views concerning "closure" details
 
-        if (requestItem.mClosedBy != null) {
+        if (requestItem.getClosedBy() != null) {
             TextView closedBy = (TextView) mRootView.findViewById(R.id.txt_closed_by);
-            closedBy.setText("Closed by: " + requestItem.mClosedBy.mNickname);
+            closedBy.setText("Closed by: " + requestItem.getClosedBy().mNickname);
         }
 
-        if (requestItem.mClosedAt != null) {
+        if (requestItem.getClosedAt() != null) {
             TextView closedAt = (TextView) mRootView.findViewById(R.id.txt_closed_at);
-            closedAt.setText(requestItem.mClosedAt);
+            closedAt.setText(requestItem.getClosedAt());
         }
 
-        if (requestItem.mClosedPictures != null) {
-            listAdapter.addAll(requestItem.mClosedPictures);
+        if (requestItem.getClosedPictures() != null) {
+            listAdapter.addAll(requestItem.getClosedPictures());
             listAdapter.notifyDataSetChanged();
         }
 
-        if (requestItem.mClosedComment != null) {
+        if (requestItem.getClosedComment() != null) {
             TextView closedComment = (TextView) mRootView.findViewById(R.id.txt_closed_comment);
-            closedComment.setLines(UtilMethods.countLines(requestItem.mClosedComment));
-            closedComment.setText(requestItem.mClosedComment);
+            closedComment.setLines(UtilMethods.countLines(requestItem.getClosedComment()));
+            closedComment.setText(requestItem.getClosedComment());
         }
 
 
@@ -210,7 +210,7 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         long myId = mContext.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
                 .getLong(Constants.FieldName.USER_ID.getValue(), 0);
 
-        boolean isPickedUpByMe = isPickedUp && requestItem.mPickedUpBy.mId == myId;
+        boolean isPickedUpByMe = isPickedUp && requestItem.getPickedUpBy().getId() == myId;
 
         Button btnCloseRequest = (Button) mRootView.findViewById(R.id.btn_close_request);
 
