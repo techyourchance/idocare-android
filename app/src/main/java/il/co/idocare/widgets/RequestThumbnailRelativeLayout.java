@@ -6,7 +6,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -72,13 +71,13 @@ public class RequestThumbnailRelativeLayout extends RelativeLayout {
 
 
         mTxtRequestStatus = (TextView) findViewById(R.id.txt_request_status);
-        mTxtRequestLocation = (TextView) findViewById(R.id.txt_request_location);
+        mTxtRequestLocation = (TextView) findViewById(R.id.txt_request_fine_location);
         mImgRequestThumbnail = (ImageView) findViewById(R.id.img_request_thumbnail);
         mTxtNoRequestThumbnailPicture =
                 (TextView) findViewById(R.id.txt_no_request_thumbnail_picture);
         mTxtCreatedComment = (TextView) findViewById(R.id.txt_created_comment);
         mTxtCreatedBy = (TextView) findViewById(R.id.txt_created_by);
-        mTxtCreatedAt = (TextView) findViewById(R.id.txt_created_at);
+        mTxtCreatedAt = (TextView) findViewById(R.id.txt_date);
         mTxtCreatedVotes = (TextView) findViewById(R.id.txt_created_votes);
 
         mIsClosed = false;

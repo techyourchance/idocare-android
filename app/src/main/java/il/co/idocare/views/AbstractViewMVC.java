@@ -1,8 +1,13 @@
 package il.co.idocare.views;
 
+import android.content.Context;
+import android.os.Bundle;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Message;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +17,8 @@ import il.co.idocare.handlermessaging.HandlerMessagingSlave;
 import il.co.idocare.models.ModelMVC;
 
 /**
- * This is an abstract implementation of ViewMVC interface which provides some convenience logic
- * specific to the app<br>
- * MVC Views of this app should extend this class.
+ * This is an abstract implementation of ViewMVC interface which provides some convenience
+ * logic specific to the app.
  */
 public abstract class AbstractViewMVC implements
         ViewMVC,
@@ -28,7 +32,7 @@ public abstract class AbstractViewMVC implements
 
     // ---------------------------------------------------------------------------------------------
     //
-    // MVC View methods
+    // Handler messaging methods
 
 
     /**
@@ -83,7 +87,7 @@ public abstract class AbstractViewMVC implements
 
     }
 
-    // End of MVC View methods
+    // End of Handler messaging methods
     //
     // ---------------------------------------------------------------------------------------------
 

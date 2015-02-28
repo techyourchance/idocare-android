@@ -1,5 +1,7 @@
 package il.co.idocare.controllers.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
@@ -21,27 +23,25 @@ public class RequestDetailsFragment extends AbstractFragment {
     RequestDetailsViewMVC mRequestDetailsViewMVC;
 
     RequestItem mRequestItem;
-    boolean mIsClosed;
-    boolean mIsPickedUp;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRequestDetailsViewMVC = new RequestDetailsViewMVC(getActivity(), inflater, container);
+
+        mRequestDetailsViewMVC =
+                new RequestDetailsViewMVC(getActivity(), container, savedInstanceState);
         // Provide inbox Handler to the MVC View
         mRequestDetailsViewMVC.addOutboxHandler(getInboxHandler());
         // Add MVC View's Handler to the set of outbox Handlers
         addOutboxHandler(mRequestDetailsViewMVC.getInboxHandler());
 
+        // Get the description of the request
         Bundle args = getArguments();
         if (args != null) {
             mRequestItem = getRequestsModel().
                     getRequest(args.getLong(Constants.FieldName.REQUEST_ID.getValue()));
-        }
-
-        if (mRequestItem == null) {
-            // TODO: handle this error somehow
-            return mRequestDetailsViewMVC.getRootView();
+        } else {
+            // TODO: handle this error
+            return null;
         }
 
         mRequestDetailsViewMVC.populateChildViewsFromRequestItem(mRequestItem);
@@ -81,6 +81,8 @@ public class RequestDetailsFragment extends AbstractFragment {
         super.onSaveInstanceState(outState);
 
     }
+
+
 
     private void pickupRequest() {
 

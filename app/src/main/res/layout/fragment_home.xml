@@ -1,18 +1,10 @@
-<LinearLayout
+
+<ListView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:id="@+id/list_requests_thumbnails"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal">
-
-    <ListView
-        android:id="@+id/list_requests_thumbnails"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="10dp"
-        android:clipToPadding="false"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="10.0dp"
-        android:background="@drawable/default_fragment_background"/>
-
-</LinearLayout>
+    android:scrollbars="none"
+    android:clipToPadding="true"
+    android:divider="@android:color/transparent"
+    android:dividerHeight="10.0dp"/>

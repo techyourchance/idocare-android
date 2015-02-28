@@ -6,7 +6,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import il.co.idocare.Constants;
@@ -102,7 +105,7 @@ public class IDoCareJSONUtils {
                 .createRequestItem(jsonObject.getLong(FieldName.REQUEST_ID.getValue()))
                 .setCreatedBy(extractUserItemFromJSONObject(
                         jsonObject.getJSONObject(FieldName.CREATED_BY.getValue())))
-                .setCreatedAt(jsonObject.getString(FieldName.CREATED_AT.getValue()))
+                .setCreatedAt(formatDate(jsonObject.getString(FieldName.CREATED_AT.getValue())))
                 .setLatitude(jsonObject.getDouble(FieldName.LATITUDE.getValue()))
                 .setLongitude(jsonObject.getDouble(FieldName.LONGITUDE.getValue()))
                 .setCreatedPollutionLevel(jsonObject.getInt(FieldName.CREATED_POLLUTION_LEVEL.getValue()));
@@ -118,14 +121,14 @@ public class IDoCareJSONUtils {
         if (!jsonObject.isNull(FieldName.PICKED_UP_BY.getValue())) {
             request.setPickedUpBy(extractUserItemFromJSONObject(
                     jsonObject.getJSONObject(FieldName.PICKED_UP_BY.getValue())));
-            request.setPickedUpAt(jsonObject.getString(FieldName.PICKED_UP_AT.getValue()));
+            request.setPickedUpAt(formatDate(jsonObject.getString(FieldName.PICKED_UP_AT.getValue())));
         }
 
         // If closed then both "by" and "at" are required
         if (!jsonObject.isNull(FieldName.CLOSED_BY.getValue())) {
             request.setClosedBy(extractUserItemFromJSONObject(
                     jsonObject.getJSONObject(FieldName.CLOSED_BY.getValue())));
-            request.setClosedAt(jsonObject.getString(FieldName.CLOSED_AT.getValue()));
+            request.setClosedAt(formatDate(jsonObject.getString(FieldName.CLOSED_AT.getValue())));
         }
 
         if (!jsonObject.isNull(FieldName.CLOSED_COMMENT.getValue()))
@@ -193,6 +196,19 @@ public class IDoCareJSONUtils {
         }
 
         return requests;
+    }
+
+
+    private static String formatDate(String stringDate) {
+        try {
+            SimpleDateFormat sdfIn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date date = sdfIn.parse(stringDate);
+            SimpleDateFormat sdfOut = new SimpleDateFormat("dd/MM/yy 'at' HH:mm ");
+            return sdfOut.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "date error";
+        }
     }
 
 

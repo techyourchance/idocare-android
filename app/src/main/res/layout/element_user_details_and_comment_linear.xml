@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/fragment_default_padding"
+    android:paddingStart="@dimen/fragment_default_padding"
+    android:paddingRight="@dimen/fragment_default_padding"
+    android:paddingEnd="@dimen/fragment_default_padding">
+
+    <TextView
+        android:id="@+id/txt_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="title"
+        android:textSize="@dimen/title_text_size"/>
+
+
+    <ImageView
+        android:id="@+id/img_user_picture"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/txt_title"
+        android:contentDescription="@string/img_user_picture_accessibility"
+        android:background="@drawable/border_background"/>
+
+    <TextView
+        android:id="@+id/txt_user_nickname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_title"
+        android:layout_toRightOf="@id/img_user_picture"
+        android:layout_toEndOf="@id/img_user_picture"
+        android:layout_marginLeft="@dimen/fragment_small_margin"
+        android:layout_marginStart="@dimen/fragment_small_margin"
+        android:text="username"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txt_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_user_nickname"
+        android:layout_toRightOf="@id/img_user_picture"
+        android:layout_toEndOf="@id/img_user_picture"
+        android:layout_marginLeft="@dimen/fragment_small_margin"
+        android:layout_marginStart="@dimen/fragment_small_margin"
+        android:text="date"
+        android:textSize="12sp"
+        android:textColor="@color/faded_text"/>
+
+    <TextView
+        android:id="@+id/txt_user_reputation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/img_user_picture"
+        android:text="TODO reputation"
+        android:textSize="8sp"/>
+
+    <ImageView
+        android:id="@+id/btn_vote_up"
+        android:clickable="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_title"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/ic_plus"
+        android:contentDescription="@string/btn_vote_up_accessibility" />
+
+    <TextView
+        android:id="@+id/txt_votes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_title"
+        android:layout_toLeftOf="@id/btn_vote_up"
+        android:layout_toStartOf="@id/btn_vote_up"
+        android:layout_marginTop="5dp"
+        android:text="TODO \n VOTE"/>
+
+
+    <ImageView
+        android:id="@+id/btn_vote_down"
+        android:clickable="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_title"
+        android:layout_toLeftOf="@id/txt_votes"
+        android:layout_toStartOf="@id/txt_votes"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/ic_minus"
+        android:contentDescription="@string/btn_vote_down_accessibility" />
+
+
+    <TextView
+        android:id="@+id/txt_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_user_reputation"
+        android:layout_marginTop="@dimen/fragment_smallest_margin"
+        android:textSize="@dimen/comments_text_size"
+        android:text="TODO comment"/>
+
+</RelativeLayout>

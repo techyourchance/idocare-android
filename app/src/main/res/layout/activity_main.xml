@@ -15,7 +15,9 @@
         android:id="@+id/frame_contents"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clickable="true"/>
+        android:clickable="true"
+        android:padding="10dp"
+        android:background="@drawable/default_fragment_background"/>
 
     <!-- The navigation drawer -->
     <ListView

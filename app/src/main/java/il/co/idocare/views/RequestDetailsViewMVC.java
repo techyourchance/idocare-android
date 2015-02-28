@@ -1,32 +1,23 @@
 package il.co.idocare.views;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.pojos.RequestItem;
-import il.co.idocare.utils.UtilMethods;
+import il.co.idocare.pojos.RequestItem.RequestStatus;
 
 /**
  * MVC View for New Request screen.
@@ -36,25 +27,47 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
     private final static String LOG_TAG = "RequestDetailsViewMVC";
 
 
-    View mRootView;
     Context mContext;
+    View mRootView;
+    RequestItem mRequestItem;
+    RequestStatus mRequestStatus;
 
-    LinearLayout mLayoutNewRequest;
-    LinearLayout mLayoutClosedRequest;
-    Button mBtnPickupRequest;
+
+    TextView mTxtStatus;
+    TextView mTxtCoarseLocation;
+    TextView mTxtFineLocation;
+    
+    TextView mTxtCreatedByTitle;
+    ImageView mImgCreatedByPicture;
+    TextView mTxtCreatedByNickname;
+    TextView mTxtCreatedAt;
+    TextView mTxtCreatedByReputation;
+    TextView mTxtCreatedVotes;
+    TextView mTxtCreatedComment;
+    ImageView[] mImgCreatedPictures;
+
+    TextView mTxtClosedByTitle;
+    ImageView mImgClosedByPicture;
+    TextView mTxtClosedByNickname;
+    TextView mTxtClosedAt;
+    TextView mTxtClosedByReputation;
+    TextView mTxtClosedVotes;
+    TextView mTxtClosedComment;
+    ImageView[] mImgClosedPictures;
+
+    Button mBtnPickUpRequest;
     Button mBtnCloseRequest;
 
 
-    public RequestDetailsViewMVC(Context context, LayoutInflater inflater, ViewGroup container) {
-        mRootView = inflater.inflate(R.layout.fragment_request_details, container, false);
+    public RequestDetailsViewMVC(Context context, ViewGroup container, Bundle savedInstanceState) {
         mContext = context;
+        mRootView = LayoutInflater.from(mContext)
+                .inflate(R.layout.fragment_request_details, container, false);
 
-        mLayoutNewRequest = (LinearLayout) mRootView.findViewById(R.id.layout_new_request);
-        mLayoutClosedRequest = (LinearLayout) mRootView.findViewById(R.id.layout_request_closed);
-        mBtnPickupRequest = (Button) mRootView.findViewById(R.id.btn_pickup_request);
-        mBtnCloseRequest = (Button) mRootView.findViewById(R.id.btn_close_request);
+        findAllViews();
 
     }
+
 
     @Override
     protected void handleMessage(Message msg) {
@@ -71,6 +84,57 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         return null;
     }
 
+    @SuppressLint("CutPasteId")
+    private void findAllViews() {
+        View includedView;
+
+        // Status bar views
+        mTxtStatus = (TextView) mRootView.findViewById(R.id.txt_request_status);
+        mTxtCoarseLocation = (TextView) mRootView.findViewById(R.id.txt_request_coarse_location);
+
+        // "Created by" views
+        includedView = mRootView.findViewById(R.id.element_created_by);
+        mTxtCreatedByTitle = (TextView) includedView.findViewById(R.id.txt_title);
+        mImgCreatedByPicture = (ImageView) includedView.findViewById(R.id.img_user_picture);
+        mTxtCreatedByNickname = (TextView) includedView.findViewById(R.id.txt_user_nickname);
+        mTxtCreatedAt = (TextView) includedView.findViewById(R.id.txt_date);
+        mTxtCreatedByReputation = (TextView) includedView.findViewById(R.id.txt_user_reputation);
+        mTxtCreatedVotes = (TextView) includedView.findViewById(R.id.txt_votes);
+        mTxtCreatedComment = (TextView) includedView.findViewById(R.id.txt_comment);
+
+        // "Created pictures" views
+        includedView = mRootView.findViewById(R.id.element_created_pictures);
+        mImgCreatedPictures = new ImageView[3];
+        mImgCreatedPictures[0] = (ImageView) includedView.findViewById(R.id.img_picture0);
+        mImgCreatedPictures[1] = (ImageView) includedView.findViewById(R.id.img_picture1);
+        mImgCreatedPictures[2] = (ImageView) includedView.findViewById(R.id.img_picture2);
+
+        // Fine location view
+        mTxtFineLocation = (TextView) mRootView.findViewById(R.id.txt_request_fine_location);
+
+        // "Closed by" views
+        includedView = mRootView.findViewById(R.id.element_closed_by);
+        mTxtClosedByTitle = (TextView) includedView.findViewById(R.id.txt_title);
+        mImgClosedByPicture = (ImageView) includedView.findViewById(R.id.img_user_picture);
+        mTxtClosedByNickname = (TextView) includedView.findViewById(R.id.txt_user_nickname);
+        mTxtClosedAt = (TextView) includedView.findViewById(R.id.txt_date);
+        mTxtClosedByReputation = (TextView) includedView.findViewById(R.id.txt_user_reputation);
+        mTxtClosedVotes = (TextView) includedView.findViewById(R.id.txt_votes);
+        mTxtClosedComment = (TextView) includedView.findViewById(R.id.txt_comment);
+
+        // "Closed pictures" views
+        includedView = mRootView.findViewById(R.id.element_closed_pictures);
+        mImgClosedPictures = new ImageView[3];
+        mImgClosedPictures[0] = (ImageView) includedView.findViewById(R.id.img_picture0);
+        mImgClosedPictures[1] = (ImageView) includedView.findViewById(R.id.img_picture1);
+        mImgClosedPictures[2] = (ImageView) includedView.findViewById(R.id.img_picture2);
+
+        // "Close" button
+        mBtnPickUpRequest = (Button) mRootView.findViewById(R.id.btn_pickup_request);
+        mBtnCloseRequest = (Button) mRootView.findViewById(R.id.btn_close_request);
+
+    }
+
 
     /**
      *
@@ -78,122 +142,183 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
      * data from the RequestItem object.
      * @param requestItem request item to take teh data from
      */
-    // TODO: these methods should be changed such that they use MVC Model
     public void populateChildViewsFromRequestItem(RequestItem requestItem) {
 
+        mRequestItem = requestItem;
+        setRequestStatus();
 
-        boolean isClosed = requestItem.getClosedBy() != null;
-        boolean isPickedUp = requestItem.getPickedUpBy() != null;
-
-
+        // Handle the status bar
+        populateStatusBarFromRequestItem();
         // Handle the views related to initial request
-        populateRequestViewsFromRequestItem(requestItem, isPickedUp, isClosed);
+        populateCreatedViewsFromRequestItem();
         // Handle the views related to pickup info
-        populateClosedViewsFromRequestItem(requestItem, isPickedUp, isClosed);
+        populateClosedViewsFromRequestItem();
         // Handle the pickup button functionality
-        populatePickupButtonFromRequestItem(requestItem, isPickedUp, isClosed);
+        populatePickupButtonFromRequestItem();
         // Handle the close button functionality
-        populateCloseButtonFromRequestItem(requestItem, isPickedUp, isClosed);
+        populateCloseButtonFromRequestItem();
+
+    }
+
+
+
+    /**
+     * Handle the status bar text and color
+     */
+    private void populateStatusBarFromRequestItem() {
+
+        int statusColor;
+        String statusText;
+
+        switch (mRequestStatus) {
+            case NEW_BY_OTHER:
+                statusColor = mContext.getResources().getColor(R.color.new_request_status);
+                statusText = mContext.getResources().getString(R.string.txt_new_request_title);
+                break;
+            case NEW_BY_ME:
+                statusColor = mContext.getResources().getColor(R.color.new_request_status);
+                statusText = mContext.getResources().getString(R.string.txt_new_request_title);
+                break;
+            case PICKED_UP_BY_OTHER:
+                statusColor = mContext.getResources().getColor(R.color.picked_up_request_status);
+                statusText = mContext.getResources().getString(R.string.txt_picked_up_request_title);
+                break;
+            case PICKED_UP_BY_ME:
+                statusColor = mContext.getResources().getColor(R.color.picked_up_request_status);
+                statusText = mContext.getResources().getString(R.string.txt_picked_up_request_title);
+                break;
+            case CLOSED_BY_OTHER:
+                statusColor = mContext.getResources().getColor(R.color.closed_request_status);
+                statusText = mContext.getResources().getString(R.string.txt_closed_request_title);
+                break;
+            case CLOSED_BY_ME:
+                statusColor = mContext.getResources().getColor(R.color.closed_request_status);
+                statusText = mContext.getResources().getString(R.string.txt_closed_request_title);
+                break;
+            default:
+                statusColor = mContext.getResources().getColor(android.R.color.white);
+                statusText = "Error: request status is not set!";
+        }
+
+        mTxtStatus.setBackgroundColor(statusColor);
+        mTxtStatus.setText(statusText);
+
+        mTxtCoarseLocation.setBackgroundColor(statusColor);
+        mTxtCoarseLocation.setText("TODO coarse loc");
+
 
     }
 
     /**
      * Handle the views describing the initial request
-     * @param requestItem request item to take teh data from
      */
-    private void populateRequestViewsFromRequestItem(RequestItem requestItem, boolean isPickedUp,
-                                                     boolean isClosed) {
+    private void populateCreatedViewsFromRequestItem() {
+        mTxtCreatedByTitle.setText(R.string.txt_created_by_title);
+        mImgCreatedByPicture.setImageResource(R.drawable.ic_launcher);
+        mTxtCreatedByNickname.setText(mRequestItem.getCreatedBy().getNickname());
+        mTxtCreatedAt.setText(mRequestItem.getCreatedAt());
+        mTxtCreatedByReputation.setText("REPUTATION");
+        mTxtCreatedVotes.setText("VOTE");
 
-        RequestPicturesAdapter listAdapter = new RequestPicturesAdapter(mContext, 0);
-        ListView listPictures = (ListView) mRootView.findViewById(R.id.list_new_request_pictures);
-        listPictures.setAdapter(listAdapter);
-
-        if (requestItem.getCreatedBy() != null) {
-            TextView createdBy = (TextView) mRootView.findViewById(R.id.txt_created_by);
-            createdBy.setText("Created by: " + requestItem.getCreatedBy().mNickname);
+        if (mRequestItem.getCreatedComment() == null ||
+                mRequestItem.getCreatedComment().isEmpty()) {
+            mTxtCreatedComment.setVisibility(View.GONE);
+        } else {
+            mTxtCreatedComment.setVisibility(View.VISIBLE);
+            mTxtCreatedComment.setText(mRequestItem.getCreatedComment());
         }
 
-        if (requestItem.getCreatedAt() != null) {
-            TextView createdAt = (TextView) mRootView.findViewById(R.id.txt_created_at);
-            createdAt.setText(requestItem.getCreatedAt());
+        for (int i=0; i<3; i++) {
+            if (mRequestItem.getCreatedPictures() != null &&
+                    mRequestItem.getCreatedPictures().length > i) {
+                ImageLoader.getInstance().displayImage(
+                        mRequestItem.getCreatedPictures()[i],
+                        mImgCreatedPictures[i],
+                        Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
+            } else {
+                mImgCreatedPictures[i].setImageResource(R.drawable.ic_picture_placeholder_small);
+
+            }
         }
 
-        if (requestItem.getCreatedPictures() != null) {
-            listAdapter.addAll(requestItem.getCreatedPictures());
-            listAdapter.notifyDataSetChanged();
-        }
-
-        if (requestItem.getCreatedComment() != null) {
-            TextView commentBefore = (TextView) mRootView.findViewById(R.id.txt_created_comment);
-            commentBefore.setLines(UtilMethods.countLines(requestItem.getCreatedComment()));
-            commentBefore.setText(requestItem.getCreatedComment());
-        }
+        mTxtFineLocation.setText("TODO fine loc");
 
     }
 
     /**
      * Handle the views describing the info about request's closure
-     * @param requestItem request item to take teh data from
      */
-    private void populateClosedViewsFromRequestItem(RequestItem requestItem, boolean isPickedUp,
-                                                    boolean isClosed) {
-
-        if (!isClosed) {
-            // If the request is not closed then hide the "closed" layout altogether
-            mRootView.findViewById(R.id.layout_request_closed).setVisibility(View.GONE);
+    private void populateClosedViewsFromRequestItem() {
+        if (mRequestStatus != RequestStatus.CLOSED_BY_OTHER &&
+                mRequestStatus != RequestStatus.CLOSED_BY_ME) {
+            // Hide all "closed" views if the request is not closed
+            mRootView.findViewById(R.id.element_closed_by).setVisibility(View.GONE);
+            mRootView.findViewById(R.id.element_closed_pictures).setVisibility(View.GONE);
+            mRootView.findViewById(R.id.btn_close_request).setVisibility(View.GONE);
+            mRootView.findViewById(R.id.line_users_separator).setVisibility(View.GONE);
             return;
         }
 
-        RequestPicturesAdapter listAdapter = new RequestPicturesAdapter(mContext, 0);
-        ListView listPictures = (ListView) mRootView.findViewById(R.id.list_request_closed_pictures);
-        listPictures.setAdapter(listAdapter);
 
+        mRootView.findViewById(R.id.element_closed_by).setVisibility(View.VISIBLE);
+        mRootView.findViewById(R.id.element_closed_pictures).setVisibility(View.VISIBLE);
+        mRootView.findViewById(R.id.btn_close_request).setVisibility(View.VISIBLE);
+        mRootView.findViewById(R.id.line_users_separator).setVisibility(View.VISIBLE);
 
-        // Populate the views concerning "closure" details
+        mTxtClosedByTitle.setText(R.string.txt_closed_by_title);
+        mImgClosedByPicture.setImageResource(R.drawable.ic_launcher);
+        mTxtClosedByNickname.setText(mRequestItem.getClosedBy().getNickname());
+        mTxtClosedAt.setText(mRequestItem.getClosedAt());
+        mTxtClosedByReputation.setText("REPUTATION");
+        mTxtClosedVotes.setText("VOTE");
 
-        if (requestItem.getClosedBy() != null) {
-            TextView closedBy = (TextView) mRootView.findViewById(R.id.txt_closed_by);
-            closedBy.setText("Closed by: " + requestItem.getClosedBy().mNickname);
+        if (mRequestItem.getClosedComment() == null ||
+                mRequestItem.getClosedComment().isEmpty()) {
+            mTxtClosedComment.setVisibility(View.GONE);
+        } else {
+            mTxtClosedComment.setVisibility(View.VISIBLE);
+            mTxtClosedComment.setText(mRequestItem.getClosedComment());
         }
+        
+        
+        for (int i=0; i<3; i++) {
+            if (mRequestItem.getClosedPictures() != null &&
+                    mRequestItem.getClosedPictures().length > i) {
+                ImageLoader.getInstance().displayImage(
+                        mRequestItem.getClosedPictures()[i],
+                        mImgClosedPictures[i],
+                        Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
+            } else {
+                mImgClosedPictures[i].setImageResource(R.drawable.ic_picture_placeholder_small);
 
-        if (requestItem.getClosedAt() != null) {
-            TextView closedAt = (TextView) mRootView.findViewById(R.id.txt_closed_at);
-            closedAt.setText(requestItem.getClosedAt());
+            }
         }
-
-        if (requestItem.getClosedPictures() != null) {
-            listAdapter.addAll(requestItem.getClosedPictures());
-            listAdapter.notifyDataSetChanged();
-        }
-
-        if (requestItem.getClosedComment() != null) {
-            TextView closedComment = (TextView) mRootView.findViewById(R.id.txt_closed_comment);
-            closedComment.setLines(UtilMethods.countLines(requestItem.getClosedComment()));
-            closedComment.setText(requestItem.getClosedComment());
-        }
-
 
     }
 
     /**
      * Handle the view of the pickup button
-     * @param requestItem request item to take teh data from
      */
-    private void populatePickupButtonFromRequestItem(RequestItem requestItem, boolean isPickedUp,
-                                                     boolean isClosed) {
+    private void populatePickupButtonFromRequestItem() {
 
-        Button btnPickupRequest = (Button) mRootView.findViewById(R.id.btn_pickup_request);
 
-        if (!isPickedUp && !isClosed) {
-            btnPickupRequest.setOnClickListener(new View.OnClickListener() {
+        if (mRequestStatus == RequestStatus.NEW_BY_ME ||
+                mRequestStatus == RequestStatus.NEW_BY_OTHER) {
+            mBtnPickUpRequest.setVisibility(View.VISIBLE);
+            mBtnPickUpRequest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     notifyOutboxHandlers(Constants.MessageType.V_PICKUP_REQUEST_BUTTON_CLICKED.ordinal(),
                             0, 0, null);
                 }
             });
-        } else {
-            btnPickupRequest.setVisibility(View.GONE);
+        }
+        else if (mRequestStatus == RequestStatus.PICKED_UP_BY_OTHER) {
+            mBtnPickUpRequest.setClickable(false);
+            mBtnPickUpRequest.setText("Assigned to " + mRequestItem.getPickedUpBy().getNickname());
+        }
+        else {
+            mBtnPickUpRequest.setVisibility(View.GONE);
         }
 
     }
@@ -201,21 +326,12 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
 
     /**
      * Handle the view of the close button
-     * @param requestItem request item to take teh data from
      */
-    private void populateCloseButtonFromRequestItem(RequestItem requestItem, boolean isPickedUp,
-                                                     boolean isClosed) {
+    private void populateCloseButtonFromRequestItem() {
 
-
-        long myId = mContext.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
-                .getLong(Constants.FieldName.USER_ID.getValue(), 0);
-
-        boolean isPickedUpByMe = isPickedUp && requestItem.getPickedUpBy().getId() == myId;
-
-        Button btnCloseRequest = (Button) mRootView.findViewById(R.id.btn_close_request);
-
-        if (isPickedUpByMe && !isClosed) {
-            btnCloseRequest.setOnClickListener(new View.OnClickListener() {
+        if (mRequestStatus == RequestStatus.PICKED_UP_BY_ME) {
+            mBtnCloseRequest.setVisibility(View.VISIBLE);
+            mBtnCloseRequest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     notifyOutboxHandlers(Constants.MessageType.V_CLOSE_REQUEST_BUTTON_CLICKED.ordinal(),
@@ -223,77 +339,42 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
                 }
             });
         } else {
-            btnCloseRequest.setVisibility(View.GONE);
+            mBtnCloseRequest.setVisibility(View.GONE);
         }
 
     }
 
+    /**
+     * Determine the status of the request based on its contents
+     */
+    private void setRequestStatus() {
 
-    private static class ViewHolder {
-        ImageView imageView;
-    }
+        SharedPreferences prefs =
+                mContext.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
+        boolean userLoggedIn = prefs.contains(Constants.FieldName.USER_ID.getValue());
+        long userId = prefs.getLong(Constants.FieldName.USER_ID.getValue(), 0);
 
-    private class RequestPicturesAdapter extends ArrayAdapter<String> {
-
-        private LayoutInflater mInflater;
-        private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
-
-        public RequestPicturesAdapter(Context context, int resource) {
-            super(context, resource);
-            mInflater = LayoutInflater.from(context);
+        if (mRequestItem.getClosedBy() != null) {
+            if (userLoggedIn && (userId == mRequestItem.getClosedBy().getId()))
+                mRequestStatus = RequestStatus.CLOSED_BY_ME;
+            else
+                mRequestStatus = RequestStatus.CLOSED_BY_OTHER;
         }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            View view = convertView;
-            final ViewHolder holder;
-            if (convertView == null) {
-                view = mInflater.inflate(R.layout.element_camera_picture, parent, false);
-                holder = new ViewHolder();
-                holder.imageView = (ImageView) view.findViewById(R.id.image);
-                view.setTag(holder);
-            } else {
-                holder = (ViewHolder) view.getTag();
-            }
-
-            ImageLoader.getInstance().displayImage(getItem(position), holder.imageView, animateFirstListener);
-
-            return view;
+        else if (mRequestItem.getPickedUpBy() != null) {
+            if (userLoggedIn && (userId == mRequestItem.getPickedUpBy().getId()))
+                mRequestStatus = RequestStatus.PICKED_UP_BY_ME;
+            else
+                mRequestStatus = RequestStatus.PICKED_UP_BY_OTHER;
         }
-
-        /**
-         * Get all the items of this adapter
-         * @return array of items or null if there are none
-         */
-        public String[] getItems() {
-            if (getCount() == 0) {
-                return null;
-            }
-            String[] items = new String[getCount()];
-            for (int i = 0; i < getCount(); i++) {
-                items[i] = getItem(i);
-            }
-            return items;
+        else if (mRequestItem.getCreatedPictures() != null) {
+            if (userLoggedIn && (userId == mRequestItem.getCreatedBy().getId()))
+                mRequestStatus = RequestStatus.NEW_BY_ME;
+            else
+                mRequestStatus = RequestStatus.NEW_BY_OTHER;
+        } else {
+            // TODO: some error
         }
     }
-
-    private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
-
-        static final List<String> displayedImages = Collections.synchronizedList(new ArrayList<String>());
-
-        @Override
-        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-            if (loadedImage != null) {
-                ImageView imageView = (ImageView) view;
-                boolean firstDisplay = !displayedImages.contains(imageUri);
-                if (firstDisplay) {
-                    FadeInBitmapDisplayer.animate(imageView, 500);
-                    displayedImages.add(imageUri);
-                }
-            }
-        }
-    }
-
 
 
 }

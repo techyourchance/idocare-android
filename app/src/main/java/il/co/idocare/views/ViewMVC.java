@@ -1,5 +1,6 @@
 package il.co.idocare.views;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -29,4 +30,5 @@ public interface ViewMVC {
      * @return Bundle containing the state of this MVC View
      */
     public Bundle getViewState();
+
 }

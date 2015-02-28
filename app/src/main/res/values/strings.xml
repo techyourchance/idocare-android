@@ -22,5 +22,12 @@
     <string name="txt_new_request_title">NEW REQUEST</string>
     <string name="txt_picked_up_request_title">IN PROGRESS</string>
     <string name="txt_closed_request_title">DONE</string>
+    <string name="img_user_picture_accessibility">User picture</string>
+    <string name="btn_vote_up_accessibility">Vote up</string>
+    <string name="btn_vote_down_accessibility">Vote down</string>
+    <string name="img_picture_accessibility">Picture</string>
+    <string name="txt_location_title">Location:</string>
+    <string name="txt_created_by_title">Created by:</string>
+    <string name="txt_closed_by_title">Closed by:</string>
 
 </resources>

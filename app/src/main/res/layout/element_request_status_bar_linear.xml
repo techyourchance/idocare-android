@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="25sp">
+
+        <TextView
+            android:id="@+id/txt_request_status"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingLeft="@dimen/text_view_default_padding"
+            android:paddingStart="@dimen/text_view_default_padding"
+            android:paddingRight="@dimen/text_view_default_padding"
+            android:paddingEnd="@dimen/text_view_default_padding"
+            android:gravity="start"
+            android:textSize="@dimen/status_text_size"
+            android:text="Status"/>
+
+        <TextView
+            android:id="@+id/txt_request_coarse_location"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="@dimen/text_view_default_padding"
+            android:paddingStart="@dimen/text_view_default_padding"
+            android:paddingRight="@dimen/text_view_default_padding"
+            android:paddingEnd="@dimen/text_view_default_padding"
+            android:gravity="end"
+            android:textSize="@dimen/coarse_location_text_size"
+            android:text="Coarse location"/>
+
+</LinearLayout>

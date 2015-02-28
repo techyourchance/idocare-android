@@ -3,119 +3,88 @@
 
 <il.co.idocare.widgets.VerticalScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:padding="1px"
+    android:background="@drawable/border_background">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:padding="@dimen/fragment_default_padding">
+        android:background="@android:color/white">
 
-        <LinearLayout
-            android:id="@+id/layout_new_request"
-            android:orientation="vertical"
+        <!-- Include colorized status bar-->
+        <include layout="@layout/element_request_status_bar_linear"/>
+
+        <!-- Include "created by" details-->
+        <include android:id="@+id/element_created_by"
+            layout="@layout/element_user_details_and_comment_linear"/>
+
+        <View
+            android:id="@+id/line_users_separator"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="2dp"
+            android:layout_marginLeft="@dimen/fragment_default_padding"
+            android:layout_marginStart="@dimen/fragment_default_padding"
+            android:layout_marginRight="@dimen/fragment_default_padding"
+            android:layout_marginEnd="@dimen/fragment_default_padding"
+            android:layout_marginTop="@dimen/fragment_smallest_margin"
+            android:layout_marginBottom="@dimen/fragment_smallest_margin"
+            android:background="@android:color/darker_gray"/>
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/border_background"
-                android:padding="@dimen/text_view_default_padding">
+        <!-- Include "closed by" details-->
+        <include android:id="@+id/element_closed_by"
+            layout="@layout/element_user_details_and_comment_linear"/>
 
-                <TextView
-                    android:id="@+id/txt_created_by"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="start"/>
+        <!-- Include "created" pictures -->
+        <include  android:id="@+id/element_created_pictures"
+            layout="@layout/element_pictures_row_linear"/>
 
-                <TextView
-                    android:id="@+id/txt_created_at"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="end"/>
+        <!-- Include "closed" pictures -->
+        <include  android:id="@+id/element_closed_pictures"
+            layout="@layout/element_pictures_row_linear"/>
 
-            </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/fragment_default_padding"
+            android:paddingStart="@dimen/fragment_default_padding"
+            android:paddingRight="@dimen/fragment_default_padding"
+            android:paddingEnd="@dimen/fragment_default_padding"
+            android:text="@string/txt_location_title"
+            android:textStyle="bold"/>
 
-            <ListView
-                android:id="@+id/list_new_request_pictures"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="@dimen/fragment_default_margin"
-                android:layout_marginBottom="@dimen/fragment_default_margin"/>
-
-            <TextView
-                android:id="@+id/txt_created_comment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/comments_text_size"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_request_closed"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/border_background"
-                android:padding="@dimen/text_view_default_padding">
-
-                <TextView
-                    android:id="@+id/txt_closed_by"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="start"/>
-
-                <TextView
-                    android:id="@+id/txt_closed_at"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="end"/>
-
-            </LinearLayout>
-
-            <ListView
-                android:id="@+id/list_request_closed_pictures"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="@dimen/fragment_default_margin"
-                android:layout_marginBottom="@dimen/fragment_default_margin"/>
-
-            <TextView
-                android:id="@+id/txt_closed_comment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/comments_text_size"/>
-
-        </LinearLayout>
-
-
+        <TextView
+            android:id="@+id/txt_request_fine_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/fragment_default_padding"
+            android:paddingStart="@dimen/fragment_default_padding"
+            android:paddingRight="@dimen/fragment_default_padding"
+            android:paddingEnd="@dimen/fragment_default_padding"
+            android:text="TODO Location"/>
 
         <Button
             android:id="@+id/btn_pickup_request"
-            android:text="@string/btn_pickup_request"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/fragment_default_margin"/>
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/fragment_default_margin"
+            android:layout_marginBottom="@dimen/fragment_default_margin"
+            android:background="@color/picked_up_request_status"
+            android:text="@string/btn_pickup_request"/>
 
 
         <Button
             android:id="@+id/btn_close_request"
-            android:text="@string/btn_close_request"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/fragment_default_margin"/>
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/fragment_default_margin"
+            android:layout_marginBottom="@dimen/fragment_default_margin"
+            android:background="@color/closed_request_status"
+            android:text="@string/btn_close_request"/>
 
     </LinearLayout>
 

@@ -1,6 +1,8 @@
 package il.co.idocare.pojos;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -8,12 +10,16 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import il.co.idocare.Constants;
 import il.co.idocare.Constants.FieldName;
 
 /**
  * This object contains data about a single request (users involved, state, location, etc)
  */
 public class RequestItem {
+
+    public enum RequestStatus {NEW_BY_OTHER, NEW_BY_ME, PICKED_UP_BY_OTHER, PICKED_UP_BY_ME,
+        CLOSED_BY_OTHER, CLOSED_BY_ME}
 
     private final static String LOG_TAG = "RequestItem";
 
@@ -33,9 +39,12 @@ public class RequestItem {
     private String[] mClosedPictures;
 
 
-
     public static RequestItem createRequestItem(long id) {
         return new RequestItem(id);
+    }
+
+    private RequestItem(long id) {
+        this(id, null, null, null, null, 0, 0, 0, null, null, null, null, null, null);
     }
 
     private RequestItem (
@@ -67,10 +76,6 @@ public class RequestItem {
         mClosedAt = closedAt;
         mClosedComment = closedComment;
         mClosedPictures = closedPictures;
-    }
-
-    private RequestItem(long id) {
-        mId = id;
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -211,4 +216,5 @@ public class RequestItem {
     public String[] getClosedPictures() {
         return mClosedPictures;
     }
+
 }
