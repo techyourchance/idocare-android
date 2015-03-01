@@ -236,7 +236,7 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
                         mImgCreatedPictures[i],
                         Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
             } else {
-                mImgCreatedPictures[i].setImageResource(R.drawable.ic_picture_placeholder_small);
+                mImgCreatedPictures[i].setVisibility(View.GONE);
 
             }
         }
@@ -289,7 +289,7 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
                         mImgClosedPictures[i],
                         Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
             } else {
-                mImgClosedPictures[i].setImageResource(R.drawable.ic_picture_placeholder_small);
+                mImgClosedPictures[i].setVisibility(View.GONE);
 
             }
         }

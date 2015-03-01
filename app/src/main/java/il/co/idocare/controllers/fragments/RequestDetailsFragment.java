@@ -1,7 +1,5 @@
 package il.co.idocare.controllers.fragments;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
@@ -34,17 +32,7 @@ public class RequestDetailsFragment extends AbstractFragment {
         // Add MVC View's Handler to the set of outbox Handlers
         addOutboxHandler(mRequestDetailsViewMVC.getInboxHandler());
 
-        // Get the description of the request
-        Bundle args = getArguments();
-        if (args != null) {
-            mRequestItem = getRequestsModel().
-                    getRequest(args.getLong(Constants.FieldName.REQUEST_ID.getValue()));
-        } else {
-            // TODO: handle this error
-            return null;
-        }
-
-        mRequestDetailsViewMVC.populateChildViewsFromRequestItem(mRequestItem);
+        obtainRequestItemAndShowItsDetails();
 
         return mRequestDetailsViewMVC.getRootView();
     }
@@ -82,6 +70,41 @@ public class RequestDetailsFragment extends AbstractFragment {
 
     }
 
+    private void obtainRequestItemAndShowItsDetails() {
+        // Get the ID of the request
+        Bundle args = getArguments();
+        if (args == null) {
+            // TODO: handle this error somehow (maybe pop back stack?)
+            return;
+        }
+
+        final long id = args.getLong(Constants.FieldName.REQUEST_ID.getValue());
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    mRequestItem = getRequestsModel().getRequest(id);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                if (mRequestItem == null) {
+                    // TODO: handle this error somehow
+                    return;
+                }
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRequestDetailsViewMVC.populateChildViewsFromRequestItem(mRequestItem);
+                    }
+                });
+
+            }
+        });
+        t.start();
+    }
 
 
     private void pickupRequest() {

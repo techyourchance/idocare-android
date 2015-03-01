@@ -62,7 +62,7 @@ public class RequestsMVCModel extends AbstractModelMVC implements ServerRequest.
      */
     public List<RequestItem> getAllRequests() throws InterruptedException {
         synchronized (LOCK) {
-            if (mRequestItems == null) {
+            while (mRequestItems == null) {
                 LOCK.wait();
             }
             return new ArrayList<RequestItem>(mRequestItems.values());
@@ -71,18 +71,20 @@ public class RequestsMVCModel extends AbstractModelMVC implements ServerRequest.
 
 
     /**
-     * Get request item having a particular ID
+     * Get request item having a particular ID. This method will block if this model hasn't
+     * completed its initialization yet.
+     * NOTE: since this method may block, do not ever call it from UI thread.
      * @param id ID of the request
-     * @return RequestItem object having the required ID, or null if there is no such request or
-     *         the model hasn't been initialized yet
+     * @return RequestItem object having the required ID, or null if there is no such request in
+     *         the model
+     * @throws java.lang.InterruptedException if the calling thread was interrupted during block
      */
-    public RequestItem getRequest(long id) {
+    public RequestItem getRequest(long id) throws InterruptedException {
         synchronized (LOCK) {
-            if (mRequestItems == null) {
-                return null;
-            } else {
-                return mRequestItems.get(Long.valueOf(id));
+            while (mRequestItems == null) {
+                LOCK.wait();
             }
+            return mRequestItems.get(Long.valueOf(id));
         }
     }
 
