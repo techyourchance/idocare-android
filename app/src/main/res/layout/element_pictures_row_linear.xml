@@ -15,18 +15,21 @@
         android:id="@+id/img_picture0"
         android:layout_width="@dimen/request_picture_width"
         android:layout_height="@dimen/request_picture_height"
-        android:contentDescription="@string/img_picture_accessibility" />
+        android:contentDescription="@string/img_picture_accessibility"
+        android:adjustViewBounds="true"/>
 
     <ImageView
         android:id="@+id/img_picture1"
         android:layout_width="@dimen/request_picture_width"
         android:layout_height="@dimen/request_picture_height"
-        android:contentDescription="@string/img_picture_accessibility" />
+        android:contentDescription="@string/img_picture_accessibility"
+        android:adjustViewBounds="true"/>
 
     <ImageView
         android:id="@+id/img_picture2"
         android:layout_width="@dimen/request_picture_width"
         android:layout_height="@dimen/request_picture_height"
-        android:contentDescription="@string/img_picture_accessibility" />
+        android:contentDescription="@string/img_picture_accessibility"
+        android:adjustViewBounds="true"/>
 
 </LinearLayout>

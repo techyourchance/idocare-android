@@ -4,6 +4,7 @@
     <color name="picked_up_request_status">#FBB03B</color>
     <color name="closed_request_status">#8BC53F</color>
     <color name="faded_text">#B3B3B3</color>
+    <color name="line_separator">#808080</color>
 
     
 </resources>

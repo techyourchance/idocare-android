@@ -214,11 +214,11 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
      */
     private void populateCreatedViewsFromRequestItem() {
         mTxtCreatedByTitle.setText(R.string.txt_created_by_title);
-        mImgCreatedByPicture.setImageResource(R.drawable.ic_launcher);
+        mImgCreatedByPicture.setImageResource(R.drawable.ic_no_user_picture);
         mTxtCreatedByNickname.setText(mRequestItem.getCreatedBy().getNickname());
         mTxtCreatedAt.setText(mRequestItem.getCreatedAt());
-        mTxtCreatedByReputation.setText("REPUTATION");
-        mTxtCreatedVotes.setText("VOTE");
+        mTxtCreatedByReputation.setText("666");
+        mTxtCreatedVotes.setText("666");
 
         if (mRequestItem.getCreatedComment() == null ||
                 mRequestItem.getCreatedComment().isEmpty()) {
@@ -266,11 +266,11 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         mRootView.findViewById(R.id.line_users_separator).setVisibility(View.VISIBLE);
 
         mTxtClosedByTitle.setText(R.string.txt_closed_by_title);
-        mImgClosedByPicture.setImageResource(R.drawable.ic_launcher);
+        mImgClosedByPicture.setImageResource(R.drawable.ic_no_user_picture);
         mTxtClosedByNickname.setText(mRequestItem.getClosedBy().getNickname());
         mTxtClosedAt.setText(mRequestItem.getClosedAt());
-        mTxtClosedByReputation.setText("REPUTATION");
-        mTxtClosedVotes.setText("VOTE");
+        mTxtClosedByReputation.setText("666");
+        mTxtClosedVotes.setText("666");
 
         if (mRequestItem.getClosedComment() == null ||
                 mRequestItem.getClosedComment().isEmpty()) {
