@@ -26,4 +26,5 @@
     <dimen name="request_status_bar_height">25sp</dimen>
     <dimen name="request_thumbnail_status_bar_height">20sp</dimen>
     <dimen name="long_button_horizontal_padding">60dp</dimen>
+    <dimen name="default_button_width">250dp</dimen>
 </resources>

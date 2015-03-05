@@ -32,10 +32,11 @@
     <Button
         android:id="@+id/btn_create_new_request"
         android:layout_gravity="center_horizontal"
-        android:layout_width="250dp"
+        android:layout_width="@dimen/default_button_width"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fragment_default_margin"
+        android:background="@color/new_request_color"
         android:text="@string/btn_create_new_request"
-        android:background="@color/new_request_color"/>
+        android:textColor="@android:color/white"/>
 
 </LinearLayout>

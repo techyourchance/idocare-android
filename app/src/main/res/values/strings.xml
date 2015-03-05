@@ -4,8 +4,8 @@
     <string name="app_name">IDoCare</string>
     <string name="btn_create_new_request">CREATE</string>
     <string name="btn_switch_to_new_request_fragment">Create new request</string>
-    <string name="btn_pickup_request">Pickup request</string>
-    <string name="btn_switch_to_close_request_fragment">Close</string>
+    <string name="btn_pickup_request">ASSIGN TO ME</string>
+    <string name="btn_switch_to_close_request_fragment">CLOSE</string>
     <string name="btn_close_request">I DID IT!</string>
     <string name="btn_take_picture">Add photo</string>
     <string name="edt_comment_hint">Comment</string>
@@ -13,7 +13,7 @@
     <string name="image_request_thumbnail_content_description">Cleanup request thumbnail</string>
     <string name="login_username_hint">Username:</string>
     <string name="login_password_hint">Password:</string>
-    <string name="btn_login_text">Log in</string>
+    <string name="btn_login_text">LOG IN</string>
     <string name="img_logo_accessibility">IDoCare logo</string>
     <string name="img_grass_accessibility">Grass picture</string>
     <string name="img_request_thumbnail_accessibility">Request thumbnail picture</string>
