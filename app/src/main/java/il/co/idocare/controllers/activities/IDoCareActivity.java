@@ -345,7 +345,6 @@ public class IDoCareActivity extends Activity implements
     private void initializeModels() {
         mRequestsModel = new RequestsMVCModel(this);
         mRequestsModel.initialize();
-
         mUsersModel = new UsersMVCModel(this);
     }
 

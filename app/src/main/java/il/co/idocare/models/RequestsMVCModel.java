@@ -38,11 +38,15 @@ public class RequestsMVCModel extends AbstractModelMVC implements ServerRequest.
     private ConcurrentHashMap<Long, RequestItem> mRequestItems;
     private Context mContext;
 
+    private boolean mIsUpdating;
+
 
     public RequestsMVCModel(Context context) {
         // The only reason for this context is to be able to access shared preferences file
         // TODO: try to find a solution that does not require passing the context around
         mContext = context;
+
+        mIsUpdating = false;
     }
 
     /**
@@ -57,7 +61,9 @@ public class RequestsMVCModel extends AbstractModelMVC implements ServerRequest.
      * Update this model with the up-to-date data from the server
      */
     public void update() {
-        fetchRequestsFromServer();
+        synchronized (LOCK) {
+            if (!mIsUpdating) fetchRequestsFromServer();
+        }
     }
 
     /**
@@ -112,6 +118,11 @@ public class RequestsMVCModel extends AbstractModelMVC implements ServerRequest.
      * Execute a new server request asking to fetch all requests
      */
     private void fetchRequestsFromServer() {
+
+        synchronized (LOCK) {
+            mIsUpdating = true;
+        }
+
         ServerRequest serverRequest = new ServerRequest(Constants.GET_ALL_REQUESTS_URL,
                 Constants.ServerRequestTag.GET_ALL_REQUESTS, this);
 
@@ -123,6 +134,11 @@ public class RequestsMVCModel extends AbstractModelMVC implements ServerRequest.
     @Override
     public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag, String responseData) {
         if (tag == Constants.ServerRequestTag.GET_ALL_REQUESTS) {
+
+            synchronized (LOCK) {
+                mIsUpdating = false;
+            }
+
             if (responseStatusOk && IDoCareJSONUtils.verifySuccessfulStatus(responseData)) {
 
                 // TODO: decide how to handle JSON parsing exceptions. Maybe rerun server request?
@@ -153,9 +169,12 @@ public class RequestsMVCModel extends AbstractModelMVC implements ServerRequest.
 
     private void updateModel(List<RequestItem> requests) {
 
+        boolean isInitializing = false;
+
         // Initialize map with correct capacity
         if (mRequestItems == null) {
             mRequestItems = new ConcurrentHashMap<Long, RequestItem>(requests.size());
+            isInitializing = true;
         }
 
         // Add requests to the map
@@ -165,21 +184,28 @@ public class RequestsMVCModel extends AbstractModelMVC implements ServerRequest.
 
             if (!mRequestItems.containsKey(id)) {
                 mRequestItems.put(id, request);
-                // Assuming that if this request wasn't in the map, then there are no listeners
-                // registered for its changes.
             } else {
                 // TODO: instead of simply replacing RequestItem, we need to make sure there was an actual change
                 mRequestItems.remove(id);
                 mRequestItems.put(id, request);
-                // Send a notification about change in data of a specific request
+            }
+
+            if (!isInitializing) {
+                // Send a notification about change in data (or addition) of this request
+                // if this is not the initialization of the model
                 notifyOutboxHandlers(Constants.MessageType.M_REQUEST_DATA_UPDATE.ordinal(), 0, 0,
                         Long.valueOf(id));
             }
         }
 
-        // Maybe there are some threads waiting for the model to be updated
-        synchronized (LOCK) {
-            LOCK.notifyAll();
+
+        // Maybe there are some threads waiting for the model to be initialized
+        if (isInitializing) {
+            synchronized (LOCK) {
+                LOCK.notifyAll();
+            }
         }
+
     }
+
 }

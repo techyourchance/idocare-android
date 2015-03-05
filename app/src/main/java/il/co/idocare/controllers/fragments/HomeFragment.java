@@ -35,13 +35,16 @@ public class HomeFragment extends AbstractFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         mViewMVCHome = new HomeViewMVC(inflater, container);
-        // Provide inbox Handler to the MVC View
-        mViewMVCHome.addOutboxHandler(getInboxHandler());
-        // Add MVC View's Handler to the set of outbox Handlers
-        addOutboxHandler(mViewMVCHome.getInboxHandler());
 
         // This is required for automatic refresh of action bar options upon fragment's loading
         setHasOptionsMenu(true);
+
+        initializeThumbnailsList();
+
+        return mViewMVCHome.getRootView();
+    }
+
+    private void initializeThumbnailsList() {
 
         mRequestThumbnailsAdapter = new HomeListAdapter(getActivity(), 0);
         final ListView requestThumbnails =
@@ -61,37 +64,60 @@ public class HomeFragment extends AbstractFragment {
             }
         });
 
-        return mViewMVCHome.getRootView();
+
+        // Populate list adapter for the first time
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final List<Long> requests;
+                try {
+                    requests = getRequestsModel().getAllRequestsIds();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    return;
+                }
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRequestThumbnailsAdapter.addAll(requests);
+                        mRequestThumbnailsAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        });
+        thread.start();
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        getRequestsModel().update();
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Provide inbox Handler to the MVC View
+        mViewMVCHome.addOutboxHandler(getInboxHandler());
+        // Add MVC View's Handler to the set of outbox Handlers
+        addOutboxHandler(mViewMVCHome.getInboxHandler());
 
-        // Since the call to getRequestsModel().getAllRequests() can block, we have to put it
-        // in a separate thread
-        Thread t = new Thread() {
-            public void run() {
-                final List<Long> requestsIds;
-                try {
-                    requestsIds = getRequestsModel().getAllRequestsIds();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    return;
-                }
-                // Modifications of list adapter's contents should be done on UI thread
-                HomeFragment.this.getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        HomeFragment.this.mRequestThumbnailsAdapter.clear();
-                        HomeFragment.this.mRequestThumbnailsAdapter.addAll(requestsIds);
-                    }
-                });
+        // Register "listener" handler with requests MVC model
+        getRequestsModel().addOutboxHandler(getInboxHandler());
+    }
 
-            }
-        };
-        t.start();
+    @Override
+    public void onStop() {
+        super.onStop();
+        // Remove "listener" handlers between the MVC controller and MVC views
+        mViewMVCHome.removeOutboxHandler(getInboxHandler());
+        removeOutboxHandler(mViewMVCHome.getInboxHandler());
+
+        // Remove "listener" handler from requests MVC model
+        getRequestsModel().removeOutboxHandler(getInboxHandler());
+
     }
 
     @Override
@@ -106,7 +132,24 @@ public class HomeFragment extends AbstractFragment {
 
     @Override
     protected void handleMessage(Message msg) {
-        // TODO: implement this method
+
+        switch (Constants.MESSAGE_TYPE_VALUES[msg.what]) {
+            case M_REQUEST_DATA_UPDATE:
+                final long requestId = ((Long)msg.obj);
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mRequestThumbnailsAdapter.getPosition(requestId) == -1) {
+                            mRequestThumbnailsAdapter.add(requestId);
+                            mRequestThumbnailsAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+
+            default:
+                break;
+        }
     }
 
 

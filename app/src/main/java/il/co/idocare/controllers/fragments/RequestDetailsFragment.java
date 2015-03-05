@@ -42,7 +42,7 @@ public class RequestDetailsFragment extends AbstractFragment {
         // Add MVC View's Handler to the set of outbox Handlers
         addOutboxHandler(mRequestDetailsViewMVC.getInboxHandler());
 
-        // Notify the MVC view about models' changes
+        // Exchange "listener" handlers between MVC views and MVC models
         getUsersModel().addOutboxHandler(mRequestDetailsViewMVC.getInboxHandler());
         getRequestsModel().addOutboxHandler(mRequestDetailsViewMVC.getInboxHandler());
     }

@@ -2,6 +2,7 @@ package il.co.idocare.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -43,11 +44,9 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
 
    private RequestItem mRequestItem;
 
-
     private TextView mTxtRequestStatus;
     private TextView mTxtRequestLocation;
     private ImageView mImgRequestThumbnail;
-    private TextView mTxtNoRequestThumbnailPicture;
     private TextView mTxtCreatedComment;
     private TextView mTxtCreatedBy;
     private TextView mTxtCreatedAt;
@@ -56,6 +55,8 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
     private boolean mIsClosed;
     private boolean mIsPickedUp;
 
+    private String mCurrentPictureUrl;
+
 
 
     public RequestThumbnailViewMVC(Context context, RequestsMVCModel requestsModel,
@@ -63,6 +64,8 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
         super(context);
         mRequestsModel = requestsModel;
         mUsersModel = usersModel;
+
+        mCurrentPictureUrl = "";
 
         init(context);
     }
@@ -89,8 +92,6 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
         mTxtRequestStatus = (TextView) findViewById(R.id.txt_request_status);
         mTxtRequestLocation = (TextView) findViewById(R.id.txt_request_fine_location);
         mImgRequestThumbnail = (ImageView) findViewById(R.id.img_request_thumbnail);
-        mTxtNoRequestThumbnailPicture =
-                (TextView) findViewById(R.id.txt_no_request_thumbnail_picture);
         mTxtCreatedComment = (TextView) findViewById(R.id.txt_created_comment);
         mTxtCreatedBy = (TextView) findViewById(R.id.txt_created_by);
         mTxtCreatedAt = (TextView) findViewById(R.id.txt_date);
@@ -242,25 +243,23 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
 
     private void setPictures() {
 
-        mImgRequestThumbnail.setVisibility(View.GONE);
-        mTxtNoRequestThumbnailPicture.setVisibility(View.VISIBLE);
+        mImgRequestThumbnail.setVisibility(View.VISIBLE);
 
-        if (mRequestItem.getCreatedPictures() != null && mRequestItem.getCreatedPictures().length > 0) {
+        if (mRequestItem.getCreatedPictures() != null &&
+                mRequestItem.getCreatedPictures().length > 0 ) {
 
-            ImageLoader.getInstance().displayImage(
-                    mRequestItem.getCreatedPictures()[0],
-                    mImgRequestThumbnail,
-                    Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS,
-                    new RequestThumbnailLoadingListener(mTxtNoRequestThumbnailPicture,
-                            getResources().getString(R.string.text_request_thumbnail_loading),
-                            getResources().getString(R.string.text_request_thumbnail_failed),
-                            getResources().getString(R.string.text_request_thumbnail_cancelled)),
-                    new RequestThumbnailLoadingProgressListener(mTxtNoRequestThumbnailPicture,
-                            getResources().getString(R.string.text_request_thumbnail_loading)));
+            if (!mRequestItem.getCreatedPictures()[0].equals(mCurrentPictureUrl)) {
+
+                ImageLoader.getInstance().displayImage(
+                        mRequestItem.getCreatedPictures()[0],
+                        mImgRequestThumbnail,
+                        Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
+
+                mCurrentPictureUrl = mRequestItem.getCreatedPictures()[0];
+            }
 
         } else {
-            mTxtNoRequestThumbnailPicture.
-                    setText(getResources().getString(R.string.text_request_thumbnail_no_picture));
+            mImgRequestThumbnail.setImageResource(R.drawable.ic_background_grass);
         }
     }
 
@@ -274,84 +273,4 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
         mTxtCreatedBy.setText(mUsersModel.getUser(createdBy).getNickname());
     }
 
-    /**
-     * ImageLoadingListener used for alternating between TextView and ImageView when
-     * request thumbnail is being loaded
-     */
-    private static class RequestThumbnailLoadingListener implements ImageLoadingListener {
-
-        TextView mTxtBeforeImage;
-        String mLoading;
-        String mFailed;
-        String mCancelled;
-
-        public RequestThumbnailLoadingListener(TextView txtBeforeImage, String loading,
-                                               String failed, String cancelled) {
-            mTxtBeforeImage = txtBeforeImage;
-            mLoading = loading;
-            mFailed = failed;
-            mCancelled = cancelled;
-        }
-
-
-        @Override
-        public void onLoadingStarted(String imageUri, View view) {
-            // Make TextView visible and set loading text
-            mTxtBeforeImage.setVisibility(View.VISIBLE);
-            mTxtBeforeImage.setText(mLoading);
-            // Hide the ImageView
-            view.setVisibility(View.GONE);
-        }
-
-        @Override
-        public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-            mTxtBeforeImage.setText(mFailed);
-        }
-
-        @Override
-        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-            // Hide TextView
-            mTxtBeforeImage.setVisibility(View.GONE);
-            // Show ImageView
-            view.setVisibility(View.VISIBLE);
-            AlphaAnimation anim = new AlphaAnimation(0.0f, 1.0f);
-            anim.setDuration(500);
-            anim.setRepeatCount(0);
-            view.startAnimation(anim);
-        }
-
-        @Override
-        public void onLoadingCancelled(String imageUri, View view) {
-            mTxtBeforeImage.setText(mCancelled);
-        }
-    }
-
-    /**
-     * ImageLoadingProgressListener used to animate request thumbnail while the picture hasn't
-     * been loaded yet.
-     */
-    private static class RequestThumbnailLoadingProgressListener implements ImageLoadingProgressListener {
-
-        TextView mTxtBeforeImage;
-        String mLoadingText;
-        int mNumOfDots;
-
-        public RequestThumbnailLoadingProgressListener(TextView txtBeforeImage, String text) {
-            mTxtBeforeImage = txtBeforeImage;
-            mLoadingText = text;
-            mNumOfDots = 0;
-        }
-
-        @Override
-        public void onProgressUpdate(String imageUri, View view, int current, int total) {
-            // Add the required amount of dots to the end of loading string
-            String dot = ".";
-            String textWithDots = mLoadingText + new String(new char[mNumOfDots % 4]).replace("\0", dot);
-            // Set the new text and increase the "dot counter"
-            mTxtBeforeImage.setText(textWithDots);
-            mNumOfDots++;
-
-
-        }
-    }
 }
