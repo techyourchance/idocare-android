@@ -1,9 +1,7 @@
 package il.co.idocare.controllers.fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -13,26 +11,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
-
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import il.co.idocare.Constants;
 import il.co.idocare.Constants.FieldName;
-import il.co.idocare.R;
 import il.co.idocare.ServerRequest;
 import il.co.idocare.utils.IDoCareHttpUtils;
 import il.co.idocare.utils.UtilMethods;
@@ -134,7 +122,7 @@ public class CloseRequestFragment extends AbstractFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.StartActivityTag.CAPTURE_PICTURE_FOR_NEW_REQUEST.ordinal()) {
+        if (requestCode == Constants.StartActivityTag.CAPTURE_PICTURE.ordinal()) {
             if (resultCode == Activity.RESULT_OK) {
                 UtilMethods.adjustCameraPicture(mLastCameraPicturePath);
                 showPicture(mLastCameraPicturePath);
@@ -182,7 +170,7 @@ public class CloseRequestFragment extends AbstractFragment {
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraPictureUri);
-        startActivityForResult(intent, Constants.StartActivityTag.CAPTURE_PICTURE_FOR_NEW_REQUEST.ordinal());
+        startActivityForResult(intent, Constants.StartActivityTag.CAPTURE_PICTURE.ordinal());
     }
 
     /**

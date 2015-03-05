@@ -2,8 +2,8 @@
 <resources>
 
     <string name="app_name">IDoCare</string>
-    <string name="btn_add_new_request">Add request</string>
-    <string name="btn_switch_to_new_request_fragment">Add request</string>
+    <string name="btn_create_new_request">CREATE</string>
+    <string name="btn_switch_to_new_request_fragment">Create new request</string>
     <string name="btn_pickup_request">Pickup request</string>
     <string name="btn_switch_to_close_request_fragment">Close</string>
     <string name="btn_close_request">I DID IT!</string>

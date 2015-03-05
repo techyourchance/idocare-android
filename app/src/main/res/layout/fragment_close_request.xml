@@ -30,7 +30,7 @@
         android:paddingStart="@dimen/long_button_horizontal_padding"
         android:paddingLeft="@dimen/long_button_horizontal_padding"
         android:paddingEnd="@dimen/long_button_horizontal_padding"
-        android:background="@color/close_request_button"
+        android:background="@color/closed_request_color"
         android:text="@string/btn_close_request"
         android:textColor="@android:color/white"/>
 

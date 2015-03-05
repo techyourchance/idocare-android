@@ -141,7 +141,7 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         mTxtCreatedTitle = (TextView) includedView.findViewById(R.id.txt_title);
         mImgCreatedByPicture = (ImageView) includedView.findViewById(R.id.img_user_picture);
         mTxtCreatedByNickname = (TextView) includedView.findViewById(R.id.txt_user_nickname);
-        mTxtCreatedAt = (TextView) includedView.findViewById(R.id.txt_date);
+        mTxtCreatedAt = (TextView) includedView.findViewById(R.id.txt_created_at);
         mTxtCreatedByReputation = (TextView) includedView.findViewById(R.id.txt_user_reputation);
         mTxtCreatedReputation = (TextView) includedView.findViewById(R.id.txt_votes);
         mTxtCreatedComment = (TextView) includedView.findViewById(R.id.txt_comment);
@@ -163,7 +163,7 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         mTxtClosedByTitle = (TextView) includedView.findViewById(R.id.txt_title);
         mImgClosedByPicture = (ImageView) includedView.findViewById(R.id.img_user_picture);
         mTxtClosedByNickname = (TextView) includedView.findViewById(R.id.txt_user_nickname);
-        mTxtClosedAt = (TextView) includedView.findViewById(R.id.txt_date);
+        mTxtClosedAt = (TextView) includedView.findViewById(R.id.txt_created_at);
         mTxtClosedByReputation = (TextView) includedView.findViewById(R.id.txt_user_reputation);
         mTxtClosedReputation = (TextView) includedView.findViewById(R.id.txt_votes);
         mTxtClosedComment = (TextView) includedView.findViewById(R.id.txt_comment);
@@ -221,27 +221,27 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
 
         switch (mRequestStatus) {
             case NEW_BY_OTHER:
-                statusColor = mContext.getResources().getColor(R.color.new_request_status);
+                statusColor = mContext.getResources().getColor(R.color.new_request_color);
                 statusText = mContext.getResources().getString(R.string.txt_new_request_title);
                 break;
             case NEW_BY_ME:
-                statusColor = mContext.getResources().getColor(R.color.new_request_status);
+                statusColor = mContext.getResources().getColor(R.color.new_request_color);
                 statusText = mContext.getResources().getString(R.string.txt_new_request_title);
                 break;
             case PICKED_UP_BY_OTHER:
-                statusColor = mContext.getResources().getColor(R.color.picked_up_request_status);
+                statusColor = mContext.getResources().getColor(R.color.picked_up_request_color);
                 statusText = mContext.getResources().getString(R.string.txt_picked_up_request_title);
                 break;
             case PICKED_UP_BY_ME:
-                statusColor = mContext.getResources().getColor(R.color.picked_up_request_status);
+                statusColor = mContext.getResources().getColor(R.color.picked_up_request_color);
                 statusText = mContext.getResources().getString(R.string.txt_picked_up_request_title);
                 break;
             case CLOSED_BY_OTHER:
-                statusColor = mContext.getResources().getColor(R.color.closed_request_status);
+                statusColor = mContext.getResources().getColor(R.color.closed_request_color);
                 statusText = mContext.getResources().getString(R.string.txt_closed_request_title);
                 break;
             case CLOSED_BY_ME:
-                statusColor = mContext.getResources().getColor(R.color.closed_request_status);
+                statusColor = mContext.getResources().getColor(R.color.closed_request_color);
                 statusText = mContext.getResources().getString(R.string.txt_closed_request_title);
                 break;
             default:

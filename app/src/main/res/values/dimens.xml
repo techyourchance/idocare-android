@@ -17,13 +17,13 @@
     <dimen name="request_picture_height">62dp</dimen>
     <dimen name="title_text_size">16sp</dimen>
     <dimen name="username_text_size">15sp</dimen>
-    <dimen name="status_text_size">16sp</dimen>
-    <dimen name="coarse_location_text_size">14sp</dimen>
-    <dimen name="thumbnail_status_text_size">14sp</dimen>
-    <dimen name="thumbnail_coarse_location_text_size">13sp</dimen>
+    <dimen name="status_text_size">15sp</dimen>
+    <dimen name="coarse_location_text_size">13sp</dimen>
+    <dimen name="thumbnail_status_text_size">13sp</dimen>
+    <dimen name="thumbnail_coarse_location_text_size">11sp</dimen>
     <dimen name="comments_text_size">15sp</dimen>
     <dimen name="line_separator_vertical_margins">3dp</dimen>
     <dimen name="request_status_bar_height">25sp</dimen>
-    <dimen name="request_thumbnail_status_bar_height">18sp</dimen>
+    <dimen name="request_thumbnail_status_bar_height">20sp</dimen>
     <dimen name="long_button_horizontal_padding">60dp</dimen>
 </resources>

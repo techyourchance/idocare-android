@@ -88,7 +88,7 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
         mImgRequestThumbnail = (ImageView) findViewById(R.id.img_request_thumbnail);
         mTxtCreatedComment = (TextView) findViewById(R.id.txt_created_comment);
         mTxtCreatedBy = (TextView) findViewById(R.id.txt_created_by);
-        mTxtCreatedAt = (TextView) findViewById(R.id.txt_date);
+        mTxtCreatedAt = (TextView) findViewById(R.id.txt_created_at);
         mTxtCreatedReputation = (TextView) findViewById(R.id.txt_votes);
 
         mIsClosed = false;
@@ -206,11 +206,11 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
         int statusColor;
 
         if (mIsClosed)
-            statusColor = getResources().getColor(R.color.closed_request_status);
+            statusColor = getResources().getColor(R.color.closed_request_color);
         else if (mIsPickedUp)
-            statusColor = getResources().getColor(R.color.picked_up_request_status);
+            statusColor = getResources().getColor(R.color.picked_up_request_color);
         else
-            statusColor = getResources().getColor(R.color.new_request_status);
+            statusColor = getResources().getColor(R.color.new_request_color);
 
         mTxtRequestStatus.setBackgroundColor(statusColor);
         mTxtRequestLocation.setBackgroundColor(statusColor);

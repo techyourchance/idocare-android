@@ -17,7 +17,9 @@ public class Constants {
      * This enum (its ordinal() values) is used with startActivityForResult() and
      * onActivityResult() calls across the app
      */
-    public enum StartActivityTag {CAPTURE_PICTURE_FOR_NEW_REQUEST}
+    public enum StartActivityTag {
+        CAPTURE_PICTURE
+    }
 
     /**
      * Global app preferences file
@@ -114,7 +116,7 @@ public class Constants {
     public enum MessageType {
         V_REQUEST_ITEM_CLICKED,
         V_LOGIN_BUTTON_CLICK,
-        V_ADD_NEW_REQUEST_BUTTON_CLICKED,
+        V_CREATE_NEW_REQUEST_BUTTON_CLICKED,
         V_CLOSE_REQUEST_BUTTON_CLICKED,
         V_PICKUP_REQUEST_BUTTON_CLICKED,
         V_TAKE_PICTURE_BUTTON_CLICKED,

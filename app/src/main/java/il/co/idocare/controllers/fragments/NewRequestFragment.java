@@ -1,9 +1,7 @@
 package il.co.idocare.controllers.fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,26 +12,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
 
 import com.google.android.gms.location.LocationServices;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import il.co.idocare.Constants;
-import il.co.idocare.R;
 import il.co.idocare.ServerRequest;
 import il.co.idocare.controllers.activities.IDoCareActivity;
 import il.co.idocare.utils.IDoCareHttpUtils;
@@ -47,7 +36,10 @@ public class NewRequestFragment extends AbstractFragment {
 
     NewRequestViewMVC mViewMVCNewRequest;
 
-    String mLastCameraPicturePath;
+    private long mRequestId;
+
+    private String mLastCameraPicturePath;
+    private List<String> mCameraPicturesPaths = new ArrayList<String>(3);
 
 
     @Override
@@ -70,14 +62,16 @@ public class NewRequestFragment extends AbstractFragment {
 
         if (savedInstanceState == null) return;
 
-        // Get the list of pictures from saved state and pass them to adapter
-        String[] adapterItems = savedInstanceState.getStringArray("adapterItems");
-        if (adapterItems != null) {
-        }
 
-        // Restore the last path to camera picture
-        if (savedInstanceState.getString("lastCameraPicturePath") != null) {
-            mLastCameraPicturePath = savedInstanceState.getString("lastCameraPicturePath");
+        mLastCameraPicturePath = savedInstanceState.getString("lastCameraPicturePath");
+
+        // Get the list of pictures from saved state and pass them to adapter
+        String[] cameraPicturesPaths = savedInstanceState.getStringArray("cameraPicturesPaths");
+
+        for (int i=0; i<cameraPicturesPaths.length; i++) {
+            if (cameraPicturesPaths[i] != null) {
+                showPicture(i, cameraPicturesPaths[i]);
+            }
         }
     }
 
@@ -95,32 +89,38 @@ public class NewRequestFragment extends AbstractFragment {
     @Override
     protected void handleMessage(Message msg) {
         switch (Constants.MESSAGE_TYPE_VALUES[msg.what]) {
-            case V_ADD_NEW_REQUEST_BUTTON_CLICKED:
-                addNewRequest();
+            case V_CREATE_NEW_REQUEST_BUTTON_CLICKED:
+                createRequest();
                 break;
             case V_TAKE_PICTURE_BUTTON_CLICKED:
                 takePictureWithCamera();
                 break;
             default:
-                Log.w(LOG_TAG, "Message of type "
-                        + Constants.MESSAGE_TYPE_VALUES[msg.what].toString() + " wasn't consumed");
+                break;
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        // Save the absolute path of the last picture (otherwise we get NullPointerException when
-        // trying to access it in onActivityResult())
+
+        String[] cameraPicturesPaths = new String[mCameraPicturesPaths.size()];
+        mCameraPicturesPaths.toArray(cameraPicturesPaths);
+
+        // Save pictures' paths
+        outState.putStringArray("cameraPicturesPaths", cameraPicturesPaths);
+
+        // If not saved, the path will be lost when Camera activity starts
         outState.putString("lastCameraPicturePath", mLastCameraPicturePath);
 
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.StartActivityTag.CAPTURE_PICTURE_FOR_NEW_REQUEST.ordinal()) {
+        if (requestCode == Constants.StartActivityTag.CAPTURE_PICTURE.ordinal()) {
             if (resultCode == Activity.RESULT_OK) {
                 UtilMethods.adjustCameraPicture(mLastCameraPicturePath);
+                showPicture(mLastCameraPicturePath);
             } else {
                 // TODO: do we need anything here?
             }
@@ -128,6 +128,23 @@ public class NewRequestFragment extends AbstractFragment {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+
+    private void showPicture(String cameraPicturePath) {
+        showPicture(mCameraPicturesPaths.size(), cameraPicturePath);
+    }
+
+    private void showPicture(int position, String cameraPicturePath) {
+        if (position >= 3) {
+            Log.e(LOG_TAG, "maximal number of pictures exceeded!");
+            return;
+        }
+        if (mCameraPicturesPaths.size() > position) {
+            mCameraPicturesPaths.remove(position);
+        }
+        mCameraPicturesPaths.add(position, cameraPicturePath);
+        mViewMVCNewRequest.showPicture(position, cameraPicturePath);
+    }
+
 
     /**
      * Create ACTION_IMAGE_CAPTURE intent with EXTRA_OUTPUT path and call startActivityForResult()
@@ -146,7 +163,7 @@ public class NewRequestFragment extends AbstractFragment {
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraPictureUri);
-        startActivityForResult(intent, Constants.StartActivityTag.CAPTURE_PICTURE_FOR_NEW_REQUEST.ordinal());
+        startActivityForResult(intent, Constants.StartActivityTag.CAPTURE_PICTURE.ordinal());
     }
 
 
@@ -154,7 +171,7 @@ public class NewRequestFragment extends AbstractFragment {
      * Create, populate and execute a new server request of type "add new request" based
      * on the contents of fragment's views
      */
-    private void addNewRequest() {
+    private void createRequest() {
 
         Bundle bundleNewRequest = mViewMVCNewRequest.getViewState();
 

@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<merge
+<!--<RelativeLayout-->
+    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_width="match_parent">-->
+
+    <merge
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Include colorized status bar-->
@@ -25,25 +30,33 @@
         android:layout_toRightOf="@id/img_request_thumbnail"
         android:layout_toEndOf="@id/img_request_thumbnail"
         android:textStyle="bold"
-        android:textSize="@dimen/title_text_size"/>
+        android:textSize="@dimen/title_text_size"
+        android:text="comment"/>
+
 
 
     <TextView
         android:id="@+id/txt_created_by"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/txt_created_comment"
-        android:layout_toRightOf="@id/img_request_thumbnail"
         android:layout_toEndOf="@id/img_request_thumbnail"
-        android:textSize="@dimen/title_text_size"/>
+        android:layout_toRightOf="@id/img_request_thumbnail"
+        android:layout_below="@id/txt_created_comment"
+        android:layout_marginTop="@dimen/fragment_small_margin"
+        android:textSize="@dimen/title_text_size"
+        android:text="nickname"/>
+
 
     <TextView
-        android:id="@id/txt_date"
+        android:id="@+id/txt_created_at"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@id/img_request_thumbnail"
-        android:layout_toEndOf="@id/img_request_thumbnail"/>
+        android:layout_toEndOf="@id/img_request_thumbnail"
+        android:text="date"/>
+
+
 
 
 
@@ -51,9 +64,9 @@
     <FrameLayout
         android:id="@+id/frame_reputation"
         android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="65dp"
+        android:layout_height="55dp"
+        android:layout_alignParentBottom="true"
+        android:paddingBottom="@dimen/fragment_small_margin"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginRight="@dimen/fragment_small_margin"
@@ -78,3 +91,5 @@
 
 
 </merge>
+
+<!--</RelativeLayout>-->

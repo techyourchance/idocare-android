@@ -73,7 +73,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/fragment_default_margin"
             android:layout_marginBottom="@dimen/fragment_default_margin"
-            android:background="@color/picked_up_request_status"
+            android:background="@color/picked_up_request_color"
             android:text="@string/btn_pickup_request"/>
 
 
@@ -84,7 +84,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/fragment_default_margin"
             android:layout_marginBottom="@dimen/fragment_default_margin"
-            android:background="@color/closed_request_status"
+            android:background="@color/closed_request_color"
             android:text="@string/btn_switch_to_close_request_fragment"/>
 
     </LinearLayout>

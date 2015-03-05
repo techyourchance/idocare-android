@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="new_request_status">#D32027</color>
-    <color name="picked_up_request_status">#FBB03B</color>
-    <color name="closed_request_status">#8BC53F</color>
+    <color name="new_request_color">#F98F03</color>
+    <color name="picked_up_request_color">#8BC53F</color>
+    <color name="closed_request_color">#298225</color>
     <color name="faded_text">#B3B3B3</color>
     <color name="line_separator">#808080</color>
-    <color name="close_request_button">#298225</color>
     <color name="picture_background">#E6E6E6</color>
     <color name="text_on_picture_background">#808080</color>
 
