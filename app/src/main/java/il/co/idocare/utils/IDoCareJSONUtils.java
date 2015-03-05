@@ -116,6 +116,9 @@ public class IDoCareJSONUtils {
         if (!jsonObject.isNull(FieldName.CREATED_PICTURES.getValue()))
             request.setCreatedPictures(jsonObject.getString(FieldName.CREATED_PICTURES.getValue()).split(", "));
 
+        if (!jsonObject.isNull(FieldName.CREATED_REPUTATION.getValue()))
+            request.setCreatedReputation(jsonObject.getInt(FieldName.CREATED_REPUTATION.getValue()));
+        
         // If picked up then both "by" and "at" are required
         if (!jsonObject.isNull(FieldName.PICKED_UP_BY.getValue())) {
             request.setPickedUpBy(jsonObject.getLong(FieldName.PICKED_UP_BY.getValue()));
@@ -135,6 +138,8 @@ public class IDoCareJSONUtils {
         if (!jsonObject.isNull(FieldName.CLOSED_PICTURES.getValue()))
             request.setClosedPictures(jsonObject.getString(FieldName.CLOSED_PICTURES.getValue()).split(", "));
 
+        if (!jsonObject.isNull(FieldName.CLOSED_REPUTATION.getValue()))
+            request.setClosedReputation(jsonObject.getInt(FieldName.CLOSED_REPUTATION.getValue()));
 
         return request;
     }

@@ -11,7 +11,7 @@ public class Constants {
      * This enum is used in order to relate HTTP response to a particular HTTP request
      */
     public enum ServerRequestTag {GET_ALL_REQUESTS, REQUEST_DETAILS, NEW_REQUEST,
-        PICKUP_REQUEST, CLOSE_REQUEST, GET_USER_DATA, LOGIN}
+        PICKUP_REQUEST, CLOSE_REQUEST, VOTE_FOR_REQUEST, GET_USER_DATA, LOGIN}
 
     /**
      * This enum (its ordinal() values) is used with startActivityForResult() and
@@ -40,6 +40,7 @@ public class Constants {
     public final static String GET_ALL_REQUESTS_URL = "http://dev-04.idocare.co.il/api-04/request";
     public final static String ADD_REQUEST_URL = "http://dev-04.idocare.co.il/api-04/request/add";
     public final static String PICKUP_REQUEST_URL = "http://dev-04.idocare.co.il/api-04/request/pickup";
+    public final static String VOTE_REQUEST_URL = "http://dev-04.idocare.co.il/api-04/request/vote";
     public final static String CLOSE_REQUEST_URL = "http://dev-04.idocare.co.il/api-04/request/close";
     public static final String GET_USER_DATA_URL = "http://dev-04.idocare.co.il/api-04/user/get";
 
@@ -73,16 +74,18 @@ public class Constants {
         USER_LAST_NAME("user_data_last_name"), USER_REPUTATION("user_data_reputation"),
         USER_PICTURE("user_data_picture"),
 
+        ENTITY_ID("entity_id"), ENTITY_PARAM("entity_param"), SCORE("score"),
+
         REQUEST_ID("request_id"),
 
-        CREATED_BY("created_by"), CREATED_AT("created_at"),
+        CREATED_BY("created_by"), CREATED_AT("created_at"), CREATED_REPUTATION("created_reputation"),
         CREATED_COMMENT("created_comment"), CREATED_PICTURES("created_pictures"),
         CREATED_POLLUTION_LEVEL("pollution_level"), LONGITUDE("long"), LATITUDE("lat"),
 
         PICKED_UP_BY("picked_up_by"), PICKED_UP_AT("picked_up_at"), PICKED_UP_BY_ME("picked_up_by_me"),
 
         CLOSED_BY("closed_by"), CLOSED_AT("closed_at"), CLOSED_COMMENT("closed_comment"),
-        CLOSED_PICTURES("closed_pictures");
+        CLOSED_PICTURES("closed_pictures"), CLOSED_REPUTATION("closed_reputation");
 
         private String mValue;
         FieldName(String value) {
@@ -112,6 +115,10 @@ public class Constants {
         V_CLOSE_REQUEST_BUTTON_CLICKED,
         V_PICKUP_REQUEST_BUTTON_CLICKED,
         V_TAKE_PICTURE_BUTTON_CLICKED,
+        V_CREATED_VOTE_UP_BUTTON_CLICKED,
+        V_CREATED_VOTE_DOWN_BUTTON_CLICKED,
+        V_CLOSED_VOTE_UP_BUTTON_CLICKED,
+        V_CLOSED_VOTE_DOWN_BUTTON_CLICKED,
 
         C_AUTHENTICATION_INITIATED,
         C_AUTHENTICATION_COMPLETED,

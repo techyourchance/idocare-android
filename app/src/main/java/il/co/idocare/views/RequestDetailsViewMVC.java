@@ -52,14 +52,18 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
     private TextView mTxtCreatedReputation;
     private TextView mTxtCreatedComment;
     private ImageView[] mImgCreatedPictures;
+    private ImageView mImgCreatedVoteUp;
+    private ImageView mImgCreatedVoteDown;
     private TextView mTxtClosedByTitle;
     private ImageView mImgClosedByPicture;
     private TextView mTxtClosedByNickname;
     private TextView mTxtClosedAt;
     private TextView mTxtClosedByReputation;
-    private TextView mTxtClosedVotes;
+    private TextView mTxtClosedReputation;
     private TextView mTxtClosedComment;
     private ImageView[] mImgClosedPictures;
+    private ImageView mImgClosedVoteUp;
+    private ImageView mImgClosedVoteDown;
 
     private Button mBtnPickUpRequest;
     private Button mBtnCloseRequest;
@@ -141,6 +145,8 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         mTxtCreatedByReputation = (TextView) includedView.findViewById(R.id.txt_user_reputation);
         mTxtCreatedReputation = (TextView) includedView.findViewById(R.id.txt_votes);
         mTxtCreatedComment = (TextView) includedView.findViewById(R.id.txt_comment);
+        mImgCreatedVoteUp = (ImageView) includedView.findViewById(R.id.img_vote_up);
+        mImgCreatedVoteDown = (ImageView) includedView.findViewById(R.id.img_vote_down);
 
         // "Created pictures" views
         includedView = mRootView.findViewById(R.id.element_created_pictures);
@@ -159,8 +165,10 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         mTxtClosedByNickname = (TextView) includedView.findViewById(R.id.txt_user_nickname);
         mTxtClosedAt = (TextView) includedView.findViewById(R.id.txt_date);
         mTxtClosedByReputation = (TextView) includedView.findViewById(R.id.txt_user_reputation);
-        mTxtClosedVotes = (TextView) includedView.findViewById(R.id.txt_votes);
+        mTxtClosedReputation = (TextView) includedView.findViewById(R.id.txt_votes);
         mTxtClosedComment = (TextView) includedView.findViewById(R.id.txt_comment);
+        mImgClosedVoteUp = (ImageView) includedView.findViewById(R.id.img_vote_up);
+        mImgClosedVoteDown = (ImageView) includedView.findViewById(R.id.img_vote_down);
 
         // "Closed pictures" views
         includedView = mRootView.findViewById(R.id.element_closed_pictures);
@@ -283,6 +291,22 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
 
         mTxtFineLocation.setText("TODO fine loc");
 
+        mImgCreatedVoteUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                notifyOutboxHandlers(Constants.MessageType.V_CREATED_VOTE_UP_BUTTON_CLICKED.ordinal(),
+                        0, 0, null);
+            }
+        });
+
+        mImgCreatedVoteDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                notifyOutboxHandlers(Constants.MessageType.V_CREATED_VOTE_DOWN_BUTTON_CLICKED.ordinal(),
+                        0, 0, null);
+            }
+        });
+
         updateCreatedByUser();
 
     }
@@ -325,7 +349,7 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
 
         mTxtClosedByTitle.setText(R.string.txt_closed_by_title);
         mTxtClosedAt.setText(mRequestItem.getClosedAt());
-        mTxtClosedVotes.setText(String.valueOf(mRequestItem.getClosedReputation()));
+        mTxtClosedReputation.setText(String.valueOf(mRequestItem.getClosedReputation()));
 
         if (mRequestItem.getClosedComment() == null ||
                 mRequestItem.getClosedComment().isEmpty()) {
@@ -348,6 +372,23 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
 
             }
         }
+
+
+        mImgClosedVoteUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                notifyOutboxHandlers(Constants.MessageType.V_CLOSED_VOTE_UP_BUTTON_CLICKED.ordinal(),
+                        0, 0, null);
+            }
+        });
+
+        mImgClosedVoteDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                notifyOutboxHandlers(Constants.MessageType.V_CLOSED_VOTE_DOWN_BUTTON_CLICKED.ordinal(),
+                        0, 0, null);
+            }
+        });
 
         updateClosedByUser();
 

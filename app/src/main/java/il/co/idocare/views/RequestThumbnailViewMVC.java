@@ -1,23 +1,17 @@
 package il.co.idocare.views;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
@@ -50,7 +44,7 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
     private TextView mTxtCreatedComment;
     private TextView mTxtCreatedBy;
     private TextView mTxtCreatedAt;
-    private TextView mTxtCreatedVotes;
+    private TextView mTxtCreatedReputation;
 
     private boolean mIsClosed;
     private boolean mIsPickedUp;
@@ -95,7 +89,7 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
         mTxtCreatedComment = (TextView) findViewById(R.id.txt_created_comment);
         mTxtCreatedBy = (TextView) findViewById(R.id.txt_created_by);
         mTxtCreatedAt = (TextView) findViewById(R.id.txt_date);
-        mTxtCreatedVotes = (TextView) findViewById(R.id.txt_created_votes);
+        mTxtCreatedReputation = (TextView) findViewById(R.id.txt_votes);
 
         mIsClosed = false;
         mIsPickedUp = false;
@@ -236,8 +230,7 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
         mTxtCreatedComment.setText(mRequestItem.getCreatedComment());
         mTxtCreatedAt.setText(mRequestItem.getCreatedAt());
 
-        // TODO: set actual votes
-        mTxtCreatedVotes.setText("TODO\nVotes");
+        mTxtCreatedReputation.setText(String.valueOf(mRequestItem.getCreatedReputation()));
     }
 
 

@@ -80,9 +80,20 @@ public class RequestDetailsFragment extends AbstractFragment {
             case V_CLOSE_REQUEST_BUTTON_CLICKED:
                 closeRequest();
                 break;
+            case V_CREATED_VOTE_UP_BUTTON_CLICKED:
+                voteForRequest(1, false);
+                break;
+            case V_CREATED_VOTE_DOWN_BUTTON_CLICKED:
+                voteForRequest(-1, false);
+                break;
+            case V_CLOSED_VOTE_UP_BUTTON_CLICKED:
+                voteForRequest(1, true);
+                break;
+            case V_CLOSED_VOTE_DOWN_BUTTON_CLICKED:
+                voteForRequest(-1, true);
+                break;
             default:
-                Log.w(LOG_TAG, "Message of type "
-                        + Constants.MESSAGE_TYPE_VALUES[msg.what].toString() + " wasn't consumed");
+                break;
         }
     }
 
@@ -124,6 +135,21 @@ public class RequestDetailsFragment extends AbstractFragment {
         Bundle args = new Bundle();
         args.putLong(Constants.FieldName.REQUEST_ID.getValue(), mRequestId);
         replaceFragment(CloseRequestFragment.class, true, args);
+    }
+
+    private void voteForRequest(int amount, boolean voteForClosed) {
+        ServerRequest serverRequest = new ServerRequest(Constants.VOTE_REQUEST_URL,
+                Constants.ServerRequestTag.VOTE_FOR_REQUEST, null);
+
+        IDoCareHttpUtils.addStandardHeaders(getActivity(), serverRequest);
+        serverRequest.addTextField(Constants.FieldName.ENTITY_ID.getValue(),
+                String.valueOf(mRequestId));
+        serverRequest.addTextField(Constants.FieldName.ENTITY_PARAM.getValue(),
+                voteForClosed ? "closed" : "created");
+        serverRequest.addTextField(Constants.FieldName.SCORE.getValue(),
+                String.valueOf(amount));
+
+        serverRequest.execute();
     }
 
 
