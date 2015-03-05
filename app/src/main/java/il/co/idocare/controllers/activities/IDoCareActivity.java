@@ -22,9 +22,6 @@ import com.google.android.gms.location.LocationServices;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-
 import il.co.idocare.Constants;
 import il.co.idocare.controllers.fragments.HomeFragment;
 import il.co.idocare.controllers.fragments.LoginFragment;
@@ -32,6 +29,7 @@ import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.R;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
 import il.co.idocare.models.RequestsMVCModel;
+import il.co.idocare.models.UsersMVCModel;
 
 
 public class IDoCareActivity extends Activity implements
@@ -45,6 +43,8 @@ public class IDoCareActivity extends Activity implements
 
     private RequestsMVCModel mRequestsModel;
 
+    private UsersMVCModel mUsersModel;
+
     // ---------------------------------------------------------------------------------------------
     //
     // Activity lifecycle management
@@ -54,7 +54,7 @@ public class IDoCareActivity extends Activity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initRequestsModel();
+        initializeModels();
 
         initUniversalImageLoader();
 
@@ -199,6 +199,10 @@ public class IDoCareActivity extends Activity implements
         return mRequestsModel;
     }
 
+    @Override
+    public UsersMVCModel getUsersModel() {
+        return mUsersModel;
+    }
 
     // End of fragments management
     //
@@ -338,9 +342,11 @@ public class IDoCareActivity extends Activity implements
                 .build();
     }
 
-    private void initRequestsModel() {
+    private void initializeModels() {
         mRequestsModel = new RequestsMVCModel(this);
         mRequestsModel.initialize();
+
+        mUsersModel = new UsersMVCModel(this);
     }
 
 }

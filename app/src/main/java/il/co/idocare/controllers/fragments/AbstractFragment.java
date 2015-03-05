@@ -14,6 +14,7 @@ import il.co.idocare.controllers.ControllerMVC;
 import il.co.idocare.handlermessaging.HandlerMessagingMaster;
 import il.co.idocare.handlermessaging.HandlerMessagingSlave;
 import il.co.idocare.models.RequestsMVCModel;
+import il.co.idocare.models.UsersMVCModel;
 
 
 /**
@@ -75,13 +76,23 @@ public abstract class AbstractFragment extends Fragment implements
 
 
     /**
-     * TODO: complete javadoc
-     * @return
+     * 
+     * @return MVC model representing the requests
      */
     public RequestsMVCModel getRequestsModel() {
         return mCallback.getRequestsModel();
     }
 
+
+    /**
+     *
+     * @return MVC model representing the users
+     */
+    public UsersMVCModel getUsersModel() {
+        return mCallback.getUsersModel();
+    }
+
+    
     // ---------------------------------------------------------------------------------------------
     //
     // MVC Controller methods
@@ -165,10 +176,16 @@ public abstract class AbstractFragment extends Fragment implements
                                     Bundle args);
 
         /**
-         * TODO: complete javadoc
-         * @return
+         *
+         * @return MVC model representing the requests
          */
         public RequestsMVCModel getRequestsModel();
+
+        /**
+         *
+         * @return MVC model representing the users
+         */
+        public UsersMVCModel getUsersModel();
     }
 
 

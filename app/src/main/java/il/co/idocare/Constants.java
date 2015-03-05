@@ -6,11 +6,12 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 public class Constants {
 
 
+
     /**
      * This enum is used in order to relate HTTP response to a particular HTTP request
      */
     public enum ServerRequestTag {GET_ALL_REQUESTS, REQUEST_DETAILS, NEW_REQUEST,
-        PICKUP_REQUEST, CLOSE_REQUEST, LOGIN}
+        PICKUP_REQUEST, CLOSE_REQUEST, GET_USER_DATA, LOGIN}
 
     /**
      * This enum (its ordinal() values) is used with startActivityForResult() and
@@ -40,6 +41,7 @@ public class Constants {
     public final static String ADD_REQUEST_URL = "http://dev-04.idocare.co.il/api-04/request/add";
     public final static String PICKUP_REQUEST_URL = "http://dev-04.idocare.co.il/api-04/request/pickup";
     public final static String CLOSE_REQUEST_URL = "http://dev-04.idocare.co.il/api-04/request/close";
+    public static final String GET_USER_DATA_URL = "http://dev-04.idocare.co.il/api-04/user/get";
 
 
     /**
@@ -66,8 +68,10 @@ public class Constants {
     public enum FieldName {
         RESPONSE_STATUS("status"), RESPONSE_MESSAGE("message"), RESPONSE_DATA("data"),
 
-        PASSWORD("user_data_auth"), USER_NICKNAME("user_data_nickname"), USER_ID("user_data_id"),
-        USER_PUBLIC_KEY("user_data_public_key"),
+        USER_PASSWORD("user_data_auth"), USER_NICKNAME("user_data_nickname"), USER_ID("user_data_id"),
+        USER_PUBLIC_KEY("user_data_public_key"), USER_FIRST_NAME("user_data_first_name"),
+        USER_LAST_NAME("user_data_last_name"), USER_REPUTATION("user_data_reputation"),
+        USER_PICTURE("user_data_picture"),
 
         REQUEST_ID("request_id"),
 
@@ -111,6 +115,9 @@ public class Constants {
 
         C_AUTHENTICATION_INITIATED,
         C_AUTHENTICATION_COMPLETED,
+
+        M_USER_DATA_UPDATE,
+        M_REQUEST_DATA_UPDATE,
     }
 
     /**

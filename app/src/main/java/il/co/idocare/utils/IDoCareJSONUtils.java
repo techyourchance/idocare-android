@@ -103,8 +103,7 @@ public class IDoCareJSONUtils {
         // Construct basic RequestItem
         RequestItem request = RequestItem
                 .createRequestItem(jsonObject.getLong(FieldName.REQUEST_ID.getValue()))
-                .setCreatedBy(extractUserItemFromJSONObject(
-                        jsonObject.getJSONObject(FieldName.CREATED_BY.getValue())))
+                .setCreatedBy(jsonObject.getLong(FieldName.CREATED_BY.getValue()))
                 .setCreatedAt(formatDate(jsonObject.getString(FieldName.CREATED_AT.getValue())))
                 .setLatitude(jsonObject.getDouble(FieldName.LATITUDE.getValue()))
                 .setLongitude(jsonObject.getDouble(FieldName.LONGITUDE.getValue()))
@@ -119,15 +118,13 @@ public class IDoCareJSONUtils {
 
         // If picked up then both "by" and "at" are required
         if (!jsonObject.isNull(FieldName.PICKED_UP_BY.getValue())) {
-            request.setPickedUpBy(extractUserItemFromJSONObject(
-                    jsonObject.getJSONObject(FieldName.PICKED_UP_BY.getValue())));
+            request.setPickedUpBy(jsonObject.getLong(FieldName.PICKED_UP_BY.getValue()));
             request.setPickedUpAt(formatDate(jsonObject.getString(FieldName.PICKED_UP_AT.getValue())));
         }
 
         // If closed then both "by" and "at" are required
         if (!jsonObject.isNull(FieldName.CLOSED_BY.getValue())) {
-            request.setClosedBy(extractUserItemFromJSONObject(
-                    jsonObject.getJSONObject(FieldName.CLOSED_BY.getValue())));
+            request.setClosedBy(jsonObject.getLong(FieldName.CLOSED_BY.getValue()));
             request.setClosedAt(formatDate(jsonObject.getString(FieldName.CLOSED_AT.getValue())));
         }
 
@@ -153,7 +150,8 @@ public class IDoCareJSONUtils {
             throws JSONException {
 
         // Ensure that all the required fields are present
-        if (jsonObject.isNull(FieldName.USER_ID.getValue())) {
+        if (jsonObject.isNull(FieldName.USER_ID.getValue()) ||
+                jsonObject.isNull(FieldName.USER_NICKNAME.getValue())) {
             return null;
         }
 
@@ -164,6 +162,18 @@ public class IDoCareJSONUtils {
         // Set optional fields
         if (!jsonObject.isNull(FieldName.USER_NICKNAME.getValue()))
             user.setNickname(jsonObject.getString(FieldName.USER_NICKNAME.getValue()));
+
+        if (!jsonObject.isNull(FieldName.USER_FIRST_NAME.getValue()))
+            user.setFirstName(jsonObject.getString(FieldName.USER_FIRST_NAME.getValue()));
+
+        if (!jsonObject.isNull(FieldName.USER_LAST_NAME.getValue()))
+            user.setLastName(jsonObject.getString(FieldName.USER_LAST_NAME.getValue()));
+
+        if (!jsonObject.isNull(FieldName.USER_REPUTATION.getValue()))
+            user.setReputation(jsonObject.getInt(FieldName.USER_REPUTATION.getValue()));
+
+        if (!jsonObject.isNull(FieldName.USER_PICTURE.getValue()))
+            user.setPictureUrl(jsonObject.getString(FieldName.USER_PICTURE.getValue()));
 
         return user;
     }

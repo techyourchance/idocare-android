@@ -24,19 +24,21 @@ public class RequestItem {
     private final static String LOG_TAG = "RequestItem";
 
     private long mId;
-    private UserItem mCreatedBy;
+    private long mCreatedBy;
     private String mCreatedAt;
     private String mCreatedComment;
     private String[] mCreatedPictures;
+    private int mCreatedReputation;
     private double mLat;
     private double mLong;
     private int mCreatedPollutionLevel;
-    private UserItem mPickedUpBy;
+    private long mPickedUpBy;
     private String mPickedUpAt;
-    private UserItem mClosedBy;
+    private long mClosedBy;
     private String mClosedAt;
     private String mClosedComment;
     private String[] mClosedPictures;
+    private int mClosedReputation;
 
 
     public static RequestItem createRequestItem(long id) {
@@ -44,45 +46,15 @@ public class RequestItem {
     }
 
     private RequestItem(long id) {
-        this(id, null, null, null, null, 0, 0, 0, null, null, null, null, null, null);
-    }
-
-    private RequestItem (
-            long id,
-            UserItem createdBy,
-            String createdAt,
-            String createdComment,
-            String[] createdPictures,
-            double latitude,
-            double longitude,
-            int createdPollutionLevel,
-            UserItem pickedUpBy,
-            String pickedUpAt,
-            UserItem closedBy,
-            String closedAt,
-            String closedComment,
-            String[] closedPictures) {
-
         mId = id;
-        mCreatedBy = createdBy;
-        mCreatedComment = createdComment;
-        mCreatedPictures = createdPictures;
-        mLat = latitude;
-        mLong = longitude;
-        mCreatedPollutionLevel = createdPollutionLevel;
-        mPickedUpBy = pickedUpBy;
-        mPickedUpAt = mPickedUpAt;
-        mClosedBy = closedBy;
-        mClosedAt = closedAt;
-        mClosedComment = closedComment;
-        mClosedPictures = closedPictures;
     }
+
 
     // ---------------------------------------------------------------------------------------------
     //
     // Setters
 
-    public RequestItem setCreatedBy(UserItem user) {
+    public RequestItem setCreatedBy(long user) {
         mCreatedBy = user;
         return this;
     }
@@ -121,7 +93,12 @@ public class RequestItem {
         return this;
     }
 
-    public RequestItem setPickedUpBy(UserItem user) {
+    public RequestItem setCreatedReputation(int reputation) {
+        mCreatedReputation = reputation;
+        return this;
+    }
+
+    public RequestItem setPickedUpBy(long user) {
         mPickedUpBy = user;
         return this;
     }
@@ -132,7 +109,7 @@ public class RequestItem {
     }
 
 
-    public RequestItem setClosedBy(UserItem user) {
+    public RequestItem setClosedBy(long user) {
         mClosedBy = user;
         return this;
     }
@@ -154,6 +131,11 @@ public class RequestItem {
         return this;
     }
 
+    public RequestItem setClosedReputation(int reputation) {
+        mClosedReputation = reputation;
+        return this;
+    }
+
 
 
     // ---------------------------------------------------------------------------------------------
@@ -165,7 +147,7 @@ public class RequestItem {
         return mId;
     }
 
-    public UserItem getCreatedBy() {
+    public long getCreatedBy() {
         return mCreatedBy;
     }
 
@@ -181,6 +163,10 @@ public class RequestItem {
         return mCreatedPictures;
     }
 
+    public int getCreatedReputation() {
+        return mCreatedReputation;
+    }
+
     public double getLat() {
         return mLat;
     }
@@ -193,7 +179,7 @@ public class RequestItem {
         return mCreatedPollutionLevel;
     }
 
-    public UserItem getPickedUpBy() {
+    public long getPickedUpBy() {
         return mPickedUpBy;
     }
 
@@ -201,7 +187,7 @@ public class RequestItem {
         return mPickedUpAt;
     }
 
-    public UserItem getClosedBy() {
+    public long getClosedBy() {
         return mClosedBy;
     }
 
@@ -215,6 +201,10 @@ public class RequestItem {
 
     public String[] getClosedPictures() {
         return mClosedPictures;
+    }
+
+    public int getClosedReputation() {
+        return mClosedReputation;
     }
 
 }

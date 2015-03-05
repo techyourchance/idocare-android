@@ -93,7 +93,7 @@ public class LoginFragment extends AbstractFragment implements ServerRequest.OnS
         serverRequest.addHeader(Constants.HttpHeader.USER_USERNAME.getValue(),
                 Base64.encodeToString(usernameBytes, Base64.NO_WRAP));
 
-        serverRequest.addTextField(FieldName.PASSWORD.getValue(),
+        serverRequest.addTextField(FieldName.USER_PASSWORD.getValue(),
                 Base64.encodeToString(passwordBytes, Base64.NO_WRAP));
 
 

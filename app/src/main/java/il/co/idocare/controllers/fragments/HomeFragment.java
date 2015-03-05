@@ -4,7 +4,6 @@ package il.co.idocare.controllers.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,26 +14,19 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import java.util.List;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.pojos.RequestItem;
-import il.co.idocare.ServerRequest;
-import il.co.idocare.utils.IDoCareHttpUtils;
-import il.co.idocare.utils.IDoCareJSONUtils;
 import il.co.idocare.views.HomeViewMVC;
-import il.co.idocare.widgets.RequestThumbnailRelativeLayout;
+import il.co.idocare.views.RequestThumbnailViewMVC;
 
 
 public class HomeFragment extends AbstractFragment {
 
     private final static String LOG_TAG = "HomeFragment";
 
-    HomeListAdapter mListAdapter;
+    HomeListAdapter mRequestThumbnailsAdapter;
     HomeViewMVC mViewMVCHome;
 
 
@@ -51,19 +43,19 @@ public class HomeFragment extends AbstractFragment {
         // This is required for automatic refresh of action bar options upon fragment's loading
         setHasOptionsMenu(true);
 
-        mListAdapter = new HomeListAdapter(getActivity(), 0);
-        final ListView listPictures =
+        mRequestThumbnailsAdapter = new HomeListAdapter(getActivity(), 0);
+        final ListView requestThumbnails =
                 (ListView) mViewMVCHome.getRootView().findViewById(R.id.list_requests_thumbnails);
-        listPictures.setAdapter(mListAdapter);
+        requestThumbnails.setAdapter(mRequestThumbnailsAdapter);
 
-        listPictures.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        requestThumbnails.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 // Get the selected item
-                RequestItem item = (RequestItem) listPictures.getItemAtPosition(position);
+                long requestId = (Long) requestThumbnails.getItemAtPosition(position);
                 // Create a bundle and put the id of the selected item there
                 Bundle args = new Bundle();
-                args.putLong(Constants.FieldName.REQUEST_ID.getValue(), item.getId());
+                args.putLong(Constants.FieldName.REQUEST_ID.getValue(), requestId);
                 // Replace with RequestDetailsFragment and pass the bundle as argument
                 replaceFragment(RequestDetailsFragment.class, true, args);
             }
@@ -81,9 +73,9 @@ public class HomeFragment extends AbstractFragment {
         // in a separate thread
         Thread t = new Thread() {
             public void run() {
-                final List<RequestItem> requests;
+                final List<Long> requestsIds;
                 try {
-                    requests = getRequestsModel().getAllRequests();
+                    requestsIds = getRequestsModel().getAllRequestsIds();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                     return;
@@ -92,8 +84,8 @@ public class HomeFragment extends AbstractFragment {
                 HomeFragment.this.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        HomeFragment.this.mListAdapter.clear();
-                        HomeFragment.this.mListAdapter.addAll(requests);
+                        HomeFragment.this.mRequestThumbnailsAdapter.clear();
+                        HomeFragment.this.mRequestThumbnailsAdapter.addAll(requestsIds);
                     }
                 });
 
@@ -137,27 +129,29 @@ public class HomeFragment extends AbstractFragment {
 
 
 
-    private class HomeListAdapter extends ArrayAdapter<RequestItem> {
+    private class HomeListAdapter extends ArrayAdapter<Long> {
 
         private final static String LOG_TAG = "HomeListAdapter";
 
+        private Context mContext;
+
         public HomeListAdapter(Context context, int resource) {
             super(context, resource);
+            mContext = context;
         }
-
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            RequestThumbnailRelativeLayout view;
+            RequestThumbnailViewMVC view;
+
             if (convertView == null) {
-                view = new RequestThumbnailRelativeLayout(getContext());
+                view = new RequestThumbnailViewMVC(mContext, getRequestsModel(),
+                        getUsersModel());
             } else {
-                view = (RequestThumbnailRelativeLayout) convertView;
+                view = (RequestThumbnailViewMVC) convertView;
             }
 
-            RequestItem request = getItem(position);
-
-            view.showRequestThumbnail(request);
+            view.showRequest(getItem(position));
 
             return view;
         }

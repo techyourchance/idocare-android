@@ -27,7 +27,7 @@
     <string name="btn_vote_down_accessibility">Vote down</string>
     <string name="img_picture_accessibility">Picture</string>
     <string name="txt_location_title">Location:</string>
-    <string name="txt_created_by_title">Created by:</string>
+    <string name="txt_created_title">Created by:</string>
     <string name="txt_closed_by_title">Closed by:</string>
 
 </resources>

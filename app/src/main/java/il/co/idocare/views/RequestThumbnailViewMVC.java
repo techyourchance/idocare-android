@@ -1,8 +1,11 @@
-package il.co.idocare.widgets;
+package il.co.idocare.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.AttributeSet;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -17,13 +20,28 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListe
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
+import il.co.idocare.handlermessaging.HandlerMessagingSlave;
+import il.co.idocare.models.RequestsMVCModel;
+import il.co.idocare.models.UsersMVCModel;
 import il.co.idocare.pojos.RequestItem;
 
 /**
  * This is the top level View which should be used as a "thumbnail" for requests
  * when they are displayed in a list.
  */
-public class RequestThumbnailRelativeLayout extends RelativeLayout {
+public class RequestThumbnailViewMVC extends RelativeLayout implements
+        ViewMVC,
+        HandlerMessagingSlave {
+
+    private static final String LOG_TAG = "RequestThumbnailViewMVC";
+
+    private final Object LOCK = new Object();
+
+    private Handler mInboxHandler;
+    private RequestsMVCModel mRequestsModel;
+    private UsersMVCModel mUsersModel;
+
+   private RequestItem mRequestItem;
 
 
     private TextView mTxtRequestStatus;
@@ -40,25 +58,23 @@ public class RequestThumbnailRelativeLayout extends RelativeLayout {
 
 
 
-    public RequestThumbnailRelativeLayout(Context context) {
+    public RequestThumbnailViewMVC(Context context, RequestsMVCModel requestsModel,
+                                   UsersMVCModel usersModel) {
         super(context);
+        mRequestsModel = requestsModel;
+        mUsersModel = usersModel;
+
         init(context);
     }
 
-    public RequestThumbnailRelativeLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context);
-    }
 
-    public RequestThumbnailRelativeLayout(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init(context);
-    }
 
     /**
      * All three constructors invoke this method.
      */
     private void init(Context context) {
+
+        // Inflate the underlying layout
         LayoutInflater.from(context).inflate(R.layout.layout_request_thumbnail, this, true);
 
         // This padding is required in order not to hide the border when colorizing inner views
@@ -84,23 +100,104 @@ public class RequestThumbnailRelativeLayout extends RelativeLayout {
         mIsPickedUp = false;
     }
 
-    /**
-     * Show "thumbnail" details of the request
-     * @param request the request item to be shown
-     */
-    public void showRequestThumbnail(RequestItem request) {
-        setStatus(request);
-        setColors();
-        setTexts(request);
-        setPictures(request);
+
+    @Override
+    public Handler getInboxHandler() {
+
+        // Since most of the work done in MVC Views consist of manipulations on underlying
+        // Android Views, it will be convenient (and less error prone) if MVC View's inbox Handler
+        // will be running on UI thread.
+        if (mInboxHandler == null) {
+            mInboxHandler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    RequestThumbnailViewMVC.this.handleMessage(msg);
+                }
+            };
+        }
+        return mInboxHandler;
     }
 
 
-    private void setStatus(RequestItem request) {
-        if (request.getClosedBy() != null) {
+    @Override
+    public Bundle getViewState() {
+        return null;
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        // Register for updates with requests and users models
+        mRequestsModel.addOutboxHandler(getInboxHandler());
+        mUsersModel.addOutboxHandler(getInboxHandler());
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        // Unregistering from updates with requests and users models
+        mRequestsModel.removeOutboxHandler(getInboxHandler());
+        mUsersModel.removeOutboxHandler(getInboxHandler());
+    }
+
+
+    private void handleMessage(Message msg) {
+        // TODO: write request/user update logic
+        switch (Constants.MESSAGE_TYPE_VALUES[msg.what]) {
+            case M_USER_DATA_UPDATE:
+                long userId = ((Long)msg.obj);
+                synchronized (LOCK) {
+                    if (mRequestItem.getCreatedBy() == userId) {
+                        updateUsers();
+                    }
+                }
+                break;
+
+            case M_REQUEST_DATA_UPDATE:
+                long requestId = ((Long)msg.obj);
+
+                synchronized (LOCK) {
+                    if (mRequestItem.getId() == requestId) {
+                        showRequest(requestId);
+                    }
+                }
+
+            default:
+                break;
+        }
+    }
+    /**
+     * Update this thumbnail with the details of the request having the specified ID
+     * @param requestId id of the request item which should be shown
+     */
+    public void showRequest(long requestId) {
+
+        synchronized (LOCK) {
+            // Get the request item
+            mRequestItem = mRequestsModel.getRequest(requestId);
+            if (mRequestItem == null) {
+                Log.e(LOG_TAG, "could not find request in the model. ID: " + String.valueOf(requestId));
+            }
+
+        }
+
+        // Update the UI
+        setStatus();
+        setColors();
+        setTexts();
+        setPictures();
+
+        // Update user's details
+        updateUsers();
+    }
+
+
+
+    private void setStatus() {
+        if (mRequestItem.getClosedBy() != 0) {
             mIsClosed = true;
         }
-        else if (request.getPickedUpBy() != null) {
+        else if (mRequestItem.getPickedUpBy() != 0) {
             mIsClosed = false;
             mIsPickedUp = true;
         }
@@ -124,7 +221,7 @@ public class RequestThumbnailRelativeLayout extends RelativeLayout {
         mTxtRequestLocation.setBackgroundColor(statusColor);
     }
 
-    private void setTexts(RequestItem request) {
+    private void setTexts() {
         if (mIsClosed)
             mTxtRequestStatus.setText(getResources().getString(R.string.txt_closed_request_title));
         else if (mIsPickedUp)
@@ -135,24 +232,23 @@ public class RequestThumbnailRelativeLayout extends RelativeLayout {
         // TODO: need to set city name
         mTxtRequestLocation.setText("TODO City Name");
 
-        mTxtCreatedComment.setText(request.getCreatedComment());
-        mTxtCreatedBy.setText(request.getCreatedBy().getNickname());
-        mTxtCreatedAt.setText(request.getCreatedAt());
+        mTxtCreatedComment.setText(mRequestItem.getCreatedComment());
+        mTxtCreatedAt.setText(mRequestItem.getCreatedAt());
 
         // TODO: set actual votes
         mTxtCreatedVotes.setText("TODO\nVotes");
     }
 
 
-    private void setPictures(RequestItem request) {
+    private void setPictures() {
 
         mImgRequestThumbnail.setVisibility(View.GONE);
         mTxtNoRequestThumbnailPicture.setVisibility(View.VISIBLE);
 
-        if (request.getCreatedPictures() != null && request.getCreatedPictures().length > 0) {
+        if (mRequestItem.getCreatedPictures() != null && mRequestItem.getCreatedPictures().length > 0) {
 
             ImageLoader.getInstance().displayImage(
-                    request.getCreatedPictures()[0],
+                    mRequestItem.getCreatedPictures()[0],
                     mImgRequestThumbnail,
                     Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS,
                     new RequestThumbnailLoadingListener(mTxtNoRequestThumbnailPicture,
@@ -168,6 +264,15 @@ public class RequestThumbnailRelativeLayout extends RelativeLayout {
         }
     }
 
+    private void updateUsers() {
+        long createdBy;
+        synchronized (LOCK) {
+            // We need this sync for the situation when both the request and some relevant user
+            // are updated simultaneously (prevent taking createdBy from the old request)
+            createdBy = mRequestItem.getCreatedBy();
+        }
+        mTxtCreatedBy.setText(mUsersModel.getUser(createdBy).getNickname());
+    }
 
     /**
      * ImageLoadingListener used for alternating between TextView and ImageView when

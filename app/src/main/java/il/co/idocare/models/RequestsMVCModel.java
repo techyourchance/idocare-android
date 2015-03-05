@@ -54,6 +54,13 @@ public class RequestsMVCModel extends AbstractModelMVC implements ServerRequest.
     }
 
     /**
+     * Update this model with the up-to-date data from the server
+     */
+    public void update() {
+        fetchRequestsFromServer();
+    }
+
+    /**
      * Obtain a list of all the requests in this model. This method will block if this model hasn't
      * completed its initialization yet.
      * NOTE: since this method may block, do not ever call it from UI thread.
@@ -71,21 +78,33 @@ public class RequestsMVCModel extends AbstractModelMVC implements ServerRequest.
 
 
     /**
-     * Get request item having a particular ID. This method will block if this model hasn't
-     * completed its initialization yet.
+     * Obtain a list of IDs of all the requests in this model. This method will block if this
+     * model hasn't completed its initialization yet.
      * NOTE: since this method may block, do not ever call it from UI thread.
-     * @param id ID of the request
-     * @return RequestItem object having the required ID, or null if there is no such request in
-     *         the model
+     * @return a list containing IDs of all the requests in this model
      * @throws java.lang.InterruptedException if the calling thread was interrupted during block
      */
-    public RequestItem getRequest(long id) throws InterruptedException {
+    public List<Long> getAllRequestsIds()  throws InterruptedException {
         synchronized (LOCK) {
             while (mRequestItems == null) {
                 LOCK.wait();
             }
-            return mRequestItems.get(Long.valueOf(id));
+            return new ArrayList<Long>(mRequestItems.keySet());
         }
+    }
+
+
+    /**
+     * Get request item having a particular ID.
+     * @param id ID of the request
+     * @return RequestItem object having the required ID, or null if there is no such request in
+     *         the model, or the model hasn't completed its initialization
+     */
+    public RequestItem getRequest(long id) {
+        if (mRequestItems == null)
+            return null;
+        else
+            return mRequestItems.get(Long.valueOf(id));
     }
 
 
@@ -135,26 +154,32 @@ public class RequestsMVCModel extends AbstractModelMVC implements ServerRequest.
     private void updateModel(List<RequestItem> requests) {
 
         // Initialize map with correct capacity
-        ConcurrentHashMap<Long, RequestItem> requestsMap =
-                new ConcurrentHashMap<Long, RequestItem>(requests.size());
+        if (mRequestItems == null) {
+            mRequestItems = new ConcurrentHashMap<Long, RequestItem>(requests.size());
+        }
 
         // Add requests to the map
         for (RequestItem request : requests) {
-            requestsMap.put(request.getId(), request);
-        }
 
-        synchronized (LOCK) {
-            if (mRequestItems == null) {
-                // If the map hasn't been initialized yed, then there might be blocked
-                // threads waiting to be notified
-                LOCK.notifyAll();
+            long id = request.getId();
+
+            if (!mRequestItems.containsKey(id)) {
+                mRequestItems.put(id, request);
+                // Assuming that if this request wasn't in the map, then there are no listeners
+                // registered for its changes.
+            } else {
+                // TODO: instead of simply replacing RequestItem, we need to make sure there was an actual change
+                mRequestItems.remove(id);
+                mRequestItems.put(id, request);
+                // Send a notification about change in data of a specific request
+                notifyOutboxHandlers(Constants.MessageType.M_REQUEST_DATA_UPDATE.ordinal(), 0, 0,
+                        Long.valueOf(id));
             }
-
-            // TODO: maybe need to update the map and not replace it completely?
-            // Replace the map
-            mRequestItems = requestsMap;
         }
 
+        // Maybe there are some threads waiting for the model to be updated
+        synchronized (LOCK) {
+            LOCK.notifyAll();
+        }
     }
-
 }

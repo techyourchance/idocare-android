@@ -16,8 +16,11 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
+import il.co.idocare.models.RequestsMVCModel;
+import il.co.idocare.models.UsersMVCModel;
 import il.co.idocare.pojos.RequestItem;
 import il.co.idocare.pojos.RequestItem.RequestStatus;
+import il.co.idocare.pojos.UserItem;
 
 /**
  * MVC View for New Request screen.
@@ -26,41 +29,48 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
 
     private final static String LOG_TAG = "RequestDetailsViewMVC";
 
+    private final Object LOCK = new Object();
 
-    Context mContext;
-    View mRootView;
-    RequestItem mRequestItem;
-    RequestStatus mRequestStatus;
+    private Context mContext;
 
+    private RequestsMVCModel mRequestsModel;
+    private UsersMVCModel mUsersModel;
 
-    TextView mTxtStatus;
-    TextView mTxtCoarseLocation;
-    TextView mTxtFineLocation;
-    
-    TextView mTxtCreatedByTitle;
-    ImageView mImgCreatedByPicture;
-    TextView mTxtCreatedByNickname;
-    TextView mTxtCreatedAt;
-    TextView mTxtCreatedByReputation;
-    TextView mTxtCreatedVotes;
-    TextView mTxtCreatedComment;
-    ImageView[] mImgCreatedPictures;
-
-    TextView mTxtClosedByTitle;
-    ImageView mImgClosedByPicture;
-    TextView mTxtClosedByNickname;
-    TextView mTxtClosedAt;
-    TextView mTxtClosedByReputation;
-    TextView mTxtClosedVotes;
-    TextView mTxtClosedComment;
-    ImageView[] mImgClosedPictures;
-
-    Button mBtnPickUpRequest;
-    Button mBtnCloseRequest;
+    private RequestItem mRequestItem;
+    private RequestStatus mRequestStatus;
 
 
-    public RequestDetailsViewMVC(Context context, ViewGroup container, Bundle savedInstanceState) {
+    private View mRootView;
+    private TextView mTxtStatus;
+    private TextView mTxtCoarseLocation;
+    private TextView mTxtFineLocation;
+    private TextView mTxtCreatedTitle;
+    private ImageView mImgCreatedByPicture;
+    private TextView mTxtCreatedByNickname;
+    private TextView mTxtCreatedAt;
+    private TextView mTxtCreatedByReputation;
+    private TextView mTxtCreatedReputation;
+    private TextView mTxtCreatedComment;
+    private ImageView[] mImgCreatedPictures;
+    private TextView mTxtClosedByTitle;
+    private ImageView mImgClosedByPicture;
+    private TextView mTxtClosedByNickname;
+    private TextView mTxtClosedAt;
+    private TextView mTxtClosedByReputation;
+    private TextView mTxtClosedVotes;
+    private TextView mTxtClosedComment;
+    private ImageView[] mImgClosedPictures;
+
+    private Button mBtnPickUpRequest;
+    private Button mBtnCloseRequest;
+
+
+    public RequestDetailsViewMVC(Context context, ViewGroup container, Bundle savedInstanceState,
+                                 RequestsMVCModel requestsModel, UsersMVCModel usersModel) {
         mContext = context;
+        mRequestsModel = requestsModel;
+        mUsersModel = usersModel;
+
         mRootView = LayoutInflater.from(mContext)
                 .inflate(R.layout.fragment_request_details, container, false);
 
@@ -71,7 +81,37 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
 
     @Override
     protected void handleMessage(Message msg) {
-        // TODO: complete this method
+        switch (Constants.MESSAGE_TYPE_VALUES[msg.what]) {
+            case M_USER_DATA_UPDATE:
+                // The assumption here is that update to the data of the user can't change the
+                // status of the request, but just the details of this particular user (e.g. reputation)
+                long userId = ((Long)msg.obj);
+                synchronized (LOCK) {
+                    if (mRequestItem.getCreatedBy() != 0 && mRequestItem.getCreatedBy() == userId) {
+                        updateCreatedByUser();
+                    }
+                    else if (mRequestItem.getPickedUpBy() != 0 && mRequestItem.getPickedUpBy() == userId) {
+                        updatePickedUpByUser();
+                    }
+                    else if (mRequestItem.getClosedBy() != 0 && mRequestItem.getClosedBy() == userId) {
+                        updateClosedByUser();
+                    }
+                }
+                break;
+
+            case M_REQUEST_DATA_UPDATE:
+                long requestId = ((Long)msg.obj);
+
+                synchronized (LOCK) {
+                    if (mRequestItem.getId() == requestId) {
+                        // Update has been made to the shown request
+                        showRequest(requestId);
+                    }
+                }
+
+            default:
+                break;
+        }
     }
 
     @Override
@@ -94,12 +134,12 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
 
         // "Created by" views
         includedView = mRootView.findViewById(R.id.element_created_by);
-        mTxtCreatedByTitle = (TextView) includedView.findViewById(R.id.txt_title);
+        mTxtCreatedTitle = (TextView) includedView.findViewById(R.id.txt_title);
         mImgCreatedByPicture = (ImageView) includedView.findViewById(R.id.img_user_picture);
         mTxtCreatedByNickname = (TextView) includedView.findViewById(R.id.txt_user_nickname);
         mTxtCreatedAt = (TextView) includedView.findViewById(R.id.txt_date);
         mTxtCreatedByReputation = (TextView) includedView.findViewById(R.id.txt_user_reputation);
-        mTxtCreatedVotes = (TextView) includedView.findViewById(R.id.txt_votes);
+        mTxtCreatedReputation = (TextView) includedView.findViewById(R.id.txt_votes);
         mTxtCreatedComment = (TextView) includedView.findViewById(R.id.txt_comment);
 
         // "Created pictures" views
@@ -138,26 +178,27 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
 
     /**
      *
-     * Decide which of the Android Views in this MVC View should be visible and populate them with
-     * data from the RequestItem object.
-     * @param requestItem request item to take teh data from
+     * Show the details of the request
+     * @param requestId ID of the request that should be shown
      */
-    public void populateChildViewsFromRequestItem(RequestItem requestItem) {
+    public void showRequest(long requestId) {
+        // This sync prevents concurrent change of mRequestItem
+        synchronized (LOCK) {
+            mRequestItem = mRequestsModel.getRequest(requestId);
 
-        mRequestItem = requestItem;
-        setRequestStatus();
+            setRequestStatus();
 
-        // Handle the status bar
-        populateStatusBarFromRequestItem();
-        // Handle the views related to initial request
-        populateCreatedViewsFromRequestItem();
-        // Handle the views related to pickup info
-        populateClosedViewsFromRequestItem();
-        // Handle the pickup button functionality
-        populatePickupButtonFromRequestItem();
-        // Handle the close button functionality
-        populateCloseButtonFromRequestItem();
-
+            // Handle the status bar
+            populateStatusBarFromRequestItem();
+            // Handle the views related to initial request
+            populateCreatedViewsFromRequestItem();
+            // Handle the views related to pickup info
+            populateClosedViewsFromRequestItem();
+            // Handle the pickup button functionality
+            populatePickupButtonFromRequestItem();
+            // Handle the close button functionality
+            populateCloseButtonFromRequestItem();
+        }
     }
 
 
@@ -213,12 +254,11 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
      * Handle the views describing the initial request
      */
     private void populateCreatedViewsFromRequestItem() {
-        mTxtCreatedByTitle.setText(R.string.txt_created_by_title);
-        mImgCreatedByPicture.setImageResource(R.drawable.ic_no_user_picture);
-        mTxtCreatedByNickname.setText(mRequestItem.getCreatedBy().getNickname());
+
+
+        mTxtCreatedTitle.setText(R.string.txt_created_title);
         mTxtCreatedAt.setText(mRequestItem.getCreatedAt());
-        mTxtCreatedByReputation.setText("666");
-        mTxtCreatedVotes.setText("666");
+        mTxtCreatedReputation.setText(String.valueOf(mRequestItem.getCreatedReputation()));
 
         if (mRequestItem.getCreatedComment() == null ||
                 mRequestItem.getCreatedComment().isEmpty()) {
@@ -243,6 +283,25 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
 
         mTxtFineLocation.setText("TODO fine loc");
 
+        updateCreatedByUser();
+
+    }
+
+    private void updateCreatedByUser() {
+        UserItem createdByUserItem = mUsersModel.getUser(mRequestItem.getCreatedBy());
+
+        mTxtCreatedByNickname.setText(createdByUserItem.getNickname());
+
+        if (createdByUserItem.getPictureUrl() != null) {
+            ImageLoader.getInstance().displayImage(
+                    createdByUserItem.getPictureUrl(),
+                    mImgCreatedByPicture,
+                    Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
+        } else {
+            mImgCreatedByPicture.setImageResource(R.drawable.default_user_picture);
+        }
+
+        mTxtCreatedByReputation.setText(String.valueOf(createdByUserItem.getReputation()));
     }
 
     /**
@@ -259,18 +318,14 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
             return;
         }
 
-
         mRootView.findViewById(R.id.element_closed_by).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.element_closed_pictures).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.btn_close_request).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.line_users_separator).setVisibility(View.VISIBLE);
 
         mTxtClosedByTitle.setText(R.string.txt_closed_by_title);
-        mImgClosedByPicture.setImageResource(R.drawable.ic_no_user_picture);
-        mTxtClosedByNickname.setText(mRequestItem.getClosedBy().getNickname());
         mTxtClosedAt.setText(mRequestItem.getClosedAt());
-        mTxtClosedByReputation.setText("666");
-        mTxtClosedVotes.setText("666");
+        mTxtClosedVotes.setText(String.valueOf(mRequestItem.getClosedReputation()));
 
         if (mRequestItem.getClosedComment() == null ||
                 mRequestItem.getClosedComment().isEmpty()) {
@@ -294,6 +349,25 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
             }
         }
 
+        updateClosedByUser();
+
+    }
+
+    private void updateClosedByUser() {
+        UserItem closedByUserItem = mUsersModel.getUser(mRequestItem.getClosedBy());
+
+        mTxtClosedByNickname.setText(closedByUserItem.getNickname());
+
+        if (closedByUserItem.getPictureUrl() != null) {
+            ImageLoader.getInstance().displayImage(
+                    closedByUserItem.getPictureUrl(),
+                    mImgClosedByPicture,
+                    Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
+        } else {
+            mImgClosedByPicture.setImageResource(R.drawable.default_user_picture);
+        }
+
+        mTxtClosedByReputation.setText(String.valueOf(closedByUserItem.getReputation()));
     }
 
     /**
@@ -315,12 +389,17 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         }
         else if (mRequestStatus == RequestStatus.PICKED_UP_BY_OTHER) {
             mBtnPickUpRequest.setClickable(false);
-            mBtnPickUpRequest.setText("Assigned to " + mRequestItem.getPickedUpBy().getNickname());
+            updatePickedUpByUser();
         }
         else {
             mBtnPickUpRequest.setVisibility(View.GONE);
         }
 
+    }
+
+    private void updatePickedUpByUser() {
+        long pickedUpBy = mRequestItem.getPickedUpBy();
+        mBtnPickUpRequest.setText("Assigned to " + mUsersModel.getUser(pickedUpBy).getNickname());
     }
 
 
@@ -354,20 +433,18 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         boolean userLoggedIn = prefs.contains(Constants.FieldName.USER_ID.getValue());
         long userId = prefs.getLong(Constants.FieldName.USER_ID.getValue(), 0);
 
-        if (mRequestItem.getClosedBy() != null) {
-            if (userLoggedIn && (userId == mRequestItem.getClosedBy().getId()))
+        if (mRequestItem.getClosedBy() != 0) {
+            if (userLoggedIn && (userId == mRequestItem.getClosedBy()))
                 mRequestStatus = RequestStatus.CLOSED_BY_ME;
             else
                 mRequestStatus = RequestStatus.CLOSED_BY_OTHER;
-        }
-        else if (mRequestItem.getPickedUpBy() != null) {
-            if (userLoggedIn && (userId == mRequestItem.getPickedUpBy().getId()))
+        } else if (mRequestItem.getPickedUpBy() != 0) {
+            if (userLoggedIn && (userId == mRequestItem.getPickedUpBy()))
                 mRequestStatus = RequestStatus.PICKED_UP_BY_ME;
             else
                 mRequestStatus = RequestStatus.PICKED_UP_BY_OTHER;
-        }
-        else if (mRequestItem.getCreatedPictures() != null) {
-            if (userLoggedIn && (userId == mRequestItem.getCreatedBy().getId()))
+        } else if (mRequestItem.getCreatedBy() != 0) {
+            if (userLoggedIn && (userId == mRequestItem.getCreatedBy()))
                 mRequestStatus = RequestStatus.NEW_BY_ME;
             else
                 mRequestStatus = RequestStatus.NEW_BY_OTHER;

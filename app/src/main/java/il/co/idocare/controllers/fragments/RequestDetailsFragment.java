@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import il.co.idocare.Constants;
-import il.co.idocare.pojos.RequestItem;
 import il.co.idocare.ServerRequest;
 import il.co.idocare.utils.IDoCareHttpUtils;
 import il.co.idocare.views.RequestDetailsViewMVC;
@@ -18,23 +17,47 @@ public class RequestDetailsFragment extends AbstractFragment {
 
     private final static String LOG_TAG = "RequestDetailsFragment";
 
-    RequestDetailsViewMVC mRequestDetailsViewMVC;
+    private RequestDetailsViewMVC mRequestDetailsViewMVC;
 
-    RequestItem mRequestItem;
+    private long mRequestId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         mRequestDetailsViewMVC =
-                new RequestDetailsViewMVC(getActivity(), container, savedInstanceState);
+                new RequestDetailsViewMVC(getActivity(), container, savedInstanceState,
+                        getRequestsModel(), getUsersModel());
+
+        obtainRequestItemAndShowItsDetails();
+
+        return mRequestDetailsViewMVC.getRootView();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
         // Provide inbox Handler to the MVC View
         mRequestDetailsViewMVC.addOutboxHandler(getInboxHandler());
         // Add MVC View's Handler to the set of outbox Handlers
         addOutboxHandler(mRequestDetailsViewMVC.getInboxHandler());
 
-        obtainRequestItemAndShowItsDetails();
+        // Notify the MVC view about models' changes
+        getUsersModel().addOutboxHandler(mRequestDetailsViewMVC.getInboxHandler());
+        getRequestsModel().addOutboxHandler(mRequestDetailsViewMVC.getInboxHandler());
+    }
 
-        return mRequestDetailsViewMVC.getRootView();
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // Remove "listener" handlers between this MVC controller and MVC views
+        mRequestDetailsViewMVC.removeOutboxHandler(getInboxHandler());
+        removeOutboxHandler(mRequestDetailsViewMVC.getInboxHandler());
+
+        // Remove "listener" handlers between MVC views and MVC Models
+        getUsersModel().removeOutboxHandler(mRequestDetailsViewMVC.getInboxHandler());
+        getRequestsModel().removeOutboxHandler(mRequestDetailsViewMVC.getInboxHandler());
     }
 
     @Override
@@ -78,32 +101,9 @@ public class RequestDetailsFragment extends AbstractFragment {
             return;
         }
 
-        final long id = args.getLong(Constants.FieldName.REQUEST_ID.getValue());
+        mRequestId = args.getLong(Constants.FieldName.REQUEST_ID.getValue());
+        mRequestDetailsViewMVC.showRequest(mRequestId);
 
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    mRequestItem = getRequestsModel().getRequest(id);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                if (mRequestItem == null) {
-                    // TODO: handle this error somehow
-                    return;
-                }
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRequestDetailsViewMVC.populateChildViewsFromRequestItem(mRequestItem);
-                    }
-                });
-
-            }
-        });
-        t.start();
     }
 
 
@@ -114,7 +114,7 @@ public class RequestDetailsFragment extends AbstractFragment {
 
         IDoCareHttpUtils.addStandardHeaders(getActivity(), serverRequest);
         serverRequest.addTextField(Constants.FieldName.REQUEST_ID.getValue(),
-                String.valueOf(mRequestItem.getId()));
+                String.valueOf(mRequestId));
 
         serverRequest.execute();
 
@@ -122,7 +122,7 @@ public class RequestDetailsFragment extends AbstractFragment {
 
     private void closeRequest() {
         Bundle args = new Bundle();
-        args.putLong(Constants.FieldName.REQUEST_ID.getValue(), mRequestItem.getId());
+        args.putLong(Constants.FieldName.REQUEST_ID.getValue(), mRequestId);
         replaceFragment(CloseRequestFragment.class, true, args);
     }
 
