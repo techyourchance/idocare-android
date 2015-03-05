@@ -3,18 +3,16 @@
 
     <string name="app_name">IDoCare</string>
     <string name="btn_add_new_request">Add request</string>
+    <string name="btn_switch_to_new_request_fragment">Add request</string>
     <string name="btn_pickup_request">Pickup request</string>
-    <string name="btn_close_request">Done</string>
+    <string name="btn_switch_to_close_request_fragment">Close</string>
+    <string name="btn_close_request">I DID IT!</string>
     <string name="btn_take_picture">Add photo</string>
     <string name="edt_comment_hint">Comment</string>
     <string name="menu_add_new_request_title">Add new request</string>
     <string name="image_request_thumbnail_content_description">Cleanup request thumbnail</string>
-    <string name="text_request_thumbnail_loading">Loading picture</string>
-    <string name="text_request_thumbnail_failed">Load failed</string>
-    <string name="text_request_thumbnail_cancelled">Load cancelled</string>
-    <string name="text_request_thumbnail_no_picture">No photo</string>
-    <string name="login_username_title">Username:</string>
-    <string name="login_password_title">Password:</string>
+    <string name="login_username_hint">Username:</string>
+    <string name="login_password_hint">Password:</string>
     <string name="btn_login_text">Log in</string>
     <string name="img_logo_accessibility">IDoCare logo</string>
     <string name="img_grass_accessibility">Grass picture</string>
@@ -29,5 +27,7 @@
     <string name="txt_location_title">Location:</string>
     <string name="txt_created_title">Created by:</string>
     <string name="txt_closed_by_title">Closed by:</string>
+    <string name="edt_closed_comment_hint">Leave a comment</string>
+    <string name="btn_add_picture_text">Add a picture</string>
 
 </resources>

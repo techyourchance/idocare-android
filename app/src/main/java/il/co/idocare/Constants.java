@@ -31,6 +31,9 @@ public class Constants {
             .considerExifParams(true)
             .build();
 
+    public static final String UIL_LOCAL_FILE_PREFIX = "file:///";
+
+
 
 
     // URLs used to issue requests to the server

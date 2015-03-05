@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <LinearLayout
+        android:id="@+id/view_take_picture"
+        android:orientation="vertical"
+        android:layout_width="281dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/fragment_default_margin"
+        android:gravity="center"
+        android:background="@color/picture_background"
+        android:clickable="true">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/picture_background"
+            android:src="@drawable/ic_picture_placeholder_large"
+            android:scaleType="centerInside"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/picture_background"
+            android:text="@string/btn_add_picture_text"
+            android:textSize="@dimen/title_text_size"
+            android:textColor="@color/text_on_picture_background"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_marginTop="@dimen/fragment_small_margin"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal">
+        
+        <ImageView
+            android:id="@+id/img_picture0"
+            android:layout_width="91dp"
+            android:layout_height="70dp"
+            android:layout_marginRight="@dimen/fragment_smallest_margin"
+            android:layout_marginEnd="@dimen/fragment_smallest_margin"
+            android:background="@color/picture_background"
+            android:src="@drawable/ic_picture_placeholder_small"
+            android:scaleType="center"/>
+
+
+        <ImageView
+            android:id="@+id/img_picture1"
+            android:layout_width="91dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="@dimen/fragment_smallest_margin"
+            android:layout_marginStart="@dimen/fragment_smallest_margin"
+            android:layout_marginRight="@dimen/fragment_smallest_margin"
+            android:layout_marginEnd="@dimen/fragment_smallest_margin"
+            android:background="@color/picture_background"
+            android:src="@drawable/ic_picture_placeholder_small"
+            android:scaleType="center"/>
+
+
+        <ImageView
+            android:id="@+id/img_picture2"
+            android:layout_width="91dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="@dimen/fragment_smallest_margin"
+            android:layout_marginStart="@dimen/fragment_smallest_margin"
+            android:background="@color/picture_background"
+            android:src="@drawable/ic_picture_placeholder_small"
+            android:scaleType="center"/>
+
+
+    </LinearLayout>
+
+</merge>

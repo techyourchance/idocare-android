@@ -31,7 +31,7 @@ public class NewRequestViewMVC extends AbstractViewMVC {
         mEdtNoteBefore = (EditText) mRootView.findViewById(R.id.edt_note_before);
         mRatingbarPollutionLevel = (RatingBar) mRootView.findViewById(R.id.ratingbar_pollution_level);
 
-        Button btnTakePicture = (Button) mRootView.findViewById(R.id.btn_take_picture);
+        Button btnTakePicture = (Button) mRootView.findViewById(R.id.view_take_picture);
         btnTakePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

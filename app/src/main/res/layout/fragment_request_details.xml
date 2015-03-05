@@ -85,7 +85,7 @@
             android:layout_marginTop="@dimen/fragment_default_margin"
             android:layout_marginBottom="@dimen/fragment_default_margin"
             android:background="@color/closed_request_status"
-            android:text="@string/btn_close_request"/>
+            android:text="@string/btn_switch_to_close_request_fragment"/>
 
     </LinearLayout>
 

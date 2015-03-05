@@ -9,7 +9,7 @@
     android:padding="@dimen/fragment_default_padding">
 
     <!-- Include camera control layout -->
-    <include layout="@layout/element_camera_control" />
+    <include layout="@layout/element_camera_control_linear" />
     
     <EditText
         android:id="@+id/edt_note_before"

@@ -47,7 +47,6 @@ public class NewRequestFragment extends AbstractFragment {
 
     NewRequestViewMVC mViewMVCNewRequest;
 
-    NewPicturesAdapter mListAdapter;
     String mLastCameraPicturePath;
 
 
@@ -59,11 +58,6 @@ public class NewRequestFragment extends AbstractFragment {
         // Add MVC View's Handler to the set of outbox Handlers
         addOutboxHandler(mViewMVCNewRequest.getInboxHandler());
 
-
-        mListAdapter = new NewPicturesAdapter(getActivity(), 0);
-        ListView listPictures =
-                (ListView) mViewMVCNewRequest.getRootView().findViewById(R.id.list_pictures);
-        listPictures.setAdapter(mListAdapter);
 
         // Restore state from bundle (if required)
         restoreSavedStateIfNeeded(savedInstanceState);
@@ -79,8 +73,6 @@ public class NewRequestFragment extends AbstractFragment {
         // Get the list of pictures from saved state and pass them to adapter
         String[] adapterItems = savedInstanceState.getStringArray("adapterItems");
         if (adapterItems != null) {
-            mListAdapter.addAll(adapterItems);
-            mListAdapter.notifyDataSetChanged();
         }
 
         // Restore the last path to camera picture
@@ -118,11 +110,6 @@ public class NewRequestFragment extends AbstractFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        // Save adapter items
-        String[] adapterItems = mListAdapter.getItems();
-        if (adapterItems != null) {
-            outState.putStringArray("adapterItems", adapterItems);
-        }
         // Save the absolute path of the last picture (otherwise we get NullPointerException when
         // trying to access it in onActivityResult())
         outState.putString("lastCameraPicturePath", mLastCameraPicturePath);
@@ -134,8 +121,6 @@ public class NewRequestFragment extends AbstractFragment {
         if (requestCode == Constants.StartActivityTag.CAPTURE_PICTURE_FOR_NEW_REQUEST.ordinal()) {
             if (resultCode == Activity.RESULT_OK) {
                 UtilMethods.adjustCameraPicture(mLastCameraPicturePath);
-                mListAdapter.add(mLastCameraPicturePath);
-                mListAdapter.notifyDataSetChanged();
             } else {
                 // TODO: do we need anything here?
             }
@@ -194,91 +179,7 @@ public class NewRequestFragment extends AbstractFragment {
             serverRequest.addTextField(Constants.FieldName.CREATED_COMMENT.getValue(),
                     bundleNewRequest.getString(Constants.FieldName.CREATED_COMMENT.getValue()));
         }
-
-        for (int i = 0; i < mListAdapter.getCount(); i++) {
-            serverRequest.addPicture(Constants.FieldName.CREATED_PICTURES.getValue(),
-                    "picture" + String.valueOf(i) + ".jpg", mListAdapter.getItem(i));
-        }
-
         serverRequest.execute();
     }
-
-    private static class ViewHolder {
-        ImageView imageView;
-    }
-
-    private class NewPicturesAdapter extends ArrayAdapter<String> {
-
-        private final static String LOG_TAG = "NewPicturesAdapter";
-
-        private LayoutInflater mInflater;
-        private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
-
-        public NewPicturesAdapter(Context context, int resource) {
-            super(context, resource);
-            mInflater = LayoutInflater.from(context);
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            View view = convertView;
-            final ViewHolder holder;
-            if (convertView == null) {
-                view = mInflater.inflate(R.layout.element_camera_picture, parent, false);
-                holder = new ViewHolder();
-                holder.imageView = (ImageView) view.findViewById(R.id.image);
-                view.setTag(holder);
-            } else {
-                holder = (ViewHolder) view.getTag();
-            }
-
-            String pathForUIL = "file://" + getItem(position);
-
-            Log.d(LOG_TAG, "UIL is loading picture at: " + pathForUIL);
-
-            ImageLoader.getInstance().displayImage(pathForUIL, holder.imageView, animateFirstListener);
-
-            return view;
-        }
-
-
-        /**
-         * Get all the items of this adapter
-         * @return array of items or null if there are none
-         */
-        public String[] getItems() {
-            if (getCount() == 0) {
-                return null;
-            }
-            String[] items = new String[getCount()];
-            for (int i = 0; i < getCount(); i++) {
-                items[i] = getItem(i);
-            }
-            return items;
-        }
-    }
-
-    private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
-
-        static final List<String> displayedImages = Collections.synchronizedList(new ArrayList<String>());
-
-        @Override
-        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-            if (loadedImage != null) {
-                ImageView imageView = (ImageView) view;
-                boolean firstDisplay = !displayedImages.contains(imageUri);
-                if (firstDisplay) {
-                    FadeInBitmapDisplayer.animate(imageView, 500);
-                    displayedImages.add(imageUri);
-                }
-            }
-        }
-    }
-
-
-
-
-
-
 
 }
