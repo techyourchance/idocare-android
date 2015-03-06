@@ -17,6 +17,15 @@
         android:layout_height="match_parent"
         android:clickable="true"
         android:padding="10dp"
+        android:visibility="gone"
+        android:background="@drawable/default_fragment_background"/>
+
+
+    <FrameLayout
+        android:id="@+id/frame_contents_no_padding"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"
         android:background="@drawable/default_fragment_background"/>
 
     <!-- The navigation drawer -->

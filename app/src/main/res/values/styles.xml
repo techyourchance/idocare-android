@@ -3,6 +3,12 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
 
+        <!-- These statements are required in order to prevent actionbar from being seen
+         before splash screen (there is additional logic in activity tht supports this feature) -->
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowTitleSize">0dp</item>
+
+
         <item name="android:actionBarStyle">@style/MyActionBar</item>
 
         <!-- Customize your theme here. -->

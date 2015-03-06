@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -28,6 +30,7 @@ import il.co.idocare.controllers.fragments.LoginFragment;
 import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.R;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
+import il.co.idocare.controllers.fragments.SplashFragment;
 import il.co.idocare.models.RequestsMVCModel;
 import il.co.idocare.models.UsersMVCModel;
 
@@ -52,7 +55,32 @@ public class IDoCareActivity extends Activity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+        if (getActionBar() != null) getActionBar().hide();
+
         setContentView(R.layout.activity_main);
+
+        // Decide which fragment to show if the app is not restored
+        if (savedInstanceState == null) {
+            SharedPreferences prefs = getSharedPreferences(Constants.PREFERENCES_FILE, MODE_PRIVATE);
+
+            if (prefs.contains(Constants.FieldName.USER_ID.getValue()) &&
+                    prefs.contains(Constants.FieldName.USER_PUBLIC_KEY.getValue())) {
+                // Show splash screen if user details exist
+                getFragmentManager().beginTransaction()
+                        .add(R.id.frame_contents_no_padding, new SplashFragment())
+                        .commit();
+            } else {
+                // Bring up login fragment
+                getFragmentManager().beginTransaction()
+                        .add(R.id.frame_contents_no_padding, new LoginFragment())
+                        .commit();
+            }
+
+            getFragmentManager().executePendingTransactions();
+        }
 
         initializeModels();
 
@@ -65,23 +93,6 @@ public class IDoCareActivity extends Activity implements
         // This callback will be used to show/hide up (back) button in actionbar
         getFragmentManager().addOnBackStackChangedListener(this);
 
-        // Decide which fragment to show if the app is not restored
-        if (savedInstanceState == null) {
-            SharedPreferences prefs = getSharedPreferences(Constants.PREFERENCES_FILE, MODE_PRIVATE);
-
-            if (prefs.contains(Constants.FieldName.USER_ID.getValue()) &&
-                    prefs.contains(Constants.FieldName.USER_PUBLIC_KEY.getValue())) {
-                // Go straight to home page if user ID and public key exist
-                getFragmentManager().beginTransaction()
-                        .add(R.id.frame_contents, new HomeFragment())
-                        .commit();
-            } else {
-                // Bring up login fragment
-                getFragmentManager().beginTransaction()
-                        .add(R.id.frame_contents, new LoginFragment())
-                        .commit();
-            }
-        }
 
     }
 
@@ -161,7 +172,17 @@ public class IDoCareActivity extends Activity implements
     public void replaceFragment(Class<? extends AbstractFragment> claz, boolean addToBackStack,
                                 Bundle args) {
 
-        Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
+        final ViewGroup viewGroup = (ViewGroup)
+                ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
+
+        int activeFrameLayoutId;
+        if (viewGroup.findViewById(R.id.frame_contents_no_padding).getVisibility() == View.VISIBLE) {
+            activeFrameLayoutId = R.id.frame_contents_no_padding;
+        } else {
+            activeFrameLayoutId = R.id.frame_contents;
+        }
+
+        Fragment currFragment = getFragmentManager().findFragmentById(activeFrameLayoutId);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
 
         if (currFragment != null) {
@@ -188,7 +209,7 @@ public class IDoCareActivity extends Activity implements
 
         if (addToBackStack) ft.addToBackStack(null);
         // Change to a new fragment
-        ft.replace(R.id.frame_contents, newFragment, claz.getClass().getSimpleName());
+        ft.replace(activeFrameLayoutId, newFragment, claz.getClass().getSimpleName());
         ft.commit();
 
     }

@@ -40,6 +40,7 @@ public class HomeFragment extends AbstractFragment {
         setHasOptionsMenu(true);
 
         if (getActivity().getActionBar() != null) {
+            getActivity().getActionBar().show();
             getActivity().getActionBar().setTitle(R.string.home_fragment_title);
         }
 
