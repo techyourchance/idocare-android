@@ -196,6 +196,14 @@ public class NewRequestFragment extends AbstractFragment {
             serverRequest.addTextField(Constants.FieldName.CREATED_COMMENT.getValue(),
                     bundleNewRequest.getString(Constants.FieldName.CREATED_COMMENT.getValue()));
         }
+
+
+        // Set closed pictures
+        for (int i = 0; i < mCameraPicturesPaths.size(); i++) {
+            serverRequest.addPicture(Constants.FieldName.CREATED_PICTURES.getValue(),
+                    "picture" + String.valueOf(i) + ".jpg", mCameraPicturesPaths.get(i));
+        }
+
         serverRequest.execute();
     }
 

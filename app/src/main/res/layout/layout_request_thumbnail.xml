@@ -14,12 +14,14 @@
 
     <ImageView
         android:id="@+id/img_request_thumbnail"
-        android:layout_width="@dimen/image_request_thumbnail_dimen"
-        android:layout_height="@dimen/image_request_thumbnail_dimen"
-        android:padding="10dp"
+        android:layout_width="@dimen/image_request_thumbnail_width"
+        android:layout_height="@dimen/image_request_thumbnail_height"
+        android:padding="@dimen/fragment_small_margin"
         android:layout_below="@id/txt_request_status"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:scaleType="centerCrop"
+        android:cropToPadding="true"
         android:contentDescription="@string/img_request_thumbnail_accessibility"/>
 
     <TextView
@@ -29,6 +31,8 @@
         android:layout_below="@id/txt_request_status"
         android:layout_toRightOf="@id/img_request_thumbnail"
         android:layout_toEndOf="@id/img_request_thumbnail"
+        android:maxLines="2"
+        android:ellipsize="end"
         android:textStyle="bold"
         android:textSize="@dimen/title_text_size"
         android:text="comment"/>
@@ -42,7 +46,6 @@
         android:layout_toEndOf="@id/img_request_thumbnail"
         android:layout_toRightOf="@id/img_request_thumbnail"
         android:layout_below="@id/txt_created_comment"
-        android:layout_marginTop="@dimen/fragment_small_margin"
         android:textSize="@dimen/title_text_size"
         android:text="nickname"/>
 
@@ -66,7 +69,6 @@
         android:layout_width="50dp"
         android:layout_height="55dp"
         android:layout_alignParentBottom="true"
-        android:paddingBottom="@dimen/fragment_small_margin"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginRight="@dimen/fragment_small_margin"

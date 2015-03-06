@@ -2,6 +2,7 @@ package il.co.idocare;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 
 public class Constants {
 
@@ -31,6 +32,7 @@ public class Constants {
             new DisplayImageOptions.Builder()
             .cacheOnDisk(true)
             .considerExifParams(true)
+            .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
             .build();
 
     public static final String UIL_LOCAL_FILE_PREFIX = "file:///";

@@ -48,7 +48,8 @@
             android:layout_marginEnd="@dimen/fragment_smallest_margin"
             android:background="@color/picture_background"
             android:src="@drawable/ic_picture_placeholder_small"
-            android:scaleType="center"/>
+            android:scaleType="centerCrop"
+            android:cropToPadding="true"/>
 
 
         <ImageView
@@ -61,7 +62,8 @@
             android:layout_marginEnd="@dimen/fragment_smallest_margin"
             android:background="@color/picture_background"
             android:src="@drawable/ic_picture_placeholder_small"
-            android:scaleType="center"/>
+            android:scaleType="centerCrop"
+            android:cropToPadding="true"/>
 
 
         <ImageView
@@ -72,7 +74,8 @@
             android:layout_marginStart="@dimen/fragment_smallest_margin"
             android:background="@color/picture_background"
             android:src="@drawable/ic_picture_placeholder_small"
-            android:scaleType="center"/>
+            android:scaleType="centerCrop"
+            android:cropToPadding="true"/>
 
 
     </LinearLayout>

@@ -243,6 +243,8 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
 
             if (!mRequestItem.getCreatedPictures()[0].equals(mCurrentPictureUrl)) {
 
+                mImgRequestThumbnail.setImageDrawable(null);
+
                 ImageLoader.getInstance().displayImage(
                         mRequestItem.getCreatedPictures()[0],
                         mImgRequestThumbnail,

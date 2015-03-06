@@ -16,20 +16,31 @@
         android:layout_width="@dimen/request_picture_width"
         android:layout_height="@dimen/request_picture_height"
         android:contentDescription="@string/img_picture_accessibility"
-        android:adjustViewBounds="true"/>
+        android:layout_marginRight="@dimen/fragment_smallest_margin"
+        android:layout_marginEnd="@dimen/fragment_smallest_margin"
+        android:scaleType="centerCrop"
+        android:cropToPadding="true"/>
 
     <ImageView
         android:id="@+id/img_picture1"
         android:layout_width="@dimen/request_picture_width"
         android:layout_height="@dimen/request_picture_height"
         android:contentDescription="@string/img_picture_accessibility"
-        android:adjustViewBounds="true"/>
+        android:layout_marginLeft="@dimen/fragment_smallest_margin"
+        android:layout_marginStart="@dimen/fragment_smallest_margin"
+        android:layout_marginRight="@dimen/fragment_smallest_margin"
+        android:layout_marginEnd="@dimen/fragment_smallest_margin"
+        android:scaleType="centerCrop"
+        android:cropToPadding="true"/>
 
     <ImageView
         android:id="@+id/img_picture2"
         android:layout_width="@dimen/request_picture_width"
         android:layout_height="@dimen/request_picture_height"
         android:contentDescription="@string/img_picture_accessibility"
-        android:adjustViewBounds="true"/>
+        android:layout_marginLeft="@dimen/fragment_smallest_margin"
+        android:layout_marginStart="@dimen/fragment_smallest_margin"
+        android:scaleType="centerCrop"
+        android:cropToPadding="true"/>
 
 </LinearLayout>
