@@ -56,30 +56,40 @@ public class IDoCareActivity extends Activity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-        if (getActionBar() != null) getActionBar().hide();
-
-        setContentView(R.layout.activity_main);
+        Log.e(LOG_TAG, "onCreate called");
+        Log.e(LOG_TAG, savedInstanceState == null ? "bundle is null" : "bundle is not null");
 
         // Decide which fragment to show if the app is not restored
         if (savedInstanceState == null) {
+
+            getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+            if (getActionBar() != null) getActionBar().hide();
+
+            setContentView(R.layout.activity_main);
+
             SharedPreferences prefs = getSharedPreferences(Constants.PREFERENCES_FILE, MODE_PRIVATE);
 
             if (prefs.contains(Constants.FieldName.USER_ID.getValue()) &&
                     prefs.contains(Constants.FieldName.USER_PUBLIC_KEY.getValue())) {
                 // Show splash screen if user details exist
-                getFragmentManager().beginTransaction()
-                        .add(R.id.frame_contents_no_padding, new SplashFragment())
-                        .commit();
+                replaceFragment(SplashFragment.class, false, null);
             } else {
                 // Bring up login fragment
-                getFragmentManager().beginTransaction()
-                        .add(R.id.frame_contents_no_padding, new LoginFragment())
-                        .commit();
+                replaceFragment(LoginFragment.class, false, null);
             }
 
-            getFragmentManager().executePendingTransactions();
+        } else {
+
+            getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+            if (getActionBar() != null) getActionBar().show();
+
+            setContentView(R.layout.activity_main);
+
+            // Hide frame layout without padding and show the one with padding
+            final ViewGroup viewGroup = (ViewGroup) ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
+
+            viewGroup.findViewById(R.id.frame_contents_no_padding).setVisibility(View.GONE);
+            viewGroup.findViewById(R.id.frame_contents).setVisibility(View.VISIBLE);
         }
 
         initializeModels();
@@ -176,11 +186,16 @@ public class IDoCareActivity extends Activity implements
                 ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
 
         int activeFrameLayoutId;
-        if (viewGroup.findViewById(R.id.frame_contents_no_padding).getVisibility() == View.VISIBLE) {
+        if (claz.isAssignableFrom(LoginFragment.class) || claz.isAssignableFrom(SplashFragment.class)) {
             activeFrameLayoutId = R.id.frame_contents_no_padding;
+            viewGroup.findViewById(R.id.frame_contents_no_padding).setVisibility(View.VISIBLE);
+            viewGroup.findViewById(R.id.frame_contents).setVisibility(View.GONE);
         } else {
             activeFrameLayoutId = R.id.frame_contents;
+            viewGroup.findViewById(R.id.frame_contents_no_padding).setVisibility(View.GONE);
+            viewGroup.findViewById(R.id.frame_contents).setVisibility(View.VISIBLE);
         }
+
 
         Fragment currFragment = getFragmentManager().findFragmentById(activeFrameLayoutId);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -194,7 +209,7 @@ public class IDoCareActivity extends Activity implements
         }
 
         // Create new fragment
-        Fragment newFragment;
+        AbstractFragment newFragment;
 
         try {
             newFragment = claz.newInstance();
@@ -205,6 +220,10 @@ public class IDoCareActivity extends Activity implements
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             return;
+        }
+
+        if (newFragment.isTopLevelFragment()) {
+            getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
 
         if (addToBackStack) ft.addToBackStack(null);

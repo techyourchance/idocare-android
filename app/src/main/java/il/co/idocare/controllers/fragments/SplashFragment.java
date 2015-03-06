@@ -1,5 +1,7 @@
 package il.co.idocare.controllers.fragments;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -35,15 +37,14 @@ public class SplashFragment extends AbstractFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_splash_screen, container, false);
 
-        // Hide action bar
-        if (getActivity().getActionBar() != null) getActivity().getActionBar().hide();
-
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        Log.e(LOG_TAG, "onResume called");
 
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -74,15 +75,7 @@ public class SplashFragment extends AbstractFragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
-                        // Hide frame layout without padding and show the one with padding
-                        final ViewGroup viewGroup = (ViewGroup) ((ViewGroup) getActivity()
-                                .findViewById(android.R.id.content)).getChildAt(0);
-
-                        viewGroup.findViewById(R.id.frame_contents_no_padding).setVisibility(View.GONE);
-                        viewGroup.findViewById(R.id.frame_contents).setVisibility(View.VISIBLE);
-
-
+                        getActivity().getFragmentManager().beginTransaction().remove(SplashFragment.this).commit();
                         replaceFragment(HomeFragment.class, false, null);
                     }
                 });

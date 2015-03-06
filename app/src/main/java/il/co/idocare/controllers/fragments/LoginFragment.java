@@ -40,6 +40,7 @@ public class LoginFragment extends AbstractFragment implements ServerRequest.OnS
         // Add MVC View's Handler to the set of outbox Handlers
         addOutboxHandler(mViewMVCLogin.getInboxHandler());
 
+        Log.e(LOG_TAG, "onCreateView called");
 
         // Hide action bar
         if (getActivity().getActionBar() != null) getActivity().getActionBar().hide();

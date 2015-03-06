@@ -1,6 +1,7 @@
 package il.co.idocare.controllers.fragments;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.location.LocationServices;
 
@@ -27,11 +29,12 @@ import il.co.idocare.R;
 import il.co.idocare.ServerRequest;
 import il.co.idocare.controllers.activities.IDoCareActivity;
 import il.co.idocare.utils.IDoCareHttpUtils;
+import il.co.idocare.utils.IDoCareJSONUtils;
 import il.co.idocare.utils.UtilMethods;
 import il.co.idocare.views.NewRequestViewMVC;
 
 
-public class NewRequestFragment extends AbstractFragment {
+public class NewRequestFragment extends AbstractFragment implements ServerRequest.OnServerResponseCallback {
 
     private final static String LOG_TAG = "NewRequestFragment";
 
@@ -41,6 +44,8 @@ public class NewRequestFragment extends AbstractFragment {
 
     private String mLastCameraPicturePath;
     private List<String> mCameraPicturesPaths = new ArrayList<String>(3);
+
+    private ProgressDialog mProgressDialog;
 
 
     @Override
@@ -178,10 +183,13 @@ public class NewRequestFragment extends AbstractFragment {
      * on the contents of fragment's views
      */
     private void createRequest() {
+        
+        showProgressDialog();
 
         Bundle bundleNewRequest = mViewMVCNewRequest.getViewState();
 
-        ServerRequest serverRequest = new ServerRequest(Constants.ADD_REQUEST_URL);
+        ServerRequest serverRequest = new ServerRequest(Constants.CREATE_REQUEST_URL,
+                Constants.ServerRequestTag.CREATE_REQUEST, this);
 
         IDoCareHttpUtils.addStandardHeaders(getActivity(), serverRequest);
 
@@ -213,4 +221,28 @@ public class NewRequestFragment extends AbstractFragment {
         serverRequest.execute();
     }
 
+
+
+    @Override
+    public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag,
+                               String responseData) {
+
+        if (tag == Constants.ServerRequestTag.CREATE_REQUEST) {
+            if (responseStatusOk && IDoCareJSONUtils.verifySuccessfulStatus(responseData)) {
+                if (mProgressDialog != null) {
+                    mProgressDialog.dismiss();
+                    mProgressDialog = null;
+                }
+                replaceFragment(HomeFragment.class, false, null);
+                Toast.makeText(getActivity(), "Request created successfully", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Log.e(LOG_TAG, "serverResponse was called with unrecognized tag: " + tag.toString());
+        }
+    }
+
+    private void showProgressDialog() {
+        mProgressDialog = ProgressDialog.
+                show(getActivity(), "Please wait ...", "Creating new request ...", true);
+    }
 }
