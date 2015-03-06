@@ -43,15 +43,15 @@ public class Constants {
     private final static String QA_ROOT_URL = "http://qa-04.idocare.co.il";
 
     // URLs used to issue requests to the server
-    public final static String IMGLIST_URL = DEV_ROOT_URL + "/api-04/imglist";
-    public final static String IMGTEST_URL = DEV_ROOT_URL + "/api-04/imgtest";
-    public final static String LOGIN_URL = DEV_ROOT_URL + "/api-04/user/login";
-    public final static String GET_ALL_REQUESTS_URL = DEV_ROOT_URL + "/api-04/request";
-    public final static String CREATE_REQUEST_URL = DEV_ROOT_URL + "/api-04/request/add";
-    public final static String PICKUP_REQUEST_URL = DEV_ROOT_URL + "/api-04/request/pickup";
-    public final static String VOTE_REQUEST_URL = DEV_ROOT_URL + "/api-04/request/vote";
-    public final static String CLOSE_REQUEST_URL = DEV_ROOT_URL + "/api-04/request/close";
-    public static final String GET_USER_DATA_URL = DEV_ROOT_URL + "/api-04/user/get";
+    public final static String IMGLIST_URL = QA_ROOT_URL + "/api-04/imglist";
+    public final static String IMGTEST_URL = QA_ROOT_URL + "/api-04/imgtest";
+    public final static String LOGIN_URL = QA_ROOT_URL + "/api-04/user/login";
+    public final static String GET_ALL_REQUESTS_URL = QA_ROOT_URL + "/api-04/request";
+    public final static String CREATE_REQUEST_URL = QA_ROOT_URL + "/api-04/request/add";
+    public final static String PICKUP_REQUEST_URL = QA_ROOT_URL + "/api-04/request/pickup";
+    public final static String VOTE_REQUEST_URL = QA_ROOT_URL + "/api-04/request/vote";
+    public final static String CLOSE_REQUEST_URL = QA_ROOT_URL + "/api-04/request/close";
+    public static final String GET_USER_DATA_URL = QA_ROOT_URL + "/api-04/user/get";
 
 
     /**
