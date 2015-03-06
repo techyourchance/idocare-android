@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 
 import il.co.idocare.Constants;
+import il.co.idocare.R;
 import il.co.idocare.ServerRequest;
 import il.co.idocare.controllers.activities.IDoCareActivity;
 import il.co.idocare.utils.IDoCareHttpUtils;
@@ -53,6 +54,11 @@ public class NewRequestFragment extends AbstractFragment {
 
         // Restore state from bundle (if required)
         restoreSavedStateIfNeeded(savedInstanceState);
+
+        if (getActivity().getActionBar() != null) {
+            getActivity().getActionBar().setTitle(R.string.new_request_fragment_title);
+        }
+
 
         return mViewMVCNewRequest.getRootView();
     }

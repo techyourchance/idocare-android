@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import il.co.idocare.Constants;
+import il.co.idocare.R;
 import il.co.idocare.ServerRequest;
 import il.co.idocare.utils.IDoCareHttpUtils;
 import il.co.idocare.views.RequestDetailsViewMVC;
@@ -29,6 +30,11 @@ public class RequestDetailsFragment extends AbstractFragment {
                         getRequestsModel(), getUsersModel());
 
         obtainRequestItemAndShowItsDetails();
+
+
+        if (getActivity().getActionBar() != null) {
+            getActivity().getActionBar().setTitle(R.string.request_details_fragment_title);
+        }
 
         return mRequestDetailsViewMVC.getRootView();
     }
