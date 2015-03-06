@@ -14,10 +14,11 @@ import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.ServerRequest;
 import il.co.idocare.utils.IDoCareHttpUtils;
+import il.co.idocare.utils.IDoCareJSONUtils;
 import il.co.idocare.views.RequestDetailsViewMVC;
 
 
-public class RequestDetailsFragment extends AbstractFragment {
+public class RequestDetailsFragment extends AbstractFragment implements ServerRequest.OnServerResponseCallback {
 
     private final static String LOG_TAG = "RequestDetailsFragment";
 
@@ -128,9 +129,10 @@ public class RequestDetailsFragment extends AbstractFragment {
 
 
     private void pickupRequest() {
+        showProgressDialog("Please wait...", "Assigning the request...");
 
         ServerRequest serverRequest = new ServerRequest(Constants.PICKUP_REQUEST_URL,
-                Constants.ServerRequestTag.PICKUP_REQUEST, null);
+                Constants.ServerRequestTag.PICKUP_REQUEST, this);
 
         IDoCareHttpUtils.addStandardHeaders(getActivity(), serverRequest);
         serverRequest.addTextField(Constants.FieldName.REQUEST_ID.getValue(),
@@ -161,7 +163,7 @@ public class RequestDetailsFragment extends AbstractFragment {
         }
 
         ServerRequest serverRequest = new ServerRequest(Constants.VOTE_REQUEST_URL,
-                Constants.ServerRequestTag.VOTE_FOR_REQUEST, null);
+                Constants.ServerRequestTag.VOTE_FOR_REQUEST, this);
 
         IDoCareHttpUtils.addStandardHeaders(getActivity(), serverRequest);
         serverRequest.addTextField(Constants.FieldName.ENTITY_ID.getValue(),
@@ -175,4 +177,25 @@ public class RequestDetailsFragment extends AbstractFragment {
     }
 
 
+    @Override
+    public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag,
+                               String responseData) {
+
+        if (tag == Constants.ServerRequestTag.PICKUP_REQUEST) {
+            if (responseStatusOk && IDoCareJSONUtils.verifySuccessfulStatus(responseData)) {
+                dismissProgressDialog();
+                getRequestsModel().update();
+                Toast.makeText(getActivity(), "This request was assigned to you", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else if (tag == Constants.ServerRequestTag.VOTE_FOR_REQUEST) {
+            if (responseStatusOk && IDoCareJSONUtils.verifySuccessfulStatus(responseData)) {
+                getRequestsModel().update();
+            }
+
+        }
+        else {
+            Log.e(LOG_TAG, "serverResponse was called with unrecognized tag: " + tag.toString());
+        }
+    }
 }

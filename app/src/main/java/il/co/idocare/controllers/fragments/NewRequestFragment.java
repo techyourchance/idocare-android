@@ -45,9 +45,6 @@ public class NewRequestFragment extends AbstractFragment implements ServerReques
     private String mLastCameraPicturePath;
     private List<String> mCameraPicturesPaths = new ArrayList<String>(3);
 
-    private ProgressDialog mProgressDialog;
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mViewMVCNewRequest = new NewRequestViewMVC(inflater, container);
@@ -184,7 +181,7 @@ public class NewRequestFragment extends AbstractFragment implements ServerReques
      */
     private void createRequest() {
         
-        showProgressDialog();
+        showProgressDialog("Please wait...", "Creating new request...");
 
         Bundle bundleNewRequest = mViewMVCNewRequest.getViewState();
 
@@ -229,10 +226,7 @@ public class NewRequestFragment extends AbstractFragment implements ServerReques
 
         if (tag == Constants.ServerRequestTag.CREATE_REQUEST) {
             if (responseStatusOk && IDoCareJSONUtils.verifySuccessfulStatus(responseData)) {
-                if (mProgressDialog != null) {
-                    mProgressDialog.dismiss();
-                    mProgressDialog = null;
-                }
+                dismissProgressDialog();
                 replaceFragment(HomeFragment.class, false, null);
                 Toast.makeText(getActivity(), "Request created successfully", Toast.LENGTH_SHORT).show();
             }
@@ -241,8 +235,4 @@ public class NewRequestFragment extends AbstractFragment implements ServerReques
         }
     }
 
-    private void showProgressDialog() {
-        mProgressDialog = ProgressDialog.
-                show(getActivity(), "Please wait ...", "Creating new request ...", true);
-    }
 }

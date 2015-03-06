@@ -2,6 +2,7 @@ package il.co.idocare.controllers.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -32,6 +33,7 @@ public abstract class AbstractFragment extends Fragment implements
     HandlerThread mInboxHandlerThread;
     Handler mInboxHandler;
     final List<Handler> mOutboxHandlers = new ArrayList<Handler>();
+    private ProgressDialog mProgressDialog;
 
     /**
      * Top level fragment =  a fragment which does not have parent in navigation hierarchy
@@ -90,6 +92,22 @@ public abstract class AbstractFragment extends Fragment implements
      */
     public UsersMVCModel getUsersModel() {
         return mCallback.getUsersModel();
+    }
+
+
+    /**
+     * TODO
+     */
+    public void showProgressDialog(String title, String message) {
+        mProgressDialog = ProgressDialog.
+                show(getActivity(), title, message, true);
+    }
+
+    public void dismissProgressDialog() {
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+            mProgressDialog = null;
+        }
     }
 
     

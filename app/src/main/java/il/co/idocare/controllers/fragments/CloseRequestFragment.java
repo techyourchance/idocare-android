@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -24,11 +25,12 @@ import il.co.idocare.Constants.FieldName;
 import il.co.idocare.R;
 import il.co.idocare.ServerRequest;
 import il.co.idocare.utils.IDoCareHttpUtils;
+import il.co.idocare.utils.IDoCareJSONUtils;
 import il.co.idocare.utils.UtilMethods;
 import il.co.idocare.views.CloseRequestViewMVC;
 
 
-public class CloseRequestFragment extends AbstractFragment {
+public class CloseRequestFragment extends AbstractFragment implements ServerRequest.OnServerResponseCallback {
 
     private final static String LOG_TAG = "CloseRequestFragment";
 
@@ -184,9 +186,13 @@ public class CloseRequestFragment extends AbstractFragment {
      * on the contents of fragment's views
      */
     private void closeRequest() {
+
+        showProgressDialog("Please wait...", "Closing the request...");
+
         Bundle closeRequestBundle = mCloseRequestViewMVC.getViewState();
 
-        ServerRequest serverRequest = new ServerRequest(Constants.CLOSE_REQUEST_URL);
+        ServerRequest serverRequest = new ServerRequest(Constants.CLOSE_REQUEST_URL,
+                Constants.ServerRequestTag.CLOSE_REQUEST, this);
 
         IDoCareHttpUtils.addStandardHeaders(getActivity(), serverRequest);
 
@@ -210,5 +216,18 @@ public class CloseRequestFragment extends AbstractFragment {
     }
 
 
+    @Override
+    public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag, String responseData) {
 
+        if (tag == Constants.ServerRequestTag.CLOSE_REQUEST) {
+            if (responseStatusOk && IDoCareJSONUtils.verifySuccessfulStatus(responseData)) {
+                dismissProgressDialog();
+                getRequestsModel().update();
+                replaceFragment(HomeFragment.class, false, null);
+                Toast.makeText(getActivity(), "Request closed successfully", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Log.e(LOG_TAG, "serverResponse was called with unrecognized tag: " + tag.toString());
+        }
+    }
 }
