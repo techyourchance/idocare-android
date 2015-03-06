@@ -1,11 +1,14 @@
 package il.co.idocare.controllers.fragments;
 
+import android.app.Notification;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
@@ -144,6 +147,19 @@ public class RequestDetailsFragment extends AbstractFragment {
     }
 
     private void voteForRequest(int amount, boolean voteForClosed) {
+
+        long myId = getActivity()
+                .getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
+                .getLong(Constants.FieldName.USER_ID.getValue(), 0);
+
+        // Don't allow voting for yourself
+        if ((voteForClosed && myId == getRequestsModel().getRequest(mRequestId).getClosedBy()) ||
+                (!voteForClosed && myId == getRequestsModel().getRequest(mRequestId).getCreatedBy())) {
+            Toast.makeText(getActivity(), getActivity().getResources()
+                    .getString(R.string.self_voting_error_message), Toast.LENGTH_LONG).show();
+            return;
+        }
+
         ServerRequest serverRequest = new ServerRequest(Constants.VOTE_REQUEST_URL,
                 Constants.ServerRequestTag.VOTE_FOR_REQUEST, null);
 
