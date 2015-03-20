@@ -33,6 +33,7 @@ import il.co.idocare.controllers.fragments.NewRequestFragment;
 import il.co.idocare.controllers.fragments.SplashFragment;
 import il.co.idocare.models.RequestsMVCModel;
 import il.co.idocare.models.UsersMVCModel;
+import il.co.idocare.utils.UtilMethods;
 
 
 public class IDoCareActivity extends Activity implements
@@ -55,9 +56,6 @@ public class IDoCareActivity extends Activity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Log.e(LOG_TAG, "onCreate called");
-        Log.e(LOG_TAG, savedInstanceState == null ? "bundle is null" : "bundle is not null");
 
         // Decide which fragment to show if the app is not restored
         if (savedInstanceState == null) {
@@ -84,12 +82,6 @@ public class IDoCareActivity extends Activity implements
             if (getActionBar() != null) getActionBar().show();
 
             setContentView(R.layout.activity_main);
-
-            // Hide frame layout without padding and show the one with padding
-            final ViewGroup viewGroup = (ViewGroup) ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
-
-            viewGroup.findViewById(R.id.frame_contents_no_padding).setVisibility(View.GONE);
-            viewGroup.findViewById(R.id.frame_contents).setVisibility(View.VISIBLE);
         }
 
         initializeModels();
@@ -115,8 +107,6 @@ public class IDoCareActivity extends Activity implements
         // TODO: verify that this call resolves the missing UP button when the activity is restarted
         onBackStackChanged();
 
-        // Start periodic updates of requests' cache
-        //scheduleRequestsCacheUpdates();
     }
 
     @Override
@@ -127,10 +117,6 @@ public class IDoCareActivity extends Activity implements
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -182,31 +168,18 @@ public class IDoCareActivity extends Activity implements
     public void replaceFragment(Class<? extends AbstractFragment> claz, boolean addToBackStack,
                                 Bundle args) {
 
-        final ViewGroup viewGroup = (ViewGroup)
-                ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
-
-        int activeFrameLayoutId;
-        if (claz.isAssignableFrom(LoginFragment.class) || claz.isAssignableFrom(SplashFragment.class)) {
-            activeFrameLayoutId = R.id.frame_contents_no_padding;
-            viewGroup.findViewById(R.id.frame_contents_no_padding).setVisibility(View.VISIBLE);
-            viewGroup.findViewById(R.id.frame_contents).setVisibility(View.GONE);
-        } else {
-            activeFrameLayoutId = R.id.frame_contents;
-            viewGroup.findViewById(R.id.frame_contents_no_padding).setVisibility(View.GONE);
-            viewGroup.findViewById(R.id.frame_contents).setVisibility(View.VISIBLE);
+        if (isFragmentShown(claz)) {
+            // The requested fragment is already shown - nothing to do
+            Log.v(LOG_TAG, "the fragment " + claz.getSimpleName() + " is already shown");
+            return;
         }
 
+        // Set default padding for the main frame layout. Fragments might overwrite in
+        // their onCreateView
+        UtilMethods.setPaddingPx(findViewById(R.id.frame_contents),
+                (int) getResources().getDimension(R.dimen.frame_contents_padding));
 
-        Fragment currFragment = getFragmentManager().findFragmentById(activeFrameLayoutId);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-
-        if (currFragment != null) {
-            if (claz.isInstance(currFragment)) {
-                // The currently shown fragment is the same as the new one - nothing to do
-                Log.v(LOG_TAG, "the fragment " + claz.getSimpleName() + " is already shown");
-                return;
-            }
-        }
 
         // Create new fragment
         AbstractFragment newFragment;
@@ -223,25 +196,29 @@ public class IDoCareActivity extends Activity implements
         }
 
         if (newFragment.isTopLevelFragment()) {
+            // Top level fragments don't have UP button
             getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        } else if (addToBackStack) {
+            ft.addToBackStack(null);
         }
 
-        if (addToBackStack) ft.addToBackStack(null);
         // Change to a new fragment
-        ft.replace(activeFrameLayoutId, newFragment, claz.getClass().getSimpleName());
+        ft.replace(R.id.frame_contents, newFragment, claz.getClass().getSimpleName());
         ft.commit();
 
     }
 
+    /**
+     * Check whether a fragment of a specific class is currently shown
+     * @param claz class of fragment to test. Null considered as "test no fragment shown"
+     * @return true if fragment of the same class (or a superclass) is currently shown
+     */
+    private boolean isFragmentShown(Class<? extends AbstractFragment> claz) {
+        Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
 
-    @Override
-    public RequestsMVCModel getRequestsModel() {
-        return mRequestsModel;
-    }
 
-    @Override
-    public UsersMVCModel getUsersModel() {
-        return mUsersModel;
+        return (currFragment == null && claz == null) || (
+                currFragment != null && claz.isInstance(currFragment));
     }
 
     // End of fragments management
@@ -251,9 +228,6 @@ public class IDoCareActivity extends Activity implements
     // ---------------------------------------------------------------------------------------------
     //
     // Navigation drawer management
-
-
-
 
     /**
      * Initiate the navigation drawer
@@ -361,6 +335,31 @@ public class IDoCareActivity extends Activity implements
     // ---------------------------------------------------------------------------------------------
 
 
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Models management
+
+    private void initializeModels() {
+        mRequestsModel = new RequestsMVCModel(this);
+        mRequestsModel.initialize();
+        mUsersModel = new UsersMVCModel(this);
+    }
+
+    @Override
+    public RequestsMVCModel getRequestsModel() {
+        return mRequestsModel;
+    }
+
+    @Override
+    public UsersMVCModel getUsersModel() {
+        return mUsersModel;
+    }
+
+    // End of models management
+    //
+    // ---------------------------------------------------------------------------------------------
+
+
 
     /**
      * Handle the initiation of UIL (third party package under Apache 2.0 license)
@@ -382,10 +381,5 @@ public class IDoCareActivity extends Activity implements
                 .build();
     }
 
-    private void initializeModels() {
-        mRequestsModel = new RequestsMVCModel(this);
-        mRequestsModel.initialize();
-        mUsersModel = new UsersMVCModel(this);
-    }
 
 }

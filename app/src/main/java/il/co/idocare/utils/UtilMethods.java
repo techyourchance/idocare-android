@@ -3,10 +3,14 @@ package il.co.idocare.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
+import android.text.BoringLayout;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -159,4 +163,27 @@ public class UtilMethods {
         return inSampleSize;
     }
 
+    /**
+     * Convert dp into px based on the current phone's density
+     */
+    public static int dpToPx(float dp) {
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        float logicalDensity = metrics.density;
+        return (int) Math.ceil(dp * logicalDensity);
+    }
+
+    /**
+     * Set the padding of the view (in dp)
+     */
+    public static void setPaddingDp(View view, float paddingDp) {
+        int paddingPx = dpToPx(paddingDp);
+        setPaddingPx(view, paddingPx);
+    }
+
+    /**
+     * Set the padding of the view (in px)
+     */
+    public static void setPaddingPx(View view, int paddingPx) {
+        view.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
+    }
 }

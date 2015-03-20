@@ -25,6 +25,7 @@ import il.co.idocare.R;
 import il.co.idocare.ServerRequest;
 import il.co.idocare.models.RequestsMVCModel;
 import il.co.idocare.utils.IDoCareJSONUtils;
+import il.co.idocare.utils.UtilMethods;
 import il.co.idocare.views.LoginViewMVC;
 
 public class SplashFragment extends AbstractFragment {
@@ -37,14 +38,15 @@ public class SplashFragment extends AbstractFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_splash_screen, container, false);
 
+        // This is a full screen fragment - remove any padding
+        UtilMethods.setPaddingPx(getActivity().findViewById(R.id.frame_contents), 0);
+
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
-        Log.e(LOG_TAG, "onResume called");
 
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -75,7 +77,6 @@ public class SplashFragment extends AbstractFragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        getActivity().getFragmentManager().beginTransaction().remove(SplashFragment.this).commit();
                         replaceFragment(HomeFragment.class, false, null);
                     }
                 });
