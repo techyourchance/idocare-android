@@ -52,6 +52,12 @@ public abstract class AbstractFragment extends Fragment implements
      */
     public abstract Class<? extends AbstractFragment> getNavHierParentFragment();
 
+    /**
+     * Get the resource ID of fragment's title
+     * @return resource ID of fragments title, or 0 if the fragment does not have a title
+     */
+    public abstract int getTitle();
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -63,7 +69,13 @@ public abstract class AbstractFragment extends Fragment implements
                     + " must implement IDoCareFragmentCallback");
         }
 
+        mCallback.setActionBarTitle(getTitle());
+
     }
+
+
+
+
 
     /**
      * Call to this method replaces the currently shown fragment with a new one
@@ -74,6 +86,13 @@ public abstract class AbstractFragment extends Fragment implements
     public void replaceFragment(Class<? extends AbstractFragment> claz, boolean addToBackStack,
                                  Bundle args) {
         mCallback.replaceFragment(claz, addToBackStack, args);
+    }
+
+    /**
+     * Change ActionBar title
+     */
+    public void setActionBarTitle(int resourceId) {
+        mCallback.setActionBarTitle(resourceId);
     }
 
 
@@ -96,13 +115,16 @@ public abstract class AbstractFragment extends Fragment implements
 
 
     /**
-     * TODO
+     * Show standard (for the app) progress dialog
      */
     public void showProgressDialog(String title, String message) {
         mProgressDialog = ProgressDialog.
                 show(getActivity(), title, message, true);
     }
 
+    /**
+     * Dismiss the standard progress dialog
+     */
     public void dismissProgressDialog() {
         if (mProgressDialog != null) {
             mProgressDialog.dismiss();
@@ -192,6 +214,11 @@ public abstract class AbstractFragment extends Fragment implements
          */
         public void replaceFragment(Class<? extends AbstractFragment> claz, boolean addToBackStack,
                                     Bundle args);
+
+        /**
+         * Change ActionBar title
+         */
+        public void setActionBarTitle(int resourceId);
 
         /**
          *

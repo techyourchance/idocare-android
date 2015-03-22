@@ -39,11 +39,6 @@ public class HomeFragment extends AbstractFragment {
         // This is required for automatic refresh of action bar options upon fragment's loading
         setHasOptionsMenu(true);
 
-        if (getActivity().getActionBar() != null) {
-            getActivity().getActionBar().show();
-            getActivity().getActionBar().setTitle(R.string.home_fragment_title);
-        }
-
         initializeThumbnailsList();
 
         return mViewMVCHome.getRootView();
@@ -133,6 +128,11 @@ public class HomeFragment extends AbstractFragment {
     @Override
     public Class<? extends AbstractFragment> getNavHierParentFragment() {
         return null;
+    }
+
+    @Override
+    public int getTitle() {
+        return R.string.home_fragment_title;
     }
 
     @Override

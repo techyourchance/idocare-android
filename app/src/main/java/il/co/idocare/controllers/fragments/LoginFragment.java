@@ -58,6 +58,11 @@ public class LoginFragment extends AbstractFragment implements ServerRequest.OnS
     }
 
     @Override
+    public int getTitle() {
+        return 0;
+    }
+
+    @Override
     protected void handleMessage(Message msg) {
         switch (Constants.MESSAGE_TYPE_VALUES[msg.what]) {
             case V_LOGIN_BUTTON_CLICK:

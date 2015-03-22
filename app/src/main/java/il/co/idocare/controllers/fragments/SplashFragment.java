@@ -97,6 +97,11 @@ public class SplashFragment extends AbstractFragment {
     }
 
     @Override
+    public int getTitle() {
+        return 0;
+    }
+
+    @Override
     protected void handleMessage(Message msg) {
     }
 

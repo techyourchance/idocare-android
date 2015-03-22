@@ -64,11 +64,6 @@ public class CloseRequestFragment extends AbstractFragment implements ServerRequ
         // Restore state from bundle (if required)
         restoreSavedStateIfNeeded(savedInstanceState);
 
-
-        if (getActivity().getActionBar() != null) {
-            getActivity().getActionBar().setTitle(R.string.close_request_fragment_title);
-        }
-
         return mCloseRequestViewMVC.getRootView();
     }
 
@@ -98,6 +93,11 @@ public class CloseRequestFragment extends AbstractFragment implements ServerRequ
     @Override
     public Class<? extends AbstractFragment> getNavHierParentFragment() {
         return HomeFragment.class;
+    }
+
+    @Override
+    public int getTitle() {
+        return R.string.close_request_fragment_title;
     }
 
     @Override

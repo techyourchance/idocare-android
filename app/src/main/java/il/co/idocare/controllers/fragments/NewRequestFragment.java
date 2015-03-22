@@ -57,11 +57,6 @@ public class NewRequestFragment extends AbstractFragment implements ServerReques
         // Restore state from bundle (if required)
         restoreSavedStateIfNeeded(savedInstanceState);
 
-        if (getActivity().getActionBar() != null) {
-            getActivity().getActionBar().setTitle(R.string.new_request_fragment_title);
-        }
-
-
         return mViewMVCNewRequest.getRootView();
     }
 
@@ -92,6 +87,11 @@ public class NewRequestFragment extends AbstractFragment implements ServerReques
     @Override
     public Class<? extends AbstractFragment> getNavHierParentFragment() {
         return HomeFragment.class;
+    }
+
+    @Override
+    public int getTitle() {
+        return R.string.new_request_fragment_title;
     }
 
     @Override

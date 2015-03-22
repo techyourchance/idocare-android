@@ -49,6 +49,8 @@ public class IDoCareActivity extends Activity implements
 
     private UsersMVCModel mUsersModel;
 
+
+
     // ---------------------------------------------------------------------------------------------
     //
     // Activity lifecycle management
@@ -289,9 +291,28 @@ public class IDoCareActivity extends Activity implements
 
         drawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
 
+            private boolean mIsDrawerVisibleLast = false;
+
             @Override
             public void onDrawerSlide(View view, float v) {
-                invalidateOptionsMenu();
+                boolean isDrawerVivible = drawerLayout.isDrawerVisible(Gravity.START);
+
+                // For performance update the action bar only when the state of drawer changes
+                if (isDrawerVivible != mIsDrawerVisibleLast) {
+
+                    if (isDrawerVivible) {
+                        setActionBarTitle(0);
+                    } else {
+                        Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
+                        if (currFragment != null) {
+                            setActionBarTitle(((AbstractFragment)currFragment).getTitle());
+                        }
+                    }
+
+                    invalidateOptionsMenu();
+
+                    mIsDrawerVisibleLast = isDrawerVivible;
+                }
             }
 
             @Override
@@ -301,7 +322,6 @@ public class IDoCareActivity extends Activity implements
 
             @Override
             public void onDrawerClosed(View view) {
-                invalidateOptionsMenu();
             }
 
             @Override
@@ -311,6 +331,27 @@ public class IDoCareActivity extends Activity implements
     }
 
     // End of navigation drawer management
+    //
+    // ---------------------------------------------------------------------------------------------
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Action bar management
+
+    public void setActionBarTitle(int resourceId) {
+
+        if (getActionBar() != null ) {
+            getActionBar().show();
+            if (resourceId != 0) {
+                getActionBar().setTitle(resourceId);
+            } else {
+                getActionBar().setTitle("");
+            }
+        }
+    }
+
+    // End of action bar management
     //
     // ---------------------------------------------------------------------------------------------
 

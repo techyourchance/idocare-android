@@ -35,11 +35,6 @@ public class RequestDetailsFragment extends AbstractFragment implements ServerRe
 
         obtainRequestItemAndShowItsDetails();
 
-
-        if (getActivity().getActionBar() != null) {
-            getActivity().getActionBar().setTitle(R.string.request_details_fragment_title);
-        }
-
         return mRequestDetailsViewMVC.getRootView();
     }
 
@@ -78,6 +73,11 @@ public class RequestDetailsFragment extends AbstractFragment implements ServerRe
     @Override
     public Class<? extends AbstractFragment> getNavHierParentFragment() {
         return HomeFragment.class;
+    }
+
+    @Override
+    public int getTitle() {
+        return R.string.request_details_fragment_title;
     }
 
     @Override
