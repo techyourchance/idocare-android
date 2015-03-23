@@ -26,9 +26,10 @@
         android:layout_width="@dimen/drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:paddingTop="@dimen/fragment_default_padding"
         android:choiceMode="singleChoice"
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp"
-        android:background="@android:color/darker_gray"/>
+        android:background="@color/fragment_bg_dark"/>
 
 </android.support.v4.widget.DrawerLayout>

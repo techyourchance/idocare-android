@@ -67,7 +67,7 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
 
 
     /**
-     * All three constructors invoke this method.
+     * Initialize this MVC view. Must be called from constructor
      */
     private void init(Context context) {
 

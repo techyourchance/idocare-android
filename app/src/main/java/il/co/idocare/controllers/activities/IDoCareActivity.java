@@ -1,19 +1,22 @@
 package il.co.idocare.controllers.activities;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,6 +28,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import il.co.idocare.Constants;
+import il.co.idocare.controllers.adapters.NavigationDrawerListAdapter;
 import il.co.idocare.controllers.fragments.HomeFragment;
 import il.co.idocare.controllers.fragments.LoginFragment;
 import il.co.idocare.controllers.fragments.AbstractFragment;
@@ -33,6 +37,7 @@ import il.co.idocare.controllers.fragments.NewRequestFragment;
 import il.co.idocare.controllers.fragments.SplashFragment;
 import il.co.idocare.models.RequestsMVCModel;
 import il.co.idocare.models.UsersMVCModel;
+import il.co.idocare.pojos.NavigationDrawerEntry;
 import il.co.idocare.utils.UtilMethods;
 
 
@@ -242,16 +247,25 @@ public class IDoCareActivity extends Activity implements
 
     }
 
-
+    @SuppressLint("NewApi")
     private void setupDrawerListView() {
 
-        final String[] entries = getResources().getStringArray(R.array.drawer_entries);
         final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         final ListView drawerList = (ListView) findViewById(R.id.drawer_contents);
 
         // Set the adapter for the list view
-        drawerList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
-                entries));
+        final NavigationDrawerListAdapter adapter = new NavigationDrawerListAdapter(this, 0);
+        drawerList.setAdapter(adapter);
+
+        // Populate the adapter with entries
+        String[] entries = getResources().getStringArray(R.array.nav_drawer_entries);
+        TypedArray icons = getResources().obtainTypedArray(R.array.nav_drawer_icons);
+
+        for (int i=0; i<entries.length; i++) {
+            adapter.add(new NavigationDrawerEntry(entries[i], icons.getResourceId(i, 0)));
+        }
+
+        icons.recycle();
 
         drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -261,16 +275,16 @@ public class IDoCareActivity extends Activity implements
                 drawerList.setItemChecked(position, true);
                 drawerLayout.closeDrawer(drawerList);
 
-                String chosenEntry = entries[position];
+                String chosenEntry = adapter.getItem(position).getTitle();
 
                 // Can't do switch/case on Strings :(
-                if (chosenEntry.equals(getResources().getString(R.string.drawer_entry_home))) {
+                if (chosenEntry.equals(getResources().getString(R.string.nav_drawer_entry_home))) {
                     replaceFragment(HomeFragment.class, false, null);
                 }
-                else if (chosenEntry.equals(getResources().getString(R.string.drawer_entry_new_request))) {
+                else if (chosenEntry.equals(getResources().getString(R.string.nav_drawer_entry_new_request))) {
                     replaceFragment(NewRequestFragment.class, false, null);
                 }
-                else if (chosenEntry.equals(getResources().getString(R.string.drawer_entry_logout))) {
+                else if (chosenEntry.equals(getResources().getString(R.string.nav_drawer_entry_logout))) {
                     IDoCareActivity.this.logOutCurrentUser();
                 }
                 else {

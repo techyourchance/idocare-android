@@ -147,8 +147,10 @@ public abstract class AbstractFragment extends Fragment implements
     @Override
     public Handler getInboxHandler() {
         // Inbox Handler will be running on a separate thread
+        // The cast into Object is due to this:
+        // http://stackoverflow.com/questions/18505973/android-studio-ambiguous-method-call-getclass
         if (mInboxHandlerThread == null) {
-            mInboxHandlerThread = new HandlerThread(this.getClass().getSimpleName());
+            mInboxHandlerThread = new HandlerThread(((Object)this).getClass().getSimpleName());
             mInboxHandlerThread.start();
         }
         if (mInboxHandler == null) {
