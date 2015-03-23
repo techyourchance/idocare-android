@@ -1,7 +1,6 @@
 package il.co.idocare.controllers.activities;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -9,8 +8,6 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -19,7 +16,6 @@ import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -41,11 +37,11 @@ import il.co.idocare.pojos.NavigationDrawerEntry;
 import il.co.idocare.utils.UtilMethods;
 
 
-public class IDoCareActivity extends Activity implements
+public class MainActivity extends Activity implements
         AbstractFragment.IDoCareFragmentCallback,
         FragmentManager.OnBackStackChangedListener {
 
-    private static final String LOG_TAG = "IDoCareActivity";
+    private static final String LOG_TAG = "MainActivity";
 
 
     public GoogleApiClient mGoogleApiClient;
@@ -285,7 +281,7 @@ public class IDoCareActivity extends Activity implements
                     replaceFragment(NewRequestFragment.class, false, null);
                 }
                 else if (chosenEntry.equals(getResources().getString(R.string.nav_drawer_entry_logout))) {
-                    IDoCareActivity.this.logOutCurrentUser();
+                    MainActivity.this.logOutCurrentUser();
                 }
                 else {
                     Log.e(LOG_TAG, "drawer entry \"" + chosenEntry + "\" has no functionality");

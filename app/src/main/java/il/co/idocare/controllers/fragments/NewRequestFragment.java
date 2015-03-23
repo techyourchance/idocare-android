@@ -1,7 +1,6 @@
 package il.co.idocare.controllers.fragments;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
@@ -27,7 +26,7 @@ import java.util.Locale;
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.ServerRequest;
-import il.co.idocare.controllers.activities.IDoCareActivity;
+import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.utils.IDoCareHttpUtils;
 import il.co.idocare.utils.IDoCareJSONUtils;
 import il.co.idocare.utils.UtilMethods;
@@ -192,7 +191,7 @@ public class NewRequestFragment extends AbstractFragment implements ServerReques
 
 
         Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                ((IDoCareActivity)getActivity()).mGoogleApiClient);
+                ((MainActivity)getActivity()).mGoogleApiClient);
         if (lastLocation != null) {
             serverRequest.addTextField(Constants.FieldName.LATITUDE.getValue(),
                     String.valueOf(lastLocation.getLatitude()));
