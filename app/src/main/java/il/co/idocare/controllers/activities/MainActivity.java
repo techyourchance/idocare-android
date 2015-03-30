@@ -37,7 +37,7 @@ import il.co.idocare.pojos.NavigationDrawerEntry;
 import il.co.idocare.utils.UtilMethods;
 
 
-public class MainActivity extends Activity implements
+public class MainActivity extends AbstractActivity implements
         AbstractFragment.IDoCareFragmentCallback,
         FragmentManager.OnBackStackChangedListener {
 
@@ -60,31 +60,11 @@ public class MainActivity extends Activity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Decide which fragment to show if the app is not restored
+        setContentView(R.layout.activity_main);
+
+        // Show Home fragment if the app is not restored
         if (savedInstanceState == null) {
-
-            getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-            if (getActionBar() != null) getActionBar().hide();
-
-            setContentView(R.layout.activity_main);
-
-            SharedPreferences prefs = getSharedPreferences(Constants.PREFERENCES_FILE, MODE_PRIVATE);
-
-            if (prefs.contains(Constants.FieldName.USER_ID.getValue()) &&
-                    prefs.contains(Constants.FieldName.USER_PUBLIC_KEY.getValue())) {
-                // Show splash screen if user details exist
-                replaceFragment(SplashFragment.class, false, null);
-            } else {
-                // Bring up login fragment
-                replaceFragment(LoginFragment.class, false, null);
-            }
-
-        } else {
-
-            getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-            if (getActionBar() != null) getActionBar().show();
-
-            setContentView(R.layout.activity_main);
+            replaceFragment(HomeFragment.class, false, null);
         }
 
         initializeModels();
@@ -159,72 +139,6 @@ public class MainActivity extends Activity implements
     }
 
     // End of back stack management
-    //
-    // ---------------------------------------------------------------------------------------------
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // Fragments management
-
-    // TODO: maybe we need to preserve the state of the replaced fragments?
-    @Override
-    public void replaceFragment(Class<? extends AbstractFragment> claz, boolean addToBackStack,
-                                Bundle args) {
-
-        if (isFragmentShown(claz)) {
-            // The requested fragment is already shown - nothing to do
-            Log.v(LOG_TAG, "the fragment " + claz.getSimpleName() + " is already shown");
-            return;
-        }
-
-        // Set default padding for the main frame layout. Fragments might overwrite in
-        // their onCreateView
-        UtilMethods.setPaddingPx(findViewById(R.id.frame_contents),
-                (int) getResources().getDimension(R.dimen.frame_contents_padding));
-
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-
-        // Create new fragment
-        AbstractFragment newFragment;
-
-        try {
-            newFragment = claz.newInstance();
-            if (args != null) newFragment.setArguments(args);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-            return;
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        if (newFragment.isTopLevelFragment()) {
-            // Top level fragments don't have UP button
-            getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        } else if (addToBackStack) {
-            ft.addToBackStack(null);
-        }
-
-        // Change to a new fragment
-        ft.replace(R.id.frame_contents, newFragment, claz.getClass().getSimpleName());
-        ft.commit();
-
-    }
-
-    /**
-     * Check whether a fragment of a specific class is currently shown
-     * @param claz class of fragment to test. Null considered as "test no fragment shown"
-     * @return true if fragment of the same class (or a superclass) is currently shown
-     */
-    private boolean isFragmentShown(Class<? extends AbstractFragment> claz) {
-        Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
-
-
-        return (currFragment == null && claz == null) || (
-                currFragment != null && claz.isInstance(currFragment));
-    }
-
-    // End of fragments management
     //
     // ---------------------------------------------------------------------------------------------
 

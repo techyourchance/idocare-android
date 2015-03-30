@@ -22,16 +22,24 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".controllers.activities.MainActivity"
+            android:name=".controllers.activities.StartupActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <activity
+            android:name=".controllers.activities.MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"/>
+
+
+
     </application>
 
 </manifest>
