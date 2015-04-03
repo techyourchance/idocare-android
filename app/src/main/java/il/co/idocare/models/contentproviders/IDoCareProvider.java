@@ -3,16 +3,11 @@ package il.co.idocare.models.contentproviders;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-import android.provider.Contacts;
 import android.text.TextUtils;
-import android.util.Log;
 
 /**
  * Created by Vasiliy on 3/24/2015.
@@ -45,63 +40,36 @@ public class IDoCareProvider extends ContentProvider {
                         String[] selectionArgs, String sortOrder) {
 
         if (TextUtils.isEmpty(sortOrder)) {
-            sortOrder = Items.SORT_ORDER_DEFAULT;
+            sortOrder = IDoCareContract.Requests.SORT_ORDER_DEFAULT;
         }
 
-
-        SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
-        boolean useAuthorityUri = false;
+        Cursor cursor;
 
         switch (URI_MATCHER.match(uri)) {
             case REQUEST_LIST:
-                builder.setTables(DbSchema.TBL_ITEMS);
+                cursor = mDbDAO.queryRequests(
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
                 break;
-            case ITEM_ID:
-                builder.setTables(DbSchema.TBL_ITEMS);
-                // limit query to one row at most:
-                builder.appendWhere(Items._ID + " = "
-                        + uri.getLastPathSegment());
-                break;
-            case PHOTO_LIST:
-                builder.setTables(DbSchema.TBL_PHOTOS);
-                break;
-            case PHOTO_ID:
-                builder.setTables(DbSchema.TBL_PHOTOS);
-                // limit query to one row at most:
-                builder.appendWhere(Contacts.Photos._ID + " = " + uri.getLastPathSegment());
-                break;
-            case ENTITY_LIST:
-                builder.setTables(DbSchema.LEFT_OUTER_JOIN_STATEMENT);
-                if (TextUtils.isEmpty(sortOrder)) {
-                    sortOrder = ItemEntities.SORT_ORDER_DEFAULT;
-                }
-                useAuthorityUri = true;
-                break;
-            case ENTITY_ID:
-                builder.setTables(DbSchema.LEFT_OUTER_JOIN_STATEMENT);
-                // limit query to one row at most:
-                builder.appendWhere(DbSchema.TBL_ITEMS + "." + Items._ID + " = " + uri.getLastPathSegment());
-                useAuthorityUri = true;
+            case REQUEST_ID:
+                cursor = mDbDAO.queryRequests(
+                        projection,
+                        "WHERE " + IDoCareContract.Requests.REQUEST_ID + " = " + uri.getLastPathSegment()
+                                + (TextUtils.isEmpty(selection) ? "" : " AND " + selection),
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
-        // if you like you can log the query
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            logQuery(builder,  projection, selection, sortOrder);
-        }
-        else {
-            logQueryDeprecated(builder, projection, selection, sortOrder);
-        }
-        Cursor cursor = builder.query(db, projection, selection, selectionArgs,
-                null, null, sortOrder);
-        // if we want to be notified of any changes:
-        if (useAuthorityUri) {
-            cursor.setNotificationUri(getContext().getContentResolver(), LentItemsContract.CONTENT_URI);
-        }
-        else {
-            cursor.setNotificationUri(getContext().getContentResolver(), uri);
-        }
+
+
         return cursor;
     }
 

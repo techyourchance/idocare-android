@@ -2,6 +2,7 @@ package il.co.idocare.models.contentproviders;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -87,13 +88,27 @@ public class IDoCareDatabaseDAO {
 //        return history;
 //    }
 
-    public synchronized void clearTable() {
+    public synchronized void clearRequestsTable() {
         mHelper.clearRequestsTable();
         notifyDataChanged();
     }
 
     private void notifyDataChanged() {
         // TODO: do we need this method? It might be used for e.g. uploading changes to server
+    }
+
+    public Cursor queryRequests(String[] projection, String selection, String[] selectionArgs,
+                                String groupBy, String having, String sortOrder) {
+        Cursor cursor = mHelper.getReadableDatabase().query(
+                IDoCareSQLOpenHelper.REQUESTS_TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                groupBy,
+                having,
+                sortOrder);
+
+        return cursor;
     }
 
 
@@ -112,6 +127,7 @@ public class IDoCareDatabaseDAO {
 
         private static final String CREATE_REQUESTS_TABLE = "CREATE TABLE " + REQUESTS_TABLE_NAME
                 + " ( " + UID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + IDoCareContract.Requests.REQUEST_ID + " INTEGER, "
                 + IDoCareContract.Requests.CREATED_BY + " INTEGER, "
                 + IDoCareContract.Requests.PICKED_UP_BY + " INTEGER, "
                 + IDoCareContract.Requests.CREATED_AT + " DATETIME, "
@@ -160,7 +176,7 @@ public class IDoCareDatabaseDAO {
         }
 
         public void clearRequestsTable() {
-            Log.d(LOG_TAG, "Clearing the table: " + REQUESTS_TABLE_NAME);
+            Log.d(LOG_TAG, "Destroying and re-creating the table: " + REQUESTS_TABLE_NAME);
             SQLiteDatabase db = getWritableDatabase();
             db.execSQL("DROP TABLE IF EXISTS " + REQUESTS_TABLE_NAME);
             db.execSQL(CREATE_REQUESTS_TABLE);

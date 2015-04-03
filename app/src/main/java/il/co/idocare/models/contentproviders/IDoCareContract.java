@@ -34,6 +34,7 @@ public class IDoCareContract {
 	 */
 	public static final class Requests implements BaseColumns {
 
+        public static final String REQUEST_ID = FieldName.REQUEST_ID.getValue();
         public static final String CREATED_BY = FieldName.CREATED_BY.getValue();
         public static final String PICKED_UP_BY = FieldName.PICKED_UP_BY.getValue();
         public static final String CREATED_AT = FieldName.CREATED_AT.getValue();
@@ -87,10 +88,10 @@ public class IDoCareContract {
                 CLOSED_BY };
 
         // TODO: add column containing "timestamp" (latest activity time) and make default sort by this column
-//		/**
-//		 * The default sort order for queries containing NAME fields.
-//		 */
-//		public static final String SORT_ORDER_DEFAULT = NAME + " ASC";
+		/**
+		 * The default sort order for queries containing NAME fields.
+		 */
+		public static final String SORT_ORDER_DEFAULT = CREATED_AT + " ASC";
 	}
 
 
