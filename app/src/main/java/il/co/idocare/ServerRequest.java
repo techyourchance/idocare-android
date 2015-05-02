@@ -159,7 +159,7 @@ public class ServerRequest {
     public void execute() {
         HttpTask httpTask = new HttpTask(mTag, mHttpMethod, mCallback,
                 mRequestTextFields, mRequestPicturesFields);
-        httpTask.execute(mUrl);
+        httpTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mUrl);
     }
 
 

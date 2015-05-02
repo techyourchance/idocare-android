@@ -155,8 +155,8 @@ public class RequestDetailsFragment extends AbstractFragment implements ServerRe
                 .getLong(Constants.FieldName.USER_ID.getValue(), 0);
 
         // Don't allow voting for yourself
-        if ((voteForClosed && myId == getRequestsModel().getRequest(mRequestId).getClosedBy()) ||
-                (!voteForClosed && myId == getRequestsModel().getRequest(mRequestId).getCreatedBy())) {
+        if ((voteForClosed && myId == getRequestsModel().getRequest(getContentResolver(), mRequestId).getClosedBy()) ||
+                (!voteForClosed && myId == getRequestsModel().getRequest(getContentResolver(), mRequestId).getCreatedBy())) {
             Toast.makeText(getActivity(), getActivity().getResources()
                     .getString(R.string.self_voting_error_message), Toast.LENGTH_LONG).show();
             return;
@@ -184,13 +184,13 @@ public class RequestDetailsFragment extends AbstractFragment implements ServerRe
         if (tag == Constants.ServerRequestTag.PICKUP_REQUEST) {
             if (responseStatusOk && IDoCareJSONUtils.verifySuccessfulStatus(responseData)) {
                 dismissProgressDialog();
-                getRequestsModel().update();
+                // TODO: update local model with the change
                 Toast.makeText(getActivity(), "This request was assigned to you", Toast.LENGTH_SHORT).show();
             }
         }
         else if (tag == Constants.ServerRequestTag.VOTE_FOR_REQUEST) {
             if (responseStatusOk && IDoCareJSONUtils.verifySuccessfulStatus(responseData)) {
-                getRequestsModel().update();
+                // TODO: update local model with the change
             }
 
         }

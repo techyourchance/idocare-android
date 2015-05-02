@@ -1,4 +1,4 @@
-package il.co.idocare.models.contentproviders;
+package il.co.idocare.contentproviders;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -21,12 +21,10 @@ public class IDoCareDatabaseDAO {
     private static final String LOG_TAG = "IDoCareDatabaseDAO";
 
 
-    private Context mContext;
     private IDoCareSQLOpenHelper mHelper;
 
 
     public IDoCareDatabaseDAO(Context context) {
-        mContext = context;
         mHelper = new IDoCareSQLOpenHelper(context);
     }
 
@@ -38,10 +36,6 @@ public class IDoCareDatabaseDAO {
         // TODO: make sure that the added data is verified beforehand!
 
         long id = db.insert(IDoCareSQLOpenHelper.REQUESTS_TABLE_NAME, null, contentValues);
-
-        if (id >= 0) {
-            notifyDataChanged(); // TODO: do we need this call here?
-        }
 
         return id;
     }
@@ -88,15 +82,11 @@ public class IDoCareDatabaseDAO {
 //        return history;
 //    }
 
-    public synchronized void clearRequestsTable() {
-        mHelper.clearRequestsTable();
-        notifyDataChanged();
-    }
 
-    private void notifyDataChanged() {
-        // TODO: do we need this method? It might be used for e.g. uploading changes to server
-    }
-
+    /**
+     * Query Requests table
+     * @return cursor containing query results
+     */
     public Cursor queryRequests(String[] projection, String selection, String[] selectionArgs,
                                 String groupBy, String having, String sortOrder) {
         Cursor cursor = mHelper.getReadableDatabase().query(
@@ -109,6 +99,25 @@ public class IDoCareDatabaseDAO {
                 sortOrder);
 
         return cursor;
+    }
+
+    /**
+     * Update entries in Requests table
+     * @return the number of rows affected
+     */
+    public int updateRequests(ContentValues values, String selection, String[] selectionArgs) {
+        return mHelper.getWritableDatabase().update(IDoCareSQLOpenHelper.REQUESTS_TABLE_NAME, values,
+                selection, selectionArgs);
+    }
+
+
+    /**
+     * Delete entries from Requests table
+     * @return the number of rows affected
+     */
+    public int deleteRequests(String selection, String[] selectionArgs) {
+        return mHelper.getWritableDatabase().delete(IDoCareSQLOpenHelper.REQUESTS_TABLE_NAME,
+                selection, selectionArgs);
     }
 
 
@@ -139,7 +148,6 @@ public class IDoCareDatabaseDAO {
                 + IDoCareContract.Requests.LONGITUDE + " REAL, "
                 + IDoCareContract.Requests.CREATED_PICTURES + " VARCHAR(1000), "
                 + IDoCareContract.Requests.CLOSED_PICTURES + " VARCHAR(1000), "
-                + IDoCareContract.Requests.POLLUTION_LEVEL + " INTEGER, "
                 + IDoCareContract.Requests.POLLUTION_LEVEL + " INTEGER, "
                 + IDoCareContract.Requests.CLOSED_BY + " INTEGER, "
                 + IDoCareContract.Requests.CREATED_REPUTATION + " INTEGER, "

@@ -1,4 +1,4 @@
-package il.co.idocare.models.contentproviders;
+package il.co.idocare.contentproviders;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -26,12 +26,15 @@ public class IDoCareProvider extends ContentProvider {
     }
 
 
-    private IDoCareDatabaseDAO mDbDAO;
+    /*
+    This Data Access Object is a wrapper around SQLite DB
+     */
+    private IDoCareDatabaseDAO mDAO;
 
 
     @Override
     public boolean onCreate() {
-        mDbDAO = new IDoCareDatabaseDAO(getContext());
+        mDAO = new IDoCareDatabaseDAO(getContext());
         return true;
     }
 
@@ -47,7 +50,7 @@ public class IDoCareProvider extends ContentProvider {
 
         switch (URI_MATCHER.match(uri)) {
             case REQUEST_LIST:
-                cursor = mDbDAO.queryRequests(
+                cursor = mDAO.queryRequests(
                         projection,
                         selection,
                         selectionArgs,
@@ -56,7 +59,7 @@ public class IDoCareProvider extends ContentProvider {
                         sortOrder);
                 break;
             case REQUEST_ID:
-                cursor = mDbDAO.queryRequests(
+                cursor = mDAO.queryRequests(
                         projection,
                         "WHERE " + IDoCareContract.Requests.REQUEST_ID + " = " + uri.getLastPathSegment()
                                 + (TextUtils.isEmpty(selection) ? "" : " AND " + selection),
@@ -68,7 +71,6 @@ public class IDoCareProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
-
 
         return cursor;
     }
@@ -93,7 +95,7 @@ public class IDoCareProvider extends ContentProvider {
                     "Unsupported URI for insertion: " + uri);
         }
 
-        long id = mDbDAO.addNewRequest(values);
+        long id = mDAO.addNewRequest(values);
 
         return getUriForId(id, uri);
     }
@@ -117,12 +119,56 @@ public class IDoCareProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        return 0;
+
+        // TODO: do we allow requests' deletion? If not, then rewrite this method to throw exception.
+
+        int delCount = 0;
+
+        switch (URI_MATCHER.match(uri)) {
+            case REQUEST_LIST:
+                delCount = mDAO.deleteRequests(selection, selectionArgs);
+                break;
+            case REQUEST_ID:
+                String idStr = uri.getLastPathSegment();
+                String where = IDoCareContract.Requests._ID + " = " + idStr;
+                if (!TextUtils.isEmpty(selection)) {
+                    where += " AND " + selection;
+                }
+                delCount = mDAO.deleteRequests(where, selectionArgs);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported URI: " + uri);
+        }
+//        // notify all listeners of changes:
+//        if (delCount > 0 && !isInBatchMode()) {
+//            getContext().getContentResolver().notifyChange(uri, null);
+//        }
+        return delCount;
     }
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        return 0;
+        int updateCount = 0;
+        switch (URI_MATCHER.match(uri)) {
+            case REQUEST_LIST:
+                updateCount = mDAO.updateRequests(values, selection, selectionArgs);
+                break;
+            case REQUEST_ID:
+                String idStr = uri.getLastPathSegment();
+                String where = IDoCareContract.Requests._ID + " = " + idStr;
+                if (!TextUtils.isEmpty(selection)) {
+                    where += " AND " + selection;
+                }
+                updateCount = mDAO.updateRequests(values, where, selectionArgs);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported URI: " + uri);
+        }
+//        // notify all listeners of changes:
+//        if (updateCount > 0 && !isInBatchMode()) {
+//            getContext().getContentResolver().notifyChange(uri, null);
+//        }
+        return updateCount;
     }
 
 }

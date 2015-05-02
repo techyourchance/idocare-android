@@ -192,7 +192,7 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
     public void showRequest(long requestId) {
         // This sync prevents concurrent change of mRequestItem
         synchronized (LOCK) {
-            mRequestItem = mRequestsModel.getRequest(requestId);
+            mRequestItem = mRequestsModel.getRequest(mContext.getContentResolver(), requestId);
 
             setRequestStatus();
 

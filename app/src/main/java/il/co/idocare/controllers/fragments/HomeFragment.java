@@ -69,18 +69,13 @@ public class HomeFragment extends AbstractFragment {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                final List<Long> requests;
-                try {
-                    requests = getRequestsModel().getAllRequestsIds();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    return;
-                }
+                final List<Long> requestsIds = getRequestsModel()
+                        .getAllRequestsIds(getContentResolver());
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mRequestThumbnailsAdapter.addAll(requests);
+                        mRequestThumbnailsAdapter.addAll(requestsIds);
                         mRequestThumbnailsAdapter.notifyDataSetChanged();
                     }
                 });
@@ -93,7 +88,6 @@ public class HomeFragment extends AbstractFragment {
     @Override
     public void onResume() {
         super.onResume();
-        getRequestsModel().update();
     }
 
     @Override

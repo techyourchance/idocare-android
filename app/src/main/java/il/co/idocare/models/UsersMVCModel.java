@@ -1,5 +1,6 @@
 package il.co.idocare.models;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -36,14 +37,14 @@ public class UsersMVCModel extends AbstractModelMVC implements ServerRequest.OnS
     private final Object LOCK = new Object();
 
     private ConcurrentHashMap<Long, UserItem> mUserItems;
-    private Context mContext;
+    private Activity mActivity;
 
 
-    public UsersMVCModel(Context context) {
+    public UsersMVCModel(Activity activity) {
         mUserItems = new ConcurrentHashMap<Long, UserItem>();
         // The only reason for this context is to be able to access shared preferences file
         // TODO: try to find a solution that does not require passing the context around
-        mContext = context;
+        mActivity = activity;
     }
 
 
@@ -72,7 +73,7 @@ public class UsersMVCModel extends AbstractModelMVC implements ServerRequest.OnS
         ServerRequest serverRequest = new ServerRequest(Constants.GET_USER_DATA_URL,
                 Constants.ServerRequestTag.GET_USER_DATA, this);
 
-        IDoCareHttpUtils.addStandardHeaders(mContext, serverRequest);
+        IDoCareHttpUtils.addStandardHeaders(mActivity, serverRequest);
 
         serverRequest.addTextField(Constants.FieldName.USER_ID.getValue(), String.valueOf(id));
 

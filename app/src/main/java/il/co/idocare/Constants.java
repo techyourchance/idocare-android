@@ -6,8 +6,6 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 
 public class Constants {
 
-
-
     /**
      * This enum is used in order to relate HTTP response to a particular HTTP request
      */
@@ -79,7 +77,7 @@ public class Constants {
         RESPONSE_STATUS("status"), RESPONSE_MESSAGE("message"), RESPONSE_DATA("data"),
 
         USER_PASSWORD("user_data_auth"), USER_NICKNAME("user_data_nickname"), USER_ID("user_data_id"),
-        USER_PUBLIC_KEY("user_data_public_key"), USER_FIRST_NAME("user_data_first_name"),
+        USER_AUTH_TOKEN("user_data_public_key"), USER_FIRST_NAME("user_data_first_name"),
         USER_LAST_NAME("user_data_last_name"), USER_REPUTATION("user_data_reputation"),
         USER_PICTURE("user_data_picture"),
 
@@ -129,8 +127,8 @@ public class Constants {
         V_CLOSED_VOTE_UP_BUTTON_CLICKED,
         V_CLOSED_VOTE_DOWN_BUTTON_CLICKED,
 
-        C_AUTHENTICATION_INITIATED,
-        C_AUTHENTICATION_COMPLETED,
+        C_LOGIN_REQUEST_SENT,
+        C_LOGIN_RESPONSE_RECEIVED,
 
         M_USER_DATA_UPDATE,
         M_REQUEST_DATA_UPDATE,

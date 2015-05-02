@@ -3,6 +3,7 @@ package il.co.idocare.controllers.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -83,7 +84,7 @@ public abstract class AbstractFragment extends Fragment implements
      * @param addToBackStack whether the old fragment should be added to the back stack.
      * @param args arguments to be set for the new fragment
      */
-    public void replaceFragment(Class<? extends AbstractFragment> claz, boolean addToBackStack,
+    public void replaceFragment(Class<? extends Fragment> claz, boolean addToBackStack,
                                  Bundle args) {
         mCallback.replaceFragment(claz, addToBackStack, args);
     }
@@ -101,7 +102,7 @@ public abstract class AbstractFragment extends Fragment implements
      * @return MVC model representing the requests
      */
     public RequestsMVCModel getRequestsModel() {
-        return mCallback.getRequestsModel();
+        return RequestsMVCModel.getInstance();
     }
 
 
@@ -113,6 +114,12 @@ public abstract class AbstractFragment extends Fragment implements
         return mCallback.getUsersModel();
     }
 
+    /**
+     * @return ContentResolver associated with parent activity
+     */
+    public ContentResolver getContentResolver() {
+        return getActivity().getContentResolver();
+    }
 
     /**
      * Show standard (for the app) progress dialog
@@ -146,6 +153,7 @@ public abstract class AbstractFragment extends Fragment implements
 
     @Override
     public Handler getInboxHandler() {
+        // TODO: consider changing all handlers to run on the main thread.
         // Inbox Handler will be running on a separate thread
         // The cast into Object is due to this:
         // http://stackoverflow.com/questions/18505973/android-studio-ambiguous-method-call-getclass
@@ -214,19 +222,13 @@ public abstract class AbstractFragment extends Fragment implements
          * @param addToBackStack whether the old fragment should be added to the back stack
          * @param args arguments to be set for the new fragment
          */
-        public void replaceFragment(Class<? extends AbstractFragment> claz, boolean addToBackStack,
+        public void replaceFragment(Class<? extends Fragment> claz, boolean addToBackStack,
                                     Bundle args);
 
         /**
          * Change ActionBar title
          */
         public void setActionBarTitle(int resourceId);
-
-        /**
-         *
-         * @return MVC model representing the requests
-         */
-        public RequestsMVCModel getRequestsModel();
 
         /**
          *

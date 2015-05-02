@@ -16,9 +16,12 @@ import il.co.idocare.R;
 /**
  * MVC View of the Home screen.
  */
-public class LoginViewMVC extends AbstractViewMVC {
+public class AuthenticateViewMVC extends AbstractViewMVC {
 
-    private final static String LOG_TAG = "LoginViewMVC";
+    public static final String VIEW_STATE_USERNAME = "username";
+    public static final String VIEW_STATE_PASSWORD = "password";
+
+    private final static String LOG_TAG = AuthenticateViewMVC.class.getSimpleName();
 
     View mRootView;
 
@@ -27,8 +30,8 @@ public class LoginViewMVC extends AbstractViewMVC {
     EditText mEdtPassword;
 
 
-    public LoginViewMVC(LayoutInflater inflater, ViewGroup container) {
-        mRootView = inflater.inflate(R.layout.fragment_login, container, false);
+    public AuthenticateViewMVC(LayoutInflater inflater, ViewGroup container) {
+        mRootView = inflater.inflate(R.layout.activity_authenticate, container, false);
 
 
         mBtnLogin = (Button) mRootView.findViewById(R.id.btn_login);
@@ -52,8 +55,8 @@ public class LoginViewMVC extends AbstractViewMVC {
     @Override
     public Bundle getViewState() {
         Bundle bundle = new Bundle();
-        bundle.putString("username", mEdtUsername.getText().toString());
-        bundle.putString("password", mEdtPassword.getText().toString());
+        bundle.putString(VIEW_STATE_USERNAME, mEdtUsername.getText().toString());
+        bundle.putString(VIEW_STATE_PASSWORD, mEdtPassword.getText().toString());
         return bundle;
     }
 
@@ -61,10 +64,10 @@ public class LoginViewMVC extends AbstractViewMVC {
     protected void handleMessage(Message msg) {
 
         switch (Constants.MESSAGE_TYPE_VALUES[msg.what]) {
-            case C_AUTHENTICATION_INITIATED:
+            case C_LOGIN_REQUEST_SENT:
                 authenticationInitiated();
                 break;
-            case C_AUTHENTICATION_COMPLETED:
+            case C_LOGIN_RESPONSE_RECEIVED:
                 authenticationCompleted();
                 break;
             default:

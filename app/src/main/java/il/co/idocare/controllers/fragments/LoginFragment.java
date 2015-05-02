@@ -1,6 +1,7 @@
 package il.co.idocare.controllers.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Message;
@@ -20,21 +21,22 @@ import il.co.idocare.Constants;
 import il.co.idocare.Constants.FieldName;
 import il.co.idocare.Constants.MessageType;
 import il.co.idocare.ServerRequest;
+import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.utils.IDoCareJSONUtils;
-import il.co.idocare.views.LoginViewMVC;
+import il.co.idocare.views.AuthenticateViewMVC;
 
 public class LoginFragment extends AbstractFragment implements ServerRequest.OnServerResponseCallback {
 
     private final static String LOG_TAG = "LoginFragment";
 
-    LoginViewMVC mViewMVCLogin;
+    AuthenticateViewMVC mViewMVCLogin;
 
     Bundle mLoginBundle;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mViewMVCLogin = new LoginViewMVC(inflater, container);
+        mViewMVCLogin = new AuthenticateViewMVC(inflater, container);
         // Provide inbox Handler to the MVC View
         mViewMVCLogin.addOutboxHandler(getInboxHandler());
         // Add MVC View's Handler to the set of outbox Handlers
@@ -87,8 +89,8 @@ public class LoginFragment extends AbstractFragment implements ServerRequest.OnS
         byte[] usernameBytes;
         byte[] passwordBytes;
         try {
-            usernameBytes = ("fuckyouhackers" + mLoginBundle.getString("username")).getBytes("UTF-8");
-            passwordBytes = ("fuckyouhackers" + mLoginBundle.getString("password")).getBytes("UTF-8");
+            usernameBytes = ("fuckyouhackers" + mLoginBundle.getString(AuthenticateViewMVC.VIEW_STATE_USERNAME)).getBytes("UTF-8");
+            passwordBytes = ("fuckyouhackers" + mLoginBundle.getString(AuthenticateViewMVC.VIEW_STATE_PASSWORD)).getBytes("UTF-8");
         } catch (UnsupportedEncodingException e ) {
             // Really? Not supporting UTF-8???
             return;
@@ -103,7 +105,7 @@ public class LoginFragment extends AbstractFragment implements ServerRequest.OnS
 
         serverRequest.execute();
 
-        notifyOutboxHandlers(MessageType.C_AUTHENTICATION_INITIATED.ordinal(), 0, 0, null);
+        notifyOutboxHandlers(MessageType.C_LOGIN_REQUEST_SENT.ordinal(), 0, 0, null);
 
     }
 
@@ -111,12 +113,11 @@ public class LoginFragment extends AbstractFragment implements ServerRequest.OnS
     @Override
     public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag, String responseData) {
         if (tag == Constants.ServerRequestTag.LOGIN) {
+            notifyOutboxHandlers(MessageType.C_LOGIN_RESPONSE_RECEIVED.ordinal(), 0, 0, null);
             if (responseStatusOk && processResponseAndStoreCredentials(responseData)) {
-                // Show action bar
-                if (getActivity().getActionBar() != null) getActivity().getActionBar().show();
-                replaceFragment(HomeFragment.class, false, null);
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
             } else {
-                notifyOutboxHandlers(MessageType.C_AUTHENTICATION_COMPLETED.ordinal(), 0, 0, null);
                 Toast.makeText(getActivity(), "Incorrect username and/or password", Toast.LENGTH_LONG).show();
             }
         } else {
@@ -134,13 +135,13 @@ public class LoginFragment extends AbstractFragment implements ServerRequest.OnS
 
             JSONObject dataObj = IDoCareJSONUtils.extractDataJSONObject(jsonData);
             long userId = dataObj.getLong(FieldName.USER_ID.getValue());
-            String publicKey = dataObj.getString(FieldName.USER_PUBLIC_KEY.getValue());
+            String publicKey = dataObj.getString(FieldName.USER_AUTH_TOKEN.getValue());
 
             SharedPreferences prefs =
                     getActivity().getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
 
             prefs.edit().putLong(FieldName.USER_ID.getValue(), userId).apply();
-            prefs.edit().putString(FieldName.USER_PUBLIC_KEY.getValue(), publicKey).apply();
+            prefs.edit().putString(FieldName.USER_AUTH_TOKEN.getValue(), publicKey).apply();
             return true;
         } catch (JSONException e) {
             e.printStackTrace();

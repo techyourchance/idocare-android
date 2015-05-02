@@ -1,10 +1,8 @@
-package il.co.idocare.models.contentproviders;
+package il.co.idocare.contentproviders;
 
 import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
-
-import java.lang.reflect.Field;
 
 import il.co.idocare.Constants.FieldName;
 
@@ -16,7 +14,7 @@ public class IDoCareContract {
 	/**
 	 * The authority of the requests provider.
 	 */
-	public static final String AUTHORITY = "il.co.idocare";
+	public static final String AUTHORITY = "il.co.idocare.provider.IDoCareProvider";
 
 	/**
 	 * The content URI for the top-level authority.

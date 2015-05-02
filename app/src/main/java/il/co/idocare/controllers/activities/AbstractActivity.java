@@ -8,11 +8,15 @@ import android.os.Bundle;
 
 import il.co.idocare.R;
 import il.co.idocare.controllers.fragments.AbstractFragment;
+import il.co.idocare.models.UsersMVCModel;
 
 /**
  * This is a wrapper around a standard Activity class which provides few convenience methods
  */
-public abstract class AbstractActivity extends Activity {
+public abstract class AbstractActivity extends Activity implements
+        AbstractFragment.IDoCareFragmentCallback {
+
+    private UsersMVCModel mUsersModel;
 
 
     // ---------------------------------------------------------------------------------------------
@@ -20,7 +24,7 @@ public abstract class AbstractActivity extends Activity {
     // Fragments management
 
     // TODO: maybe we need to preserve the state of the replaced fragments?
-    public void replaceFragment(Class<? extends AbstractFragment> claz, boolean addToBackStack,
+    public void replaceFragment(Class<? extends Fragment> claz, boolean addToBackStack,
                                 Bundle args) {
 
         if (isFragmentShown(claz)) {
@@ -32,7 +36,7 @@ public abstract class AbstractActivity extends Activity {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
 
         // Create new fragment
-        AbstractFragment newFragment;
+        Fragment newFragment;
 
         try {
             newFragment = claz.newInstance();
@@ -45,11 +49,17 @@ public abstract class AbstractActivity extends Activity {
             return;
         }
 
-        if (newFragment.isTopLevelFragment()) {
-            // Top level fragments don't have UP button
-            getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        } else if (addToBackStack) {
-            ft.addToBackStack(null);
+
+        // If the new fragment is a subclass of AbstractFragment
+        if (AbstractFragment.class.isAssignableFrom(claz)) {
+
+            if (((AbstractFragment) newFragment).isTopLevelFragment()) {
+                // Top level fragments don't have UP button
+                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            } else if (addToBackStack) {
+                ft.addToBackStack(null);
+            }
+
         }
 
         // Change to a new fragment
@@ -63,7 +73,7 @@ public abstract class AbstractActivity extends Activity {
      * @param claz class of fragment to test. Null considered as "test no fragment shown"
      * @return true if fragment of the same class (or a superclass) is currently shown
      */
-    private boolean isFragmentShown(Class<? extends AbstractFragment> claz) {
+    private boolean isFragmentShown(Class<? extends Fragment> claz) {
         Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
 
 
@@ -74,5 +84,51 @@ public abstract class AbstractActivity extends Activity {
     // End of fragments management
     //
     // ---------------------------------------------------------------------------------------------
+
+
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Models management
+
+    /**
+     * This method executes any code required for models' initialization
+     */
+    public void initializeModels() {
+        mUsersModel = new UsersMVCModel(this);
+    }
+
+    @Override
+    public UsersMVCModel getUsersModel() {
+        return mUsersModel;
+    }
+
+    // End of models management
+    //
+    // ---------------------------------------------------------------------------------------------
+
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Action bar management
+
+    public void setActionBarTitle(int resourceId) {
+
+        if (getActionBar() != null ) {
+            getActionBar().show();
+            if (resourceId != 0) {
+                getActionBar().setTitle(resourceId);
+            } else {
+                getActionBar().setTitle("");
+            }
+        }
+    }
+
+    // End of action bar management
+    //
+    // ---------------------------------------------------------------------------------------------
+
 
 }

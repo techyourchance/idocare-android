@@ -222,7 +222,7 @@ public class CloseRequestFragment extends AbstractFragment implements ServerRequ
         if (tag == Constants.ServerRequestTag.CLOSE_REQUEST) {
             if (responseStatusOk && IDoCareJSONUtils.verifySuccessfulStatus(responseData)) {
                 dismissProgressDialog();
-                getRequestsModel().update();
+                // TODO: need to update local sql db
                 replaceFragment(HomeFragment.class, false, null);
                 Toast.makeText(getActivity(), "Request closed successfully", Toast.LENGTH_SHORT).show();
             }

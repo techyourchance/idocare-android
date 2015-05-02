@@ -1,10 +1,8 @@
 package il.co.idocare.controllers.activities;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
@@ -30,23 +28,17 @@ import il.co.idocare.controllers.fragments.LoginFragment;
 import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.R;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
-import il.co.idocare.controllers.fragments.SplashFragment;
-import il.co.idocare.models.RequestsMVCModel;
 import il.co.idocare.models.UsersMVCModel;
 import il.co.idocare.pojos.NavigationDrawerEntry;
-import il.co.idocare.utils.UtilMethods;
 
 
 public class MainActivity extends AbstractActivity implements
-        AbstractFragment.IDoCareFragmentCallback,
         FragmentManager.OnBackStackChangedListener {
 
     private static final String LOG_TAG = "MainActivity";
 
 
     public GoogleApiClient mGoogleApiClient;
-
-    private RequestsMVCModel mRequestsModel;
 
     private UsersMVCModel mUsersModel;
 
@@ -60,7 +52,14 @@ public class MainActivity extends AbstractActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+        // This is required because we disabled the action bar in the theme
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+
         setContentView(R.layout.activity_main);
+
+        // Show the action bar (just in case it was hidden)
+        if (getActionBar() != null) getActionBar().show();
 
         // Show Home fragment if the app is not restored
         if (savedInstanceState == null) {
@@ -75,7 +74,7 @@ public class MainActivity extends AbstractActivity implements
 
         setupDrawer();
 
-        // This callback will be used to show/hide up (back) button in actionbar
+        // This callback will be used to show/hide up (back) button in actionbarh
         getFragmentManager().addOnBackStackChangedListener(this);
 
 
@@ -259,26 +258,6 @@ public class MainActivity extends AbstractActivity implements
     // ---------------------------------------------------------------------------------------------
 
 
-    // ---------------------------------------------------------------------------------------------
-    //
-    // Action bar management
-
-    public void setActionBarTitle(int resourceId) {
-
-        if (getActionBar() != null ) {
-            getActionBar().show();
-            if (resourceId != 0) {
-                getActionBar().setTitle(resourceId);
-            } else {
-                getActionBar().setTitle("");
-            }
-        }
-    }
-
-    // End of action bar management
-    //
-    // ---------------------------------------------------------------------------------------------
-
 
 
     // ---------------------------------------------------------------------------------------------
@@ -290,37 +269,12 @@ public class MainActivity extends AbstractActivity implements
                 getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
 
         prefs.edit().remove(Constants.FieldName.USER_ID.getValue()).apply();
-        prefs.edit().remove(Constants.FieldName.USER_PUBLIC_KEY.getValue()).commit();
+        prefs.edit().remove(Constants.FieldName.USER_AUTH_TOKEN.getValue()).commit();
         replaceFragment(LoginFragment.class, false, null);
 
     }
 
     // End of user session management
-    //
-    // ---------------------------------------------------------------------------------------------
-
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // Models management
-
-    private void initializeModels() {
-        mRequestsModel = new RequestsMVCModel(this);
-        mRequestsModel.initialize();
-        mUsersModel = new UsersMVCModel(this);
-    }
-
-    @Override
-    public RequestsMVCModel getRequestsModel() {
-        return mRequestsModel;
-    }
-
-    @Override
-    public UsersMVCModel getUsersModel() {
-        return mUsersModel;
-    }
-
-    // End of models management
     //
     // ---------------------------------------------------------------------------------------------
 

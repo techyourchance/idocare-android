@@ -15,6 +15,7 @@ import java.util.List;
 import il.co.idocare.handlermessaging.HandlerMessagingMaster;
 import il.co.idocare.handlermessaging.HandlerMessagingSlave;
 import il.co.idocare.models.ModelMVC;
+import il.co.idocare.models.RequestsMVCModel;
 
 /**
  * This is an abstract implementation of ViewMVC interface which provides some convenience
@@ -27,8 +28,15 @@ public abstract class AbstractViewMVC implements
 
     Handler mInboxHandler;
     final List<Handler> mOutboxHandlers = new ArrayList<Handler>();
-    ModelMVC mModelMVC;
 
+
+    /**
+     *
+     * @return requests model instance
+     */
+    public RequestsMVCModel getRequestsModel() {
+        return RequestsMVCModel.getInstance();
+    }
 
     // ---------------------------------------------------------------------------------------------
     //
@@ -47,6 +55,7 @@ public abstract class AbstractViewMVC implements
         // Android Views, it will be convenient (and less error prone) if MVC View's inbox Handler
         // will be running on UI thread.
         if (mInboxHandler == null) {
+            // TODO: review hte warning about possible memory leak due to this handler being inner class
             mInboxHandler = new Handler() {
                 @Override
                 public void handleMessage(Message msg) {

@@ -32,6 +32,8 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
 
     private final Object LOCK = new Object();
 
+    private Context mContext;
+
     private Handler mInboxHandler;
     private RequestsMVCModel mRequestsModel;
     private UsersMVCModel mUsersModel;
@@ -56,6 +58,8 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
     public RequestThumbnailViewMVC(Context context, RequestsMVCModel requestsModel,
                                    UsersMVCModel usersModel) {
         super(context);
+        mContext = context;
+
         mRequestsModel = requestsModel;
         mUsersModel = usersModel;
 
@@ -169,7 +173,7 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
 
         synchronized (LOCK) {
             // Get the request item
-            mRequestItem = mRequestsModel.getRequest(requestId);
+            mRequestItem = mRequestsModel.getRequest(mContext.getContentResolver(), requestId);
             if (mRequestItem == null) {
                 Log.e(LOG_TAG, "could not find request in the model. ID: " + String.valueOf(requestId));
             }
