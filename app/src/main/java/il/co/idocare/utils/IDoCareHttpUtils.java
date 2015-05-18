@@ -20,8 +20,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import il.co.idocare.Constants;
-import il.co.idocare.ServerRequest;
-import il.co.idocare.authenticators.AccountAuthenticator;
+import il.co.idocare.connectivity.ServerRequest;
+import il.co.idocare.authentication.AccountAuthenticator;
 
 /**
  * Created by Vasiliy on 2/17/2015.
@@ -36,68 +36,16 @@ public class IDoCareHttpUtils {
      * Authentication token<br>
      * Timestamp<br>
      *
-     * <b>This method must not be called from the UI thread!</b>
-     * 
-     * @param activity context that issued a call to this method. This context will be used for
-     *                 starting login/signup activities (if required)
      * @param serverRequest ServerRequest to add the headers to
+     * @param userId ID of the active account
+     * @param authToken the authentication token associated with the active account
      */
-    public static void addStandardHeaders(Activity activity, ServerRequest serverRequest) {
-        SharedPreferences prefs =
-                activity.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
+    public static void addStandardHeaders(ServerRequest serverRequest, String userId, String authToken) {
 
-
-        String accountName = prefs.getString(AccountManager.KEY_ACCOUNT_NAME, "");
-        String accountType = prefs.getString(AccountManager.KEY_ACCOUNT_TYPE, "");
-
-        if (TextUtils.isEmpty(accountName) || TextUtils.isEmpty(accountType)) {
-            Log.e(LOG_TAG, "Couldn't obtain the default account data from shared preferences");
-            // TODO: this error need to be handled (maybe throw an exception?)
-            return;
-        }
-
-        Account account = new Account(accountName, accountType);
-        Account[] existingAccounts = AccountManager.get(activity).getAccountsByType(AccountAuthenticator.ACCOUNT_TYPE);
-
-        if (!Arrays.asList(existingAccounts).contains(account)) {
-            Log.e(LOG_TAG, "The default account is no longer registered on the device");
-            // TODO: this error need to be handled (maybe throw an exception?)
-            return;
-        }
-
-        AccountManagerFuture<Bundle> future = AccountManager.get(activity).getAuthToken(
-                account,
-                AccountAuthenticator.ACCOUNT_TYPE,
-                null,
-                activity,
-                null,
-                null);
-
-        Bundle result = null;
-        try {
-            result = future.getResult();
-        } catch (OperationCanceledException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (AuthenticatorException e) {
-            e.printStackTrace();
-        }
-
-
-        if (result == null || !result.containsKey(AccountManager.KEY_AUTHTOKEN)) {
-            Log.e(LOG_TAG, "Couldn't obtain auth token for the specified account");
-            // TODO: this error need to be handled (maybe throw an exception?)
-            return;
-
-        }
-
-        String authToken = result.getString(AccountManager.KEY_AUTHTOKEN);
-
-        serverRequest.addHeader(Constants.HttpHeader.USER_ID.getValue(), accountName); // Currently what is stored in shared preferences as account name is user ID
+        serverRequest.addHeader(Constants.HttpHeader.USER_ID.getValue(), userId);
 
         long timestamp = System.currentTimeMillis();
-        String token = generateAuthToken(accountName +
+        String token = generateAuthToken(userId +
                 authToken +
                 String.valueOf(timestamp));
 

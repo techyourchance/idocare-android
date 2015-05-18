@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import il.co.idocare.Constants;
-import il.co.idocare.ServerRequest;
-import il.co.idocare.authenticators.AccountAuthenticator;
+import il.co.idocare.connectivity.ServerRequest;
+import il.co.idocare.authentication.AccountAuthenticator;
 import il.co.idocare.utils.IDoCareJSONUtils;
 import il.co.idocare.views.AuthenticateViewMVC;
 

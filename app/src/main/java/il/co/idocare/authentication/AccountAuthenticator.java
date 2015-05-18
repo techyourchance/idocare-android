@@ -1,4 +1,4 @@
-package il.co.idocare.authenticators;
+package il.co.idocare.authentication;
 
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
-import il.co.idocare.Constants;
 import il.co.idocare.controllers.activities.AuthenticatorActivity;
 
 /**

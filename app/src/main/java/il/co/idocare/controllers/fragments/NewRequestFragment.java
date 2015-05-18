@@ -25,7 +25,7 @@ import java.util.Locale;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.ServerRequest;
+import il.co.idocare.connectivity.ServerRequest;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.utils.IDoCareHttpUtils;
 import il.co.idocare.utils.IDoCareJSONUtils;

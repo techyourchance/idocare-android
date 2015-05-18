@@ -20,7 +20,7 @@ import java.io.UnsupportedEncodingException;
 import il.co.idocare.Constants;
 import il.co.idocare.Constants.FieldName;
 import il.co.idocare.Constants.MessageType;
-import il.co.idocare.ServerRequest;
+import il.co.idocare.connectivity.ServerRequest;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.utils.IDoCareJSONUtils;
 import il.co.idocare.views.AuthenticateViewMVC;
@@ -83,8 +83,10 @@ public class LoginFragment extends AbstractFragment implements ServerRequest.OnS
 
         mLoginBundle = mViewMVCLogin.getViewState();
 
-        ServerRequest serverRequest = new ServerRequest(Constants.LOGIN_URL,
-                Constants.ServerRequestTag.LOGIN, this);
+        ServerRequest serverRequest = new ServerRequest(ServerRequest.LOGIN_URL,
+                ServerRequest.ServerRequestTag.LOGIN, this);
+
+        // TODO: this simple authentication mechnanism should be replaced with complete SSL
 
         byte[] usernameBytes;
         byte[] passwordBytes;
@@ -111,8 +113,9 @@ public class LoginFragment extends AbstractFragment implements ServerRequest.OnS
 
 
     @Override
-    public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag, String responseData) {
-        if (tag == Constants.ServerRequestTag.LOGIN) {
+    public void serverResponse(boolean responseStatusOk, ServerRequest.ServerRequestTag tag,
+                               String responseData) {
+        if (tag == ServerRequest.ServerRequestTag.LOGIN) {
             notifyOutboxHandlers(MessageType.C_LOGIN_RESPONSE_RECEIVED.ordinal(), 0, 0, null);
             if (responseStatusOk && processResponseAndStoreCredentials(responseData)) {
                 Intent intent = new Intent(getActivity(), MainActivity.class);

@@ -1,4 +1,4 @@
-package il.co.idocare;
+package il.co.idocare.connectivity;
 
 
 import android.os.AsyncTask;
@@ -28,8 +28,37 @@ import ch.boye.httpclientandroidlib.impl.client.CloseableHttpClient;
 import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
 import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
 import ch.boye.httpclientandroidlib.util.EntityUtils;
+import il.co.idocare.Constants;
 
 public class ServerRequest {
+
+
+
+
+    private final static String DEV_ROOT_URL = "http://dev-04.idocare.co.il";
+    private final static String QA_ROOT_URL = "http://qa-04.idocare.co.il";
+
+    // URLs used to issue requests to the server
+    public final static String LOGIN_URL = DEV_ROOT_URL + "/api-04/user/login";
+    public final static String GET_USER_DATA_URL = DEV_ROOT_URL + "/api-04/user/get";
+    public final static String ADD_USER_URL = DEV_ROOT_URL + "/api-04/user/add";
+    public final static String GET_ALL_ARTICLES_URL = DEV_ROOT_URL + "/api-04/article";
+    public final static String VOTE_REQUEST_URL = DEV_ROOT_URL + "/api-04/request/vote";
+    public final static String VOTE_ARTICLE_URL = DEV_ROOT_URL + "/api-04/article/vote";
+    public final static String GET_ALL_REQUESTS_URL = DEV_ROOT_URL + "/api-04/request";
+    public final static String CREATE_REQUEST_URL = DEV_ROOT_URL + "/api-04/request/add";
+    public final static String PICKUP_REQUEST_URL = DEV_ROOT_URL + "/api-04/request/pickup";
+    public final static String CLOSE_REQUEST_URL = DEV_ROOT_URL + "/api-04/request/close";
+    public final static String GET_REQUEST_URL = DEV_ROOT_URL + "/api-04/request/get";
+
+
+    /**
+     * This enum is used in order to indicate which request should be initiated and
+     * is also used as an asynchronous completion token in order to identify
+     * the request while processing its response
+     */
+    public enum ServerRequestTag {GET_ALL_REQUESTS, REQUEST_DETAILS, CREATE_REQUEST,
+        PICKUP_REQUEST, CLOSE_REQUEST, VOTE_FOR_REQUEST, GET_USER_DATA, LOGIN}
 
 
     /**
@@ -43,7 +72,7 @@ public class ServerRequest {
          * @param tag the tag of the server request
          * @param responseData the body of the received http response
          */
-        public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag, String responseData);
+        public void serverResponse(boolean responseStatusOk, ServerRequestTag tag, String responseData);
     }
 
     private final static String LOG_TAG = "ServerRequest";
@@ -53,7 +82,7 @@ public class ServerRequest {
      */
     public enum HttpMethod { GET, POST }
 
-    Constants.ServerRequestTag mTag;
+    ServerRequestTag mTag;
     String mUrl;
     OnServerResponseCallback mCallback;
     HttpMethod mHttpMethod;
@@ -89,7 +118,7 @@ public class ServerRequest {
      * @param tag this tag will be provided alongside server response data on callback call
      * @param callback callback object to be used when the response is available
      */
-    public ServerRequest (String url, Constants.ServerRequestTag tag, OnServerResponseCallback callback) {
+    public ServerRequest (String url, ServerRequestTag tag, OnServerResponseCallback callback) {
         mUrl = url;
         mTag = tag;
         mCallback = callback;
@@ -179,22 +208,22 @@ public class ServerRequest {
         private Map<String, String> mTextFieldsMap;
         private Map<String, Map<String, String>> mPicturesFieldsMap;
         private OnServerResponseCallback mCallback;
-        private Constants.ServerRequestTag mTag;
+        private ServerRequestTag mTag;
 
         private boolean mResponseStatusOk = false;
 
-        protected HttpTask (Constants.ServerRequestTag tag, HttpMethod httpMethod,
+        protected HttpTask (ServerRequestTag tag, HttpMethod httpMethod,
                             OnServerResponseCallback callback) {
             this(tag, httpMethod, callback, null, null);
         }
 
-        protected HttpTask (Constants.ServerRequestTag tag, HttpMethod httpMethod,
+        protected HttpTask (ServerRequestTag tag, HttpMethod httpMethod,
                             OnServerResponseCallback callback, Map<String, String> textFieldsMap) {
             this(tag, httpMethod, callback, textFieldsMap, null);
         }
 
 
-        protected HttpTask (Constants.ServerRequestTag tag, HttpMethod httpMethod,
+        protected HttpTask (ServerRequestTag tag, HttpMethod httpMethod,
                             OnServerResponseCallback callback, Map<String, String> textFieldsMap,
                             Map<String, Map<String, String>> picturesMap) {
             mTag = tag;

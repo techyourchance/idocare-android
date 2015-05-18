@@ -12,9 +12,8 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
-import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.authenticators.AccountAuthenticator;
+import il.co.idocare.authentication.AccountAuthenticator;
 import il.co.idocare.controllers.fragments.SplashFragment;
 
 /**

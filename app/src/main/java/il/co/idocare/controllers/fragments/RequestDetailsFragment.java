@@ -1,6 +1,5 @@
 package il.co.idocare.controllers.fragments;
 
-import android.app.Notification;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Message;
@@ -12,7 +11,7 @@ import android.widget.Toast;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.ServerRequest;
+import il.co.idocare.connectivity.ServerRequest;
 import il.co.idocare.utils.IDoCareHttpUtils;
 import il.co.idocare.utils.IDoCareJSONUtils;
 import il.co.idocare.views.RequestDetailsViewMVC;

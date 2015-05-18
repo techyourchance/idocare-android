@@ -1,12 +1,24 @@
 package il.co.idocare.controllers.activities;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 
+import java.util.Arrays;
+
+import il.co.idocare.Constants;
 import il.co.idocare.R;
+import il.co.idocare.authentication.AccountAuthenticator;
+import il.co.idocare.authentication.MyAccountManager;
 import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.models.UsersMVCModel;
 
@@ -15,6 +27,8 @@ import il.co.idocare.models.UsersMVCModel;
  */
 public abstract class AbstractActivity extends Activity implements
         AbstractFragment.IDoCareFragmentCallback {
+
+    private static final String LOG_TAG = AbstractActivity.class.getSimpleName();
 
     private UsersMVCModel mUsersModel;
 
@@ -127,6 +141,34 @@ public abstract class AbstractActivity extends Activity implements
     }
 
     // End of action bar management
+    //
+    // ---------------------------------------------------------------------------------------------
+
+
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Accounts management
+
+    @Override
+    public AccountManagerFuture<Bundle> getAuthTokenForActiveAccount() {
+        return MyAccountManager.getAuthTokenForActiveAccount(this);
+    }
+
+    private AccountManagerFuture<Bundle> addNewAccount() {
+        return AccountManager.get(this).addAccount(
+                AccountAuthenticator.ACCOUNT_TYPE,
+                AccountAuthenticator.AUTH_TOKEN_TYPE_DEFAULT,
+                null,
+                null,
+                this,
+                null,
+                null);
+    }
+
+
+    // End of accounts management
     //
     // ---------------------------------------------------------------------------------------------
 

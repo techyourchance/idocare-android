@@ -1,38 +1,19 @@
 package il.co.idocare.utils;
 
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
-import android.text.BoringLayout;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
-
-import il.co.idocare.Constants;
-import il.co.idocare.Constants.HttpHeader;
-import il.co.idocare.Constants.FieldName;
-import il.co.idocare.ServerRequest;
-import il.co.idocare.pojos.RequestItem;
 
 public class UtilMethods {
 

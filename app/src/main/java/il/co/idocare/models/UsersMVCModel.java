@@ -1,19 +1,15 @@
 package il.co.idocare.models;
 
 import android.app.Activity;
-import android.content.Context;
 import android.util.Log;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import il.co.idocare.Constants;
-import il.co.idocare.ServerRequest;
+import il.co.idocare.connectivity.ServerRequest;
 import il.co.idocare.pojos.UserItem;
 import il.co.idocare.utils.IDoCareHttpUtils;
 import il.co.idocare.utils.IDoCareJSONUtils;

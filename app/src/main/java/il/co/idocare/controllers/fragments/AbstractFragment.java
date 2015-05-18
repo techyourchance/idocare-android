@@ -1,5 +1,6 @@
 package il.co.idocare.controllers.fragments;
 
+import android.accounts.AccountManagerFuture;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
@@ -75,9 +76,6 @@ public abstract class AbstractFragment extends Fragment implements
     }
 
 
-
-
-
     /**
      * Call to this method replaces the currently shown fragment with a new one
      * @param claz the class of the new fragment.
@@ -139,6 +137,16 @@ public abstract class AbstractFragment extends Fragment implements
         }
     }
 
+
+    /**
+     * This method obtains the auth token for the active account (as specified in SharedPreferences).
+     * If no IDoCare accounts registered on the device, or active account is not set, or the auth
+     * token is not valid - the user will be prompted for credentials using AccountManager's APIs.
+     * @return AccountManagerFuture object as returned by GetAuthToken() of AccountManager.
+     */
+    public AccountManagerFuture<Bundle> getAuthTokenForActiveAccount() {
+        return mCallback.getAuthTokenForActiveAccount();
+    }
     
     // ---------------------------------------------------------------------------------------------
     //
@@ -231,10 +239,17 @@ public abstract class AbstractFragment extends Fragment implements
         public void setActionBarTitle(int resourceId);
 
         /**
-         *
          * @return MVC model representing the users
          */
         public UsersMVCModel getUsersModel();
+
+        /**
+         * This method obtains the auth token for the active account (as specified in SharedPreferences).
+         * If no IDoCare accounts registered on the device, or active account is not set, or the auth
+         * token is not valid - the user will be prompted for credentials using AccountManager's APIs.
+         * @return AccountManagerFuture object as returned by GetAuthToken() of AccountManager.
+         */
+        public AccountManagerFuture<Bundle> getAuthTokenForActiveAccount();
     }
 
 
