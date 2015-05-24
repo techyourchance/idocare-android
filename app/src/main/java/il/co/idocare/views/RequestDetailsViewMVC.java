@@ -276,11 +276,11 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
             mTxtCreatedComment.setText(mRequestItem.getCreatedComment());
         }
 
+        String[] createdPictures = mRequestItem.getCreatedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
         for (int i=0; i<3; i++) {
-            if (mRequestItem.getCreatedPictures() != null &&
-                    mRequestItem.getCreatedPictures().length > i) {
+            if (createdPictures.length > i) {
                 ImageLoader.getInstance().displayImage(
-                        mRequestItem.getCreatedPictures()[i],
+                        createdPictures[i],
                         mImgCreatedPictures[i],
                         Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
             } else {
@@ -359,12 +359,11 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
             mTxtClosedComment.setText(mRequestItem.getClosedComment());
         }
         
-        
+        String[] closedPictures = mRequestItem.getClosedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
         for (int i=0; i<3; i++) {
-            if (mRequestItem.getClosedPictures() != null &&
-                    mRequestItem.getClosedPictures().length > i) {
+            if (closedPictures.length > i) {
                 ImageLoader.getInstance().displayImage(
-                        mRequestItem.getClosedPictures()[i],
+                        closedPictures[i],
                         mImgClosedPictures[i],
                         Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
             } else {

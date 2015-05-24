@@ -12,6 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import ch.boye.httpclientandroidlib.HttpEntity;
 import ch.boye.httpclientandroidlib.HttpResponse;
@@ -31,8 +32,6 @@ import ch.boye.httpclientandroidlib.util.EntityUtils;
 import il.co.idocare.Constants;
 
 public class ServerRequest {
-
-
 
 
     private final static String DEV_ROOT_URL = "http://dev-04.idocare.co.il";
@@ -82,11 +81,12 @@ public class ServerRequest {
      */
     public enum HttpMethod { GET, POST }
 
-    ServerRequestTag mTag;
-    String mUrl;
-    OnServerResponseCallback mCallback;
-    HttpMethod mHttpMethod;
-
+    private ServerRequestTag mTag;
+    private String mUrl;
+    private OnServerResponseCallback mCallback;
+    private HttpMethod mHttpMethod;
+    private HttpTask mHttpTask;
+    private String mResponseData;
 
     /**
      * Headers to be added to HTTP request
@@ -127,11 +127,6 @@ public class ServerRequest {
         mRequestTextFields = new HashMap<String, String>();
         mRequestPicturesFields = new HashMap<String, Map<String, String>>();
 
-        Log.d(LOG_TAG, "creating new server request:"
-                + "\nURL: "         + (mUrl != null ? mUrl : "null")
-                + "\nRequest tag: " + (mTag != null ? mTag.toString() : "null")
-                + "\nCallback: "    + (mCallback != null ? mCallback.toString() : "null")
-                + "\nMethod: "      + (mHttpMethod != null ? mHttpMethod.toString() : "null") );
     }
 
     /**
@@ -183,12 +178,88 @@ public class ServerRequest {
     }
 
     /**
-     * Execute this server request
+     * Execute this server request. This method returns immediately.
      */
     public void execute() {
-        HttpTask httpTask = new HttpTask(mTag, mHttpMethod, mCallback,
+        if (mHttpTask != null) {
+            throw new IllegalStateException("ServerRequest can't be executed more than once");
+        }
+
+        mHttpTask = new HttpTask(mTag, mHttpMethod, mCallback,
                 mRequestTextFields, mRequestPicturesFields);
-        httpTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mUrl);
+        // TODO: maybe this can be optimized in some way?
+        mHttpTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mUrl);
+
+        logServerRequestInfo();
+    }
+
+    /**
+     * Execute this server request. This method blocks until the request is executed.
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    public void blockingExecute() throws ExecutionException, InterruptedException {
+        execute();
+        // TODO: maybe it will be better to use get() with timeout in this method?
+        mHttpTask.get();
+    }
+
+
+    /**
+     * Get the response obtained for this request. This method will block until the response is received.
+     * @return the server response
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    public String getResponseData() throws ExecutionException, InterruptedException {
+        if (mHttpTask == null) {
+            throw new IllegalStateException("ServerRequest must be executed before trying to get " +
+                    "the response data");
+        }
+        // TODO: maybe it will be better to use get() with timeout in this method?
+        return mHttpTask.get();
+    }
+
+
+    private void logServerRequestInfo() {
+
+        StringBuilder stringBuilder = new StringBuilder(400);
+
+        stringBuilder.append("Executing new server request:").append("\n")
+                .append("URL: ").append((mUrl != null ? mUrl : "null")).append("\n")
+                .append("Method: ").append(mHttpMethod != null ? mHttpMethod.toString() : "null").append("\n");
+
+        stringBuilder.append("Headers: ").append("\n");
+        for (String headerName : mRequestHeaders.keySet()) {
+            stringBuilder.append("\t").append(headerName).append(" : ")
+                    .append(mRequestHeaders.get(headerName)).append("\n");
+        }
+
+        if (mRequestTextFields.size() > 0) {
+            stringBuilder.append("Fields: ").append("\n");
+            for (String fieldName : mRequestTextFields.keySet()) {
+                stringBuilder.append("\t").append(fieldName).append(" : ")
+                        .append(mRequestTextFields.get(fieldName)).append("\n");
+            }
+        }
+
+        if (mRequestPicturesFields.size() > 0) {
+            stringBuilder.append("Pictures: ").append("\n");
+            for (String pictureField : mRequestPicturesFields.keySet()) {
+                stringBuilder.append("\t").append("Field name: ").append(pictureField).append("\n");
+                for (String pictureName : mRequestPicturesFields.get(pictureField).keySet()) {
+                    stringBuilder.append("\t\t").append(pictureName).append(" : ")
+                            .append(mRequestPicturesFields.get(pictureField).get(pictureName))
+                            .append("\n");
+                }
+            }
+        }
+
+        stringBuilder.append("Request tag: ").append(mTag != null ? mTag.toString() : "null").append("\n");
+        stringBuilder.append("Callback: ").append(mCallback != null ? mCallback.toString() : "null").append("\n");
+
+
+        Log.d(LOG_TAG, stringBuilder.toString());
     }
 
 
@@ -324,6 +395,8 @@ public class ServerRequest {
 
         @Override
         protected void onPostExecute(String responseData) {
+            ServerRequest.this.mResponseData = responseData;
+
             if (mCallback != null) {
                 mCallback.serverResponse(mResponseStatusOk, mTag, responseData);
             }

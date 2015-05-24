@@ -6,6 +6,8 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 
 public class Constants {
 
+    public static final java.lang.String PICTURES_LIST_SEPARATOR = ", ";
+
     /**
      * This enum (its ordinal() values) is used with startActivityForResult() and
      * onActivityResult() calls across the app

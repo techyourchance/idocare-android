@@ -3,6 +3,8 @@ package il.co.idocare.controllers.activities;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -11,14 +13,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.authentication.AccountAuthenticator;
-import il.co.idocare.authentication.MyAccountManager;
 import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.models.UsersMVCModel;
 
@@ -29,6 +31,7 @@ public abstract class AbstractActivity extends Activity implements
         AbstractFragment.IDoCareFragmentCallback {
 
     private static final String LOG_TAG = AbstractActivity.class.getSimpleName();
+    private static final String ACTIVE_ACCOUNT_NAME_KEY = "idocare_active_account_name";
 
     private UsersMVCModel mUsersModel;
 
@@ -152,25 +155,36 @@ public abstract class AbstractActivity extends Activity implements
     // Accounts management
 
     @Override
-    public AccountManagerFuture<Bundle> getAuthTokenForActiveAccount() {
-        return MyAccountManager.getAuthTokenForActiveAccount(this);
-    }
+    public String getAuthTokenForActiveAccount() throws AuthenticatorException, OperationCanceledException, IOException {
 
-    private AccountManagerFuture<Bundle> addNewAccount() {
-        return AccountManager.get(this).addAccount(
+        AccountManagerFuture<Bundle> future = AccountManager.get(this).getAuthTokenByFeatures(
                 AccountAuthenticator.ACCOUNT_TYPE,
                 AccountAuthenticator.AUTH_TOKEN_TYPE_DEFAULT,
                 null,
-                null,
                 this,
                 null,
-                null);
+                null,
+                null,
+                null
+        );
+
+        return future.getResult().getString(AccountManager.KEY_AUTHTOKEN);
     }
 
+    @Override
+    public Account getActiveAccount() {
+        Account[] accounts = AccountManager.get(this).getAccountsByType(AccountAuthenticator.ACCOUNT_TYPE);
+        if (accounts.length > 0) {
+            return accounts[0];
+        } else {
+            return null;
+        }
+    }
 
     // End of accounts management
     //
     // ---------------------------------------------------------------------------------------------
+
 
 
 }

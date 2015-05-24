@@ -12,7 +12,7 @@ import android.text.TextUtils;
 /**
  * Created by Vasiliy on 3/24/2015.
  */
-public class IDoCareProvider extends ContentProvider {
+public class IDoCareContentProvider extends ContentProvider {
 
     private static final int REQUEST_LIST = 0;
     private static final int REQUEST_ID = 1;

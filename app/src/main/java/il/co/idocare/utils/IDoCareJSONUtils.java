@@ -1,5 +1,6 @@
 package il.co.idocare.utils;
 
+import android.content.ContentValues;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -114,7 +115,7 @@ public class IDoCareJSONUtils {
             request.setCreatedComment(jsonObject.getString(FieldName.CREATED_COMMENT.getValue()));
 
         if (!jsonObject.isNull(FieldName.CREATED_PICTURES.getValue()))
-            request.setCreatedPictures(jsonObject.getString(FieldName.CREATED_PICTURES.getValue()).split(", "));
+            request.setCreatedPictures(jsonObject.getString(FieldName.CREATED_PICTURES.getValue()));
 
         if (!jsonObject.isNull(FieldName.CREATED_REPUTATION.getValue()))
             request.setCreatedReputation(jsonObject.getInt(FieldName.CREATED_REPUTATION.getValue()));
@@ -136,7 +137,7 @@ public class IDoCareJSONUtils {
 
 
         if (!jsonObject.isNull(FieldName.CLOSED_PICTURES.getValue()))
-            request.setClosedPictures(jsonObject.getString(FieldName.CLOSED_PICTURES.getValue()).split(", "));
+            request.setClosedPictures(jsonObject.getString(FieldName.CLOSED_PICTURES.getValue()));
 
         if (!jsonObject.isNull(FieldName.CLOSED_REPUTATION.getValue()))
             request.setClosedReputation(jsonObject.getInt(FieldName.CLOSED_REPUTATION.getValue()));
@@ -212,7 +213,6 @@ public class IDoCareJSONUtils {
 
         return requests;
     }
-
 
     private static String formatDate(String stringDate) {
         try {

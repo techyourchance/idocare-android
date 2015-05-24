@@ -42,7 +42,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
     private static final String KEY_ERROR_MSG = "key_error_msg";
 
     private AuthenticateViewMVC mViewMVC;
-    private AccountManager mAccountManager;
 
     private final List<Handler> mOutboxHandlers = new ArrayList<Handler>();
 
@@ -56,8 +55,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
         addOutboxHandler(mViewMVC.getInboxHandler());
 
         setContentView(mViewMVC.getRootView());
-
-        mAccountManager = AccountManager.get(getBaseContext());
 
 //        if (accountName != null) {
 //            ((TextView)findViewById(R.id.accountName)).setText(accountName);
@@ -73,8 +70,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
 
         Bundle userDataBundle = mViewMVC.getViewState();
 
-        ServerRequest serverRequest = new ServerRequest(Constants.LOGIN_URL,
-                Constants.ServerRequestTag.LOGIN, this);
+        ServerRequest serverRequest = new ServerRequest(ServerRequest.LOGIN_URL,
+                ServerRequest.ServerRequestTag.LOGIN, this);
 
         byte[] usernameBytes;
         byte[] passwordBytes;
@@ -101,8 +98,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
 
 
     @Override
-    public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag, String responseData) {
-        if (tag == Constants.ServerRequestTag.LOGIN) {
+    public void serverResponse(boolean responseStatusOk, ServerRequest.ServerRequestTag tag, String responseData) {
+        if (tag == ServerRequest.ServerRequestTag.LOGIN) {
 
             notifyOutboxHandlers(Constants.MessageType.C_LOGIN_RESPONSE_RECEIVED.ordinal(), 0, 0, null);
 
@@ -123,6 +120,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
 
 
     private void finishLogin(Bundle data) {
+
+        AccountManager accountManager = AccountManager.get(this);
+
         if (data.containsKey(KEY_ERROR_MSG)) {
             Toast.makeText(this, "Incorrect username and/or password", Toast.LENGTH_LONG).show();
             Log.i(LOG_TAG, "Incorrect username and/or password:  " + data.getString(KEY_ERROR_MSG));
@@ -143,10 +143,10 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
 
             // Creating the account on the device and setting the auth token we got
             // (Not setting the auth token will cause another call to the server to authenticate the user)
-            mAccountManager.addAccountExplicitly(account, null, null);
-            mAccountManager.setAuthToken(account, authTokenType, authToken);
+            accountManager.addAccountExplicitly(account, null, null);
+            accountManager.setAuthToken(account, authTokenType, authToken);
         } else {
-            mAccountManager.setAuthToken(account, authTokenType, authToken);
+            accountManager.setAuthToken(account, authTokenType, authToken);
         }
 
         // Remember the account as a default account for the app

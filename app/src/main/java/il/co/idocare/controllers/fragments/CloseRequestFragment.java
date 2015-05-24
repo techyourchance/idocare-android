@@ -1,5 +1,7 @@
 package il.co.idocare.controllers.fragments;
 
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -7,6 +9,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -187,14 +191,29 @@ public class CloseRequestFragment extends AbstractFragment implements ServerRequ
      */
     private void closeRequest() {
 
+        String id = getActiveAccount().name;
+        if (TextUtils.isEmpty(id)) {
+            // TODO: decide what to do
+            return;
+        }
+
+
         showProgressDialog("Please wait...", "Closing the request...");
 
         Bundle closeRequestBundle = mCloseRequestViewMVC.getViewState();
 
-        ServerRequest serverRequest = new ServerRequest(Constants.CLOSE_REQUEST_URL,
-                Constants.ServerRequestTag.CLOSE_REQUEST, this);
+        ServerRequest serverRequest = new ServerRequest(ServerRequest.CLOSE_REQUEST_URL,
+                ServerRequest.ServerRequestTag.CLOSE_REQUEST, this);
 
-        IDoCareHttpUtils.addStandardHeaders(getActivity(), serverRequest);
+        try {
+            IDoCareHttpUtils.addStandardHeaders(serverRequest, id, getAuthTokenForActiveAccount());
+        } catch (AuthenticatorException e) {
+            e.printStackTrace();
+        } catch (OperationCanceledException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         // Set request ID
         serverRequest.addTextField(FieldName.REQUEST_ID.getValue(), String.valueOf(mRequestId));
@@ -217,9 +236,9 @@ public class CloseRequestFragment extends AbstractFragment implements ServerRequ
 
 
     @Override
-    public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag, String responseData) {
+    public void serverResponse(boolean responseStatusOk, ServerRequest.ServerRequestTag tag, String responseData) {
 
-        if (tag == Constants.ServerRequestTag.CLOSE_REQUEST) {
+        if (tag == ServerRequest.ServerRequestTag.CLOSE_REQUEST) {
             if (responseStatusOk && IDoCareJSONUtils.verifySuccessfulStatus(responseData)) {
                 dismissProgressDialog();
                 // TODO: need to update local sql db

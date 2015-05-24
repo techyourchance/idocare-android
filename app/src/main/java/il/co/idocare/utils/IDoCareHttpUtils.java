@@ -2,6 +2,7 @@ package il.co.idocare.utils;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
@@ -9,6 +10,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -22,6 +24,7 @@ import java.util.Arrays;
 import il.co.idocare.Constants;
 import il.co.idocare.connectivity.ServerRequest;
 import il.co.idocare.authentication.AccountAuthenticator;
+import il.co.idocare.controllers.fragments.AbstractFragment;
 
 /**
  * Created by Vasiliy on 2/17/2015.

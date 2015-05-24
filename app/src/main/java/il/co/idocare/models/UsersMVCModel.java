@@ -1,5 +1,6 @@
 package il.co.idocare.models;
 
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.util.Log;
 
@@ -9,6 +10,7 @@ import org.json.JSONObject;
 import java.util.concurrent.ConcurrentHashMap;
 
 import il.co.idocare.Constants;
+import il.co.idocare.authentication.AccountAuthenticator;
 import il.co.idocare.connectivity.ServerRequest;
 import il.co.idocare.pojos.UserItem;
 import il.co.idocare.utils.IDoCareHttpUtils;
@@ -66,19 +68,20 @@ public class UsersMVCModel extends AbstractModelMVC implements ServerRequest.OnS
      * Execute a new server request asking to fetch user data
      */
     private void fetchUserDataFromServer(long id) {
-        ServerRequest serverRequest = new ServerRequest(Constants.GET_USER_DATA_URL,
-                Constants.ServerRequestTag.GET_USER_DATA, this);
-
-        IDoCareHttpUtils.addStandardHeaders(mActivity, serverRequest);
-
-        serverRequest.addTextField(Constants.FieldName.USER_ID.getValue(), String.valueOf(id));
-
-        serverRequest.execute();
+//        ServerRequest serverRequest = new ServerRequest(ServerRequest.GET_USER_DATA_URL,
+//                ServerRequest.ServerRequestTag.GET_USER_DATA, this);
+//
+//
+//        IDoCareHttpUtils.addStandardHeaders(serverRequest, id, );
+//
+//        serverRequest.addTextField(Constants.FieldName.USER_ID.getValue(), String.valueOf(id));
+//
+//        serverRequest.execute();
     }
 
     @Override
-    public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag, String responseData) {
-        if (tag == Constants.ServerRequestTag.GET_USER_DATA) {
+    public void serverResponse(boolean responseStatusOk, ServerRequest.ServerRequestTag tag, String responseData) {
+        if (tag == ServerRequest.ServerRequestTag.GET_USER_DATA) {
             if (responseStatusOk && IDoCareJSONUtils.verifySuccessfulStatus(responseData)) {
 
                 // TODO: decide how to handle JSON parsing exceptions. Maybe rerun server request?

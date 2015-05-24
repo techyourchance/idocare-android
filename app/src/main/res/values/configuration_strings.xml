@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+This file contains strings that are used as part of the code or configuration -
+none of these strings should be localized.
+-->
+<resources>
+    <string name="content_provider_authority" translatable="false">il.co.idocare.provider.IDoCareContentProvider</string>
+    <string name="idocare_account_type" translatable="false">il.co.idocare.account</string>
+
+</resources>

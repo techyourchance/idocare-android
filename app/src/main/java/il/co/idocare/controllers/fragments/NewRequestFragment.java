@@ -1,5 +1,7 @@
 package il.co.idocare.controllers.fragments;
 
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
@@ -8,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +20,7 @@ import android.widget.Toast;
 import com.google.android.gms.location.LocationServices;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -179,15 +183,30 @@ public class NewRequestFragment extends AbstractFragment implements ServerReques
      * on the contents of fragment's views
      */
     private void createRequest() {
+
+        String activeAccountId = getActiveAccount().name;
+        if (TextUtils.isEmpty(activeAccountId)) {
+            Toast.makeText(getActivity(), "No active account found", Toast.LENGTH_LONG).show();
+            Log.i(LOG_TAG, "No active account found - request pickup failed");
+            return;
+        }
         
         showProgressDialog("Please wait...", "Creating new request...");
 
         Bundle bundleNewRequest = mViewMVCNewRequest.getViewState();
 
-        ServerRequest serverRequest = new ServerRequest(Constants.CREATE_REQUEST_URL,
-                Constants.ServerRequestTag.CREATE_REQUEST, this);
+        ServerRequest serverRequest = new ServerRequest(ServerRequest.CREATE_REQUEST_URL,
+                ServerRequest.ServerRequestTag.CREATE_REQUEST, this);
 
-        IDoCareHttpUtils.addStandardHeaders(getActivity(), serverRequest);
+        try {
+            IDoCareHttpUtils.addStandardHeaders(serverRequest, activeAccountId, getAuthTokenForActiveAccount());
+        } catch (AuthenticatorException e) {
+            e.printStackTrace();
+        } catch (OperationCanceledException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
         Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(
@@ -220,10 +239,10 @@ public class NewRequestFragment extends AbstractFragment implements ServerReques
 
 
     @Override
-    public void serverResponse(boolean responseStatusOk, Constants.ServerRequestTag tag,
+    public void serverResponse(boolean responseStatusOk, ServerRequest.ServerRequestTag tag,
                                String responseData) {
 
-        if (tag == Constants.ServerRequestTag.CREATE_REQUEST) {
+        if (tag == ServerRequest.ServerRequestTag.CREATE_REQUEST) {
             if (responseStatusOk && IDoCareJSONUtils.verifySuccessfulStatus(responseData)) {
                 dismissProgressDialog();
                 replaceFragment(HomeFragment.class, false, null);

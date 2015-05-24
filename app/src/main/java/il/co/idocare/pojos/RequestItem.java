@@ -1,17 +1,9 @@
 package il.co.idocare.pojos;
 
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.util.Log;
+import android.content.ContentValues;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import il.co.idocare.Constants;
-import il.co.idocare.Constants.FieldName;
+import il.co.idocare.contentproviders.IDoCareContract.Requests;
 
 /**
  * This object contains data about a single request (users involved, state, location, etc)
@@ -27,7 +19,7 @@ public class RequestItem {
     private long mCreatedBy;
     private String mCreatedAt;
     private String mCreatedComment;
-    private String[] mCreatedPictures;
+    private String mCreatedPictures;
     private int mCreatedReputation;
     private double mLat;
     private double mLong;
@@ -37,7 +29,7 @@ public class RequestItem {
     private long mClosedBy;
     private String mClosedAt;
     private String mClosedComment;
-    private String[] mClosedPictures;
+    private String mClosedPictures;
     private int mClosedReputation;
 
 
@@ -48,6 +40,40 @@ public class RequestItem {
     private RequestItem(long id) {
         mId = id;
     }
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Adapters (converters)
+
+    /**
+     * Convert this request object to ContentValues object that can be passed to ContentPsovider
+     * @return
+     */
+    public ContentValues toContentValues() {
+        ContentValues values = new ContentValues();
+
+        values.put(Requests.REQUEST_ID, getId());
+        values.put(Requests.CREATED_BY, getCreatedBy());
+        values.put(Requests.CREATED_AT, getCreatedAt());
+        values.put(Requests.CREATED_COMMENT, getCreatedComment());
+        values.put(Requests.CREATED_PICTURES, getCreatedPictures());
+        values.put(Requests.CREATED_REPUTATION, getCreatedReputation());
+        values.put(Requests.LATITUDE, getLatitude());
+        values.put(Requests.LONGITUDE, getLongitude());
+        values.put(Requests.POLLUTION_LEVEL, getCreatedPollutionLevel());
+        values.put(Requests.PICKED_UP_BY, getPickedUpBy());
+        values.put(Requests.PICKED_UP_AT, getPickedUpAt());
+        values.put(Requests.CLOSED_BY, getClosedBy());
+        values.put(Requests.CLOSED_AT, getClosedAt());
+        values.put(Requests.CLOSED_COMMENT, getClosedComment());
+        values.put(Requests.CLOSED_PICTURES, getClosedPictures());
+        values.put(Requests.CLOSED_REPUTATION, getClosedReputation());
+
+        return values;
+    }
+
+
 
 
     // ---------------------------------------------------------------------------------------------
@@ -88,7 +114,7 @@ public class RequestItem {
     }
 
 
-    public RequestItem setCreatedPictures(String[] pictures) {
+    public RequestItem setCreatedPictures(String pictures) {
         mCreatedPictures = pictures;
         return this;
     }
@@ -126,7 +152,7 @@ public class RequestItem {
     }
 
 
-    public RequestItem setClosedPictures(String[] pictures) {
+    public RequestItem setClosedPictures(String pictures) {
         mClosedPictures = pictures;
         return this;
     }
@@ -159,7 +185,7 @@ public class RequestItem {
         return mCreatedComment;
     }
 
-    public String[] getCreatedPictures() {
+    public String getCreatedPictures() {
         return mCreatedPictures;
     }
 
@@ -167,11 +193,11 @@ public class RequestItem {
         return mCreatedReputation;
     }
 
-    public double getLat() {
+    public double getLatitude() {
         return mLat;
     }
 
-    public double getLong() {
+    public double getLongitude() {
         return mLong;
     }
 
@@ -199,7 +225,7 @@ public class RequestItem {
         return mClosedComment;
     }
 
-    public String[] getClosedPictures() {
+    public String getClosedPictures() {
         return mClosedPictures;
     }
 

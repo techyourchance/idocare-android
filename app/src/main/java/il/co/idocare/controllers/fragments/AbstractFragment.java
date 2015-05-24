@@ -1,6 +1,9 @@
 package il.co.idocare.controllers.fragments;
 
+import android.accounts.Account;
 import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
@@ -10,6 +13,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -142,10 +146,19 @@ public abstract class AbstractFragment extends Fragment implements
      * This method obtains the auth token for the active account (as specified in SharedPreferences).
      * If no IDoCare accounts registered on the device, or active account is not set, or the auth
      * token is not valid - the user will be prompted for credentials using AccountManager's APIs.
+     *
+     * This method might block and should not be called on the main thread.
      * @return AccountManagerFuture object as returned by GetAuthToken() of AccountManager.
      */
-    public AccountManagerFuture<Bundle> getAuthTokenForActiveAccount() {
+    public String getAuthTokenForActiveAccount() throws AuthenticatorException, OperationCanceledException, IOException {
         return mCallback.getAuthTokenForActiveAccount();
+    }
+
+    /**
+     * @return the active account as specified in SharedPreferences, null if no account specified
+     */
+    public Account getActiveAccount() {
+        return mCallback.getActiveAccount();
     }
     
     // ---------------------------------------------------------------------------------------------
@@ -247,9 +260,16 @@ public abstract class AbstractFragment extends Fragment implements
          * This method obtains the auth token for the active account (as specified in SharedPreferences).
          * If no IDoCare accounts registered on the device, or active account is not set, or the auth
          * token is not valid - the user will be prompted for credentials using AccountManager's APIs.
+         *
+         * This method might block and should not be called on the main thread.
          * @return AccountManagerFuture object as returned by GetAuthToken() of AccountManager.
          */
-        public AccountManagerFuture<Bundle> getAuthTokenForActiveAccount();
+        public String getAuthTokenForActiveAccount() throws AuthenticatorException, OperationCanceledException, IOException;
+
+        /**
+         * @return the active account as specified in SharedPreferences, null if no account specified
+         */
+        public Account getActiveAccount();
     }
 
 

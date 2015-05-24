@@ -242,19 +242,18 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
 
         mImgRequestThumbnail.setVisibility(View.VISIBLE);
 
-        if (mRequestItem.getCreatedPictures() != null &&
-                mRequestItem.getCreatedPictures().length > 0 ) {
-
-            if (!mRequestItem.getCreatedPictures()[0].equals(mCurrentPictureUrl)) {
+        String[] createdPictures = mRequestItem.getCreatedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
+        if (createdPictures.length > 0 ) {
+            if (!createdPictures[0].equals(mCurrentPictureUrl)) {
 
                 mImgRequestThumbnail.setImageDrawable(null);
 
                 ImageLoader.getInstance().displayImage(
-                        mRequestItem.getCreatedPictures()[0],
+                        createdPictures[0],
                         mImgRequestThumbnail,
                         Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
 
-                mCurrentPictureUrl = mRequestItem.getCreatedPictures()[0];
+                mCurrentPictureUrl = createdPictures[0];
             }
 
         } else {

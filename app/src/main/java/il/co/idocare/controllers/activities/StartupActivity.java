@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import il.co.idocare.R;
 import il.co.idocare.authentication.AccountAuthenticator;
@@ -23,7 +24,6 @@ public class StartupActivity extends AbstractActivity {
 
     private static final String LOG_TAG = StartupActivity.class.getSimpleName();
 
-    private AccountManager mAccountManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,11 +31,8 @@ public class StartupActivity extends AbstractActivity {
 
         setContentView(R.layout.activity_startup);
 
-        mAccountManager = AccountManager.get(this);
-
-
         /*
-        Since all we do in SplashFragment is just show some graphics, and there are no other
+        VZ: Since all we do in SplashFragment is just show some graphics, and there are no other
         fragments shown in StartupActivity, we could make this activity fragmentless (thus
         simplifying things). I chose to keep "fragmentation" in order to be able to easily extend
         the functionality of startup activity in the future (if such a need arises)
@@ -69,8 +66,8 @@ public class StartupActivity extends AbstractActivity {
 
                 try {
                     Bundle result = future.getResult();
-                    // If the result was obtained successfully it means that authentication
-                    // succeeded
+
+                    // Make sure that the splash fragment is shown at least 5 seconds
                     long currTime = System.currentTimeMillis();
                     if (currTime < initTime + 5*1000) {
                         try {
@@ -97,6 +94,7 @@ public class StartupActivity extends AbstractActivity {
                     Intent intent = new Intent(StartupActivity.this, MainActivity.class);
                     startActivity(intent);
                 } else {
+                    // TODO: consider handling this error case in a different way
                     Log.i(LOG_TAG, "Could not obtain auth token");
                     Toast.makeText(StartupActivity.this, "Could not obtain auth token", Toast.LENGTH_LONG).show();
                 }
