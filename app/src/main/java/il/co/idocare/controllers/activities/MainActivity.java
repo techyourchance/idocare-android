@@ -1,8 +1,10 @@
 package il.co.idocare.controllers.activities;
 
+import android.accounts.Account;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
@@ -22,6 +24,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import il.co.idocare.Constants;
+import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.adapters.NavigationDrawerListAdapter;
 import il.co.idocare.controllers.fragments.HomeFragment;
 import il.co.idocare.controllers.fragments.LoginFragment;
@@ -86,8 +89,14 @@ public class MainActivity extends AbstractActivity implements
 
         if (mGoogleApiClient != null) mGoogleApiClient.connect();
 
+        enableAutomaticSync();
+        requestImmediateSync(); // TODO: come up with some more sophisticated scheme
+
+
         // TODO: verify that this call resolves the missing UP button when the activity is restarted
         onBackStackChanged();
+
+
 
     }
 
@@ -95,7 +104,10 @@ public class MainActivity extends AbstractActivity implements
     protected void onStop() {
         super.onStop();
 
+
         if (mGoogleApiClient != null) mGoogleApiClient.disconnect();
+
+        disableAutomaticSync();
 
     }
 
@@ -272,6 +284,34 @@ public class MainActivity extends AbstractActivity implements
         prefs.edit().remove(Constants.FieldName.USER_AUTH_TOKEN.getValue()).commit();
         replaceFragment(LoginFragment.class, false, null);
 
+    }
+
+
+    private void enableAutomaticSync() {
+        Account acc = getActiveAccount();
+        ContentResolver.setIsSyncable(acc, IDoCareContract.AUTHORITY, 1);
+        //ContentResolver.setSyncAutomatically(acc, IDoCareContract.AUTHORITY, true);
+    }
+
+    private void disableAutomaticSync() {
+        Account acc = getActiveAccount();
+        ContentResolver.setIsSyncable(acc, IDoCareContract.AUTHORITY, 0);
+
+    }
+
+    private void requestImmediateSync() {
+        Account acc = getActiveAccount();
+        // Pass the settings flags by inserting them in a bundle
+        Bundle settingsBundle = new Bundle();
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        /*
+         * Request the sync for the default account, authority, and
+         * manual sync settings
+         */
+        ContentResolver.requestSync(acc, IDoCareContract.AUTHORITY, settingsBundle);
     }
 
     // End of user session management

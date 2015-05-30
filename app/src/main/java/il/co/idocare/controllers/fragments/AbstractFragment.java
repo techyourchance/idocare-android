@@ -13,6 +13,8 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -160,6 +162,7 @@ public abstract class AbstractFragment extends Fragment implements
     public Account getActiveAccount() {
         return mCallback.getActiveAccount();
     }
+
     
     // ---------------------------------------------------------------------------------------------
     //
@@ -270,6 +273,7 @@ public abstract class AbstractFragment extends Fragment implements
          * @return the active account as specified in SharedPreferences, null if no account specified
          */
         public Account getActiveAccount();
+
     }
 
 

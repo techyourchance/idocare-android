@@ -1,9 +1,11 @@
 package il.co.idocare.controllers.activities;
 
+import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import il.co.idocare.R;
 import il.co.idocare.authentication.AccountAuthenticator;
+import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.fragments.SplashFragment;
 
 /**
@@ -71,11 +74,13 @@ public class StartupActivity extends AbstractActivity {
                     long currTime = System.currentTimeMillis();
                     if (currTime < initTime + 5*1000) {
                         try {
-                            Thread.sleep(initTime + 3*1000 - initTime);
+                            Thread.sleep(initTime + 5*1000 - currTime);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
+
+
                     return true;
                 } catch (AuthenticatorException e) {
                     e.printStackTrace();

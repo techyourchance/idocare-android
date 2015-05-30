@@ -209,6 +209,9 @@ public class NewRequestFragment extends AbstractFragment implements ServerReques
         }
 
 
+
+        // TODO: find a way to distribute GoogleApiClient to fragments without casting
+        // TODO: is it ok to put GoogleApiClient in AbstractActivity and add the getter to Callback IF?
         Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 ((MainActivity)getActivity()).mGoogleApiClient);
         if (lastLocation != null) {

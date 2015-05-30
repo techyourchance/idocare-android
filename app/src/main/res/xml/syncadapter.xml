@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:contentAuthority="@string/content_provider_authority"
     android:accountType="@string/idocare_account_type"
-    android:userVisible="false"
+    android:userVisible="true"
     android:supportsUploading="true"
     android:allowParallelSyncs="false"
     android:isAlwaysSyncable="true"/>

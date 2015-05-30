@@ -35,14 +35,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     private static final String LOG_TAG = SyncAdapter.class.getSimpleName();
 
-    private ContentResolver mContentResolver;
 
     /**
      * Set up the sync adapter
      */
     public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
-        mContentResolver = context.getContentResolver();
     }
 
     /**
@@ -55,7 +53,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             boolean autoInitialize,
             boolean allowParallelSyncs) {
         super(context, autoInitialize, allowParallelSyncs);
-        mContentResolver = context.getContentResolver();
     }
 
 
@@ -127,7 +124,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         // TODO: replace the data in the DB
         int deleted = 0;
         try {
-            deleted = provider.delete(IDoCareContract.Requests.CONTENT_URI, "ALL", null);
+            deleted = provider.delete(IDoCareContract.Requests.CONTENT_URI, null, null);
             Log.v(LOG_TAG, "deleted " + deleted + " entries from content provider");
         } catch (RemoteException e) {
             e.printStackTrace();
