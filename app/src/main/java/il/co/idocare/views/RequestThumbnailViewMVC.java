@@ -38,7 +38,6 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
     private Context mContext;
 
     private Handler mInboxHandler;
-    private RequestThumbnailContentObserver mContentObserver;
 
     private RequestItem mRequestItem;
 
@@ -137,14 +136,6 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
      */
     public void showRequestThumbnail(RequestItem requestItem) {
 
-        // Update ContentObserver
-        if (mContentObserver != null && requestItem.getId() != mRequestItem.getId()) {
-            mContext.getContentResolver().unregisterContentObserver(mContentObserver);
-            mContentObserver = new RequestThumbnailContentObserver(new Handler());
-            Uri uri = ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI, requestItem.getId());
-            mContext.getContentResolver().registerContentObserver(uri, false, mContentObserver);
-        }
-
         mRequestItem = requestItem;
 
         // Update the UI
@@ -235,75 +226,6 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
     }
 
 
-
-    /**
-     * ContentObserver that handles changes of request shown in this thumbnail
-     */
-    private class RequestThumbnailContentObserver extends ContentObserver {
-
-        private View mView;
-        private long mRequestId;
-        private Context mContext;
-
-        public RequestThumbnailContentObserver(Handler handler) {
-            super(handler);
-            mView = RequestThumbnailViewMVC.this;
-            mRequestId = RequestThumbnailViewMVC.this.mRequestItem.getId();
-            mContext = RequestThumbnailViewMVC.this.mContext;
-        }
-
-        @Override
-        public void onChange(boolean selfChange) {
-            this.onChange(selfChange, null);
-        }
-
-        @Override
-        public void onChange(boolean selfChange, Uri uri) {
-
-            if (uri == null) {
-                uri = ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI, mRequestId);
-            }
-
-            // This statement prevents the adapter from recycling this view. If not set, then when the
-            // view is scrolled off the screen while this method is executed, it might be the case
-            // the adapter will bind another request to this view, but execution of this method will
-            // re-bind the old request, thus creating erroneous list.
-            ViewCompat.setHasTransientState(mView, true);
-
-            new AsyncTask<Uri,Void,Cursor>() {
-
-                @Override
-                protected Cursor doInBackground(Uri... uris) {
-                    Cursor cursor = mContext.getContentResolver().query(
-                            uris[0],
-                            RequestItem.MANDATORY_REQUEST_FIELDS,
-                            null,
-                            null,
-                            null);
-                    return cursor;
-                }
-
-                @Override
-                protected void onPostExecute(Cursor cursor) {
-                    RequestItem request;
-
-                    try {
-                        request = RequestItem.createRequestItem(cursor);
-                    } catch (IllegalArgumentException e) {
-                        e.printStackTrace();
-                        // TODO: consider more sophisticated error handling (maybe destroy the view?)
-                        return;
-                    }
-
-                    ((RequestThumbnailViewMVC) mView).showRequestThumbnail(request);
-                }
-            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, uri);
-
-
-            // Once all the changes were applied - this view might be recycled by the adapter
-            ViewCompat.setHasTransientState(mView, false);
-        }
-    }
 
 
 
