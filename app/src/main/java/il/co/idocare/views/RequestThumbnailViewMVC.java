@@ -1,10 +1,16 @@
 package il.co.idocare.views;
 
+import android.content.ContentUris;
 import android.content.Context;
+import android.database.ContentObserver;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.view.ViewCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -32,8 +38,9 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
     private Context mContext;
 
     private Handler mInboxHandler;
+    private RequestThumbnailContentObserver mContentObserver;
 
-   private RequestItem mRequestItem;
+    private RequestItem mRequestItem;
 
     private TextView mTxtRequestStatus;
     private TextView mTxtRequestLocation;
@@ -52,11 +59,11 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
 
     public RequestThumbnailViewMVC(Context context) {
         super(context);
-        mContext = context;
 
+        mContext = context;
         mCurrentPictureUrl = "";
 
-        init(context);
+        init();
     }
 
 
@@ -64,10 +71,10 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
     /**
      * Initialize this MVC view. Must be called from constructor
      */
-    private void init(Context context) {
+    private void init() {
 
         // Inflate the underlying layout
-        LayoutInflater.from(context).inflate(R.layout.layout_request_thumbnail, this, true);
+        LayoutInflater.from(mContext).inflate(R.layout.layout_request_thumbnail, this, true);
 
         // This padding is required in order not to hide the border when colorizing inner views
         int padding = (int) getResources().getDimension(R.dimen.border_background_width);
@@ -114,16 +121,6 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
         return null;
     }
 
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-    }
-
 
     private void handleMessage(Message msg) {
         // TODO: write request/user update logic
@@ -133,11 +130,20 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
                 break;
         }
     }
+
     /**
      * Update this thumbnail with the details of a particular request
-     * @param cursor a Cursor positioned at the entry that should be shown
+     * @param requestItem the request which should be displayed
      */
     public void showRequestThumbnail(RequestItem requestItem) {
+
+        // Update ContentObserver
+        if (mContentObserver != null && requestItem.getId() != mRequestItem.getId()) {
+            mContext.getContentResolver().unregisterContentObserver(mContentObserver);
+            mContentObserver = new RequestThumbnailContentObserver(new Handler());
+            Uri uri = ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI, requestItem.getId());
+            mContext.getContentResolver().registerContentObserver(uri, false, mContentObserver);
+        }
 
         mRequestItem = requestItem;
 
@@ -227,5 +233,78 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
         // TODO: replace this code to obtain user's name from users' cache
         mTxtCreatedBy.setText(Long.toString(createdBy));
     }
+
+
+
+    /**
+     * ContentObserver that handles changes of request shown in this thumbnail
+     */
+    private class RequestThumbnailContentObserver extends ContentObserver {
+
+        private View mView;
+        private long mRequestId;
+        private Context mContext;
+
+        public RequestThumbnailContentObserver(Handler handler) {
+            super(handler);
+            mView = RequestThumbnailViewMVC.this;
+            mRequestId = RequestThumbnailViewMVC.this.mRequestItem.getId();
+            mContext = RequestThumbnailViewMVC.this.mContext;
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            this.onChange(selfChange, null);
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+
+            if (uri == null) {
+                uri = ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI, mRequestId);
+            }
+
+            // This statement prevents the adapter from recycling this view. If not set, then when the
+            // view is scrolled off the screen while this method is executed, it might be the case
+            // the adapter will bind another request to this view, but execution of this method will
+            // re-bind the old request, thus creating erroneous list.
+            ViewCompat.setHasTransientState(mView, true);
+
+            new AsyncTask<Uri,Void,Cursor>() {
+
+                @Override
+                protected Cursor doInBackground(Uri... uris) {
+                    Cursor cursor = mContext.getContentResolver().query(
+                            uris[0],
+                            RequestItem.MANDATORY_REQUEST_FIELDS,
+                            null,
+                            null,
+                            null);
+                    return cursor;
+                }
+
+                @Override
+                protected void onPostExecute(Cursor cursor) {
+                    RequestItem request;
+
+                    try {
+                        request = RequestItem.createRequestItem(cursor);
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                        // TODO: consider more sophisticated error handling (maybe destroy the view?)
+                        return;
+                    }
+
+                    ((RequestThumbnailViewMVC) mView).showRequestThumbnail(request);
+                }
+            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, uri);
+
+
+            // Once all the changes were applied - this view might be recycled by the adapter
+            ViewCompat.setHasTransientState(mView, false);
+        }
+    }
+
+
 
 }

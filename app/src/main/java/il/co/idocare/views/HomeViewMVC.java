@@ -37,4 +37,6 @@ public class HomeViewMVC extends AbstractViewMVC {
     protected void handleMessage(Message msg) {
         // TODO: implement this method
     }
+
+
 }

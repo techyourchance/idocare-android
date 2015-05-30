@@ -24,7 +24,7 @@ import il.co.idocare.views.RequestDetailsViewMVC;
 
 public class RequestDetailsFragment extends AbstractFragment implements ServerRequest.OnServerResponseCallback {
 
-    private final static String LOG_TAG = "RequestDetailsFragment";
+    private final static String LOG_TAG = RequestDetailsFragment.class.getSimpleName();
 
     private RequestDetailsViewMVC mRequestDetailsViewMVC;
 
