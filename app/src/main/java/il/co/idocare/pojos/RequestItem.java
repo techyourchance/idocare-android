@@ -2,7 +2,9 @@ package il.co.idocare.pojos;
 
 
 import android.content.ContentValues;
+import android.database.Cursor;
 
+import il.co.idocare.Constants.FieldName;
 import il.co.idocare.contentproviders.IDoCareContract.Requests;
 
 /**
@@ -12,6 +14,24 @@ public class RequestItem {
 
     public enum RequestStatus {NEW_BY_OTHER, NEW_BY_ME, PICKED_UP_BY_OTHER, PICKED_UP_BY_ME,
         CLOSED_BY_OTHER, CLOSED_BY_ME}
+
+    /**
+     * This String array specifies the fields that are mandatory for RequestItem object in
+     * order to be useful. This array can be used as is in queries against ContentProvider.
+     */
+    public static String[] MANDATORY_REQUEST_FIELDS = new String[] {
+            FieldName.REQUEST_ID.getValue(),
+            FieldName.CREATED_BY.getValue(),
+            FieldName.CREATED_AT.getValue(),
+            FieldName.CREATED_COMMENT.getValue(),
+            FieldName.CREATED_PICTURES.getValue(),
+            FieldName.CREATED_REPUTATION.getValue(),
+            FieldName.CREATED_POLLUTION_LEVEL.getValue(),
+            FieldName.PICKED_UP_BY.getValue(),
+            FieldName.CLOSED_BY.getValue(),
+            FieldName.LONGITUDE.getValue(),
+            FieldName.LATITUDE.getValue(),
+    };
 
     private final static String LOG_TAG = "RequestItem";
 
@@ -33,8 +53,80 @@ public class RequestItem {
     private int mClosedReputation;
 
 
+    /**
+     * Create RequestItem object having a particular id
+     * @param id ID of the request
+     * @return newly created RequestItem object
+     */
     public static RequestItem createRequestItem(long id) {
         return new RequestItem(id);
+    }
+
+    /**
+     * Create RequestItem object by querying the cursor at the current position.
+     * @param cursor the Cursor to be queried
+     * @return newly created RequestItem object
+     * @throws IllegalArgumentException if any of the mandatory fields (as specified by
+     * {@link RequestItem#MANDATORY_REQUEST_FIELDS}) are missing from the cursor
+     */
+    public static RequestItem createRequestItem(Cursor cursor) throws IllegalArgumentException {
+        RequestItem request = null;
+
+        // Mandatory fields
+        try {
+            long requestId = cursor.getLong(cursor.getColumnIndexOrThrow(FieldName.REQUEST_ID.getValue()));
+            long createdBy = cursor.getLong(cursor.getColumnIndexOrThrow(FieldName.CREATED_BY.getValue()));
+            String createdAt = cursor.getString(cursor.getColumnIndexOrThrow(FieldName.CREATED_AT.getValue()));
+            String createdComment = cursor.getString(cursor.getColumnIndexOrThrow(FieldName.CREATED_COMMENT.getValue()));
+            String createdPictures = cursor.getString(cursor.getColumnIndexOrThrow(FieldName.CREATED_PICTURES.getValue()));
+            int createdReputation = cursor.getInt(cursor.getColumnIndexOrThrow(FieldName.CREATED_REPUTATION.getValue()));
+            int createdPollutionLevel = cursor.getInt(cursor.getColumnIndexOrThrow(FieldName.CREATED_POLLUTION_LEVEL.getValue()));
+            long pickedUpBy = cursor.getLong(cursor.getColumnIndexOrThrow(FieldName.PICKED_UP_BY.getValue()));
+            long closedBy = cursor.getLong(cursor.getColumnIndexOrThrow(FieldName.CLOSED_BY.getValue()));
+            double latitude = cursor.getDouble(cursor.getColumnIndexOrThrow(FieldName.LATITUDE.getValue()));
+            double longitude = cursor.getDouble(cursor.getColumnIndexOrThrow(FieldName.LONGITUDE.getValue()));
+
+
+            request = createRequestItem(requestId);
+            request = RequestItem.createRequestItem(requestId);
+            request.setCreatedBy(createdBy);
+            request.setCreatedAt(createdAt);
+            request.setCreatedComment(createdComment);
+            request.setCreatedPictures(createdPictures);
+            request.setCreatedReputation(createdReputation);
+            request.setCreatedPollutionLevel(createdPollutionLevel);
+            request.setPickedUpBy(pickedUpBy);
+            request.setClosedBy(closedBy);
+            request.setLatitude(latitude);
+            request.setLongitude(longitude);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Couldn't create a new RequestItem: one or more " +
+                    "of the mandatory fields missing from the cursor", e);
+        }
+
+        // Non-mandatory fields
+
+        int i;
+
+        if ((i = cursor.getColumnIndex(FieldName.PICKED_UP_AT.getValue())) != -1) {
+            request.setPickedUpAt(cursor.getString(i));
+        }
+        if ((i = cursor.getColumnIndex(FieldName.CLOSED_AT.getValue())) != -1) {
+            request.setClosedAt(cursor.getString(i));
+        }
+        if ((i = cursor.getColumnIndex(FieldName.CLOSED_COMMENT.getValue())) != -1) {
+            request.setClosedComment(cursor.getString(i));
+        }
+        if ((i = cursor.getColumnIndex(FieldName.CLOSED_PICTURES.getValue())) != -1) {
+            request.setClosedPictures(cursor.getString(i));
+        }
+        if ((i = cursor.getColumnIndex(FieldName.CLOSED_REPUTATION.getValue())) != -1) {
+            request.setClosedReputation(cursor.getInt(i));
+        }
+
+
+        return request;
+
     }
 
     private RequestItem(long id) {
@@ -47,7 +139,7 @@ public class RequestItem {
     // Adapters (converters)
 
     /**
-     * Convert this request object to ContentValues object that can be passed to ContentPsovider
+     * Convert this request object to ContentValues object that can be passed to ContentProvider
      * @return
      */
     public ContentValues toContentValues() {

@@ -1,21 +1,13 @@
 package il.co.idocare.views;
 
-import android.content.Context;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import il.co.idocare.handlermessaging.HandlerMessagingMaster;
 import il.co.idocare.handlermessaging.HandlerMessagingSlave;
-import il.co.idocare.models.ModelMVC;
-import il.co.idocare.models.RequestsMVCModel;
 
 /**
  * This is an abstract implementation of ViewMVC interface which provides some convenience
@@ -28,15 +20,6 @@ public abstract class AbstractViewMVC implements
 
     Handler mInboxHandler;
     final List<Handler> mOutboxHandlers = new ArrayList<Handler>();
-
-
-    /**
-     *
-     * @return requests model instance
-     */
-    public RequestsMVCModel getRequestsModel() {
-        return RequestsMVCModel.getInstance();
-    }
 
     // ---------------------------------------------------------------------------------------------
     //

@@ -1,7 +1,6 @@
 package il.co.idocare.controllers.fragments;
 
 import android.accounts.Account;
-import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.Activity;
@@ -13,8 +12,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +19,6 @@ import java.util.List;
 import il.co.idocare.controllers.ControllerMVC;
 import il.co.idocare.handlermessaging.HandlerMessagingMaster;
 import il.co.idocare.handlermessaging.HandlerMessagingSlave;
-import il.co.idocare.models.RequestsMVCModel;
-import il.co.idocare.models.UsersMVCModel;
 
 
 /**
@@ -100,23 +95,6 @@ public abstract class AbstractFragment extends Fragment implements
         mCallback.setActionBarTitle(resourceId);
     }
 
-
-    /**
-     * 
-     * @return MVC model representing the requests
-     */
-    public RequestsMVCModel getRequestsModel() {
-        return RequestsMVCModel.getInstance();
-    }
-
-
-    /**
-     *
-     * @return MVC model representing the users
-     */
-    public UsersMVCModel getUsersModel() {
-        return mCallback.getUsersModel();
-    }
 
     /**
      * @return ContentResolver associated with parent activity
@@ -253,11 +231,6 @@ public abstract class AbstractFragment extends Fragment implements
          * Change ActionBar title
          */
         public void setActionBarTitle(int resourceId);
-
-        /**
-         * @return MVC model representing the users
-         */
-        public UsersMVCModel getUsersModel();
 
         /**
          * This method obtains the auth token for the active account (as specified in SharedPreferences).

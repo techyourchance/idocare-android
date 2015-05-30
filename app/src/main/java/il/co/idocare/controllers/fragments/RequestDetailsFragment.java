@@ -34,8 +34,7 @@ public class RequestDetailsFragment extends AbstractFragment implements ServerRe
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         mRequestDetailsViewMVC =
-                new RequestDetailsViewMVC(getActivity(), container, savedInstanceState,
-                        getRequestsModel(), getUsersModel());
+                new RequestDetailsViewMVC(getActivity(), container, savedInstanceState);
 
         obtainRequestItemAndShowItsDetails();
 
@@ -51,9 +50,6 @@ public class RequestDetailsFragment extends AbstractFragment implements ServerRe
         // Add MVC View's Handler to the set of outbox Handlers
         addOutboxHandler(mRequestDetailsViewMVC.getInboxHandler());
 
-        // Exchange "listener" handlers between MVC views and MVC models
-        getUsersModel().addOutboxHandler(mRequestDetailsViewMVC.getInboxHandler());
-        getRequestsModel().addOutboxHandler(mRequestDetailsViewMVC.getInboxHandler());
     }
 
     @Override
@@ -64,9 +60,6 @@ public class RequestDetailsFragment extends AbstractFragment implements ServerRe
         mRequestDetailsViewMVC.removeOutboxHandler(getInboxHandler());
         removeOutboxHandler(mRequestDetailsViewMVC.getInboxHandler());
 
-        // Remove "listener" handlers between MVC views and MVC Models
-        getUsersModel().removeOutboxHandler(mRequestDetailsViewMVC.getInboxHandler());
-        getRequestsModel().removeOutboxHandler(mRequestDetailsViewMVC.getInboxHandler());
     }
 
     @Override
@@ -177,13 +170,14 @@ public class RequestDetailsFragment extends AbstractFragment implements ServerRe
             return;
         }
 
-        // Don't allow voting for yourself
-        if ((voteForClosed && Long.valueOf(activeAccountId) == getRequestsModel().getRequest(getContentResolver(), mRequestId).getClosedBy()) ||
-                (!voteForClosed && Long.valueOf(activeAccountId) == getRequestsModel().getRequest(getContentResolver(), mRequestId).getCreatedBy())) {
-            Toast.makeText(getActivity(), getActivity().getResources()
-                    .getString(R.string.self_voting_error_message), Toast.LENGTH_LONG).show();
-            return;
-        }
+        // TODO: rewrite this logic without Models...
+//        // Don't allow voting for yourself
+//        if ((voteForClosed && Long.valueOf(activeAccountId) == getRequestsModel().getRequest(getContentResolver(), mRequestId).getClosedBy()) ||
+//                (!voteForClosed && Long.valueOf(activeAccountId) == getRequestsModel().getRequest(getContentResolver(), mRequestId).getCreatedBy())) {
+//            Toast.makeText(getActivity(), getActivity().getResources()
+//                    .getString(R.string.self_voting_error_message), Toast.LENGTH_LONG).show();
+//            return;
+//        }
 
         ServerRequest serverRequest = new ServerRequest(ServerRequest.VOTE_REQUEST_URL,
                 ServerRequest.ServerRequestTag.VOTE_FOR_REQUEST, this);

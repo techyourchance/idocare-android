@@ -1,10 +1,10 @@
 package il.co.idocare.views;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,9 +15,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
+import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.handlermessaging.HandlerMessagingSlave;
-import il.co.idocare.models.RequestsMVCModel;
-import il.co.idocare.models.UsersMVCModel;
 import il.co.idocare.pojos.RequestItem;
 
 /**
@@ -28,15 +27,11 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
         ViewMVC,
         HandlerMessagingSlave {
 
-    private static final String LOG_TAG = "RequestThumbnailViewMVC";
-
-    private final Object LOCK = new Object();
+    private static final String LOG_TAG = RequestThumbnailViewMVC.class.getSimpleName();
 
     private Context mContext;
 
     private Handler mInboxHandler;
-    private RequestsMVCModel mRequestsModel;
-    private UsersMVCModel mUsersModel;
 
    private RequestItem mRequestItem;
 
@@ -55,13 +50,9 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
 
 
 
-    public RequestThumbnailViewMVC(Context context, RequestsMVCModel requestsModel,
-                                   UsersMVCModel usersModel) {
+    public RequestThumbnailViewMVC(Context context) {
         super(context);
         mContext = context;
-
-        mRequestsModel = requestsModel;
-        mUsersModel = usersModel;
 
         mCurrentPictureUrl = "";
 
@@ -126,59 +117,29 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        // Register for updates with requests and users models
-        mRequestsModel.addOutboxHandler(getInboxHandler());
-        mUsersModel.addOutboxHandler(getInboxHandler());
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        // Unregistering from updates with requests and users models
-        mRequestsModel.removeOutboxHandler(getInboxHandler());
-        mUsersModel.removeOutboxHandler(getInboxHandler());
     }
 
 
     private void handleMessage(Message msg) {
         // TODO: write request/user update logic
         switch (Constants.MESSAGE_TYPE_VALUES[msg.what]) {
-            case M_USER_DATA_UPDATE:
-                long userId = ((Long)msg.obj);
-                synchronized (LOCK) {
-                    if (mRequestItem.getCreatedBy() == userId) {
-                        updateUsers();
-                    }
-                }
-                break;
-
-            case M_REQUEST_DATA_UPDATE:
-                long requestId = ((Long)msg.obj);
-
-                synchronized (LOCK) {
-                    if (mRequestItem.getId() == requestId) {
-                        showRequest(requestId);
-                    }
-                }
 
             default:
                 break;
         }
     }
     /**
-     * Update this thumbnail with the details of the request having the specified ID
-     * @param requestId id of the request item which should be shown
+     * Update this thumbnail with the details of a particular request
+     * @param cursor a Cursor positioned at the entry that should be shown
      */
-    public void showRequest(long requestId) {
+    public void showRequestThumbnail(RequestItem requestItem) {
 
-        synchronized (LOCK) {
-            // Get the request item
-            mRequestItem = mRequestsModel.getRequest(mContext.getContentResolver(), requestId);
-            if (mRequestItem == null) {
-                Log.e(LOG_TAG, "could not find request in the model. ID: " + String.valueOf(requestId));
-            }
-
-        }
+        mRequestItem = requestItem;
 
         // Update the UI
         setStatus();
@@ -262,13 +223,9 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
     }
 
     private void updateUsers() {
-        long createdBy;
-        synchronized (LOCK) {
-            // We need this sync for the situation when both the request and some relevant user
-            // are updated simultaneously (prevent taking createdBy from the old request)
-            createdBy = mRequestItem.getCreatedBy();
-        }
-        mTxtCreatedBy.setText(mUsersModel.getUser(createdBy).getNickname());
+        long createdBy = mRequestItem.getCreatedBy();
+        // TODO: replace this code to obtain user's name from users' cache
+        mTxtCreatedBy.setText(Long.toString(createdBy));
     }
 
 }

@@ -27,7 +27,7 @@ public class IDoCareContract {
 	/**
 	 * A selection clause for ID based queries.
 	 */
-	public static final String SELECTION_ID_BASED = BaseColumns._ID + " = ? ";
+	public static final String SELECTION_ID_BASED = Requests.REQUEST_ID + " = ? ";
 
 
 	/**

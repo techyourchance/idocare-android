@@ -9,20 +9,13 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.TextUtils;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 
-import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.authentication.AccountAuthenticator;
 import il.co.idocare.controllers.fragments.AbstractFragment;
-import il.co.idocare.models.UsersMVCModel;
 
 /**
  * This is a wrapper around a standard Activity class which provides few convenience methods
@@ -33,7 +26,6 @@ public abstract class AbstractActivity extends Activity implements
     private static final String LOG_TAG = AbstractActivity.class.getSimpleName();
     private static final String ACTIVE_ACCOUNT_NAME_KEY = "idocare_active_account_name";
 
-    private UsersMVCModel mUsersModel;
 
 
     // ---------------------------------------------------------------------------------------------
@@ -101,30 +93,6 @@ public abstract class AbstractActivity extends Activity implements
     // End of fragments management
     //
     // ---------------------------------------------------------------------------------------------
-
-
-
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // Models management
-
-    /**
-     * This method executes any code required for models' initialization
-     */
-    public void initializeModels() {
-        mUsersModel = new UsersMVCModel(this);
-    }
-
-    @Override
-    public UsersMVCModel getUsersModel() {
-        return mUsersModel;
-    }
-
-    // End of models management
-    //
-    // ---------------------------------------------------------------------------------------------
-
 
 
     // ---------------------------------------------------------------------------------------------

@@ -1,9 +1,14 @@
 package il.co.idocare.controllers.fragments;
 
 
-import android.content.Context;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Message;
+import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -11,46 +16,52 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import java.util.List;
+import java.util.Arrays;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
+import il.co.idocare.contentproviders.IDoCareContract;
+import il.co.idocare.controllers.adapters.HomeFragmentListAdapter;
+import il.co.idocare.pojos.RequestItem;
 import il.co.idocare.views.HomeViewMVC;
-import il.co.idocare.views.RequestThumbnailViewMVC;
 
 
-public class HomeFragment extends AbstractFragment {
+public class HomeFragment extends AbstractFragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    private final static String LOG_TAG = "HomeFragment";
+    private final static String LOG_TAG = HomeFragment.class.getSimpleName();
 
-    HomeListAdapter mRequestThumbnailsAdapter;
-    HomeViewMVC mViewMVCHome;
+    private final static int LOADER_ID = 0;
+
+    HomeFragmentListAdapter mAdapter;
+    HomeViewMVC mHomeViewMVC;
 
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        mViewMVCHome = new HomeViewMVC(inflater, container);
+        mHomeViewMVC = new HomeViewMVC(inflater, container);
 
         // This is required for automatic refresh of action bar options upon fragment's loading
         setHasOptionsMenu(true);
 
         initializeThumbnailsList();
 
-        return mViewMVCHome.getRootView();
+        return mHomeViewMVC.getRootView();
     }
 
     private void initializeThumbnailsList() {
 
-        mRequestThumbnailsAdapter = new HomeListAdapter(getActivity(), 0);
+        mAdapter = new HomeFragmentListAdapter(getActivity(), null, 0);
         final ListView requestThumbnails =
-                (ListView) mViewMVCHome.getRootView().findViewById(R.id.list_requests_thumbnails);
-        requestThumbnails.setAdapter(mRequestThumbnailsAdapter);
+                (ListView) mHomeViewMVC.getRootView().findViewById(R.id.list_requests_thumbnails);
+        requestThumbnails.setAdapter(mAdapter);
 
+        getLoaderManager().initLoader(LOADER_ID, null, this);
+
+        // TODO: remove this listener from here and put it in MVCView and add message for click
         requestThumbnails.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
@@ -65,23 +76,6 @@ public class HomeFragment extends AbstractFragment {
         });
 
 
-        // Populate list adapter for the first time
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final List<Long> requestsIds = getRequestsModel()
-                        .getAllRequestsIds(getContentResolver());
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRequestThumbnailsAdapter.addAll(requestsIds);
-                        mRequestThumbnailsAdapter.notifyDataSetChanged();
-                    }
-                });
-            }
-        });
-        thread.start();
 
     }
 
@@ -94,23 +88,17 @@ public class HomeFragment extends AbstractFragment {
     public void onStart() {
         super.onStart();
         // Provide inbox Handler to the MVC View
-        mViewMVCHome.addOutboxHandler(getInboxHandler());
+        mHomeViewMVC.addOutboxHandler(getInboxHandler());
         // Add MVC View's Handler to the set of outbox Handlers
-        addOutboxHandler(mViewMVCHome.getInboxHandler());
-
-        // Register "listener" handler with requests MVC model
-        getRequestsModel().addOutboxHandler(getInboxHandler());
+        addOutboxHandler(mHomeViewMVC.getInboxHandler());
     }
 
     @Override
     public void onStop() {
         super.onStop();
         // Remove "listener" handlers between the MVC controller and MVC views
-        mViewMVCHome.removeOutboxHandler(getInboxHandler());
-        removeOutboxHandler(mViewMVCHome.getInboxHandler());
-
-        // Remove "listener" handler from requests MVC model
-        getRequestsModel().removeOutboxHandler(getInboxHandler());
+        mHomeViewMVC.removeOutboxHandler(getInboxHandler());
+        removeOutboxHandler(mHomeViewMVC.getInboxHandler());
 
     }
 
@@ -133,18 +121,6 @@ public class HomeFragment extends AbstractFragment {
     protected void handleMessage(Message msg) {
 
         switch (Constants.MESSAGE_TYPE_VALUES[msg.what]) {
-            case M_REQUEST_DATA_UPDATE:
-                final long requestId = ((Long)msg.obj);
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mRequestThumbnailsAdapter.getPosition(requestId) == -1) {
-                            mRequestThumbnailsAdapter.add(requestId);
-                            mRequestThumbnailsAdapter.notifyDataSetChanged();
-                        }
-                    }
-                });
 
             default:
                 break;
@@ -171,33 +147,66 @@ public class HomeFragment extends AbstractFragment {
 
 
 
-    private class HomeListAdapter extends ArrayAdapter<Long> {
+    // ---------------------------------------------------------------------------------------------
+    //
+    // LoaderCallback methods
 
-        private final static String LOG_TAG = "HomeListAdapter";
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
 
-        private Context mContext;
+        if (id == LOADER_ID) {
 
-        public HomeListAdapter(Context context, int resource) {
-            super(context, resource);
-            mContext = context;
-        }
+            // The data needed for displaying the requests's thumbnail + the _id column which is
+            // required by CursorAdapter framework
+            String[] projection = new String[RequestItem.MANDATORY_REQUEST_FIELDS.length + 1];
+            projection[0] = IDoCareContract.Requests._ID;
+            System.arraycopy(RequestItem.MANDATORY_REQUEST_FIELDS, 0, projection, 1, RequestItem.MANDATORY_REQUEST_FIELDS.length);
 
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            RequestThumbnailViewMVC view;
 
-            if (convertView == null) {
-                view = new RequestThumbnailViewMVC(mContext, getRequestsModel(),
-                        getUsersModel());
-            } else {
-                view = (RequestThumbnailViewMVC) convertView;
-            }
+            // Change these values when adding filtering and sorting
+            String selection = null;
+            String[] selectionArgs = null;
+            String sortOrder = null;
 
-            view.showRequest(getItem(position));
-
-            return view;
+            //noinspection ConstantConditions
+            return new CursorLoader(getActivity(),
+                    IDoCareContract.Requests.CONTENT_URI,
+                    projection,
+                    selection,
+                    selectionArgs,
+                    sortOrder);
+        } else {
+            Log.e(LOG_TAG, "onCreateLoader() called with unrecognized id: " + id);
+            return null;
         }
 
     }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        if (loader.getId() == LOADER_ID) {
+            mAdapter.swapCursor(cursor);
+        } else {
+            Log.e(LOG_TAG, "onLoadFinished() called with unrecognized loader id: " + loader.getId());
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        if (loader.getId() == LOADER_ID) {
+            // Releasing the resources
+            mAdapter.swapCursor(null);
+        } else {
+            Log.e(LOG_TAG, "onLoaderReset() called with unrecognized loader id: " + loader.getId());
+        }
+
+    }
+
+
+    // End of LoaderCallback methods
+    //
+    // ---------------------------------------------------------------------------------------------
+
+
 
 }

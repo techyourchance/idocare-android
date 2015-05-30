@@ -16,8 +16,6 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.models.RequestsMVCModel;
-import il.co.idocare.models.UsersMVCModel;
 import il.co.idocare.pojos.RequestItem;
 import il.co.idocare.pojos.RequestItem.RequestStatus;
 import il.co.idocare.pojos.UserItem;
@@ -32,9 +30,6 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
     private final Object LOCK = new Object();
 
     private Context mContext;
-
-    private RequestsMVCModel mRequestsModel;
-    private UsersMVCModel mUsersModel;
 
     private RequestItem mRequestItem;
     private RequestStatus mRequestStatus;
@@ -69,11 +64,8 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
     private Button mBtnCloseRequest;
 
 
-    public RequestDetailsViewMVC(Context context, ViewGroup container, Bundle savedInstanceState,
-                                 RequestsMVCModel requestsModel, UsersMVCModel usersModel) {
+    public RequestDetailsViewMVC(Context context, ViewGroup container, Bundle savedInstanceState) {
         mContext = context;
-        mRequestsModel = requestsModel;
-        mUsersModel = usersModel;
 
         mRootView = LayoutInflater.from(mContext)
                 .inflate(R.layout.fragment_request_details, container, false);
@@ -103,15 +95,6 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
                 }
                 break;
 
-            case M_REQUEST_DATA_UPDATE:
-                long requestId = ((Long)msg.obj);
-
-                synchronized (LOCK) {
-                    if (mRequestItem.getId() == requestId) {
-                        // Update has been made to the shown request
-                        showRequest(requestId);
-                    }
-                }
 
             default:
                 break;
@@ -192,7 +175,6 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
     public void showRequest(long requestId) {
         // This sync prevents concurrent change of mRequestItem
         synchronized (LOCK) {
-            mRequestItem = mRequestsModel.getRequest(mContext.getContentResolver(), requestId);
 
             setRequestStatus();
 
@@ -312,7 +294,8 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
     }
 
     private void updateCreatedByUser() {
-        UserItem createdByUserItem = mUsersModel.getUser(mRequestItem.getCreatedBy());
+        // TODO: obtain users' data from cache
+        UserItem createdByUserItem = UserItem.createUserItem(0);
 
         mTxtCreatedByNickname.setText(createdByUserItem.getNickname());
 
@@ -394,7 +377,8 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
     }
 
     private void updateClosedByUser() {
-        UserItem closedByUserItem = mUsersModel.getUser(mRequestItem.getClosedBy());
+        // TODO: obtain user's data from cache
+        UserItem closedByUserItem = UserItem.createUserItem(0);
 
         mTxtClosedByNickname.setText(closedByUserItem.getNickname());
 
@@ -439,7 +423,8 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
 
     private void updatePickedUpByUser() {
         long pickedUpBy = mRequestItem.getPickedUpBy();
-        mBtnPickUpRequest.setText("Assigned to " + mUsersModel.getUser(pickedUpBy).getNickname());
+        // TODO: obtain user's data from local cache
+        mBtnPickUpRequest.setText("Assigned to " + "SOMEUSER");
     }
 
 

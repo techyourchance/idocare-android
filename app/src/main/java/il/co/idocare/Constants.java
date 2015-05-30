@@ -113,7 +113,6 @@ public class Constants {
         C_LOGIN_RESPONSE_RECEIVED,
 
         M_USER_DATA_UPDATE,
-        M_REQUEST_DATA_UPDATE,
     }
 
     /**

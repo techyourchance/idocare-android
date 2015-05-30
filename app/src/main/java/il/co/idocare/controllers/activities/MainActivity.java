@@ -31,7 +31,6 @@ import il.co.idocare.controllers.fragments.LoginFragment;
 import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.R;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
-import il.co.idocare.models.UsersMVCModel;
 import il.co.idocare.pojos.NavigationDrawerEntry;
 
 
@@ -43,7 +42,6 @@ public class MainActivity extends AbstractActivity implements
 
     public GoogleApiClient mGoogleApiClient;
 
-    private UsersMVCModel mUsersModel;
 
 
 
@@ -68,8 +66,6 @@ public class MainActivity extends AbstractActivity implements
         if (savedInstanceState == null) {
             replaceFragment(HomeFragment.class, false, null);
         }
-
-        initializeModels();
 
         initUniversalImageLoader();
 
