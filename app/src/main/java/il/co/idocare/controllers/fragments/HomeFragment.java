@@ -66,7 +66,9 @@ public class HomeFragment extends AbstractFragment implements LoaderManager.Load
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 // Get the selected item
-                long requestId = (Long) requestThumbnails.getItemAtPosition(position);
+                Cursor cursor = (Cursor) mAdapter.getItem(position);
+                long requestId = cursor.getLong(cursor.getColumnIndex(Constants.FieldName.REQUEST_ID.getValue()));
+
                 // Create a bundle and put the id of the selected item there
                 Bundle args = new Bundle();
                 args.putLong(Constants.FieldName.REQUEST_ID.getValue(), requestId);

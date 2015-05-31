@@ -34,6 +34,7 @@ public class StartupActivity extends AbstractActivity {
 
         setContentView(R.layout.activity_startup);
 
+
         /*
         VZ: Since all we do in SplashFragment is just show some graphics, and there are no other
         fragments shown in StartupActivity, we could make this activity fragmentless (thus
@@ -48,6 +49,7 @@ public class StartupActivity extends AbstractActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
 
         // Ask for an auth token
         final AccountManagerFuture<Bundle> future = AccountManager.get(this).getAuthTokenByFeatures(
@@ -72,9 +74,9 @@ public class StartupActivity extends AbstractActivity {
 
                     // Make sure that the splash fragment is shown at least 5 seconds
                     long currTime = System.currentTimeMillis();
-                    if (currTime < initTime + 5*1000) {
+                    if (currTime < initTime + 2*1000) {
                         try {
-                            Thread.sleep(initTime + 5*1000 - currTime);
+                            Thread.sleep(initTime + 2*1000 - currTime);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }

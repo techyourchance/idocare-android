@@ -1,16 +1,9 @@
 package il.co.idocare.views;
 
-import android.content.ContentUris;
 import android.content.Context;
-import android.database.ContentObserver;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.view.ViewCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -21,7 +14,6 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.handlermessaging.HandlerMessagingSlave;
 import il.co.idocare.pojos.RequestItem;
 
@@ -62,7 +54,11 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
         mContext = context;
         mCurrentPictureUrl = "";
 
-        init();
+
+        // Inflate the underlying layout
+        LayoutInflater.from(mContext).inflate(R.layout.layout_request_thumbnail, this, true);
+
+        initialize();
     }
 
 
@@ -70,10 +66,7 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
     /**
      * Initialize this MVC view. Must be called from constructor
      */
-    private void init() {
-
-        // Inflate the underlying layout
-        LayoutInflater.from(mContext).inflate(R.layout.layout_request_thumbnail, this, true);
+    private void initialize() {
 
         // This padding is required in order not to hide the border when colorizing inner views
         int padding = (int) getResources().getDimension(R.dimen.border_background_width);

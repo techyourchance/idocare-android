@@ -61,7 +61,7 @@ public class IDoCareContentProvider extends ContentProvider {
             case REQUEST_ID:
                 cursor = mDAO.queryRequests(
                         projection,
-                        "WHERE " + IDoCareContract.Requests.REQUEST_ID + " = " + uri.getLastPathSegment()
+                        IDoCareContract.Requests.REQUEST_ID + " = " + uri.getLastPathSegment()
                                 + (TextUtils.isEmpty(selection) ? "" : " AND " + selection),
                         selectionArgs,
                         null,

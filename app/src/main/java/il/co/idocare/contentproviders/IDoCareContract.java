@@ -71,7 +71,7 @@ public class IDoCareContract {
          * A projection of all columns in the Requests table.
          */
         public static final String[] PROJECTION_ALL = {
-                _ID,
+                REQUEST_ID,
                 CREATED_BY,
                 PICKED_UP_BY,
                 CREATED_AT,

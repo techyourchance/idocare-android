@@ -27,8 +27,6 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
 
     private final static String LOG_TAG = "RequestDetailsViewMVC";
 
-    private final Object LOCK = new Object();
-
     private Context mContext;
 
     private RequestItem mRequestItem;
@@ -70,7 +68,7 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         mRootView = LayoutInflater.from(mContext)
                 .inflate(R.layout.fragment_request_details, container, false);
 
-        findAllViews();
+        initialize();
 
     }
 
@@ -78,24 +76,6 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
     @Override
     protected void handleMessage(Message msg) {
         switch (Constants.MESSAGE_TYPE_VALUES[msg.what]) {
-            case M_USER_DATA_UPDATE:
-                // The assumption here is that update to the data of the user can't change the
-                // status of the request, but just the details of this particular user (e.g. reputation)
-                long userId = ((Long)msg.obj);
-                synchronized (LOCK) {
-                    if (mRequestItem.getCreatedBy() != 0 && mRequestItem.getCreatedBy() == userId) {
-                        updateCreatedByUser();
-                    }
-                    else if (mRequestItem.getPickedUpBy() != 0 && mRequestItem.getPickedUpBy() == userId) {
-                        updatePickedUpByUser();
-                    }
-                    else if (mRequestItem.getClosedBy() != 0 && mRequestItem.getClosedBy() == userId) {
-                        updateClosedByUser();
-                    }
-                }
-                break;
-
-
             default:
                 break;
         }
@@ -112,8 +92,8 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
     }
 
     @SuppressLint("CutPasteId")
-    private void findAllViews() {
-        View includedView;
+    private void initialize() {
+        View includedView; // Used to reference compound sub-views
 
         // Status bar views
         mTxtStatus = (TextView) mRootView.findViewById(R.id.txt_request_status);
@@ -170,25 +150,24 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
     /**
      *
      * Show the details of the request
-     * @param requestId ID of the request that should be shown
+     * @param requestItem the request that should be shown
      */
-    public void showRequest(long requestId) {
-        // This sync prevents concurrent change of mRequestItem
-        synchronized (LOCK) {
+    public void showRequest(RequestItem requestItem) {
 
-            setRequestStatus();
+        mRequestItem = requestItem;
 
-            // Handle the status bar
-            populateStatusBarFromRequestItem();
-            // Handle the views related to initial request
-            populateCreatedViewsFromRequestItem();
-            // Handle the views related to pickup info
-            populateClosedViewsFromRequestItem();
-            // Handle the pickup button functionality
-            populatePickupButtonFromRequestItem();
-            // Handle the close button functionality
-            populateCloseButtonFromRequestItem();
-        }
+        setRequestStatus();
+
+        // Handle the status bar
+        populateStatusBarFromRequestItem();
+        // Handle the views related to initial request
+        populateCreatedViewsFromRequestItem();
+        // Handle the views related to pickup info
+        populateClosedViewsFromRequestItem();
+        // Handle the pickup button functionality
+        populatePickupButtonFromRequestItem();
+        // Handle the close button functionality
+        populateCloseButtonFromRequestItem();
     }
 
 
@@ -453,6 +432,7 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
      */
     private void setRequestStatus() {
 
+        // TODO: request status should be a part of the RequestItem object
         SharedPreferences prefs =
                 mContext.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
         boolean userLoggedIn = prefs.contains(Constants.FieldName.USER_ID.getValue());

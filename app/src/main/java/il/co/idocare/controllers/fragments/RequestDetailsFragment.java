@@ -2,7 +2,11 @@ package il.co.idocare.controllers.fragments;
 
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
-import android.content.Context;
+import android.app.LoaderManager;
+import android.content.ContentUris;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.TextUtils;
@@ -17,14 +21,20 @@ import java.io.IOException;
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.connectivity.ServerRequest;
+import il.co.idocare.contentproviders.IDoCareContract;
+import il.co.idocare.pojos.RequestItem;
 import il.co.idocare.utils.IDoCareHttpUtils;
 import il.co.idocare.utils.IDoCareJSONUtils;
 import il.co.idocare.views.RequestDetailsViewMVC;
 
 
-public class RequestDetailsFragment extends AbstractFragment implements ServerRequest.OnServerResponseCallback {
+public class RequestDetailsFragment extends AbstractFragment implements
+        ServerRequest.OnServerResponseCallback,
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     private final static String LOG_TAG = RequestDetailsFragment.class.getSimpleName();
+
+    private final static int SINGLE_REQUEST_LOADER = 0;
 
     private RequestDetailsViewMVC mRequestDetailsViewMVC;
 
@@ -36,7 +46,7 @@ public class RequestDetailsFragment extends AbstractFragment implements ServerRe
         mRequestDetailsViewMVC =
                 new RequestDetailsViewMVC(getActivity(), container, savedInstanceState);
 
-        obtainRequestItemAndShowItsDetails();
+        initialize();
 
         return mRequestDetailsViewMVC.getRootView();
     }
@@ -111,7 +121,7 @@ public class RequestDetailsFragment extends AbstractFragment implements ServerRe
 
     }
 
-    private void obtainRequestItemAndShowItsDetails() {
+    private void initialize() {
         // Get the ID of the request
         Bundle args = getArguments();
         if (args == null) {
@@ -120,7 +130,7 @@ public class RequestDetailsFragment extends AbstractFragment implements ServerRe
         }
 
         mRequestId = args.getLong(Constants.FieldName.REQUEST_ID.getValue());
-        mRequestDetailsViewMVC.showRequest(mRequestId);
+        getLoaderManager().initLoader(SINGLE_REQUEST_LOADER, null, this);
 
     }
 
@@ -201,6 +211,74 @@ public class RequestDetailsFragment extends AbstractFragment implements ServerRe
 
         serverRequest.execute();
     }
+
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // LoaderCallback methods
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
+
+        if (id == SINGLE_REQUEST_LOADER) {
+
+
+            String[] projection = IDoCareContract.Requests.PROJECTION_ALL;
+
+            // Change these values when adding filtering and sorting
+            String selection = null;
+            String[] selectionArgs = null;
+            String sortOrder = null;
+
+            //noinspection ConstantConditions
+            return new CursorLoader(getActivity(),
+                    ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI, mRequestId),
+                    projection,
+                    selection,
+                    selectionArgs,
+                    sortOrder);
+        } else {
+            Log.e(LOG_TAG, "onCreateLoader() called with unrecognized id: " + id);
+            return null;
+        }
+
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        if (loader.getId() == SINGLE_REQUEST_LOADER) {
+            try {
+                if (cursor.moveToFirst()) {
+                    RequestItem request = RequestItem.createRequestItem(cursor);
+                    mRequestDetailsViewMVC.showRequest(request);
+                } else {
+                    // TODO: think of how to handle this error - the returned cursor is empty!
+                }
+            } catch (IllegalArgumentException e) {
+                Log.e(LOG_TAG, "Couldn't create RequestItem from the Cursor provided to onLoadFinished()");
+                e.printStackTrace();
+            }
+        } else {
+            Log.e(LOG_TAG, "onLoadFinished() called with unrecognized loader id: " + loader.getId());
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        if (loader.getId() == SINGLE_REQUEST_LOADER) {
+            // TODO: should we do s.t. here? Maybe mRequestDetailsViewMVC.showRequest(null)?
+        } else {
+            Log.e(LOG_TAG, "onLoaderReset() called with unrecognized loader id: " + loader.getId());
+        }
+
+    }
+
+
+    // End of LoaderCallback methods
+    //
+    // ---------------------------------------------------------------------------------------------
+
 
 
     @Override
