@@ -145,22 +145,22 @@ public class RequestItem {
     public ContentValues toContentValues() {
         ContentValues values = new ContentValues();
 
-        values.put(Requests.REQUEST_ID, getId());
-        values.put(Requests.CREATED_BY, getCreatedBy());
-        values.put(Requests.CREATED_AT, getCreatedAt());
-        values.put(Requests.CREATED_COMMENT, getCreatedComment());
-        values.put(Requests.CREATED_PICTURES, getCreatedPictures());
-        values.put(Requests.CREATED_REPUTATION, getCreatedReputation());
-        values.put(Requests.LATITUDE, getLatitude());
-        values.put(Requests.LONGITUDE, getLongitude());
-        values.put(Requests.POLLUTION_LEVEL, getCreatedPollutionLevel());
-        values.put(Requests.PICKED_UP_BY, getPickedUpBy());
-        values.put(Requests.PICKED_UP_AT, getPickedUpAt());
-        values.put(Requests.CLOSED_BY, getClosedBy());
-        values.put(Requests.CLOSED_AT, getClosedAt());
-        values.put(Requests.CLOSED_COMMENT, getClosedComment());
-        values.put(Requests.CLOSED_PICTURES, getClosedPictures());
-        values.put(Requests.CLOSED_REPUTATION, getClosedReputation());
+        values.put(Requests.COL_REQUEST_ID, getId());
+        values.put(Requests.COL_CREATED_BY, getCreatedBy());
+        values.put(Requests.COL_CREATED_AT, getCreatedAt());
+        values.put(Requests.COL_CREATED_COMMENT, getCreatedComment());
+        values.put(Requests.COL_CREATED_PICTURES, getCreatedPictures());
+        values.put(Requests.COL_CREATED_REPUTATION, getCreatedReputation());
+        values.put(Requests.COL_LATITUDE, getLatitude());
+        values.put(Requests.COL_LONGITUDE, getLongitude());
+        values.put(Requests.COL_POLLUTION_LEVEL, getCreatedPollutionLevel());
+        values.put(Requests.COL_PICKED_UP_BY, getPickedUpBy());
+        values.put(Requests.COL_PICKED_UP_AT, getPickedUpAt());
+        values.put(Requests.COL_CLOSED_BY, getClosedBy());
+        values.put(Requests.COL_CLOSED_AT, getClosedAt());
+        values.put(Requests.COL_CLOSED_COMMENT, getClosedComment());
+        values.put(Requests.COL_CLOSED_PICTURES, getClosedPictures());
+        values.put(Requests.COL_CLOSED_REPUTATION, getClosedReputation());
 
         return values;
     }

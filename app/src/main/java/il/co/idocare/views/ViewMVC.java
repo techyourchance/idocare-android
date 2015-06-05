@@ -1,11 +1,7 @@
 package il.co.idocare.views;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
-
-import il.co.idocare.models.ModelMVC;
 
 /**
  * MVC view interface.

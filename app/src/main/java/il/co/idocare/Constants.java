@@ -76,6 +76,8 @@ public class Constants {
         CLOSED_BY("closed_by"), CLOSED_AT("closed_at"), CLOSED_COMMENT("closed_comment"),
         CLOSED_PICTURES("closed_pictures"), CLOSED_REPUTATION("closed_reputation");
 
+
+
         private String mValue;
         FieldName(String value) {
             this.mValue=value;

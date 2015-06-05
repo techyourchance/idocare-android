@@ -86,7 +86,6 @@ public class MainActivity extends AbstractActivity implements
         if (mGoogleApiClient != null) mGoogleApiClient.connect();
 
         enableAutomaticSync();
-        requestImmediateSync(); // TODO: come up with some more sophisticated scheme
 
 
         // TODO: verify that this call resolves the missing UP button when the activity is restarted
@@ -286,7 +285,7 @@ public class MainActivity extends AbstractActivity implements
     private void enableAutomaticSync() {
         Account acc = getActiveAccount();
         ContentResolver.setIsSyncable(acc, IDoCareContract.AUTHORITY, 1);
-        //ContentResolver.setSyncAutomatically(acc, IDoCareContract.AUTHORITY, true);
+        ContentResolver.setSyncAutomatically(acc, IDoCareContract.AUTHORITY, true);
     }
 
     private void disableAutomaticSync() {

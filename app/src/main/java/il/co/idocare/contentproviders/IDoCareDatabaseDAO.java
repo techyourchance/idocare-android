@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.BaseColumns;
 import android.util.Log;
 
 
@@ -18,7 +17,7 @@ import android.util.Log;
 public class IDoCareDatabaseDAO {
 
 
-    private static final String LOG_TAG = "IDoCareDatabaseDAO";
+    private static final String LOG_TAG = IDoCareDatabaseDAO.class.getSimpleName();
 
 
     private IDoCareSQLOpenHelper mHelper;
@@ -39,48 +38,6 @@ public class IDoCareDatabaseDAO {
 
         return id;
     }
-
-//
-//    private  ArrayList<HistoryFragment.HistoryEntry> getHistory(String selection,
-//                                                                            String orderBy) {
-//        SQLiteDatabase db = mHelper.getReadableDatabase();
-//
-//        String[] columns = {CustomSQLOpenHelper.UID, CustomSQLOpenHelper.LEFT_OR_RIGHT,
-//                CustomSQLOpenHelper.DATE, CustomSQLOpenHelper.DURATION, CustomSQLOpenHelper.AMOUNT,
-//                CustomSQLOpenHelper.DELTA_ROLL, CustomSQLOpenHelper.DELTA_TILT};
-//
-//        Cursor cursor = db.query(CustomSQLOpenHelper.TABLE_NAME, columns, selection,
-//                null, null, null, orderBy);
-//
-//        ArrayList<HistoryFragment.HistoryEntry> history = new ArrayList<HistoryFragment.HistoryEntry>();
-//
-//
-//        while (cursor.moveToNext()) {
-//            int index0 = cursor.getColumnIndex(CustomSQLOpenHelper.UID);
-//            int index1 = cursor.getColumnIndex(CustomSQLOpenHelper.LEFT_OR_RIGHT);
-//            int index2 = cursor.getColumnIndex(CustomSQLOpenHelper.DATE);
-//            int index3 = cursor.getColumnIndex(CustomSQLOpenHelper.DURATION);
-//            int index4 = cursor.getColumnIndex(CustomSQLOpenHelper.AMOUNT);
-//            int index5 = cursor.getColumnIndex(CustomSQLOpenHelper.DELTA_ROLL);
-//            int index6 = cursor.getColumnIndex(CustomSQLOpenHelper.DELTA_TILT);
-//
-//            int uid = cursor.getInt(index0);
-//            String leftOrRight = cursor.getString(index1);
-//            String dateString = cursor.getString(index2);
-//            int duration = cursor.getInt(index3);
-//            int amount = cursor.getInt(index4);
-//            int delta_roll = cursor.getInt(index5);
-//            int delta_tilt = cursor.getInt(index6);
-//
-//            history.add(new HistoryFragment.HistoryEntry(uid, leftOrRight, dateString,
-//                    duration, amount, delta_roll, delta_tilt));
-//
-//        }
-//
-//        cursor.close();
-//
-//        return history;
-//    }
 
 
     /**
@@ -121,41 +78,101 @@ public class IDoCareDatabaseDAO {
     }
 
 
+    public long addNewUserAction(ContentValues contentValues) {
+
+        SQLiteDatabase db = mHelper.getWritableDatabase();
+
+        // TODO: make sure that the added data is verified beforehand!
+
+        long id = db.insert(IDoCareSQLOpenHelper.USER_ACTIONS_TABLE_NAME, null, contentValues);
+
+        return id;
+    }
+
+    /**
+     * Query UserActions table
+     * @return cursor containing query results
+     */
+    public Cursor queryUserActions(String[] projection, String selection, String[] selectionArgs,
+                                String groupBy, String having, String sortOrder) {
+        Cursor cursor = mHelper.getReadableDatabase().query(
+                IDoCareSQLOpenHelper.USER_ACTIONS_TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                groupBy,
+                having,
+                sortOrder);
+
+        return cursor;
+    }
+
+
+    /**
+     * Update entries in UserActions table
+     * @return the number of rows affected
+     */
+    public int updateUserActions(ContentValues values, String selection, String[] selectionArgs) {
+        return mHelper.getWritableDatabase().update(IDoCareSQLOpenHelper.USER_ACTIONS_TABLE_NAME, values,
+                selection, selectionArgs);
+    }
+
+
+    /**
+     * Delete entries from UserActions table
+     * @return the number of rows affected
+     */
+    public int deleteUserActions(String selection, String[] selectionArgs) {
+        return mHelper.getWritableDatabase().delete(IDoCareSQLOpenHelper.USER_ACTIONS_TABLE_NAME,
+                selection, selectionArgs);
+    }
+
     /**
      * Custom implementation of SQLiteOpenHelper.
      */
     private static class IDoCareSQLOpenHelper extends SQLiteOpenHelper {
 
-        private static final String LOG_TAG = "IDoCareSQLOpenHelper";
+        private static final String LOG_TAG = IDoCareSQLOpenHelper.class.getSimpleName();
 
         private static final int DATABASE_VERSION = 1;
 
         private static final String DATABASE_NAME = "idocare_db";
+
         private static final String REQUESTS_TABLE_NAME = "requests_tbl";
-        private static final String UID = BaseColumns._ID;
+        private static final String USER_ACTIONS_TABLE_NAME = "user_actions_tbl";
 
-        private static final String CREATE_REQUESTS_TABLE = "CREATE TABLE " + REQUESTS_TABLE_NAME
-                + " ( " + UID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + IDoCareContract.Requests.REQUEST_ID + " INTEGER, "
-                + IDoCareContract.Requests.CREATED_BY + " INTEGER, "
-                + IDoCareContract.Requests.PICKED_UP_BY + " INTEGER, "
-                + IDoCareContract.Requests.CREATED_AT + " DATETIME, "
-                + IDoCareContract.Requests.PICKED_UP_AT + " DATETIME, "
-                + IDoCareContract.Requests.CLOSED_AT + " DATETIME, "
-                + IDoCareContract.Requests.CREATED_COMMENT + " VARCHAR(2000), "
-                + IDoCareContract.Requests.CLOSED_COMMENT + " VARCHAR(2000), "
-                + IDoCareContract.Requests.LATITUDE + " REAL, "
-                + IDoCareContract.Requests.LONGITUDE + " REAL, "
-                + IDoCareContract.Requests.CREATED_PICTURES + " VARCHAR(1000), "
-                + IDoCareContract.Requests.CLOSED_PICTURES + " VARCHAR(1000), "
-                + IDoCareContract.Requests.POLLUTION_LEVEL + " INTEGER, "
-                + IDoCareContract.Requests.CLOSED_BY + " INTEGER, "
-                + IDoCareContract.Requests.CREATED_REPUTATION + " INTEGER, "
-                + IDoCareContract.Requests.CLOSED_REPUTATION + " INTEGER "
-                + " ); ";
+        private static final String CREATE_REQUESTS_TABLE =
+                "CREATE TABLE " + REQUESTS_TABLE_NAME
+                + " ( " + IDoCareContract.Requests._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + IDoCareContract.Requests.COL_REQUEST_ID + " INTEGER, "
+                + IDoCareContract.Requests.COL_CREATED_BY + " INTEGER, "
+                + IDoCareContract.Requests.COL_PICKED_UP_BY + " INTEGER, "
+                + IDoCareContract.Requests.COL_CREATED_AT + " DATETIME, "
+                + IDoCareContract.Requests.COL_PICKED_UP_AT + " DATETIME, "
+                + IDoCareContract.Requests.COL_CLOSED_AT + " DATETIME, "
+                + IDoCareContract.Requests.COL_CREATED_COMMENT + " VARCHAR(1000), "
+                + IDoCareContract.Requests.COL_CLOSED_COMMENT + " VARCHAR(1000), "
+                + IDoCareContract.Requests.COL_LATITUDE + " REAL, "
+                + IDoCareContract.Requests.COL_LONGITUDE + " REAL, "
+                + IDoCareContract.Requests.COL_CREATED_PICTURES + " VARCHAR(1000), "
+                + IDoCareContract.Requests.COL_CLOSED_PICTURES + " VARCHAR(1000), "
+                + IDoCareContract.Requests.COL_POLLUTION_LEVEL + " INTEGER, "
+                + IDoCareContract.Requests.COL_CLOSED_BY + " INTEGER, "
+                + IDoCareContract.Requests.COL_CREATED_REPUTATION + " INTEGER, "
+                + IDoCareContract.Requests.COL_CLOSED_REPUTATION + " INTEGER, "
+                + IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG + " INTEGER DEFAULT 0);";
 
-        private static final String DROP_REQUESTS_TABLE =
-                "DROP TABLE IF EXISTS " + REQUESTS_TABLE_NAME;
+
+        private static final String CREATE_USER_ACTIONS_TABLE =
+                "CREATE TABLE " + USER_ACTIONS_TABLE_NAME
+                + " ( " + IDoCareContract.UserActions._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + IDoCareContract.UserActions.COL_TIMESTAMP + " INTEGER, "
+                + IDoCareContract.UserActions.COL_ENTITY_TYPE + " VARCHAR(1000), "
+                + IDoCareContract.UserActions.COL_ENTITY_ID + " INTEGER, "
+                + IDoCareContract.UserActions.COL_ENTITY_PARAM + " VARCHAR(1000), "
+                + IDoCareContract.UserActions.COL_ACTION_TYPE + " VARCHAR(1000), "
+                + IDoCareContract.UserActions.COL_ACTION_PARAM + " VARCHAR(1000) );";
+
 
 
         public IDoCareSQLOpenHelper(Context context) {
@@ -167,6 +184,7 @@ public class IDoCareDatabaseDAO {
             Log.v(LOG_TAG, "onCreate is called");
             try {
                 db.execSQL(CREATE_REQUESTS_TABLE);
+                db.execSQL(CREATE_USER_ACTIONS_TABLE);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -176,19 +194,14 @@ public class IDoCareDatabaseDAO {
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.v(LOG_TAG, "onUpgrade is called. Old ver: " + oldVersion + " new ver: " + newVersion);
             try {
-                db.execSQL(DROP_REQUESTS_TABLE);
+                db.execSQL("DROP TABLE IF EXISTS " + REQUESTS_TABLE_NAME);
+                db.execSQL("DROP TABLE IF EXISTS " + USER_ACTIONS_TABLE_NAME);
                 onCreate(db);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
 
-        public void clearRequestsTable() {
-            Log.d(LOG_TAG, "Destroying and re-creating the table: " + REQUESTS_TABLE_NAME);
-            SQLiteDatabase db = getWritableDatabase();
-            db.execSQL("DROP TABLE IF EXISTS " + REQUESTS_TABLE_NAME);
-            db.execSQL(CREATE_REQUESTS_TABLE);
-        }
 
     }
 
