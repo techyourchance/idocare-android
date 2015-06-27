@@ -8,6 +8,11 @@ public class Constants {
 
     public static final java.lang.String PICTURES_LIST_SEPARATOR = ", ";
 
+
+    private final static String DEV_ROOT_URL = "http://dev-04.idocare.co.il";
+    private final static String QA_ROOT_URL = "http://qa-04.idocare.co.il";
+    public final static String ROOT_URL = DEV_ROOT_URL;
+
     /**
      * This enum (its ordinal() values) is used with startActivityForResult() and
      * onActivityResult() calls across the app

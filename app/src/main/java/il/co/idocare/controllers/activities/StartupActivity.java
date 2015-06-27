@@ -82,7 +82,6 @@ public class StartupActivity extends AbstractActivity {
                         }
                     }
 
-
                     return true;
                 } catch (AuthenticatorException e) {
                     e.printStackTrace();
@@ -106,7 +105,7 @@ public class StartupActivity extends AbstractActivity {
                     Toast.makeText(StartupActivity.this, "Could not obtain auth token", Toast.LENGTH_LONG).show();
                 }
             }
-        }.execute();
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
 }

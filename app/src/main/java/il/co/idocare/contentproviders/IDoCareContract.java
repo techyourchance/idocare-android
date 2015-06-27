@@ -49,8 +49,6 @@ public class IDoCareContract {
         public static final String COL_CREATED_REPUTATION = FieldName.CREATED_REPUTATION.getValue();
         public static final String COL_CLOSED_REPUTATION = FieldName.CLOSED_REPUTATION.getValue();
         public static final String COL_CLOSED_BY = FieldName.CLOSED_BY.getValue();
-
-
         /**
          * This column, when set to int>0, indicates that the corresponding request was modified
          * locally (potentially more than once), and that these local changes haven't been
@@ -114,8 +112,12 @@ public class IDoCareContract {
         public static final String COL_ENTITY_PARAM = "entity_param";
         public static final String COL_ACTION_TYPE = "action_type";
         public static final String COL_ACTION_PARAM = "action_param";
+        public static final String COL_SERVER_RESPONSE_STATUS_CODE = "server_response_status_code";
+        public static final String COL_SERVER_RESPONSE_REASON_PHRASE = "server_response_reason_phrase";
+        public static final String COL_SERVER_RESPONSE_ENTITY = "server_response_entity";
 
         // Field values (correspond to particular values in table cells)
+        // Any change/addition to these values should be reflected to UserActionsComparator
         public static final String ENTITY_TYPE_REQUEST = "entity_type_request";
         public static final String ENTITY_TYPE_ARTICLE = "entity_type_article";
         public static final String ENTITY_PARAM_REQUEST_CREATED = "entity_param_request_created";

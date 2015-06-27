@@ -22,20 +22,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import il.co.idocare.Constants;
-import il.co.idocare.connectivity.ServerRequest;
 import il.co.idocare.authentication.AccountAuthenticator;
+import il.co.idocare.connectivity.ServerHttpRequest;
 import il.co.idocare.utils.IDoCareJSONUtils;
 import il.co.idocare.views.AuthenticateViewMVC;
 
 /**
  * Created by Vasiliy on 4/30/2015.
  */
-public class AuthenticatorActivity extends AccountAuthenticatorActivity implements ServerRequest.OnServerResponseCallback {
+public class AuthenticatorActivity extends AccountAuthenticatorActivity implements ServerHttpRequest.OnServerResponseCallback {
 
     public final static String ARG_ACCOUNT_NAME = "arg_account_name";
     public final static String ARG_AUTH_TOKEN_TYPE = "arg_auth_type";
     public static final String ARG_ACCOUNT_TYPE = "arg_account_type";
     public static final String ARG_IS_ADDING_NEW_ACCOUNT = "arg_is_adding_new_account";
+
+
+    private final static String LOGIN_URL = Constants.ROOT_URL + "/api-04/user/login";
 
     private static final String LOG_TAG = AuthenticatorActivity.class.getSimpleName();
 
@@ -70,9 +73,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
 
         Bundle userDataBundle = mViewMVC.getViewState();
 
-        ServerRequest serverRequest = new ServerRequest(ServerRequest.LOGIN_URL,
-                ServerRequest.ServerRequestTag.LOGIN, this);
-
         byte[] usernameBytes;
         byte[] passwordBytes;
         try {
@@ -83,6 +83,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
             return;
         }
 
+
+        ServerHttpRequest serverRequest = new ServerHttpRequest(LOGIN_URL, null, null, this, LOGIN_URL);
+
         serverRequest.addHeader(Constants.HttpHeader.USER_USERNAME.getValue(),
                 Base64.encodeToString(usernameBytes, Base64.NO_WRAP));
 
@@ -90,7 +93,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
                 Base64.encodeToString(passwordBytes, Base64.NO_WRAP));
 
 
-        serverRequest.execute();
+        new Thread(serverRequest).start();
 
         notifyOutboxHandlers(Constants.MessageType.C_LOGIN_REQUEST_SENT.ordinal(), 0, 0, null);
 
@@ -98,23 +101,29 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
 
 
     @Override
-    public void serverResponse(boolean responseStatusOk, ServerRequest.ServerRequestTag tag, String responseData) {
-        if (tag == ServerRequest.ServerRequestTag.LOGIN) {
+    public void serverResponse(int statusCode, String reasonPhrase, String entityString,
+                               Object asyncCompletionToken) {
+        String url = (String) asyncCompletionToken;
+        if (url.equals(LOGIN_URL)) {
 
             notifyOutboxHandlers(Constants.MessageType.C_LOGIN_RESPONSE_RECEIVED.ordinal(), 0, 0, null);
 
             Bundle data = null;
 
-            if (responseStatusOk) {
-                data = extractResponseData(responseData);
+            if (statusCode / 100 == 2) {
+                data = extractResponseData(entityString);
             } else {
                 data = new Bundle();
-                data.putString(KEY_ERROR_MSG, "Unsuccessful server response. Response data: " + responseData);
+                data.putString(KEY_ERROR_MSG, "Unsuccessful server response.\n" + "" +
+                        "Status code: " + statusCode + "\n" +
+                        "Reason phrase: " + reasonPhrase + "\n" +
+                        "Response data: " + entityString);
             }
 
             finishLogin(data);
+
         } else {
-            Log.e(LOG_TAG, "serverResponse was called with unrecognized tag: " + tag.toString());
+            Log.e(LOG_TAG, "receiver serverResponse() callback for unrecognized URL: " + url);
         }
     }
 
@@ -124,8 +133,18 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
         AccountManager accountManager = AccountManager.get(this);
 
         if (data.containsKey(KEY_ERROR_MSG)) {
-            Toast.makeText(this, "Incorrect username and/or password", Toast.LENGTH_LONG).show();
-            Log.i(LOG_TAG, "Incorrect username and/or password:  " + data.getString(KEY_ERROR_MSG));
+            runOnUiThread(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(AuthenticatorActivity.this,
+                                    "Login failed", Toast.LENGTH_LONG).show();
+                        }
+                    }
+            );
+
+            Log.i(LOG_TAG, "Login failed. Error message:\n" +
+                    data.get(KEY_ERROR_MSG));
             return;
         }
 
@@ -152,8 +171,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
         // Remember the account as a default account for the app
         SharedPreferences prefs =
                 this.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
-        prefs.edit().putString(AccountManager.KEY_ACCOUNT_NAME, accountName);
-        prefs.edit().putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
+        prefs.edit().putString(AccountManager.KEY_ACCOUNT_NAME, accountName).apply();
+        prefs.edit().putString(AccountManager.KEY_ACCOUNT_TYPE, accountType).apply();
 
 
         final Intent result = new Intent();

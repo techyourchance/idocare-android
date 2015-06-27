@@ -21,7 +21,10 @@ import il.co.idocare.R;
  */
 public class NewRequestViewMVC extends AbstractViewMVC {
 
-    private final static String LOG_TAG = "NewRequestViewMVC";
+    public final static String KEY_CREATED_COMMENT = Constants.FieldName.CREATED_COMMENT.getValue();
+    public final static String KEY_CREATED_POLLUTION_LEVEL = Constants.FieldName.CREATED_POLLUTION_LEVEL.getValue();
+
+    private final static String LOG_TAG = NewRequestViewMVC.class.getSimpleName();
 
 
     private View mRootView;

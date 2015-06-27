@@ -1,11 +1,11 @@
 package il.co.idocare.controllers.fragments;
 
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
@@ -20,28 +20,26 @@ import android.widget.Toast;
 import com.google.android.gms.location.LocationServices;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.connectivity.ServerRequest;
+import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.activities.MainActivity;
-import il.co.idocare.utils.IDoCareHttpUtils;
-import il.co.idocare.utils.IDoCareJSONUtils;
 import il.co.idocare.utils.UtilMethods;
 import il.co.idocare.views.NewRequestViewMVC;
 
 
-public class NewRequestFragment extends AbstractFragment implements ServerRequest.OnServerResponseCallback {
+public class NewRequestFragment extends AbstractFragment {
 
-    private final static String LOG_TAG = "NewRequestFragment";
+    private final static String LOG_TAG = NewRequestFragment.class.getSimpleName();
 
-    NewRequestViewMVC mViewMVCNewRequest;
+    NewRequestViewMVC mViewMVC;
 
     private long mRequestId;
 
@@ -50,17 +48,17 @@ public class NewRequestFragment extends AbstractFragment implements ServerReques
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mViewMVCNewRequest = new NewRequestViewMVC(inflater, container);
+        mViewMVC = new NewRequestViewMVC(inflater, container);
         // Provide inbox Handler to the MVC View
-        mViewMVCNewRequest.addOutboxHandler(getInboxHandler());
+        mViewMVC.addOutboxHandler(getInboxHandler());
         // Add MVC View's Handler to the set of outbox Handlers
-        addOutboxHandler(mViewMVCNewRequest.getInboxHandler());
+        addOutboxHandler(mViewMVC.getInboxHandler());
 
 
         // Restore state from bundle (if required)
         restoreSavedStateIfNeeded(savedInstanceState);
 
-        return mViewMVCNewRequest.getRootView();
+        return mViewMVC.getRootView();
     }
 
 
@@ -153,7 +151,7 @@ public class NewRequestFragment extends AbstractFragment implements ServerReques
             mCameraPicturesPaths.remove(position);
         }
         mCameraPicturesPaths.add(position, cameraPicturePath);
-        mViewMVCNewRequest.showPicture(position, cameraPicturePath);
+        mViewMVC.showPicture(position, cameraPicturePath);
     }
 
 
@@ -179,81 +177,78 @@ public class NewRequestFragment extends AbstractFragment implements ServerReques
 
 
     /**
-     * Create, populate and execute a new server request of type "add new request" based
-     * on the contents of fragment's views
+     * Add new request to the local cache, mark it as modified and add the corresponding user
+     * action to the local cache of user actions
      */
     private void createRequest() {
 
-        String activeAccountId = getActiveAccount().name;
-        if (TextUtils.isEmpty(activeAccountId)) {
+        String createdBy = getActiveAccount().name;
+        if (TextUtils.isEmpty(createdBy)) {
             Toast.makeText(getActivity(), "No active account found", Toast.LENGTH_LONG).show();
-            Log.i(LOG_TAG, "No active account found - request pickup failed");
+            Log.i(LOG_TAG, "No active account found - request creation failed");
             return;
         }
         
         showProgressDialog("Please wait...", "Creating new request...");
 
-        Bundle bundleNewRequest = mViewMVCNewRequest.getViewState();
-
-        ServerRequest serverRequest = new ServerRequest(ServerRequest.CREATE_REQUEST_URL,
-                ServerRequest.ServerRequestTag.CREATE_REQUEST, this);
-
-        try {
-            IDoCareHttpUtils.addStandardHeaders(serverRequest, activeAccountId, getAuthTokenForActiveAccount());
-        } catch (AuthenticatorException e) {
-            e.printStackTrace();
-        } catch (OperationCanceledException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-
         // TODO: find a way to distribute GoogleApiClient to fragments without casting
         // TODO: is it ok to put GoogleApiClient in AbstractActivity and add the getter to Callback IF?
         Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                ((MainActivity)getActivity()).mGoogleApiClient);
+                ((MainActivity) getActivity()).mGoogleApiClient);
+        String latitude = "", longitude = "";
         if (lastLocation != null) {
-            serverRequest.addTextField(Constants.FieldName.LATITUDE.getValue(),
-                    String.valueOf(lastLocation.getLatitude()));
-            serverRequest.addTextField(Constants.FieldName.LONGITUDE.getValue(),
-                    String.valueOf(lastLocation.getLongitude()));
+            latitude = String.valueOf(lastLocation.getLatitude());
+            longitude = String.valueOf(lastLocation.getLongitude());
         }
-
-        serverRequest.addTextField(Constants.FieldName.CREATED_POLLUTION_LEVEL.getValue(),
-                bundleNewRequest.getString(Constants.FieldName.CREATED_POLLUTION_LEVEL.getValue()));
-
-        if (bundleNewRequest.getString(Constants.FieldName.CREATED_COMMENT.getValue()).length() > 0) {
-            serverRequest.addTextField(Constants.FieldName.CREATED_COMMENT.getValue(),
-                    bundleNewRequest.getString(Constants.FieldName.CREATED_COMMENT.getValue()));
+        StringBuilder sb = new StringBuilder("");
+        for (int i=0; i<mCameraPicturesPaths.size(); i++) {
+            sb.append(mCameraPicturesPaths.get(i));
+            if (i < mCameraPicturesPaths.size()-1) sb.append(", ");
         }
+        String createdPictures = sb.toString();
+
+        Bundle bundleNewRequest = mViewMVC.getViewState();
+        String pollutionLevel =
+                bundleNewRequest.getString(NewRequestViewMVC.KEY_CREATED_POLLUTION_LEVEL);
+        String createdComment =
+                bundleNewRequest.getString(NewRequestViewMVC.KEY_CREATED_COMMENT);
+
+        // Generate a temporary ID for this request - the actual ID will be assigned by the server
+        long tempId = UUID.randomUUID().getLeastSignificantBits();
 
 
-        // Set closed pictures
-        for (int i = 0; i < mCameraPicturesPaths.size(); i++) {
-            serverRequest.addPicture(Constants.FieldName.CREATED_PICTURES.getValue(),
-                    "picture" + String.valueOf(i) + ".jpg", mCameraPicturesPaths.get(i));
-        }
+        // Create entries for a newly created request
+        final ContentValues requestCV = new ContentValues();
+        requestCV.put(IDoCareContract.Requests.COL_REQUEST_ID, tempId);
+        requestCV.put(IDoCareContract.Requests.COL_CREATED_BY, createdBy);
+        requestCV.put(IDoCareContract.Requests.COL_CREATED_COMMENT, createdComment);
+        requestCV.put(IDoCareContract.Requests.COL_CREATED_PICTURES, createdPictures);
+        requestCV.put(IDoCareContract.Requests.COL_LONGITUDE, longitude);
+        requestCV.put(IDoCareContract.Requests.COL_LATITUDE, latitude);
+        requestCV.put(IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG, "1");
 
-        serverRequest.execute();
-    }
+        // Create entries for user action corresponding to request's creation
+        final ContentValues userActionCV = new ContentValues();
+        userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_TYPE,
+                IDoCareContract.UserActions.ENTITY_TYPE_REQUEST);
+        userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_ID, tempId);
+        userActionCV.put(IDoCareContract.UserActions.COL_ACTION_TYPE, IDoCareContract.UserActions.ACTION_TYPE_CREATE_REQUEST);
 
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                getContentResolver().insert(IDoCareContract.Requests.CONTENT_URI, requestCV);
+                getContentResolver().insert(IDoCareContract.UserActions.CONTENT_URI, userActionCV);
+                return null;
+            }
 
-
-    @Override
-    public void serverResponse(boolean responseStatusOk, ServerRequest.ServerRequestTag tag,
-                               String responseData) {
-
-        if (tag == ServerRequest.ServerRequestTag.CREATE_REQUEST) {
-            if (responseStatusOk && IDoCareJSONUtils.verifySuccessfulStatus(responseData)) {
+            @Override
+            protected void onPostExecute(Void aVoid) {
                 dismissProgressDialog();
                 replaceFragment(HomeFragment.class, false, null);
-                Toast.makeText(getActivity(), "Request created successfully", Toast.LENGTH_SHORT).show();
             }
-        } else {
-            Log.e(LOG_TAG, "serverResponse was called with unrecognized tag: " + tag.toString());
-        }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[] {null});
+
     }
 
 }

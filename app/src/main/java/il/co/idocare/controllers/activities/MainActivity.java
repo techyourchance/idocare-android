@@ -27,7 +27,6 @@ import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.adapters.NavigationDrawerListAdapter;
 import il.co.idocare.controllers.fragments.HomeFragment;
-import il.co.idocare.controllers.fragments.LoginFragment;
 import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.R;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
@@ -53,10 +52,6 @@ public class MainActivity extends AbstractActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-        // This is required because we disabled the action bar in the theme
-        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-
         setContentView(R.layout.activity_main);
 
         // Show the action bar (just in case it was hidden)
@@ -73,7 +68,7 @@ public class MainActivity extends AbstractActivity implements
 
         setupDrawer();
 
-        // This callback will be used to show/hide up (back) button in actionbarh
+        // This callback will be used to show/hide up (back) button in actionbar
         getFragmentManager().addOnBackStackChangedListener(this);
 
 
@@ -87,11 +82,8 @@ public class MainActivity extends AbstractActivity implements
 
         enableAutomaticSync();
 
-
         // TODO: verify that this call resolves the missing UP button when the activity is restarted
         onBackStackChanged();
-
-
 
     }
 
@@ -99,12 +91,11 @@ public class MainActivity extends AbstractActivity implements
     protected void onStop() {
         super.onStop();
 
-
         if (mGoogleApiClient != null) mGoogleApiClient.disconnect();
 
         disableAutomaticSync();
-
     }
+
 
 
     @Override
@@ -276,8 +267,7 @@ public class MainActivity extends AbstractActivity implements
                 getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
 
         prefs.edit().remove(Constants.FieldName.USER_ID.getValue()).apply();
-        prefs.edit().remove(Constants.FieldName.USER_AUTH_TOKEN.getValue()).commit();
-        replaceFragment(LoginFragment.class, false, null);
+        prefs.edit().remove(Constants.FieldName.USER_AUTH_TOKEN.getValue()).apply();
 
     }
 
@@ -291,7 +281,6 @@ public class MainActivity extends AbstractActivity implements
     private void disableAutomaticSync() {
         Account acc = getActiveAccount();
         ContentResolver.setIsSyncable(acc, IDoCareContract.AUTHORITY, 0);
-
     }
 
     private void requestImmediateSync() {

@@ -1,7 +1,5 @@
 package il.co.idocare.controllers.fragments;
 
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -9,15 +7,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,16 +20,13 @@ import java.util.List;
 import java.util.Locale;
 
 import il.co.idocare.Constants;
-import il.co.idocare.Constants.FieldName;
 import il.co.idocare.R;
-import il.co.idocare.connectivity.ServerRequest;
-import il.co.idocare.utils.IDoCareHttpUtils;
-import il.co.idocare.utils.IDoCareJSONUtils;
+import il.co.idocare.connectivity.ServerHttpRequest;
 import il.co.idocare.utils.UtilMethods;
 import il.co.idocare.views.CloseRequestViewMVC;
 
 
-public class CloseRequestFragment extends AbstractFragment implements ServerRequest.OnServerResponseCallback {
+public class CloseRequestFragment extends AbstractFragment implements ServerHttpRequest.OnServerResponseCallback {
 
     private final static String LOG_TAG = "CloseRequestFragment";
 
@@ -191,62 +183,67 @@ public class CloseRequestFragment extends AbstractFragment implements ServerRequ
      */
     private void closeRequest() {
 
-        String id = getActiveAccount().name;
-        if (TextUtils.isEmpty(id)) {
-            // TODO: decide what to do
-            return;
-        }
-
-
-        showProgressDialog("Please wait...", "Closing the request...");
-
-        Bundle closeRequestBundle = mCloseRequestViewMVC.getViewState();
-
-        ServerRequest serverRequest = new ServerRequest(ServerRequest.CLOSE_REQUEST_URL,
-                ServerRequest.ServerRequestTag.CLOSE_REQUEST, this);
-
-        try {
-            IDoCareHttpUtils.addStandardHeaders(serverRequest, id, getAuthTokenForActiveAccount());
-        } catch (AuthenticatorException e) {
-            e.printStackTrace();
-        } catch (OperationCanceledException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // Set request ID
-        serverRequest.addTextField(FieldName.REQUEST_ID.getValue(), String.valueOf(mRequestId));
-
-        // Set closed comment
-        if (closeRequestBundle.getString(FieldName.CLOSED_COMMENT.getValue()).length() > 0) {
-            serverRequest.addTextField(FieldName.CLOSED_COMMENT.getValue(),
-                    closeRequestBundle.getString(FieldName.CLOSED_COMMENT.getValue()));
-        }
-
-        // Set closed pictures
-        for (int i = 0; i < mCameraPicturesPaths.size(); i++) {
-            serverRequest.addPicture(FieldName.CLOSED_PICTURES.getValue(),
-                    "picture" + String.valueOf(i) + ".jpg", mCameraPicturesPaths.get(i));
-        }
-
-        serverRequest.execute();
+//        String id = getActiveAccount().name;
+//        if (TextUtils.isEmpty(id)) {
+//            // TODO: decide what to do
+//            return;
+//        }
+//
+//
+//        showProgressDialog("Please wait...", "Closing the request...");
+//
+//        Bundle closeRequestBundle = mCloseRequestViewMVC.getViewState();
+//
+//        ServerRequest serverRequest = new ServerRequest(ServerRequest.CLOSE_REQUEST_URL,
+//                ServerRequest.ServerRequestTag.CLOSE_REQUEST, this);
+//
+//        try {
+//            IDoCareHttpUtils.addStandardHeaders(serverRequest, id, getAuthTokenForActiveAccount());
+//        } catch (AuthenticatorException e) {
+//            e.printStackTrace();
+//        } catch (OperationCanceledException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        // Set request ID
+//        serverRequest.addTextField(FieldName.REQUEST_ID.getValue(), String.valueOf(mRequestId));
+//
+//        // Set closed comment
+//        if (closeRequestBundle.getString(FieldName.CLOSED_COMMENT.getValue()).length() > 0) {
+//            serverRequest.addTextField(FieldName.CLOSED_COMMENT.getValue(),
+//                    closeRequestBundle.getString(FieldName.CLOSED_COMMENT.getValue()));
+//        }
+//
+//        // Set closed pictures
+//        for (int i = 0; i < mCameraPicturesPaths.size(); i++) {
+//            serverRequest.addPicture(FieldName.CLOSED_PICTURES.getValue(),
+//                    "picture" + String.valueOf(i) + ".jpg", mCameraPicturesPaths.get(i));
+//        }
+//
+//        serverRequest.execute();
 
     }
 
+//
+//    @Override
+//    public void serverResponse(UserActionItem userAction, int statusCode, String reasonPhrase, String entityString) {
+//
+//        if (userAction == ServerRequest.ServerRequestTag.CLOSE_REQUEST) {
+//            if (responseStatusOk && IDoCareJSONUtils.verifySuccessfulStatus(entityString)) {
+//                dismissProgressDialog();
+//                // TODO: need to update local sql db
+//                replaceFragment(HomeFragment.class, false, null);
+//                Toast.makeText(getActivity(), "Request closed successfully", Toast.LENGTH_SHORT).show();
+//            }
+//        } else {
+//            Log.e(LOG_TAG, "serverResponse was called with unrecognized tag: " + userAction.toString());
+//        }
+//    }
 
     @Override
-    public void serverResponse(boolean responseStatusOk, ServerRequest.ServerRequestTag tag, String responseData) {
+    public void serverResponse(int statusCode, String reasonPhrase, String entityString, Object asyncCompletionToken) {
 
-        if (tag == ServerRequest.ServerRequestTag.CLOSE_REQUEST) {
-            if (responseStatusOk && IDoCareJSONUtils.verifySuccessfulStatus(responseData)) {
-                dismissProgressDialog();
-                // TODO: need to update local sql db
-                replaceFragment(HomeFragment.class, false, null);
-                Toast.makeText(getActivity(), "Request closed successfully", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            Log.e(LOG_TAG, "serverResponse was called with unrecognized tag: " + tag.toString());
-        }
     }
 }

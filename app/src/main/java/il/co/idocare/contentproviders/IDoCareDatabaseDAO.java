@@ -142,8 +142,8 @@ public class IDoCareDatabaseDAO {
         private static final String USER_ACTIONS_TABLE_NAME = "user_actions_tbl";
 
         private static final String CREATE_REQUESTS_TABLE =
-                "CREATE TABLE " + REQUESTS_TABLE_NAME
-                + " ( " + IDoCareContract.Requests._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                "CREATE TABLE " + REQUESTS_TABLE_NAME + " ( "
+                + IDoCareContract.Requests._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + IDoCareContract.Requests.COL_REQUEST_ID + " INTEGER, "
                 + IDoCareContract.Requests.COL_CREATED_BY + " INTEGER, "
                 + IDoCareContract.Requests.COL_PICKED_UP_BY + " INTEGER, "
@@ -158,20 +158,23 @@ public class IDoCareDatabaseDAO {
                 + IDoCareContract.Requests.COL_CLOSED_PICTURES + " VARCHAR(1000), "
                 + IDoCareContract.Requests.COL_POLLUTION_LEVEL + " INTEGER, "
                 + IDoCareContract.Requests.COL_CLOSED_BY + " INTEGER, "
-                + IDoCareContract.Requests.COL_CREATED_REPUTATION + " INTEGER, "
-                + IDoCareContract.Requests.COL_CLOSED_REPUTATION + " INTEGER, "
+                + IDoCareContract.Requests.COL_CREATED_REPUTATION + " INTEGER DEFAULT 0, "
+                + IDoCareContract.Requests.COL_CLOSED_REPUTATION + " INTEGER DEFAULT 0, "
                 + IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG + " INTEGER DEFAULT 0);";
 
 
         private static final String CREATE_USER_ACTIONS_TABLE =
-                "CREATE TABLE " + USER_ACTIONS_TABLE_NAME
-                + " ( " + IDoCareContract.UserActions._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                "CREATE TABLE " + USER_ACTIONS_TABLE_NAME + " ( "
+                + IDoCareContract.UserActions._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + IDoCareContract.UserActions.COL_TIMESTAMP + " INTEGER, "
                 + IDoCareContract.UserActions.COL_ENTITY_TYPE + " VARCHAR(1000), "
                 + IDoCareContract.UserActions.COL_ENTITY_ID + " INTEGER, "
                 + IDoCareContract.UserActions.COL_ENTITY_PARAM + " VARCHAR(1000), "
                 + IDoCareContract.UserActions.COL_ACTION_TYPE + " VARCHAR(1000), "
-                + IDoCareContract.UserActions.COL_ACTION_PARAM + " VARCHAR(1000) );";
+                + IDoCareContract.UserActions.COL_ACTION_PARAM + " VARCHAR(1000), "
+                + IDoCareContract.UserActions.COL_SERVER_RESPONSE_STATUS_CODE + " INTEGER DEFAULT 0, "
+                + IDoCareContract.UserActions.COL_SERVER_RESPONSE_REASON_PHRASE + " VARCHAR(1000) DEFAULT '', "
+                + IDoCareContract.UserActions.COL_SERVER_RESPONSE_ENTITY + " VARCHAR(10000) DEFAULT '' );";
 
 
 

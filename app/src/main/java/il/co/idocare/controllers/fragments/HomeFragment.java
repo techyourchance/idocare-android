@@ -38,7 +38,6 @@ public class HomeFragment extends AbstractFragment implements LoaderManager.Load
     HomeViewMVC mHomeViewMVC;
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 

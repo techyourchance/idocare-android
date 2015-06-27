@@ -1,7 +1,5 @@
 package il.co.idocare.controllers.fragments;
 
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.CursorLoader;
@@ -9,27 +7,21 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Message;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
-import java.io.IOException;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.connectivity.ServerRequest;
+import il.co.idocare.connectivity.ServerHttpRequest;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.pojos.RequestItem;
-import il.co.idocare.utils.IDoCareHttpUtils;
-import il.co.idocare.utils.IDoCareJSONUtils;
 import il.co.idocare.views.RequestDetailsViewMVC;
 
 
 public class RequestDetailsFragment extends AbstractFragment implements
-        ServerRequest.OnServerResponseCallback,
+        ServerHttpRequest.OnServerResponseCallback,
         LoaderManager.LoaderCallbacks<Cursor> {
 
     private final static String LOG_TAG = RequestDetailsFragment.class.getSimpleName();
@@ -136,32 +128,32 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
 
     private void pickupRequest() {
-
-        String activeAccountId = getActiveAccount().name;
-        if (TextUtils.isEmpty(activeAccountId)) {
-            Toast.makeText(getActivity(), "No active account found", Toast.LENGTH_LONG).show();
-            Log.i(LOG_TAG, "No active account found - request pickup failed");
-            return;
-        }
-        showProgressDialog("Please wait...", "Assigning the request...");
-
-        ServerRequest serverRequest = new ServerRequest(ServerRequest.PICKUP_REQUEST_URL,
-                ServerRequest.ServerRequestTag.PICKUP_REQUEST, this);
-
-        try {
-            IDoCareHttpUtils.addStandardHeaders(serverRequest, activeAccountId, getAuthTokenForActiveAccount());
-        } catch (AuthenticatorException e) {
-            e.printStackTrace();
-        } catch (OperationCanceledException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        serverRequest.addTextField(Constants.FieldName.REQUEST_ID.getValue(),
-                String.valueOf(mRequestId));
-
-        serverRequest.execute();
+//
+//        String activeAccountId = getActiveAccount().name;
+//        if (TextUtils.isEmpty(activeAccountId)) {
+//            Toast.makeText(getActivity(), "No active account found", Toast.LENGTH_LONG).show();
+//            Log.i(LOG_TAG, "No active account found - request pickup failed");
+//            return;
+//        }
+//        showProgressDialog("Please wait...", "Assigning the request...");
+//
+//        ServerRequest serverRequest = new ServerRequest(ServerRequest.PICKUP_REQUEST_URL,
+//                ServerRequest.ServerRequestTag.PICKUP_REQUEST, this);
+//
+//        try {
+//            IDoCareHttpUtils.addStandardHeaders(serverRequest, activeAccountId, getAuthTokenForActiveAccount());
+//        } catch (AuthenticatorException e) {
+//            e.printStackTrace();
+//        } catch (OperationCanceledException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        serverRequest.addTextField(Constants.FieldName.REQUEST_ID.getValue(),
+//                String.valueOf(mRequestId));
+//
+//        serverRequest.execute();
 
     }
 
@@ -172,44 +164,44 @@ public class RequestDetailsFragment extends AbstractFragment implements
     }
 
     private void voteForRequest(int amount, boolean voteForClosed) {
-
-        String activeAccountId = getActiveAccount().name;
-        if (TextUtils.isEmpty(activeAccountId)) {
-            Toast.makeText(getActivity(), "No active account found", Toast.LENGTH_LONG).show();
-            Log.i(LOG_TAG, "No active account found - request pickup failed");
-            return;
-        }
-
-        // TODO: rewrite this logic without Models...
-//        // Don't allow voting for yourself
-//        if ((voteForClosed && Long.valueOf(activeAccountId) == getRequestsModel().getRequest(getContentResolver(), mRequestId).getClosedBy()) ||
-//                (!voteForClosed && Long.valueOf(activeAccountId) == getRequestsModel().getRequest(getContentResolver(), mRequestId).getCreatedBy())) {
-//            Toast.makeText(getActivity(), getActivity().getResources()
-//                    .getString(R.string.self_voting_error_message), Toast.LENGTH_LONG).show();
+//
+//        String activeAccountId = getActiveAccount().name;
+//        if (TextUtils.isEmpty(activeAccountId)) {
+//            Toast.makeText(getActivity(), "No active account found", Toast.LENGTH_LONG).show();
+//            Log.i(LOG_TAG, "No active account found - request pickup failed");
 //            return;
 //        }
-
-        ServerRequest serverRequest = new ServerRequest(ServerRequest.VOTE_REQUEST_URL,
-                ServerRequest.ServerRequestTag.VOTE_FOR_REQUEST, this);
-
-        try {
-            IDoCareHttpUtils.addStandardHeaders(serverRequest, activeAccountId, getAuthTokenForActiveAccount());
-        } catch (AuthenticatorException e) {
-            e.printStackTrace();
-        } catch (OperationCanceledException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        serverRequest.addTextField(Constants.FieldName.ENTITY_ID.getValue(),
-                String.valueOf(mRequestId));
-        serverRequest.addTextField(Constants.FieldName.ENTITY_PARAM.getValue(),
-                voteForClosed ? "closed" : "created");
-        serverRequest.addTextField(Constants.FieldName.SCORE.getValue(),
-                String.valueOf(amount));
-
-        serverRequest.execute();
+//
+//        // TODO: rewrite this logic without Models...
+////        // Don't allow voting for yourself
+////        if ((voteForClosed && Long.valueOf(activeAccountId) == getRequestsModel().getRequest(getContentResolver(), mRequestId).getClosedBy()) ||
+////                (!voteForClosed && Long.valueOf(activeAccountId) == getRequestsModel().getRequest(getContentResolver(), mRequestId).getCreatedBy())) {
+////            Toast.makeText(getActivity(), getActivity().getResources()
+////                    .getString(R.string.self_voting_error_message), Toast.LENGTH_LONG).show();
+////            return;
+////        }
+//
+//        ServerRequest serverRequest = new ServerRequest(ServerRequest.VOTE_REQUEST_URL,
+//                ServerRequest.ServerRequestTag.VOTE_FOR_REQUEST, this);
+//
+//        try {
+//            IDoCareHttpUtils.addStandardHeaders(serverRequest, activeAccountId, getAuthTokenForActiveAccount());
+//        } catch (AuthenticatorException e) {
+//            e.printStackTrace();
+//        } catch (OperationCanceledException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        serverRequest.addTextField(Constants.FieldName.ENTITY_ID.getValue(),
+//                String.valueOf(mRequestId));
+//        serverRequest.addTextField(Constants.FieldName.ENTITY_PARAM.getValue(),
+//                voteForClosed ? "closed" : "created");
+//        serverRequest.addTextField(Constants.FieldName.SCORE.getValue(),
+//                String.valueOf(amount));
+//
+//        serverRequest.execute();
     }
 
 
@@ -280,26 +272,31 @@ public class RequestDetailsFragment extends AbstractFragment implements
     // ---------------------------------------------------------------------------------------------
 
 
+//
+//    @Override
+//    public void serverResponse(UserActionItem userAction,
+//                               int statusCode, String reasonPhrase, String entityString) {
+//
+//        if (userAction == ServerRequest.ServerRequestTag.PICKUP_REQUEST) {
+//            if (responseStatusOk && IDoCareJSONUtils.verifySuccessfulStatus(entityString)) {
+//                dismissProgressDialog();
+//                // TODO: update local model with the change
+//                Toast.makeText(getActivity(), "This request was assigned to you", Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//        else if (userAction == ServerRequest.ServerRequestTag.VOTE_FOR_REQUEST) {
+//            if (responseStatusOk && IDoCareJSONUtils.verifySuccessfulStatus(entityString)) {
+//                // TODO: update local model with the change
+//            }
+//
+//        }
+//        else {
+//            Log.e(LOG_TAG, "serverResponse was called with unrecognized tag: " + userAction.toString());
+//        }
+//    }
 
     @Override
-    public void serverResponse(boolean responseStatusOk, ServerRequest.ServerRequestTag tag,
-                               String responseData) {
+    public void serverResponse(int statusCode, String reasonPhrase, String entityString, Object asyncCompletionToken) {
 
-        if (tag == ServerRequest.ServerRequestTag.PICKUP_REQUEST) {
-            if (responseStatusOk && IDoCareJSONUtils.verifySuccessfulStatus(responseData)) {
-                dismissProgressDialog();
-                // TODO: update local model with the change
-                Toast.makeText(getActivity(), "This request was assigned to you", Toast.LENGTH_SHORT).show();
-            }
-        }
-        else if (tag == ServerRequest.ServerRequestTag.VOTE_FOR_REQUEST) {
-            if (responseStatusOk && IDoCareJSONUtils.verifySuccessfulStatus(responseData)) {
-                // TODO: update local model with the change
-            }
-
-        }
-        else {
-            Log.e(LOG_TAG, "serverResponse was called with unrecognized tag: " + tag.toString());
-        }
     }
 }
