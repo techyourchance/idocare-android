@@ -135,6 +135,7 @@ public class IDoCareContentProvider extends ContentProvider {
                 break;
             case USER_ACTIONS_LIST:
                 id = mDAO.addNewUserAction(values);
+                break;
             default:
                 throw new IllegalArgumentException(
                         "Unsupported URI for insertion: " + uri);
