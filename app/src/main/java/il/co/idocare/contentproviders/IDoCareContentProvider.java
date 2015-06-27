@@ -104,6 +104,8 @@ public class IDoCareContentProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unsupported URI: " + uri.toString());
         }
 
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
         return cursor;
     }
 
