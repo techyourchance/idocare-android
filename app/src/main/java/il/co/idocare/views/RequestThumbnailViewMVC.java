@@ -12,6 +12,9 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.handlermessaging.HandlerMessagingSlave;
@@ -199,8 +202,17 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
 
                 mImgRequestThumbnail.setImageDrawable(null);
 
+                String universalImageLoaderUri = createdPictures[0];
+                try {
+                    new URL(universalImageLoaderUri);
+                } catch (MalformedURLException e) {
+                    // The exception means that the current Uri is not a valid URL - it is local
+                    // uri and we need to adjust it to the scheme recognized by UIL
+                    universalImageLoaderUri = "file://" + universalImageLoaderUri;
+                }
+
                 ImageLoader.getInstance().displayImage(
-                        createdPictures[0],
+                        universalImageLoaderUri,
                         mImgRequestThumbnail,
                         Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
 
