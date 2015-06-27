@@ -60,6 +60,9 @@ public class CloseRequestFragment extends AbstractFragment implements ServerHttp
         // Restore state from bundle (if required)
         restoreSavedStateIfNeeded(savedInstanceState);
 
+
+        setActionBarTitle(getTitle());
+
         return mCloseRequestViewMVC.getRootView();
     }
 
@@ -92,8 +95,8 @@ public class CloseRequestFragment extends AbstractFragment implements ServerHttp
     }
 
     @Override
-    public int getTitle() {
-        return R.string.close_request_fragment_title;
+    public String getTitle() {
+        return getResources().getString(R.string.close_request_fragment_title);
     }
 
     @Override

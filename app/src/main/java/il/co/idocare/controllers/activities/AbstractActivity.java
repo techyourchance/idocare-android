@@ -10,6 +10,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import java.io.IOException;
 
@@ -99,12 +100,12 @@ public abstract class AbstractActivity extends Activity implements
     //
     // Action bar management
 
-    public void setActionBarTitle(int resourceId) {
+    public void setActionBarTitle(String title) {
 
         if (getActionBar() != null ) {
             getActionBar().show();
-            if (resourceId != 0) {
-                getActionBar().setTitle(resourceId);
+            if (!TextUtils.isEmpty(title)) {
+                getActionBar().setTitle(title);
             } else {
                 getActionBar().setTitle("");
             }

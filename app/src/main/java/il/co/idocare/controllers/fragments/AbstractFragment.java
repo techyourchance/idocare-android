@@ -56,10 +56,10 @@ public abstract class AbstractFragment extends Fragment implements
     public abstract Class<? extends AbstractFragment> getNavHierParentFragment();
 
     /**
-     * Get the resource ID of fragment's title
-     * @return resource ID of fragments title, or 0 if the fragment does not have a title
+     * Get fragment's title
+     * @return fragment's title, or null if the fragment does not have a title
      */
-    public abstract int getTitle();
+    public abstract String getTitle();
 
     @Override
     public void onAttach(Activity activity) {
@@ -71,8 +71,6 @@ public abstract class AbstractFragment extends Fragment implements
             throw new ClassCastException(activity.toString()
                     + " must implement IDoCareFragmentCallback");
         }
-
-        mCallback.setActionBarTitle(getTitle());
 
     }
 
@@ -91,8 +89,8 @@ public abstract class AbstractFragment extends Fragment implements
     /**
      * Change ActionBar title
      */
-    public void setActionBarTitle(int resourceId) {
-        mCallback.setActionBarTitle(resourceId);
+    public void setActionBarTitle(String title) {
+        mCallback.setActionBarTitle(title);
     }
 
 
@@ -230,7 +228,7 @@ public abstract class AbstractFragment extends Fragment implements
         /**
          * Change ActionBar title
          */
-        public void setActionBarTitle(int resourceId);
+        public void setActionBarTitle(String title);
 
         /**
          * This method obtains the auth token for the active account (as specified in SharedPreferences).

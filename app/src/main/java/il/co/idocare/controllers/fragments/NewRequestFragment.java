@@ -58,6 +58,9 @@ public class NewRequestFragment extends AbstractFragment {
         // Restore state from bundle (if required)
         restoreSavedStateIfNeeded(savedInstanceState);
 
+
+        setActionBarTitle(getTitle());
+
         return mViewMVC.getRootView();
     }
 
@@ -91,8 +94,8 @@ public class NewRequestFragment extends AbstractFragment {
     }
 
     @Override
-    public int getTitle() {
-        return R.string.new_request_fragment_title;
+    public String getTitle() {
+        return getResources().getString(R.string.new_request_fragment_title);
     }
 
     @Override

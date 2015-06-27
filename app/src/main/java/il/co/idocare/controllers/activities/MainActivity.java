@@ -222,7 +222,7 @@ public class MainActivity extends AbstractActivity implements
                 if (isDrawerVivible != mIsDrawerVisibleLast) {
 
                     if (isDrawerVivible) {
-                        setActionBarTitle(0);
+                        setActionBarTitle("");
                     } else {
                         Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
                         if (currFragment != null) {

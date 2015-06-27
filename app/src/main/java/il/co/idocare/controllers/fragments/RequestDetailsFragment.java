@@ -40,6 +40,8 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
         initialize();
 
+        setActionBarTitle(getTitle());
+
         return mRequestDetailsViewMVC.getRootView();
     }
 
@@ -75,9 +77,10 @@ public class RequestDetailsFragment extends AbstractFragment implements
     }
 
     @Override
-    public int getTitle() {
-        return R.string.request_details_fragment_title;
+    public String getTitle() {
+        return getResources().getString(R.string.request_details_fragment_title);
     }
+
 
     @Override
     protected void handleMessage(Message msg) {

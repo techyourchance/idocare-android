@@ -46,7 +46,9 @@ public class HomeFragment extends AbstractFragment implements LoaderManager.Load
         // This is required for automatic refresh of action bar options upon fragment's loading
         setHasOptionsMenu(true);
 
-        initializeThumbnailsList();
+        initializeThumbnailsList(); // TODO: move the adapter and the click listener to MVC view
+
+        setActionBarTitle(getTitle());
 
         return mHomeViewMVC.getRootView();
     }
@@ -114,8 +116,8 @@ public class HomeFragment extends AbstractFragment implements LoaderManager.Load
     }
 
     @Override
-    public int getTitle() {
-        return R.string.home_fragment_title;
+    public String getTitle() {
+        return getResources().getString(R.string.home_fragment_title);
     }
 
     @Override
