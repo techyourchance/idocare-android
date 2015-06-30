@@ -78,6 +78,57 @@ public class SQLiteWrapper {
     }
 
 
+
+    public long addNewUser(ContentValues contentValues) {
+
+        SQLiteDatabase db = mHelper.getWritableDatabase();
+
+        // TODO: make sure that the added data is verified beforehand!
+
+        long id = db.insert(MySQLiteOpenHelper.USERS_TABLE_NAME, null, contentValues);
+
+        return id;
+    }
+
+
+    /**
+     * Query Users table
+     * @return cursor containing query results
+     */
+    public Cursor queryUsers(String[] projection, String selection, String[] selectionArgs,
+                                String groupBy, String having, String sortOrder) {
+        Cursor cursor = mHelper.getReadableDatabase().query(
+                MySQLiteOpenHelper.USERS_TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                groupBy,
+                having,
+                sortOrder);
+
+        return cursor;
+    }
+
+    /**
+     * Update entries in Users table
+     * @return the number of rows affected
+     */
+    public int updateUsers(ContentValues values, String selection, String[] selectionArgs) {
+        return mHelper.getWritableDatabase().update(MySQLiteOpenHelper.USERS_TABLE_NAME, values,
+                selection, selectionArgs);
+    }
+
+
+    /**
+     * Delete entries from Users table
+     * @return the number of rows affected
+     */
+    public int deleteUsers(String selection, String[] selectionArgs) {
+        return mHelper.getWritableDatabase().delete(MySQLiteOpenHelper.USERS_TABLE_NAME,
+                selection, selectionArgs);
+    }
+
+
     public long addNewUserAction(ContentValues contentValues) {
 
         SQLiteDatabase db = mHelper.getWritableDatabase();
@@ -187,6 +238,7 @@ public class SQLiteWrapper {
         private static final String DATABASE_NAME = "idocare_db";
 
         private static final String REQUESTS_TABLE_NAME = "requests_tbl";
+        private static final String USERS_TABLE_NAME = "users_tbl";
         private static final String USER_ACTIONS_TABLE_NAME = "user_actions_tbl";
         private static final String TEMP_ID_MAPPINGS_TABLE_NAME = "temp_id_mappings_tbl";
 
@@ -212,6 +264,16 @@ public class SQLiteWrapper {
                 + IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG + " INTEGER DEFAULT 0);";
 
 
+        private static final String CREATE_USERS_TABLE = "CREATE TABLE " + USERS_TABLE_NAME + " ( "
+                + IDoCareContract.Users._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + IDoCareContract.Users.COL_USER_ID + " INTEGER, "
+                + IDoCareContract.Users.COL_USER_NICKNAME + " VARCHAR(1000), "
+                + IDoCareContract.Users.COL_USER_FIRST_NAME + " VARCHAR(1000), "
+                + IDoCareContract.Users.COL_USER_LAST_NAME + " VARCHAR(1000), "
+                + IDoCareContract.Users.COL_USER_REPUTATION + " INTEGER, "
+                + IDoCareContract.Users.COL_USER_PICTURE + " VARCHAR(1000) ); ";
+
+
         private static final String CREATE_USER_ACTIONS_TABLE =
                 "CREATE TABLE " + USER_ACTIONS_TABLE_NAME + " ( "
                 + IDoCareContract.UserActions._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -224,6 +286,7 @@ public class SQLiteWrapper {
                 + IDoCareContract.UserActions.COL_SERVER_RESPONSE_STATUS_CODE + " INTEGER DEFAULT 0, "
                 + IDoCareContract.UserActions.COL_SERVER_RESPONSE_REASON_PHRASE + " VARCHAR(1000) DEFAULT '', "
                 + IDoCareContract.UserActions.COL_SERVER_RESPONSE_ENTITY + " VARCHAR(10000) DEFAULT '' );";
+
 
         private static final String CREATE_TEMP_ID_MAPPINGS_TABLE =
                 "CREATE TABLE " + TEMP_ID_MAPPINGS_TABLE_NAME + " ( "
@@ -242,6 +305,7 @@ public class SQLiteWrapper {
             Log.v(LOG_TAG, "onCreate is called");
             try {
                 db.execSQL(CREATE_REQUESTS_TABLE);
+                db.execSQL(CREATE_USERS_TABLE);
                 db.execSQL(CREATE_USER_ACTIONS_TABLE);
                 db.execSQL(CREATE_TEMP_ID_MAPPINGS_TABLE);
             } catch (SQLException e) {
@@ -254,6 +318,7 @@ public class SQLiteWrapper {
             Log.v(LOG_TAG, "onUpgrade is called. Old ver: " + oldVersion + " new ver: " + newVersion);
             try {
                 db.execSQL("DROP TABLE IF EXISTS " + REQUESTS_TABLE_NAME);
+                db.execSQL("DROP TABLE IF EXISTS " + USERS_TABLE_NAME);
                 db.execSQL("DROP TABLE IF EXISTS " + USER_ACTIONS_TABLE_NAME);
                 db.execSQL("DROP TABLE IF EXISTS " + TEMP_ID_MAPPINGS_TABLE_NAME);
                 onCreate(db);

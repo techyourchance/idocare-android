@@ -100,6 +100,55 @@ public class IDoCareContract {
 	}
 
 
+
+    /**
+     * Constants for the UserAction table of the provider.
+     */
+    public static final class Users implements BaseColumns {
+
+        // Entry fields (correspond to columns in table)
+        public static final String COL_USER_ID = Constants.FIELD_NAME_USER_ID;
+        public static final String COL_USER_NICKNAME = Constants.FIELD_NAME_USER_NICKNAME;
+        public static final String COL_USER_FIRST_NAME = Constants.FIELD_NAME_USER_FIRST_NAME;
+        public static final String COL_USER_LAST_NAME = Constants.FIELD_NAME_USER_LAST_NAME;
+        public static final String COL_USER_REPUTATION = Constants.FIELD_NAME_USER_REPUTATION;
+        public static final String COL_USER_PICTURE = Constants.FIELD_NAME_USER_PICTURE;
+
+        /**
+         * The content URI for this table.
+         */
+        public static final Uri CONTENT_URI =  Uri.withAppendedPath(IDoCareContract.CONTENT_URI, "users");
+
+        /**
+         * The mime type of a directory of user actions.
+         */
+        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.il.co.idocare.users";
+
+        /**
+         * The mime type of a single user action.
+         */
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.il.co.idocare.users";
+
+        /**
+         * A projection of all columns in the UserActions table.
+         */
+        public static final String[] PROJECTION_ALL = {
+                _ID,
+                COL_USER_ID,
+                COL_USER_NICKNAME,
+                COL_USER_FIRST_NAME,
+                COL_USER_LAST_NAME,
+                COL_USER_REPUTATION,
+                COL_USER_PICTURE
+        };
+
+        /**
+         * The default sort order for queries containing NAME fields.
+         */
+        public static final String SORT_ORDER_DEFAULT = _ID + " DESC";
+    }
+
+
     /**
      * Constants for the UserAction table of the provider.
      */

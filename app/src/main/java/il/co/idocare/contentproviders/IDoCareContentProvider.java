@@ -15,10 +15,12 @@ public class IDoCareContentProvider extends ContentProvider {
 
     private static final int REQUESTS_LIST = 0;
     private static final int REQUEST_ID = 1;
-    private static final int USER_ACTIONS_LIST = 2;
-    private static final int USER_ACTION_ID = 3;
-    private static final int TEMP_ID_MAPPINGS_LIST = 4;
-    private static final int TEMP_ID_MAPPING_ID = 5;
+    private static final int USERS_LIST = 10;
+    private static final int USER_ID = 11;
+    private static final int USER_ACTIONS_LIST = 20;
+    private static final int USER_ACTION_ID = 21;
+    private static final int TEMP_ID_MAPPINGS_LIST = 30;
+    private static final int TEMP_ID_MAPPING_ID = 31;
 
     private static final UriMatcher URI_MATCHER;
 
@@ -30,6 +32,8 @@ public class IDoCareContentProvider extends ContentProvider {
          */
         URI_MATCHER.addURI(IDoCareContract.AUTHORITY, "requests", REQUESTS_LIST);
         URI_MATCHER.addURI(IDoCareContract.AUTHORITY, "requests/*", REQUEST_ID);
+        URI_MATCHER.addURI(IDoCareContract.AUTHORITY, "users", USERS_LIST);
+        URI_MATCHER.addURI(IDoCareContract.AUTHORITY, "users/*", USER_ID);
         URI_MATCHER.addURI(IDoCareContract.AUTHORITY, "user_actions", USER_ACTIONS_LIST);
         URI_MATCHER.addURI(IDoCareContract.AUTHORITY, "user_actions/*", USER_ACTION_ID);
         URI_MATCHER.addURI(IDoCareContract.AUTHORITY, "temp_id_mappings", TEMP_ID_MAPPINGS_LIST);
@@ -76,6 +80,31 @@ public class IDoCareContentProvider extends ContentProvider {
                 cursor = mSQLiteWrapper.queryRequests(
                         projection,
                         IDoCareContract.Requests.COL_REQUEST_ID + " = " + uri.getLastPathSegment()
+                                + (TextUtils.isEmpty(selection) ? "" : " AND " + selection),
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+
+            case USERS_LIST:
+                if (TextUtils.isEmpty(sortOrder))
+                    sortOrder = IDoCareContract.Users.SORT_ORDER_DEFAULT;
+                cursor = mSQLiteWrapper.queryUsers(
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+
+            case USER_ID:
+                if (TextUtils.isEmpty(sortOrder))
+                    sortOrder = IDoCareContract.Users.SORT_ORDER_DEFAULT;
+                cursor = mSQLiteWrapper.queryUsers(
+                        projection,
+                        IDoCareContract.Users.COL_USER_ID + " = " + uri.getLastPathSegment()
                                 + (TextUtils.isEmpty(selection) ? "" : " AND " + selection),
                         selectionArgs,
                         null,
@@ -149,6 +178,10 @@ public class IDoCareContentProvider extends ContentProvider {
                 return IDoCareContract.Requests.CONTENT_TYPE;
             case REQUEST_ID:
                 return IDoCareContract.Requests.CONTENT_ITEM_TYPE;
+            case USERS_LIST:
+                return IDoCareContract.Users.CONTENT_TYPE;
+            case USER_ID:
+                return IDoCareContract.Users.CONTENT_ITEM_TYPE;
             case USER_ACTIONS_LIST:
                 return IDoCareContract.UserActions.CONTENT_TYPE;
             case USER_ACTION_ID:
@@ -168,6 +201,9 @@ public class IDoCareContentProvider extends ContentProvider {
 
         switch(URI_MATCHER.match(uri)) {
             case REQUESTS_LIST:
+                id = mSQLiteWrapper.addNewRequest(values);
+                break;
+            case USERS_LIST:
                 id = mSQLiteWrapper.addNewRequest(values);
                 break;
             case USER_ACTIONS_LIST:
@@ -219,6 +255,19 @@ public class IDoCareContentProvider extends ContentProvider {
                 delCount = mSQLiteWrapper.deleteRequests(where, selectionArgs);
                 break;
 
+            case USERS_LIST:
+                delCount = mSQLiteWrapper.deleteUsers(selection, selectionArgs);
+                break;
+
+            case USER_ID:
+                idStr = uri.getLastPathSegment();
+                where = IDoCareContract.Users.COL_USER_ID + " = " + idStr;
+                if (!TextUtils.isEmpty(selection)) {
+                    where += " AND " + selection;
+                }
+                delCount = mSQLiteWrapper.deleteUsers(where, selectionArgs);
+                break;
+            
             case USER_ACTIONS_LIST:
                 delCount = mSQLiteWrapper.deleteUserActions(selection, selectionArgs);
                 break;
@@ -273,6 +322,19 @@ public class IDoCareContentProvider extends ContentProvider {
                     where += " AND " + selection;
                 }
                 updateCount = mSQLiteWrapper.updateRequests(values, where, selectionArgs);
+                break;
+
+            case USERS_LIST:
+                updateCount = mSQLiteWrapper.updateUsers(values, selection, selectionArgs);
+                break;
+
+            case USER_ID:
+                idStr = uri.getLastPathSegment();
+                where = IDoCareContract.Users.COL_USER_ID + " = " + idStr;
+                if (!TextUtils.isEmpty(selection)) {
+                    where += " AND " + selection;
+                }
+                updateCount = mSQLiteWrapper.updateUsers(values, where, selectionArgs);
                 break;
 
             case USER_ACTIONS_LIST:
