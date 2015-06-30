@@ -266,8 +266,8 @@ public class MainActivity extends AbstractActivity implements
         SharedPreferences prefs =
                 getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
 
-        prefs.edit().remove(Constants.FieldName.USER_ID.getValue()).apply();
-        prefs.edit().remove(Constants.FieldName.USER_AUTH_TOKEN.getValue()).apply();
+        prefs.edit().remove(Constants.FIELD_NAME_USER_ID).apply();
+        prefs.edit().remove(Constants.FIELD_NAME_USER_AUTH_TOKEN).apply();
 
     }
 

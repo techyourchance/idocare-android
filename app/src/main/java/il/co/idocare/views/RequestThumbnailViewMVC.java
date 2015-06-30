@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -196,31 +197,33 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
 
         mImgRequestThumbnail.setVisibility(View.VISIBLE);
 
+        if (TextUtils.isEmpty(mRequestItem.getCreatedPictures())) {
+            mCurrentPictureUrl = "";
+            mImgRequestThumbnail.setImageResource(R.drawable.ic_background_grass);
+            return;
+        }
+
         String[] createdPictures = mRequestItem.getCreatedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
-        if (createdPictures.length > 0 ) {
-            if (!createdPictures[0].equals(mCurrentPictureUrl)) {
 
-                mImgRequestThumbnail.setImageDrawable(null);
+        if (!createdPictures[0].equals(mCurrentPictureUrl)) {
 
-                String universalImageLoaderUri = createdPictures[0];
-                try {
-                    new URL(universalImageLoaderUri);
-                } catch (MalformedURLException e) {
-                    // The exception means that the current Uri is not a valid URL - it is local
-                    // uri and we need to adjust it to the scheme recognized by UIL
-                    universalImageLoaderUri = "file://" + universalImageLoaderUri;
-                }
+            mImgRequestThumbnail.setImageDrawable(null);
 
-                ImageLoader.getInstance().displayImage(
-                        universalImageLoaderUri,
-                        mImgRequestThumbnail,
-                        Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
-
-                mCurrentPictureUrl = createdPictures[0];
+            String universalImageLoaderUri = createdPictures[0];
+            try {
+                new URL(universalImageLoaderUri);
+            } catch (MalformedURLException e) {
+                // The exception means that the current Uri is not a valid URL - it is local
+                // uri and we need to adjust it to the scheme recognized by UIL
+                universalImageLoaderUri = "file://" + universalImageLoaderUri;
             }
 
-        } else {
-            mImgRequestThumbnail.setImageResource(R.drawable.ic_background_grass);
+            ImageLoader.getInstance().displayImage(
+                    universalImageLoaderUri,
+                    mImgRequestThumbnail,
+                    Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
+
+            mCurrentPictureUrl = createdPictures[0];
         }
     }
 

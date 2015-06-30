@@ -51,7 +51,7 @@ public class CloseRequestFragment extends AbstractFragment implements ServerHttp
 
         Bundle args = getArguments();
         if (args != null) {
-            mRequestId = args.getLong(Constants.FieldName.REQUEST_ID.getValue());
+            mRequestId = args.getLong(Constants.FIELD_NAME_REQUEST_ID);
         } else {
             Log.e(LOG_TAG, "no arguments set for CloseRequestFragment");
             // TODO: add error case here
@@ -211,17 +211,17 @@ public class CloseRequestFragment extends AbstractFragment implements ServerHttp
 //        }
 //
 //        // Set request ID
-//        serverRequest.addTextField(FieldName.REQUEST_ID.getValue(), String.valueOf(mRequestId));
+//        serverRequest.addTextField(FIELD_NAME_REQUEST_ID, String.valueOf(mRequestId));
 //
 //        // Set closed comment
-//        if (closeRequestBundle.getString(FieldName.CLOSED_COMMENT.getValue()).length() > 0) {
-//            serverRequest.addTextField(FieldName.CLOSED_COMMENT.getValue(),
-//                    closeRequestBundle.getString(FieldName.CLOSED_COMMENT.getValue()));
+//        if (closeRequestBundle.getString(FIELD_NAME_CLOSED_COMMENT).length() > 0) {
+//            serverRequest.addTextField(FIELD_NAME_CLOSED_COMMENT,
+//                    closeRequestBundle.getString(FIELD_NAME_CLOSED_COMMENT));
 //        }
 //
 //        // Set closed pictures
 //        for (int i = 0; i < mCameraPicturesPaths.size(); i++) {
-//            serverRequest.addPicture(FieldName.CLOSED_PICTURES.getValue(),
+//            serverRequest.addPicture(FIELD_NAME_CLOSED_PICTURES,
 //                    "picture" + String.valueOf(i) + ".jpg", mCameraPicturesPaths.get(i));
 //        }
 //

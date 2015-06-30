@@ -4,13 +4,20 @@ package il.co.idocare.pojos;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-import il.co.idocare.Constants.FieldName;
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
+
+import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract.Requests;
 
 /**
  * This object contains data about a single request (users involved, state, location, etc)
  */
 public class RequestItem {
+
+
+    private final static String LOG_TAG = "RequestItem";
+
 
     public enum RequestStatus {NEW_BY_OTHER, NEW_BY_ME, PICKED_UP_BY_OTHER, PICKED_UP_BY_ME,
         CLOSED_BY_OTHER, CLOSED_BY_ME}
@@ -20,36 +27,51 @@ public class RequestItem {
      * order to be useful. This array can be used as is in queries against ContentProvider.
      */
     public static String[] MANDATORY_REQUEST_FIELDS = new String[] {
-            FieldName.REQUEST_ID.getValue(),
-            FieldName.CREATED_BY.getValue(),
-            FieldName.CREATED_AT.getValue(),
-            FieldName.CREATED_COMMENT.getValue(),
-            FieldName.CREATED_PICTURES.getValue(),
-            FieldName.CREATED_REPUTATION.getValue(),
-            FieldName.CREATED_POLLUTION_LEVEL.getValue(),
-            FieldName.PICKED_UP_BY.getValue(),
-            FieldName.CLOSED_BY.getValue(),
-            FieldName.LONGITUDE.getValue(),
-            FieldName.LATITUDE.getValue(),
+            Constants.FIELD_NAME_REQUEST_ID,
+            Constants.FIELD_NAME_CREATED_BY,
+            Constants.FIELD_NAME_CREATED_AT,
+            Constants.FIELD_NAME_CREATED_COMMENT,
+            Constants.FIELD_NAME_CREATED_PICTURES,
+            Constants.FIELD_NAME_CREATED_REPUTATION,
+            Constants.FIELD_NAME_CREATED_POLLUTION_LEVEL,
+            Constants.FIELD_NAME_PICKED_UP_BY,
+            Constants.FIELD_NAME_CLOSED_BY,
+            Constants.FIELD_NAME_LONGITUDE,
+            Constants.FIELD_NAME_LATITUDE,
     };
 
-    private final static String LOG_TAG = "RequestItem";
 
+    @SerializedName(Constants.FIELD_NAME_REQUEST_ID)
     private long mId;
+    @SerializedName(Constants.FIELD_NAME_CREATED_BY)
     private long mCreatedBy;
+    @SerializedName(Constants.FIELD_NAME_CREATED_AT)
     private String mCreatedAt;
+    @SerializedName(Constants.FIELD_NAME_CREATED_COMMENT)
     private String mCreatedComment;
+    @SerializedName(Constants.FIELD_NAME_CREATED_PICTURES)
     private String mCreatedPictures;
+    @SerializedName(Constants.FIELD_NAME_CREATED_REPUTATION)
     private int mCreatedReputation;
+    @SerializedName(Constants.FIELD_NAME_LATITUDE)
     private double mLat;
+    @SerializedName(Constants.FIELD_NAME_LONGITUDE)
     private double mLong;
+    @SerializedName(Constants.FIELD_NAME_CREATED_POLLUTION_LEVEL)
     private int mCreatedPollutionLevel;
+    @SerializedName(Constants.FIELD_NAME_PICKED_UP_BY)
     private long mPickedUpBy;
+    @SerializedName(Constants.FIELD_NAME_PICKED_UP_AT)
     private String mPickedUpAt;
+    @SerializedName(Constants.FIELD_NAME_CLOSED_BY)
     private long mClosedBy;
+    @SerializedName(Constants.FIELD_NAME_CLOSED_AT)
     private String mClosedAt;
+    @SerializedName(Constants.FIELD_NAME_CLOSED_COMMENT)
     private String mClosedComment;
+    @SerializedName(Constants.FIELD_NAME_CLOSED_PICTURES)
     private String mClosedPictures;
+    @SerializedName(Constants.FIELD_NAME_CLOSED_REPUTATION)
     private int mClosedReputation;
 
 
@@ -74,17 +96,17 @@ public class RequestItem {
 
         // Mandatory fields
         try {
-            long requestId = cursor.getLong(cursor.getColumnIndexOrThrow(FieldName.REQUEST_ID.getValue()));
-            long createdBy = cursor.getLong(cursor.getColumnIndexOrThrow(FieldName.CREATED_BY.getValue()));
-            String createdAt = cursor.getString(cursor.getColumnIndexOrThrow(FieldName.CREATED_AT.getValue()));
-            String createdComment = cursor.getString(cursor.getColumnIndexOrThrow(FieldName.CREATED_COMMENT.getValue()));
-            String createdPictures = cursor.getString(cursor.getColumnIndexOrThrow(FieldName.CREATED_PICTURES.getValue()));
-            int createdReputation = cursor.getInt(cursor.getColumnIndexOrThrow(FieldName.CREATED_REPUTATION.getValue()));
-            int createdPollutionLevel = cursor.getInt(cursor.getColumnIndexOrThrow(FieldName.CREATED_POLLUTION_LEVEL.getValue()));
-            long pickedUpBy = cursor.getLong(cursor.getColumnIndexOrThrow(FieldName.PICKED_UP_BY.getValue()));
-            long closedBy = cursor.getLong(cursor.getColumnIndexOrThrow(FieldName.CLOSED_BY.getValue()));
-            double latitude = cursor.getDouble(cursor.getColumnIndexOrThrow(FieldName.LATITUDE.getValue()));
-            double longitude = cursor.getDouble(cursor.getColumnIndexOrThrow(FieldName.LONGITUDE.getValue()));
+            long requestId = cursor.getLong(cursor.getColumnIndexOrThrow(Constants.FIELD_NAME_REQUEST_ID));
+            long createdBy = cursor.getLong(cursor.getColumnIndexOrThrow(Constants.FIELD_NAME_CREATED_BY));
+            String createdAt = cursor.getString(cursor.getColumnIndexOrThrow(Constants.FIELD_NAME_CREATED_AT));
+            String createdComment = cursor.getString(cursor.getColumnIndexOrThrow(Constants.FIELD_NAME_CREATED_COMMENT));
+            String createdPictures = cursor.getString(cursor.getColumnIndexOrThrow(Constants.FIELD_NAME_CREATED_PICTURES));
+            int createdReputation = cursor.getInt(cursor.getColumnIndexOrThrow(Constants.FIELD_NAME_CREATED_REPUTATION));
+            int createdPollutionLevel = cursor.getInt(cursor.getColumnIndexOrThrow(Constants.FIELD_NAME_CREATED_POLLUTION_LEVEL));
+            long pickedUpBy = cursor.getLong(cursor.getColumnIndexOrThrow(Constants.FIELD_NAME_PICKED_UP_BY));
+            long closedBy = cursor.getLong(cursor.getColumnIndexOrThrow(Constants.FIELD_NAME_CLOSED_BY));
+            double latitude = cursor.getDouble(cursor.getColumnIndexOrThrow(Constants.FIELD_NAME_LATITUDE));
+            double longitude = cursor.getDouble(cursor.getColumnIndexOrThrow(Constants.FIELD_NAME_LONGITUDE));
 
 
             request = createRequestItem(requestId);
@@ -108,25 +130,33 @@ public class RequestItem {
 
         int i;
 
-        if ((i = cursor.getColumnIndex(FieldName.PICKED_UP_AT.getValue())) != -1) {
+        if ((i = cursor.getColumnIndex(Constants.FIELD_NAME_PICKED_UP_AT)) != -1) {
             request.setPickedUpAt(cursor.getString(i));
         }
-        if ((i = cursor.getColumnIndex(FieldName.CLOSED_AT.getValue())) != -1) {
+        if ((i = cursor.getColumnIndex(Constants.FIELD_NAME_CLOSED_AT)) != -1) {
             request.setClosedAt(cursor.getString(i));
         }
-        if ((i = cursor.getColumnIndex(FieldName.CLOSED_COMMENT.getValue())) != -1) {
+        if ((i = cursor.getColumnIndex(Constants.FIELD_NAME_CLOSED_COMMENT)) != -1) {
             request.setClosedComment(cursor.getString(i));
         }
-        if ((i = cursor.getColumnIndex(FieldName.CLOSED_PICTURES.getValue())) != -1) {
+        if ((i = cursor.getColumnIndex(Constants.FIELD_NAME_CLOSED_PICTURES)) != -1) {
             request.setClosedPictures(cursor.getString(i));
         }
-        if ((i = cursor.getColumnIndex(FieldName.CLOSED_REPUTATION.getValue())) != -1) {
+        if ((i = cursor.getColumnIndex(Constants.FIELD_NAME_CLOSED_REPUTATION)) != -1) {
             request.setClosedReputation(cursor.getInt(i));
         }
 
 
         return request;
 
+    }
+
+    /**
+     * Create RequestItem from a string formatted as JSON object
+     */
+    public static RequestItem createRequestItem(String jsonObjectString) {
+        Gson gson = new Gson();
+        return gson.fromJson(jsonObjectString, RequestItem.class);
     }
 
     private RequestItem(long id) {

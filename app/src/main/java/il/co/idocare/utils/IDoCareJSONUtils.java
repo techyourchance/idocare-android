@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.List;
 
 import il.co.idocare.Constants;
-import il.co.idocare.Constants.FieldName;
 import il.co.idocare.pojos.RequestItem;
 import il.co.idocare.pojos.UserItem;
 
@@ -35,8 +34,8 @@ public class IDoCareJSONUtils {
         try {
             JSONObject jsonObj = new JSONObject(jsonString);
 
-            String status = jsonObj.getString(Constants.FieldName.RESPONSE_STATUS.getValue());
-            String message = jsonObj.getString(Constants.FieldName.RESPONSE_MESSAGE.getValue());
+            String status = jsonObj.getString(Constants.FIELD_NAME_RESPONSE_STATUS);
+            String message = jsonObj.getString(Constants.FIELD_NAME_RESPONSE_MESSAGE);
 
             if (status.equals("success")) {
                 return true;
@@ -63,156 +62,10 @@ public class IDoCareJSONUtils {
 
         JSONObject jsonObj = new JSONObject(jsonString);
 
-        return jsonObj.getJSONObject(Constants.FieldName.RESPONSE_DATA.getValue());
-    }
-
-    /**
-     * This method extracts the "data" JSON array from a string formatted as JSON object.
-     * @param jsonString JSON string representing the object
-     * @return JSONArray representing the "data" field of the argument
-     * @throws org.json.JSONException if the argument is not formatted as JSON object, or this
-     *         JSON object doesn't have "data" field formatted as JSON array
-     */
-    public static JSONArray extractDataJSONArray(String jsonString) throws JSONException {
-
-        JSONObject jsonObj = new JSONObject(jsonString);
-
-        return jsonObj.getJSONArray(Constants.FieldName.RESPONSE_DATA.getValue());
+        return jsonObj.getJSONObject(Constants.FIELD_NAME_RESPONSE_DATA);
     }
 
 
-    /**
-     * Build RequestItem from JSON object containing request's details
-     * @param jsonObject string formatted as JSON object containing request's details
-     * @return RequestItem object, or null if the information in the argument JSON object is not
-     *         enough to construct a valid RequestObject
-     * @throws org.json.JSONException in case of a formatting error
-     */
-    public static RequestItem extractRequestItemFromJSONObject(JSONObject jsonObject)
-            throws JSONException {
-
-        // Ensure that all the required fields are present
-        if (jsonObject.isNull(FieldName.REQUEST_ID.getValue()) ||
-                jsonObject.isNull(FieldName.CREATED_BY.getValue()) ||
-                jsonObject.isNull(FieldName.CREATED_AT.getValue()) ||
-                jsonObject.isNull(FieldName.LATITUDE.getValue()) ||
-                jsonObject.isNull(FieldName.LONGITUDE.getValue()) ||
-                jsonObject.isNull(FieldName.CREATED_POLLUTION_LEVEL.getValue())) {
-            return null;
-        }
-
-        // Construct basic RequestItem
-        RequestItem request = RequestItem
-                .createRequestItem(jsonObject.getLong(FieldName.REQUEST_ID.getValue()))
-                .setCreatedBy(jsonObject.getLong(FieldName.CREATED_BY.getValue()))
-                .setCreatedAt(formatDate(jsonObject.getString(FieldName.CREATED_AT.getValue())))
-                .setLatitude(jsonObject.getDouble(FieldName.LATITUDE.getValue()))
-                .setLongitude(jsonObject.getDouble(FieldName.LONGITUDE.getValue()))
-                .setCreatedPollutionLevel(jsonObject.getInt(FieldName.CREATED_POLLUTION_LEVEL.getValue()));
-
-        // Set optional fields
-        if (!jsonObject.isNull(FieldName.CREATED_COMMENT.getValue()))
-            request.setCreatedComment(jsonObject.getString(FieldName.CREATED_COMMENT.getValue()));
-
-        if (!jsonObject.isNull(FieldName.CREATED_PICTURES.getValue()))
-            request.setCreatedPictures(jsonObject.getString(FieldName.CREATED_PICTURES.getValue()));
-
-        if (!jsonObject.isNull(FieldName.CREATED_REPUTATION.getValue()))
-            request.setCreatedReputation(jsonObject.getInt(FieldName.CREATED_REPUTATION.getValue()));
-        
-        // If picked up then both "by" and "at" are required
-        if (!jsonObject.isNull(FieldName.PICKED_UP_BY.getValue())) {
-            request.setPickedUpBy(jsonObject.getLong(FieldName.PICKED_UP_BY.getValue()));
-            request.setPickedUpAt(formatDate(jsonObject.getString(FieldName.PICKED_UP_AT.getValue())));
-        }
-
-        // If closed then both "by" and "at" are required
-        if (!jsonObject.isNull(FieldName.CLOSED_BY.getValue())) {
-            request.setClosedBy(jsonObject.getLong(FieldName.CLOSED_BY.getValue()));
-            request.setClosedAt(formatDate(jsonObject.getString(FieldName.CLOSED_AT.getValue())));
-        }
-
-        if (!jsonObject.isNull(FieldName.CLOSED_COMMENT.getValue()))
-            request.setClosedComment(FieldName.CLOSED_COMMENT.getValue());
-
-
-        if (!jsonObject.isNull(FieldName.CLOSED_PICTURES.getValue()))
-            request.setClosedPictures(jsonObject.getString(FieldName.CLOSED_PICTURES.getValue()));
-
-        if (!jsonObject.isNull(FieldName.CLOSED_REPUTATION.getValue()))
-            request.setClosedReputation(jsonObject.getInt(FieldName.CLOSED_REPUTATION.getValue()));
-
-        return request;
-    }
-
-    /**
-     * Build UserItem from JSON object containing user's details
-     * @param jsonObject string formatted as JSON object containing user's details
-     * @return UserItem object, or null if the information in the argument JSON object is not
-     *         enough to construct a valid RequestObject
-     * @throws org.json.JSONException in case of a formatting error
-     */
-    public static UserItem extractUserItemFromJSONObject(JSONObject jsonObject)
-            throws JSONException {
-
-        // Ensure that all the required fields are present
-        if (jsonObject.isNull(FieldName.USER_ID.getValue()) ||
-                jsonObject.isNull(FieldName.USER_NICKNAME.getValue())) {
-            return null;
-        }
-
-        // Create basic UserItem
-        UserItem user =  UserItem.createUserItem(jsonObject.getLong(FieldName.USER_ID.getValue()));
-
-
-        // Set optional fields
-        if (!jsonObject.isNull(FieldName.USER_NICKNAME.getValue()))
-            user.setNickname(jsonObject.getString(FieldName.USER_NICKNAME.getValue()));
-
-        if (!jsonObject.isNull(FieldName.USER_FIRST_NAME.getValue()))
-            user.setFirstName(jsonObject.getString(FieldName.USER_FIRST_NAME.getValue()));
-
-        if (!jsonObject.isNull(FieldName.USER_LAST_NAME.getValue()))
-            user.setLastName(jsonObject.getString(FieldName.USER_LAST_NAME.getValue()));
-
-        if (!jsonObject.isNull(FieldName.USER_REPUTATION.getValue()))
-            user.setReputation(jsonObject.getInt(FieldName.USER_REPUTATION.getValue()));
-
-        if (!jsonObject.isNull(FieldName.USER_PICTURE.getValue()))
-            user.setPictureUrl(jsonObject.getString(FieldName.USER_PICTURE.getValue()));
-
-        return user;
-    }
-
-
-    /**
-     * Parse JSON Array into list of RequestItem objects
-     * @param jsonArray the array to parse
-     * @return list of created RequestItem objects, or null if the argument is null
-     * @throws JSONException in case the elements of the argument JSON array can not be
-     *         parsed as request JSON objects
-     */
-    public static List<RequestItem> extractRequestItemsFromJSONArray(JSONArray jsonArray)
-            throws JSONException {
-
-        if (jsonArray == null) return null;
-
-        List<RequestItem> requests = new ArrayList<RequestItem>(jsonArray.length());
-
-        RequestItem requestItem;
-
-        for (int i=0; i<jsonArray.length(); i++) {
-
-            requestItem = IDoCareJSONUtils
-                    .extractRequestItemFromJSONObject(jsonArray.getJSONObject(i));
-
-            // Add the created RequestItem if everything was fine
-            if (requestItem != null) requests.add(requestItem);
-
-        }
-
-        return requests;
-    }
 
     private static String formatDate(String stringDate) {
         try {

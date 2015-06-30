@@ -5,6 +5,8 @@ import android.content.ContentProviderClient;
 import android.util.Log;
 
 import il.co.idocare.Constants;
+import il.co.idocare.connectivity.responsehandlers.RequestsDownloadServerResponseHandler;
+import il.co.idocare.connectivity.responsehandlers.ServerResponseHandler;
 
 /**
  * This class downloads data from the server and updates the local application's cache
@@ -60,7 +62,7 @@ public class ServerDataDownloader implements ServerHttpRequest.OnServerResponseC
 
             // Create an appropriate response handler
             ServerResponseHandler responseHandler =
-                    new ServerResponseHandler.RequestsDownloadServerResponseHandler();
+                    new RequestsDownloadServerResponseHandler();
 
             try {
                 responseHandler.handleResponse(statusCode, reasonPhrase, entityString, mProvider);

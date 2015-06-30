@@ -89,7 +89,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
         serverRequest.addHeader(Constants.HttpHeader.USER_USERNAME.getValue(),
                 Base64.encodeToString(usernameBytes, Base64.NO_WRAP));
 
-        serverRequest.addTextField(Constants.FieldName.USER_PASSWORD.getValue(),
+        serverRequest.addTextField(Constants.FIELD_NAME_USER_PASSWORD,
                 Base64.encodeToString(passwordBytes, Base64.NO_WRAP));
 
 
@@ -109,6 +109,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
             notifyOutboxHandlers(Constants.MessageType.C_LOGIN_RESPONSE_RECEIVED.ordinal(), 0, 0, null);
 
             Bundle data = null;
+
+            // TODO: use a responsehandler here just like in DataUploader/Downloader classes!
 
             if (statusCode / 100 == 2) {
                 data = extractResponseData(entityString);
@@ -196,8 +198,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
             }
 
             JSONObject dataObj = IDoCareJSONUtils.extractDataJSONObject(jsonData);
-            long userId = dataObj.getLong(Constants.FieldName.USER_ID.getValue());
-            String authToken = dataObj.getString(Constants.FieldName.USER_AUTH_TOKEN.getValue());
+            long userId = dataObj.getLong(Constants.FIELD_NAME_USER_ID);
+            String authToken = dataObj.getString(Constants.FIELD_NAME_USER_AUTH_TOKEN);
 
             data.putString(AccountManager.KEY_ACCOUNT_NAME, String.valueOf(userId));
             data.putString(AccountManager.KEY_ACCOUNT_TYPE, getIntent().getStringExtra(ARG_ACCOUNT_TYPE));

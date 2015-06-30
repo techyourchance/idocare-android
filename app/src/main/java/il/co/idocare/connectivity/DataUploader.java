@@ -18,24 +18,18 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import il.co.idocare.Constants;
+import il.co.idocare.connectivity.responsehandlers.ServerResponseHandler;
+import il.co.idocare.connectivity.responsehandlers.UserActionsServerResponseHandler;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.pojos.UserActionItem;
 
 /**
  * This class synchronizes the local modifications made by the user to the server.
  */
-public class UserActionsUploader implements ServerHttpRequest.OnServerResponseCallback{
+public class DataUploader implements ServerHttpRequest.OnServerResponseCallback{
 
-    private static final String LOG_TAG = UserActionsUploader.class.getSimpleName();
+    private static final String LOG_TAG = DataUploader.class.getSimpleName();
 
-
-
-    public final static String CREATE_REQUEST_URL = Constants.ROOT_URL + "/api-04/request/add";
-    public final static String PICKUP_REQUEST_URL = Constants.ROOT_URL + "/api-04/request/pickup";
-    public final static String CLOSE_REQUEST_URL = Constants.ROOT_URL + "/api-04/request/close";
-    public final static String VOTE_REQUEST_URL = Constants.ROOT_URL + "/api-04/request/vote";
-    public final static String VOTE_ARTICLE_URL = Constants.ROOT_URL + "/api-04/article/vote";
 
     /*
      * This object will be used to synchronize access to ContentProviderClient. We don't sync on
@@ -69,8 +63,8 @@ public class UserActionsUploader implements ServerHttpRequest.OnServerResponseCa
     private ContentProviderClient mProvider;
 
 
-    public UserActionsUploader(Account account, String authToken,
-                               ContentProviderClient provider) {
+    public DataUploader(Account account, String authToken,
+                        ContentProviderClient provider) {
         mAccount = account;
         mAuthToken = authToken;
         mProvider = provider;
@@ -97,7 +91,6 @@ public class UserActionsUploader implements ServerHttpRequest.OnServerResponseCa
         // pass user actions mapping to the dispatcher for binding and sorting
         mDispatcher.prepareUserActionsForDispatching(queryForUserActions(mProvider));
 
-        // TODO: implement full server request logic
         Runnable serverRequest;
         UserActionItem userAction;
 
@@ -107,10 +100,12 @@ public class UserActionsUploader implements ServerHttpRequest.OnServerResponseCa
             userAction = mDispatcher.dispatchNextUserAction();
 
             if (userAction != null) {
-                // UserActionItem will be used to determine the type of the request, as well as
-                // Asynchronous Completion Token for the callback
-                serverRequest = new ServerHttpRequest(getUrl(userAction),
-                        mAccount, mAuthToken, this, userAction);
+                synchronized (CONTENT_PROVIDER_CLIENT_LOCK) {
+                    // UserActionItem will be used to determine the type of the request, as well as
+                    // Asynchronous Completion Token for the callback
+                    serverRequest = DataUploaderAssistant.createUserActionServerRequest(userAction,
+                            mAccount, mAuthToken, this, userAction, mProvider);
+                }
 
                 mExecutor.execute(serverRequest);
             }
@@ -123,47 +118,20 @@ public class UserActionsUploader implements ServerHttpRequest.OnServerResponseCa
             e.printStackTrace();
         }
 
-        clearLocallyModifiedFlags();
+        performCleanup();
 
     }
 
-
     /**
-     * Get the appropriate Url for ServerRequest based on the information about user's action
+     * This method performs all the necessary cleanup when users' actions have been uploaded
      */
-    private String getUrl(UserActionItem userAction) {
-        String entityType = userAction.mEntityType;
-        String actionType = userAction.mActionType;
+    private void performCleanup() {
+        clearLocallyModifiedFlags();
 
-        switch (entityType) {
+        // TODO: review this step - is there any scenario that might require the mappings to survive?
+        clearTempIdMappings();
 
-            case IDoCareContract.UserActions.ENTITY_TYPE_REQUEST:
-                switch (actionType) {
-                    case IDoCareContract.UserActions.ACTION_TYPE_CREATE_REQUEST:
-                        return CREATE_REQUEST_URL;
-                    case IDoCareContract.UserActions.ACTION_TYPE_PICKUP_REQUEST:
-                        return PICKUP_REQUEST_URL;
-                    case IDoCareContract.UserActions.ACTION_TYPE_CLOSE_REQUEST:
-                        return CLOSE_REQUEST_URL;
-                    case IDoCareContract.UserActions.ACTION_TYPE_VOTE:
-                        return VOTE_REQUEST_URL;
-                    default:
-                        throw new IllegalArgumentException("unknown action type '" + actionType
-                                + "' for entity '" + entityType + "'");
-                }
 
-            case IDoCareContract.UserActions.ENTITY_TYPE_ARTICLE:
-                switch (actionType) {
-                    case IDoCareContract.UserActions.ACTION_TYPE_VOTE:
-                        return VOTE_ARTICLE_URL;
-                    default:
-                        throw new IllegalArgumentException("unknown action type '" + actionType
-                                + "' for entity '" + entityType + "'");
-                }
-
-            default:
-                throw new IllegalArgumentException("unknown entity type '" + entityType + "'");
-        }
     }
 
     /**
@@ -207,6 +175,22 @@ public class UserActionsUploader implements ServerHttpRequest.OnServerResponseCa
         }
     }
 
+    /**
+     * This method removes all temp IDs mappings from DB
+     */
+    private void clearTempIdMappings() {
+        synchronized (CONTENT_PROVIDER_CLIENT_LOCK) {
+            try {
+                mProvider.delete(
+                        IDoCareContract.TempIdMappings.CONTENT_URI,
+                        null,
+                        null
+                );
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     /*
     Please note that this callback will be called from whatever thread the corresponding
@@ -225,7 +209,7 @@ public class UserActionsUploader implements ServerHttpRequest.OnServerResponseCa
 
         // Create an appropriate response handler
         ServerResponseHandler responseHandler =
-                new ServerResponseHandler.UserActionsServerResponseHandler(userAction);
+                new UserActionsServerResponseHandler(userAction);
 
         try {
             // When handling responses the response handler can use ContentProviderClient, therefore
@@ -238,19 +222,7 @@ public class UserActionsUploader implements ServerHttpRequest.OnServerResponseCa
             // Notify the dispatcher that the user's action has been uploaded
             mDispatcher.dispatchedUserActionUploaded(userAction);
 
-            int actionsDeletedFromDB;
-            // Remove the uploaded user's action from the DB
-            synchronized (CONTENT_PROVIDER_CLIENT_LOCK) {
-                actionsDeletedFromDB = mProvider.delete(
-                        ContentUris.withAppendedId(IDoCareContract.UserActions.CONTENT_URI, userAction.mId),
-                        null,
-                        null
-                );
-            }
-            if (actionsDeletedFromDB != 1) {
-                Log.e(LOG_TAG, "error when removing user's action from DB. Actions removed: " + actionsDeletedFromDB);
-            }
-        } catch (Exception e) { // TODO: catch concrete exceptions thrown by handleResponse()
+        } catch (ServerResponseHandler.ServerResponseHandlerException e) {
             e.printStackTrace();
             // Let dispatcher know that the action completed, otherwise it will be waiting there
             // forever.
@@ -259,6 +231,22 @@ public class UserActionsUploader implements ServerHttpRequest.OnServerResponseCa
         }
 
 
+        int actionsDeletedFromDB = -1;
+        // Remove the uploaded user's action from the DB
+        synchronized (CONTENT_PROVIDER_CLIENT_LOCK) {
+            try {
+                actionsDeletedFromDB = mProvider.delete(
+                        ContentUris.withAppendedId(IDoCareContract.UserActions.CONTENT_URI, userAction.mId),
+                        null,
+                        null
+                );
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        if (actionsDeletedFromDB != 1) {
+            Log.e(LOG_TAG, "error when removing user's action from DB. Actions removed: " + actionsDeletedFromDB);
+        }
     }
 
     /**
@@ -325,7 +313,7 @@ public class UserActionsUploader implements ServerHttpRequest.OnServerResponseCa
                             IDoCareContract.UserActions.CONTENT_URI,
                             IDoCareContract.UserActions.PROJECTION_ALL,
                             IDoCareContract.UserActions.COL_ENTITY_ID + " = ? AND "
-                            + IDoCareContract.UserActions.COL_SERVER_RESPONSE_STATUS_CODE + " != ?",
+                            + IDoCareContract.UserActions.COL_SERVER_RESPONSE_STATUS_CODE + " = ?",
                             new String[] {String.valueOf(requestId), "0"},
                             IDoCareContract.UserActions.SORT_ORDER_DEFAULT
                     );
@@ -451,14 +439,17 @@ public class UserActionsUploader implements ServerHttpRequest.OnServerResponseCa
         }
 
         /**
-         * NOTE: the dispatcher is considered empty when all user's actions had been
-         * dispatched AND have already completed. This behavior is consistent with the fact that
-         * dispatched actions can be reverted to become non-dispatched in case of errors, which
-         * allows these actions to be re-dispatched and re-uploaded.
-         * @return true if all actions had been dispatched and have already been uploaded
+         * TODO: the logic in this method should change if we'll allow dispatched actions to be returned to non-dispatched state (e.g. in case of error)
+         * @return true if all actions had been dispatched
          */
         public boolean isEmpty() {
-            return mNonDispatchedUserActions.isEmpty() && mDispatchedUserActions.isEmpty();
+            synchronized (DISPATCHER_LOCK) {
+                for (long id : mNonDispatchedUserActions.keySet()) {
+                    if (!mNonDispatchedUserActions.get(id).isEmpty())
+                        return false;
+                }
+            }
+            return true;
         }
 
 
@@ -497,18 +488,19 @@ public class UserActionsUploader implements ServerHttpRequest.OnServerResponseCa
                 // TODO: reevaluate this limit: do we need it at all, and if we do, is the limit sane?
                 for (int i=0; i < 100; i ++) {
 
-                    // It might be the case that while the thread was blocked this map became empty,
-                    // or had been empty initially
-                    if (mNonDispatchedUserActions.isEmpty()) {
-                        return null;
-                    }
+                    boolean moreNonDispatchedActions = false;
 
                     for (long id : mNonDispatchedUserActions.keySet()) {
 
-                        if (mWaitForResponseBeforeProceed.get(id))
-                            continue; // This entity is "Stalled" - continue to the next
-
                         if (!mNonDispatchedUserActions.get(id).isEmpty()) {
+
+                            if (mWaitForResponseBeforeProceed.get(id)) {
+                                // If we got here - there are non-dispatched actions for this entity,
+                                // but they are stalled. We need to skip this entity's actions,
+                                // but "remember" that they haven't been dispatched...
+                                moreNonDispatchedActions = true;
+                                continue;
+                            }
 
                             // TODO: removing from ArrayList at index 0 is the most expensive. Try to find a more efficient solution
                             UserActionItem nextAction = mNonDispatchedUserActions.get(id).remove(0);
@@ -526,12 +518,18 @@ public class UserActionsUploader implements ServerHttpRequest.OnServerResponseCa
                         }
                     }
 
-                    // If we got here - none of the actions could be dispatched now, therefore
-                    // the thread should block and wait
-                    try {
-                        DISPATCHER_LOCK.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    // If we got here - none of the actions could be dispatched. If there are
+                    // additional non-dispatched actions - these actions weren't dispatched
+                    // because they are "stalled", and the calling thread should block until these
+                    // actions are "un-stalled"
+                    if (moreNonDispatchedActions) {
+                        try {
+                            DISPATCHER_LOCK.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        return null;
                     }
                 }
 
@@ -541,8 +539,12 @@ public class UserActionsUploader implements ServerHttpRequest.OnServerResponseCa
             }
         }
 
+        /**
+         * Let the dispatcher know that one of the dispatched actions have been uploaded to the
+         * server
+         */
         public void dispatchedUserActionUploaded(UserActionItem userAction) {
-            // TODO: this method should notifyAll() the waiting threads such that they can proceed
+
             long entityId = userAction.mEntityId;
 
             synchronized (DISPATCHER_LOCK) {
@@ -575,8 +577,94 @@ public class UserActionsUploader implements ServerHttpRequest.OnServerResponseCa
                      */
                     DISPATCHER_LOCK.notifyAll();
                 }
+
+
+                // There are user actions that their uploading changes IDs of entities (e.g. new requests
+                // get permanent IDs assigned by the server) - account for this change
+                ensureConsistentEntityIds(userAction);
             }
 
+
+        }
+
+        /**
+         * Some user actions, when uploaded to the server, change entities IDs (e.g. newly created
+         * requests assigned permanent IDs during uploading). This method ensures that the internal
+         * IDs managed by this dispatcher stay in sync with these changes
+         */
+        private void ensureConsistentEntityIds(UserActionItem userAction) {
+            if (userAction.mEntityType.equals(IDoCareContract.UserActions.ENTITY_TYPE_REQUEST) &&
+                    userAction.mActionType.equals(IDoCareContract.UserActions.ACTION_TYPE_CREATE_REQUEST)) {
+                // The uploaded action was of type "create request", which means that the ID of this
+                // request has changed...
+                long oldId = userAction.mEntityId;
+                long newId = 0;
+                // There should be mapping from old entity ID to the new entity ID...
+                /*
+                  IMPORTANT: it is kind of dangerous to use the lock from the enclosing class here,
+                  but I do it in order to simplify things. If the app will hang in the future -
+                  this is one of the first places to check for deadlocks.
+                  */
+                synchronized (CONTENT_PROVIDER_CLIENT_LOCK) {
+                    Cursor cursor = null;
+                    try {
+                        cursor = mProvider.query(
+                                ContentUris.withAppendedId(IDoCareContract.TempIdMappings.CONTENT_URI, oldId),
+                                new String[] {IDoCareContract.TempIdMappings.COL_PERMANENT_ID},
+                                null,
+                                null,
+                                null
+                        );
+
+                        if (cursor != null && cursor.moveToFirst()) {
+                            newId = cursor.getLong(cursor.getColumnIndexOrThrow(
+                                    IDoCareContract.TempIdMappings.COL_PERMANENT_ID));
+                        } else {
+                            throw new IllegalStateException("while ensuring IDs consistency after " +
+                                    "a user action of type " + userAction.mActionType + " for entity " +
+                                    userAction.mEntityType + ", could not find a mapping from old ID to a new ID");
+                        }
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                        throw new IllegalStateException("couldn't ensure consistent mapping from" +
+                                "old ID to the new ID");
+                    } finally {
+                        if (cursor != null) cursor.close();
+                    }
+
+                    if (newId == 0)
+                        Log.e(LOG_TAG, "while ensuring a consistent ID the new ID is 0, which is " +
+                                "most probably means some error happened and consistency lost");
+                }
+
+                // Now change IDs in all the data structures... huh
+                changeIdsInMap(mNonDispatchedUserActions, oldId, newId);
+                changeIdsInMap(mDispatchedUserActions, oldId, newId);
+                changeIdsInMap(mWaitForResponseBeforeProceed, oldId, newId);
+                if (mCompletedEntityIds.contains(oldId)) {
+                    mCompletedEntityIds.remove(Long.valueOf(oldId));
+                    mCompletedEntityIds.add(newId);
+                }
+
+            }
+        }
+
+        private <T> void changeIdsInMap(Map<Long, T> map,
+                                    long oldId, long newId) {
+            if (map.containsKey(oldId)) {
+
+                map.put(newId, map.remove(oldId));
+
+                // Check whether the element of the map is a List
+                if (map.get(newId).getClass().isAssignableFrom(List.class)) {
+                    for (Object item : (List)map.get(newId)) {
+                        // Check whether the element of the list is UserActionItem
+                        if (item.getClass().isAssignableFrom(UserActionItem.class)) {
+                            ((UserActionItem)item).mEntityId = newId;
+                        }
+                    }
+                }
+            }
         }
 
         public List<Long> getCompletedEntityIds() {

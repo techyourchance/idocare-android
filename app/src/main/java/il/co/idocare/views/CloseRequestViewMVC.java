@@ -81,7 +81,7 @@ public class CloseRequestViewMVC extends AbstractViewMVC {
     @Override
     public Bundle getViewState() {
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.FieldName.CLOSED_COMMENT.getValue(),
+        bundle.putString(Constants.FIELD_NAME_CLOSED_COMMENT,
                 mEdtClosedComment.getText().toString());
         return bundle;
     }

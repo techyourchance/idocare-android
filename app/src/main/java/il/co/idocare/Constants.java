@@ -13,6 +13,54 @@ public class Constants {
     private final static String QA_ROOT_URL = "http://qa-04.idocare.co.il";
     public final static String ROOT_URL = DEV_ROOT_URL;
 
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Names of fields used in communication with the server
+
+    public static final String FIELD_NAME_RESPONSE_STATUS = "status";
+    public static final String FIELD_NAME_RESPONSE_MESSAGE = "message";
+    public static final String FIELD_NAME_RESPONSE_DATA = "data";
+
+    public static final String FIELD_NAME_USER_PASSWORD = "user_data_auth";
+    public static final String FIELD_NAME_USER_NICKNAME = "user_data_nickname";
+    public static final String FIELD_NAME_USER_ID = "user_data_id";
+    public static final String FIELD_NAME_USER_AUTH_TOKEN = "user_data_public_key";
+    public static final String FIELD_NAME_USER_FIRST_NAME = "user_data_first_name";
+    public static final String FIELD_NAME_USER_LAST_NAME = "user_data_last_name";
+    public static final String FIELD_NAME_USER_REPUTATION = "user_data_reputation";
+    public static final String FIELD_NAME_USER_PICTURE = "user_data_picture";
+
+    public static final String FIELD_NAME_ENTITY_ID = "entity_id";
+    public static final String FIELD_NAME_ENTITY_PARAM = "entity_param";
+    public static final String FIELD_NAME_SCORE = "score";
+
+    public static final String FIELD_NAME_REQUEST_ID = "request_id";
+
+    public static final String FIELD_NAME_CREATED_BY = "created_by";
+    public static final String FIELD_NAME_CREATED_AT = "created_at";
+    public static final String FIELD_NAME_CREATED_REPUTATION = "created_reputation";
+    public static final String FIELD_NAME_CREATED_COMMENT = "created_comment";
+    public static final String FIELD_NAME_CREATED_PICTURES = "created_pictures";
+    public static final String FIELD_NAME_CREATED_POLLUTION_LEVEL = "pollution_level";
+    public static final String FIELD_NAME_LONGITUDE = "long";
+    public static final String FIELD_NAME_LATITUDE = "lat";
+
+    public static final String FIELD_NAME_PICKED_UP_BY = "picked_up_by";
+    public static final String FIELD_NAME_PICKED_UP_AT = "picked_up_at";
+    public static final String FIELD_NAME_PICKED_UP_BY_ME = "picked_up_by_me";
+
+    public static final String FIELD_NAME_CLOSED_BY = "closed_by";
+    public static final String FIELD_NAME_CLOSED_AT = "closed_at";
+    public static final String FIELD_NAME_CLOSED_COMMENT = "closed_comment";
+    public static final String FIELD_NAME_CLOSED_PICTURES = "closed_pictures";
+    public static final String FIELD_NAME_CLOSED_REPUTATION = "closed_reputation";
+
+    // End of fields' names
+    //
+    // ---------------------------------------------------------------------------------------------
+
+
     /**
      * This enum (its ordinal() values) is used with startActivityForResult() and
      * onActivityResult() calls across the app
@@ -50,42 +98,6 @@ public class Constants {
         private String mValue;
         HttpHeader(String value) {
             this.mValue = PREFIX + value;
-        }
-
-        public String getValue() {
-            return mValue;
-        }
-    }
-
-    /**
-     * Static names of HTTP and JSON fields
-     */
-    public enum FieldName {
-        RESPONSE_STATUS("status"), RESPONSE_MESSAGE("message"), RESPONSE_DATA("data"),
-
-        USER_PASSWORD("user_data_auth"), USER_NICKNAME("user_data_nickname"), USER_ID("user_data_id"),
-        USER_AUTH_TOKEN("user_data_public_key"), USER_FIRST_NAME("user_data_first_name"),
-        USER_LAST_NAME("user_data_last_name"), USER_REPUTATION("user_data_reputation"),
-        USER_PICTURE("user_data_picture"),
-
-        ENTITY_ID("entity_id"), ENTITY_PARAM("entity_param"), SCORE("score"),
-
-        REQUEST_ID("request_id"),
-
-        CREATED_BY("created_by"), CREATED_AT("created_at"), CREATED_REPUTATION("created_reputation"),
-        CREATED_COMMENT("created_comment"), CREATED_PICTURES("created_pictures"),
-        CREATED_POLLUTION_LEVEL("pollution_level"), LONGITUDE("long"), LATITUDE("lat"),
-
-        PICKED_UP_BY("picked_up_by"), PICKED_UP_AT("picked_up_at"), PICKED_UP_BY_ME("picked_up_by_me"),
-
-        CLOSED_BY("closed_by"), CLOSED_AT("closed_at"), CLOSED_COMMENT("closed_comment"),
-        CLOSED_PICTURES("closed_pictures"), CLOSED_REPUTATION("closed_reputation");
-
-
-
-        private String mValue;
-        FieldName(String value) {
-            this.mValue=value;
         }
 
         public String getValue() {

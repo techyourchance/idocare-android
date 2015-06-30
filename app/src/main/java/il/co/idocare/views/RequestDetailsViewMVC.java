@@ -435,8 +435,8 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         // TODO: request status should be a part of the RequestItem object
         SharedPreferences prefs =
                 mContext.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
-        boolean userLoggedIn = prefs.contains(Constants.FieldName.USER_ID.getValue());
-        long userId = prefs.getLong(Constants.FieldName.USER_ID.getValue(), 0);
+        boolean userLoggedIn = prefs.contains(Constants.FIELD_NAME_USER_ID);
+        long userId = prefs.getLong(Constants.FIELD_NAME_USER_ID, 0);
 
         if (mRequestItem.getClosedBy() != 0) {
             if (userLoggedIn && (userId == mRequestItem.getClosedBy()))

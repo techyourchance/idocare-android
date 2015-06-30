@@ -21,8 +21,8 @@ import il.co.idocare.R;
  */
 public class NewRequestViewMVC extends AbstractViewMVC {
 
-    public final static String KEY_CREATED_COMMENT = Constants.FieldName.CREATED_COMMENT.getValue();
-    public final static String KEY_CREATED_POLLUTION_LEVEL = Constants.FieldName.CREATED_POLLUTION_LEVEL.getValue();
+    public final static String KEY_CREATED_COMMENT = Constants.FIELD_NAME_CREATED_COMMENT;
+    public final static String KEY_CREATED_POLLUTION_LEVEL = Constants.FIELD_NAME_CREATED_POLLUTION_LEVEL;
 
     private final static String LOG_TAG = NewRequestViewMVC.class.getSimpleName();
 
@@ -86,9 +86,9 @@ public class NewRequestViewMVC extends AbstractViewMVC {
     @Override
     public Bundle getViewState() {
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.FieldName.CREATED_COMMENT.getValue(),
+        bundle.putString(Constants.FIELD_NAME_CREATED_COMMENT,
                 mEdtCreatedComment.getText().toString());
-        bundle.putString(Constants.FieldName.CREATED_POLLUTION_LEVEL.getValue(),
+        bundle.putString(Constants.FIELD_NAME_CREATED_POLLUTION_LEVEL,
                 String.valueOf(mRatingbarPollutionLevel.getRating()));
         return bundle;
     }

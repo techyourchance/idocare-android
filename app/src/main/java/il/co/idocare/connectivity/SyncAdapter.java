@@ -9,21 +9,11 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
-import android.os.RemoteException;
-import android.text.TextUtils;
 import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import il.co.idocare.authentication.AccountAuthenticator;
-import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.pojos.RequestItem;
-import il.co.idocare.utils.IDoCareJSONUtils;
 
 /**
  * Our sync adapter
@@ -68,12 +58,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             return;
         }
 
-//        UserActionsUploader userActionsUploader =
-//                new UserActionsUploader(account, authToken, provider);
-//
-//        // This call will block until all local actions will be synchronized to the server
-//        // and the respective ContentProvider will be updated
-//        userActionsUploader.uploadAll();
+        DataUploader dataUploader =
+                new DataUploader(account, authToken, provider);
+
+        // This call will block until all local actions will be synchronized to the server
+        // and the respective ContentProvider will be updated
+        dataUploader.uploadAll();
 
 
         ServerDataDownloader serverDataDownloader =
@@ -83,6 +73,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         // and the respective ContentProvider will be updated
         serverDataDownloader.downloadAll();
 
+
+        Log.d(LOG_TAG, "onPerformSync() returned");
 
     }
 

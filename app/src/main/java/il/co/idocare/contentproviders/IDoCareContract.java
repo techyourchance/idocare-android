@@ -4,10 +4,10 @@ import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import il.co.idocare.Constants.FieldName;
+import il.co.idocare.Constants;
 
 /**
- * Created by Vasiliy on 3/24/2015.
+ * Contract class for our ContentProvider
  */
 public class IDoCareContract {
 
@@ -33,22 +33,22 @@ public class IDoCareContract {
 	public static final class Requests implements BaseColumns {
 
         // Entry fields (correspond to columns in table)
-        public static final String COL_REQUEST_ID = FieldName.REQUEST_ID.getValue();
-        public static final String COL_CREATED_BY = FieldName.CREATED_BY.getValue();
-        public static final String COL_PICKED_UP_BY = FieldName.PICKED_UP_BY.getValue();
-        public static final String COL_CREATED_AT = FieldName.CREATED_AT.getValue();
-        public static final String COL_PICKED_UP_AT = FieldName.PICKED_UP_AT.getValue();
-        public static final String COL_CLOSED_AT = FieldName.CLOSED_AT.getValue();
-        public static final String COL_CREATED_COMMENT = FieldName.CREATED_COMMENT.getValue();
-        public static final String COL_CLOSED_COMMENT = FieldName.CLOSED_COMMENT.getValue();
-        public static final String COL_LATITUDE = FieldName.LATITUDE.getValue();
-        public static final String COL_LONGITUDE = FieldName.LONGITUDE.getValue();
-        public static final String COL_CREATED_PICTURES = FieldName.CREATED_PICTURES.getValue();
-        public static final String COL_CLOSED_PICTURES = FieldName.CLOSED_PICTURES.getValue();
-        public static final String COL_POLLUTION_LEVEL = FieldName.CREATED_POLLUTION_LEVEL.getValue();
-        public static final String COL_CREATED_REPUTATION = FieldName.CREATED_REPUTATION.getValue();
-        public static final String COL_CLOSED_REPUTATION = FieldName.CLOSED_REPUTATION.getValue();
-        public static final String COL_CLOSED_BY = FieldName.CLOSED_BY.getValue();
+        public static final String COL_REQUEST_ID = Constants.FIELD_NAME_REQUEST_ID;
+        public static final String COL_CREATED_BY = Constants.FIELD_NAME_CREATED_BY;
+        public static final String COL_PICKED_UP_BY = Constants.FIELD_NAME_PICKED_UP_BY;
+        public static final String COL_CREATED_AT = Constants.FIELD_NAME_CREATED_AT;
+        public static final String COL_PICKED_UP_AT = Constants.FIELD_NAME_PICKED_UP_AT;
+        public static final String COL_CLOSED_AT = Constants.FIELD_NAME_CLOSED_AT;
+        public static final String COL_CREATED_COMMENT = Constants.FIELD_NAME_CREATED_COMMENT;
+        public static final String COL_CLOSED_COMMENT = Constants.FIELD_NAME_CLOSED_COMMENT;
+        public static final String COL_LATITUDE = Constants.FIELD_NAME_LATITUDE;
+        public static final String COL_LONGITUDE = Constants.FIELD_NAME_LONGITUDE;
+        public static final String COL_CREATED_PICTURES = Constants.FIELD_NAME_CREATED_PICTURES;
+        public static final String COL_CLOSED_PICTURES = Constants.FIELD_NAME_CLOSED_PICTURES;
+        public static final String COL_POLLUTION_LEVEL = Constants.FIELD_NAME_CREATED_POLLUTION_LEVEL;
+        public static final String COL_CREATED_REPUTATION = Constants.FIELD_NAME_CREATED_REPUTATION;
+        public static final String COL_CLOSED_REPUTATION = Constants.FIELD_NAME_CLOSED_REPUTATION;
+        public static final String COL_CLOSED_BY = Constants.FIELD_NAME_CLOSED_BY;
         /**
          * This column, when set to int>0, indicates that the corresponding request was modified
          * locally (potentially more than once), and that these local changes haven't been
@@ -159,6 +159,46 @@ public class IDoCareContract {
          * The default sort order for queries containing NAME fields.
          */
         public static final String SORT_ORDER_DEFAULT = COL_TIMESTAMP + " DESC";
+    }
+
+
+    /**
+     * Constants for the UserAction table of the provider.
+     */
+    public static final class TempIdMappings implements BaseColumns {
+
+        // Entry fields (correspond to columns in table)
+        public static final String COL_TEMP_ID = "temp_id";
+        public static final String COL_PERMANENT_ID = "col_permanent_id";
+
+        /**
+         * The content URI for this table.
+         */
+        public static final Uri CONTENT_URI =  Uri.withAppendedPath(IDoCareContract.CONTENT_URI, "temp_id_mappings");
+
+        /**
+         * The mime type of a directory of user actions.
+         */
+        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.il.co.idocare.temp_id_mappings";
+
+        /**
+         * The mime type of a single user action.
+         */
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.il.co.idocare.temp_id_mappings";
+
+        /**
+         * A projection of all columns in the UserActions table.
+         */
+        public static final String[] PROJECTION_ALL = {
+                _ID,
+                COL_TEMP_ID,
+                COL_PERMANENT_ID
+        };
+
+        /**
+         * The default sort order for queries containing NAME fields.
+         */
+        public static final String SORT_ORDER_DEFAULT = _ID + " DESC";
     }
 
 

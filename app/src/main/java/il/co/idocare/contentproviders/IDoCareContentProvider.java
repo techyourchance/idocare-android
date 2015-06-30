@@ -17,20 +17,28 @@ public class IDoCareContentProvider extends ContentProvider {
     private static final int REQUEST_ID = 1;
     private static final int USER_ACTIONS_LIST = 2;
     private static final int USER_ACTION_ID = 3;
+    private static final int TEMP_ID_MAPPINGS_LIST = 4;
+    private static final int TEMP_ID_MAPPING_ID = 5;
 
     private static final UriMatcher URI_MATCHER;
 
     static {
         URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
+        /*
+        I'm forced to use * instead of # because of:
+        https://code.google.com/p/android/issues/detail?id=27031
+         */
         URI_MATCHER.addURI(IDoCareContract.AUTHORITY, "requests", REQUESTS_LIST);
-        URI_MATCHER.addURI(IDoCareContract.AUTHORITY, "requests/#", REQUEST_ID);
+        URI_MATCHER.addURI(IDoCareContract.AUTHORITY, "requests/*", REQUEST_ID);
         URI_MATCHER.addURI(IDoCareContract.AUTHORITY, "user_actions", USER_ACTIONS_LIST);
-        URI_MATCHER.addURI(IDoCareContract.AUTHORITY, "user_actions/#", USER_ACTION_ID);
+        URI_MATCHER.addURI(IDoCareContract.AUTHORITY, "user_actions/*", USER_ACTION_ID);
+        URI_MATCHER.addURI(IDoCareContract.AUTHORITY, "temp_id_mappings", TEMP_ID_MAPPINGS_LIST);
+        URI_MATCHER.addURI(IDoCareContract.AUTHORITY, "temp_id_mappings/*", TEMP_ID_MAPPING_ID);
     }
 
 
     /*
-    This Data Access Object is a wrapper around SQLite DB
+    This Data Access Object is a wrapper around SQLiteOpenHelper
      */
     private IDoCareDatabaseDAO mDAO;
 
@@ -100,6 +108,31 @@ public class IDoCareContentProvider extends ContentProvider {
                         sortOrder);
                 break;
 
+            case TEMP_ID_MAPPINGS_LIST:
+                if (TextUtils.isEmpty(sortOrder))
+                    sortOrder = IDoCareContract.TempIdMappings.SORT_ORDER_DEFAULT;
+                cursor = mDAO.queryTempIdMappings(
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+
+            case TEMP_ID_MAPPING_ID:
+                if (TextUtils.isEmpty(sortOrder))
+                    sortOrder = IDoCareContract.TempIdMappings.SORT_ORDER_DEFAULT;
+                cursor = mDAO.queryTempIdMappings(
+                        projection,
+                        IDoCareContract.TempIdMappings.COL_TEMP_ID + " = " + uri.getLastPathSegment()
+                                + (TextUtils.isEmpty(selection) ? "" : " AND " + selection),
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri.toString());
         }
@@ -120,6 +153,10 @@ public class IDoCareContentProvider extends ContentProvider {
                 return IDoCareContract.UserActions.CONTENT_TYPE;
             case USER_ACTION_ID:
                 return IDoCareContract.UserActions.CONTENT_ITEM_TYPE;
+            case TEMP_ID_MAPPINGS_LIST:
+                return IDoCareContract.TempIdMappings.CONTENT_TYPE;
+            case TEMP_ID_MAPPING_ID:
+                return IDoCareContract.TempIdMappings.CONTENT_ITEM_TYPE;
             default:
                 return null;
         }
@@ -135,6 +172,9 @@ public class IDoCareContentProvider extends ContentProvider {
                 break;
             case USER_ACTIONS_LIST:
                 id = mDAO.addNewUserAction(values);
+                break;
+            case TEMP_ID_MAPPINGS_LIST:
+                id = mDAO.addNewTempIdMapping(values);
                 break;
             default:
                 throw new IllegalArgumentException(
@@ -159,8 +199,6 @@ public class IDoCareContentProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-
-        // TODO: do we allow requests' deletion? If not, then rewrite this method to throw exception.
 
         int delCount = 0;
 
@@ -194,6 +232,18 @@ public class IDoCareContentProvider extends ContentProvider {
                 delCount = mDAO.deleteUserActions(where, selectionArgs);
                 break;
 
+            case TEMP_ID_MAPPINGS_LIST:
+                delCount = mDAO.deleteTempIdMappings(selection, selectionArgs);
+                break;
+
+            case TEMP_ID_MAPPING_ID:
+                idStr = uri.getLastPathSegment();
+                where = IDoCareContract.TempIdMappings._ID + " = " + idStr;
+                if (!TextUtils.isEmpty(selection)) {
+                    where += " AND " + selection;
+                }
+                delCount = mDAO.deleteTempIdMappings(where, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -236,6 +286,19 @@ public class IDoCareContentProvider extends ContentProvider {
                     where += " AND " + selection;
                 }
                 updateCount = mDAO.updateUserActions(values, where, selectionArgs);
+                break;
+
+            case TEMP_ID_MAPPINGS_LIST:
+                updateCount = mDAO.updateTempIdMappings(values, selection, selectionArgs);
+                break;
+
+            case TEMP_ID_MAPPING_ID:
+                idStr = uri.getLastPathSegment();
+                where = IDoCareContract.TempIdMappings._ID + " = " + idStr;
+                if (!TextUtils.isEmpty(selection)) {
+                    where += " AND " + selection;
+                }
+                updateCount = mDAO.updateTempIdMappings(values, where, selectionArgs);
                 break;
 
             default:

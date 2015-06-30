@@ -127,6 +127,54 @@ public class IDoCareDatabaseDAO {
                 selection, selectionArgs);
     }
 
+
+    public long addNewTempIdMapping(ContentValues contentValues) {
+
+        SQLiteDatabase db = mHelper.getWritableDatabase();
+
+        long id = db.insert(IDoCareSQLOpenHelper.TEMP_ID_MAPPINGS_TABLE_NAME, null, contentValues);
+
+        return id;
+    }
+
+    /**
+     * Query TempIdMappings table
+     * @return cursor containing query results
+     */
+    public Cursor queryTempIdMappings(String[] projection, String selection, String[] selectionArgs,
+                                   String groupBy, String having, String sortOrder) {
+        Cursor cursor = mHelper.getReadableDatabase().query(
+                IDoCareSQLOpenHelper.TEMP_ID_MAPPINGS_TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                groupBy,
+                having,
+                sortOrder);
+
+        return cursor;
+    }
+
+
+    /**
+     * Update entries in TempIdMappings table
+     * @return the number of rows affected
+     */
+    public int updateTempIdMappings(ContentValues values, String selection, String[] selectionArgs) {
+        return mHelper.getWritableDatabase().update(IDoCareSQLOpenHelper.TEMP_ID_MAPPINGS_TABLE_NAME,
+                values, selection, selectionArgs);
+    }
+
+
+    /**
+     * Delete entries from TempIdMappings table
+     * @return the number of rows affected
+     */
+    public int deleteTempIdMappings(String selection, String[] selectionArgs) {
+        return mHelper.getWritableDatabase().delete(IDoCareSQLOpenHelper.TEMP_ID_MAPPINGS_TABLE_NAME,
+                selection, selectionArgs);
+    }
+
     /**
      * Custom implementation of SQLiteOpenHelper.
      */
@@ -140,6 +188,7 @@ public class IDoCareDatabaseDAO {
 
         private static final String REQUESTS_TABLE_NAME = "requests_tbl";
         private static final String USER_ACTIONS_TABLE_NAME = "user_actions_tbl";
+        private static final String TEMP_ID_MAPPINGS_TABLE_NAME = "temp_id_mappings_tbl";
 
         private static final String CREATE_REQUESTS_TABLE =
                 "CREATE TABLE " + REQUESTS_TABLE_NAME + " ( "
@@ -169,12 +218,18 @@ public class IDoCareDatabaseDAO {
                 + IDoCareContract.UserActions.COL_TIMESTAMP + " INTEGER, "
                 + IDoCareContract.UserActions.COL_ENTITY_TYPE + " VARCHAR(1000), "
                 + IDoCareContract.UserActions.COL_ENTITY_ID + " INTEGER, "
-                + IDoCareContract.UserActions.COL_ENTITY_PARAM + " VARCHAR(1000), "
+                + IDoCareContract.UserActions.COL_ENTITY_PARAM + " VARCHAR(        1000), "
                 + IDoCareContract.UserActions.COL_ACTION_TYPE + " VARCHAR(1000), "
                 + IDoCareContract.UserActions.COL_ACTION_PARAM + " VARCHAR(1000), "
                 + IDoCareContract.UserActions.COL_SERVER_RESPONSE_STATUS_CODE + " INTEGER DEFAULT 0, "
                 + IDoCareContract.UserActions.COL_SERVER_RESPONSE_REASON_PHRASE + " VARCHAR(1000) DEFAULT '', "
                 + IDoCareContract.UserActions.COL_SERVER_RESPONSE_ENTITY + " VARCHAR(10000) DEFAULT '' );";
+
+        private static final String CREATE_TEMP_ID_MAPPINGS_TABLE =
+                "CREATE TABLE " + TEMP_ID_MAPPINGS_TABLE_NAME + " ( "
+                + IDoCareContract.TempIdMappings._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + IDoCareContract.TempIdMappings.COL_TEMP_ID + " INTEGER, "
+                + IDoCareContract.TempIdMappings.COL_PERMANENT_ID + " INTEGER ); ";
 
 
 
@@ -188,6 +243,7 @@ public class IDoCareDatabaseDAO {
             try {
                 db.execSQL(CREATE_REQUESTS_TABLE);
                 db.execSQL(CREATE_USER_ACTIONS_TABLE);
+                db.execSQL(CREATE_TEMP_ID_MAPPINGS_TABLE);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -199,6 +255,7 @@ public class IDoCareDatabaseDAO {
             try {
                 db.execSQL("DROP TABLE IF EXISTS " + REQUESTS_TABLE_NAME);
                 db.execSQL("DROP TABLE IF EXISTS " + USER_ACTIONS_TABLE_NAME);
+                db.execSQL("DROP TABLE IF EXISTS " + TEMP_ID_MAPPINGS_TABLE_NAME);
                 onCreate(db);
             } catch (SQLException e) {
                 e.printStackTrace();

@@ -68,11 +68,11 @@ public class HomeFragment extends AbstractFragment implements LoaderManager.Load
                                     int position, long id) {
                 // Get the selected item
                 Cursor cursor = (Cursor) mAdapter.getItem(position);
-                long requestId = cursor.getLong(cursor.getColumnIndex(Constants.FieldName.REQUEST_ID.getValue()));
+                long requestId = cursor.getLong(cursor.getColumnIndex(Constants.FIELD_NAME_REQUEST_ID));
 
                 // Create a bundle and put the id of the selected item there
                 Bundle args = new Bundle();
-                args.putLong(Constants.FieldName.REQUEST_ID.getValue(), requestId);
+                args.putLong(Constants.FIELD_NAME_REQUEST_ID, requestId);
                 // Replace with RequestDetailsFragment and pass the bundle as argument
                 replaceFragment(RequestDetailsFragment.class, true, args);
             }

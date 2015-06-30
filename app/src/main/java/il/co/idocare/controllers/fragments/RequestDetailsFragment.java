@@ -124,7 +124,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
             return;
         }
 
-        mRequestId = args.getLong(Constants.FieldName.REQUEST_ID.getValue());
+        mRequestId = args.getLong(Constants.FIELD_NAME_REQUEST_ID);
         getLoaderManager().initLoader(SINGLE_REQUEST_LOADER, null, this);
 
     }
@@ -153,7 +153,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
 //            e.printStackTrace();
 //        }
 //
-//        serverRequest.addTextField(Constants.FieldName.REQUEST_ID.getValue(),
+//        serverRequest.addTextField(Constants.FIELD_NAME_REQUEST_ID,
 //                String.valueOf(mRequestId));
 //
 //        serverRequest.execute();
@@ -162,7 +162,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
     private void closeRequest() {
         Bundle args = new Bundle();
-        args.putLong(Constants.FieldName.REQUEST_ID.getValue(), mRequestId);
+        args.putLong(Constants.FIELD_NAME_REQUEST_ID, mRequestId);
         replaceFragment(CloseRequestFragment.class, true, args);
     }
 
@@ -197,11 +197,11 @@ public class RequestDetailsFragment extends AbstractFragment implements
 //            e.printStackTrace();
 //        }
 //
-//        serverRequest.addTextField(Constants.FieldName.ENTITY_ID.getValue(),
+//        serverRequest.addTextField(Constants.FIELD_NAME_ENTITY_ID,
 //                String.valueOf(mRequestId));
-//        serverRequest.addTextField(Constants.FieldName.ENTITY_PARAM.getValue(),
+//        serverRequest.addTextField(Constants.FIELD_NAME_ENTITY_PARAM,
 //                voteForClosed ? "closed" : "created");
-//        serverRequest.addTextField(Constants.FieldName.SCORE.getValue(),
+//        serverRequest.addTextField(Constants.FIELD_NAME_SCORE,
 //                String.valueOf(amount));
 //
 //        serverRequest.execute();

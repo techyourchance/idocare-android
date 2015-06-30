@@ -81,6 +81,7 @@ public class ServerHttpRequest implements Runnable {
     private HttpUriRequest mHttpRequest;
 
     private Map<String, String> mTextFields;
+    private Map<String, Map<String, String>> mPicturesFields;
 
 
     public ServerHttpRequest(String url, Account account, String authToken,
@@ -96,8 +97,6 @@ public class ServerHttpRequest implements Runnable {
 
     @Override
     public void run() {
-
-        // TODO: add text fields and pictures
 
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         StringBuilder httpResponseBuffer = new StringBuilder();
@@ -164,15 +163,46 @@ public class ServerHttpRequest implements Runnable {
     /**
      * Add a text field to the body of this request
      */
-    public void addTextField(String name, String value) {
-        if (TextUtils.isEmpty(name)) {
-            throw new IllegalArgumentException("the name of the text field must be non-empty");
+    public void addTextField(String fieldName, String value) {
+        if (TextUtils.isEmpty(fieldName)) {
+            throw new IllegalArgumentException("the name of the field must be non-empty");
         }
 
         if (mTextFields == null)
             mTextFields = new HashMap<>(1);
 
-        mTextFields.put(name, value);
+        mTextFields.put(fieldName, value);
+
+    }
+
+    /**
+     * Add binary data of picture to the body of this request.
+     * @param fieldName the name of the field in the body of the request which will contain the
+     *                  picture. Picture fields are arrays - multiple pictures might be added
+     *                  under the same fieldName
+     * @param pictureName the name of the picture
+     * @param uri local URI of the picture
+     */
+    public void addPictureField(String fieldName, String pictureName, String uri) {
+        if (TextUtils.isEmpty(fieldName)) {
+            throw new IllegalArgumentException("the name of the field must be non-empty");
+        }
+        if (TextUtils.isEmpty(pictureName)) {
+            throw new IllegalArgumentException("the name of the picture must be non-empty");
+        }
+        if (mPicturesFields == null)
+            mPicturesFields = new HashMap<>(1);
+
+        Map<String, String> field;
+
+        if (mPicturesFields.containsKey(fieldName)) {
+            field = mPicturesFields.get(fieldName);
+        } else {
+            field = new HashMap<String, String>(1);
+            mPicturesFields.put(fieldName, field);
+        }
+
+        field.put(pictureName, uri);
 
     }
 
@@ -240,16 +270,11 @@ public class ServerHttpRequest implements Runnable {
      * This method creates an appropriate entity for the request
      */
     private HttpEntity createHttpEntity() {
-        
-        
-        // TODO: populate the maps from ACTION_PARAM field formatted as JSON
-        Map<String, Map<String,String>> picturesFieldsMap = new HashMap<>();
-        
-        
+
         HttpEntity httpEntity = null;
 
         // Use multipart body if pictures should be attached
-        boolean isMultipart = (picturesFieldsMap != null && picturesFieldsMap.size() > 0);
+        boolean isMultipart = (mPicturesFields != null && mPicturesFields.size() > 0);
 
         if (isMultipart ) {
             MultipartEntityBuilder multipartEntity = MultipartEntityBuilder.create();
@@ -262,9 +287,9 @@ public class ServerHttpRequest implements Runnable {
             }
 
 
-            for (String fieldName : picturesFieldsMap.keySet()) {
+            for (String fieldName : mPicturesFields.keySet()) {
                 int i = 0;
-                Map<String, String> field = picturesFieldsMap.get(fieldName);
+                Map<String, String> field = mPicturesFields.get(fieldName);
                 for (String pictureName : field.keySet()) {
                     String pictureUri = field.get(pictureName);
                     File pictureFile = new File(pictureUri);
@@ -272,7 +297,7 @@ public class ServerHttpRequest implements Runnable {
                     if (pictureFile.exists()) {
                         multipartEntity.addBinaryBody(
                                 fieldName + "[" + i + "]",
-                                pictureFile, ContentType.create("image/jpeg"), pictureName);
+                                pictureFile, ContentType.create("image/jpeg"), pictureName + ".jpg");
                     } else {
                         Log.e(LOG_TAG, "the picture file does not exist: " + pictureFile);
                     }
