@@ -53,7 +53,7 @@
             android:theme="@style/NoActionBarTheme"/>
 
 
-        <service android:name=".controllers.services.AuthenticatorService">
+        <service android:name=".services.AuthenticatorService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -63,7 +63,7 @@
         </service>
 
         <service
-            android:name=".controllers.services.SyncService"
+            android:name=".services.SyncService"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter"/>

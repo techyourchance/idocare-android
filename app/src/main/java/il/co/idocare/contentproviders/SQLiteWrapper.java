@@ -14,17 +14,17 @@ import android.util.Log;
  * methods for DB management, while abstracting out implementation details.
  * TODO: review synchronization and data validation requirements
  */
-public class IDoCareDatabaseDAO {
+public class SQLiteWrapper {
 
 
-    private static final String LOG_TAG = IDoCareDatabaseDAO.class.getSimpleName();
+    private static final String LOG_TAG = SQLiteWrapper.class.getSimpleName();
 
 
-    private IDoCareSQLOpenHelper mHelper;
+    private MySQLiteOpenHelper mHelper;
 
 
-    public IDoCareDatabaseDAO(Context context) {
-        mHelper = new IDoCareSQLOpenHelper(context);
+    public SQLiteWrapper(Context context) {
+        mHelper = new MySQLiteOpenHelper(context);
     }
 
 
@@ -34,7 +34,7 @@ public class IDoCareDatabaseDAO {
 
         // TODO: make sure that the added data is verified beforehand!
 
-        long id = db.insert(IDoCareSQLOpenHelper.REQUESTS_TABLE_NAME, null, contentValues);
+        long id = db.insert(MySQLiteOpenHelper.REQUESTS_TABLE_NAME, null, contentValues);
 
         return id;
     }
@@ -47,7 +47,7 @@ public class IDoCareDatabaseDAO {
     public Cursor queryRequests(String[] projection, String selection, String[] selectionArgs,
                                 String groupBy, String having, String sortOrder) {
         Cursor cursor = mHelper.getReadableDatabase().query(
-                IDoCareSQLOpenHelper.REQUESTS_TABLE_NAME,
+                MySQLiteOpenHelper.REQUESTS_TABLE_NAME,
                 projection,
                 selection,
                 selectionArgs,
@@ -63,7 +63,7 @@ public class IDoCareDatabaseDAO {
      * @return the number of rows affected
      */
     public int updateRequests(ContentValues values, String selection, String[] selectionArgs) {
-        return mHelper.getWritableDatabase().update(IDoCareSQLOpenHelper.REQUESTS_TABLE_NAME, values,
+        return mHelper.getWritableDatabase().update(MySQLiteOpenHelper.REQUESTS_TABLE_NAME, values,
                 selection, selectionArgs);
     }
 
@@ -73,7 +73,7 @@ public class IDoCareDatabaseDAO {
      * @return the number of rows affected
      */
     public int deleteRequests(String selection, String[] selectionArgs) {
-        return mHelper.getWritableDatabase().delete(IDoCareSQLOpenHelper.REQUESTS_TABLE_NAME,
+        return mHelper.getWritableDatabase().delete(MySQLiteOpenHelper.REQUESTS_TABLE_NAME,
                 selection, selectionArgs);
     }
 
@@ -84,7 +84,7 @@ public class IDoCareDatabaseDAO {
 
         // TODO: make sure that the added data is verified beforehand!
 
-        long id = db.insert(IDoCareSQLOpenHelper.USER_ACTIONS_TABLE_NAME, null, contentValues);
+        long id = db.insert(MySQLiteOpenHelper.USER_ACTIONS_TABLE_NAME, null, contentValues);
 
         return id;
     }
@@ -96,7 +96,7 @@ public class IDoCareDatabaseDAO {
     public Cursor queryUserActions(String[] projection, String selection, String[] selectionArgs,
                                 String groupBy, String having, String sortOrder) {
         Cursor cursor = mHelper.getReadableDatabase().query(
-                IDoCareSQLOpenHelper.USER_ACTIONS_TABLE_NAME,
+                MySQLiteOpenHelper.USER_ACTIONS_TABLE_NAME,
                 projection,
                 selection,
                 selectionArgs,
@@ -113,7 +113,7 @@ public class IDoCareDatabaseDAO {
      * @return the number of rows affected
      */
     public int updateUserActions(ContentValues values, String selection, String[] selectionArgs) {
-        return mHelper.getWritableDatabase().update(IDoCareSQLOpenHelper.USER_ACTIONS_TABLE_NAME, values,
+        return mHelper.getWritableDatabase().update(MySQLiteOpenHelper.USER_ACTIONS_TABLE_NAME, values,
                 selection, selectionArgs);
     }
 
@@ -123,7 +123,7 @@ public class IDoCareDatabaseDAO {
      * @return the number of rows affected
      */
     public int deleteUserActions(String selection, String[] selectionArgs) {
-        return mHelper.getWritableDatabase().delete(IDoCareSQLOpenHelper.USER_ACTIONS_TABLE_NAME,
+        return mHelper.getWritableDatabase().delete(MySQLiteOpenHelper.USER_ACTIONS_TABLE_NAME,
                 selection, selectionArgs);
     }
 
@@ -132,7 +132,7 @@ public class IDoCareDatabaseDAO {
 
         SQLiteDatabase db = mHelper.getWritableDatabase();
 
-        long id = db.insert(IDoCareSQLOpenHelper.TEMP_ID_MAPPINGS_TABLE_NAME, null, contentValues);
+        long id = db.insert(MySQLiteOpenHelper.TEMP_ID_MAPPINGS_TABLE_NAME, null, contentValues);
 
         return id;
     }
@@ -144,7 +144,7 @@ public class IDoCareDatabaseDAO {
     public Cursor queryTempIdMappings(String[] projection, String selection, String[] selectionArgs,
                                    String groupBy, String having, String sortOrder) {
         Cursor cursor = mHelper.getReadableDatabase().query(
-                IDoCareSQLOpenHelper.TEMP_ID_MAPPINGS_TABLE_NAME,
+                MySQLiteOpenHelper.TEMP_ID_MAPPINGS_TABLE_NAME,
                 projection,
                 selection,
                 selectionArgs,
@@ -161,7 +161,7 @@ public class IDoCareDatabaseDAO {
      * @return the number of rows affected
      */
     public int updateTempIdMappings(ContentValues values, String selection, String[] selectionArgs) {
-        return mHelper.getWritableDatabase().update(IDoCareSQLOpenHelper.TEMP_ID_MAPPINGS_TABLE_NAME,
+        return mHelper.getWritableDatabase().update(MySQLiteOpenHelper.TEMP_ID_MAPPINGS_TABLE_NAME,
                 values, selection, selectionArgs);
     }
 
@@ -171,16 +171,16 @@ public class IDoCareDatabaseDAO {
      * @return the number of rows affected
      */
     public int deleteTempIdMappings(String selection, String[] selectionArgs) {
-        return mHelper.getWritableDatabase().delete(IDoCareSQLOpenHelper.TEMP_ID_MAPPINGS_TABLE_NAME,
+        return mHelper.getWritableDatabase().delete(MySQLiteOpenHelper.TEMP_ID_MAPPINGS_TABLE_NAME,
                 selection, selectionArgs);
     }
 
     /**
      * Custom implementation of SQLiteOpenHelper.
      */
-    private static class IDoCareSQLOpenHelper extends SQLiteOpenHelper {
+    private static class MySQLiteOpenHelper extends SQLiteOpenHelper {
 
-        private static final String LOG_TAG = IDoCareSQLOpenHelper.class.getSimpleName();
+        private static final String LOG_TAG = MySQLiteOpenHelper.class.getSimpleName();
 
         private static final int DATABASE_VERSION = 1;
 
@@ -233,7 +233,7 @@ public class IDoCareDatabaseDAO {
 
 
 
-        public IDoCareSQLOpenHelper(Context context) {
+        public MySQLiteOpenHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
 

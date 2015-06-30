@@ -1,4 +1,4 @@
-package il.co.idocare.connectivity;
+package il.co.idocare.networking;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -66,12 +66,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         dataUploader.uploadAll();
 
 
-        ServerDataDownloader serverDataDownloader =
-                new ServerDataDownloader(account, authToken, provider);
+        DataDownloader dataDownloader =
+                new DataDownloader(account, authToken, provider);
 
         // This call will block until all relevant data will be synchronized from the server
         // and the respective ContentProvider will be updated
-        serverDataDownloader.downloadAll();
+        dataDownloader.downloadAll();
 
 
         Log.d(LOG_TAG, "onPerformSync() returned");

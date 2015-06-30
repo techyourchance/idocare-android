@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -25,7 +24,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.controllers.adapters.NavigationDrawerListAdapter;
+import il.co.idocare.controllers.listadapters.NavigationDrawerListAdapter;
 import il.co.idocare.controllers.fragments.HomeFragment;
 import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.R;

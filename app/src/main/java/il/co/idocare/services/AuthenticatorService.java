@@ -1,4 +1,4 @@
-package il.co.idocare.controllers.services;
+package il.co.idocare.services;
 
 import android.app.Service;
 import android.content.Intent;

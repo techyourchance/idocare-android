@@ -23,7 +23,7 @@ import java.util.List;
 
 import il.co.idocare.Constants;
 import il.co.idocare.authentication.AccountAuthenticator;
-import il.co.idocare.connectivity.ServerHttpRequest;
+import il.co.idocare.networking.ServerHttpRequest;
 import il.co.idocare.utils.IDoCareJSONUtils;
 import il.co.idocare.views.AuthenticateViewMVC;
 

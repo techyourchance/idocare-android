@@ -1,4 +1,4 @@
-package il.co.idocare.connectivity.responsehandlers;
+package il.co.idocare.networking.responsehandlers;
 
 import android.content.ContentProviderClient;
 import android.content.ContentUris;

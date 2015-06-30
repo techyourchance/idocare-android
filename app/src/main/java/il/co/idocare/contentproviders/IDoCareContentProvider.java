@@ -40,12 +40,12 @@ public class IDoCareContentProvider extends ContentProvider {
     /*
     This Data Access Object is a wrapper around SQLiteOpenHelper
      */
-    private IDoCareDatabaseDAO mDAO;
+    private SQLiteWrapper mSQLiteWrapper;
 
 
     @Override
     public boolean onCreate() {
-        mDAO = new IDoCareDatabaseDAO(getContext());
+        mSQLiteWrapper = new SQLiteWrapper(getContext());
         return true;
     }
 
@@ -61,7 +61,7 @@ public class IDoCareContentProvider extends ContentProvider {
             case REQUESTS_LIST:
                 if (TextUtils.isEmpty(sortOrder))
                     sortOrder = IDoCareContract.Requests.SORT_ORDER_DEFAULT;
-                cursor = mDAO.queryRequests(
+                cursor = mSQLiteWrapper.queryRequests(
                         projection,
                         selection,
                         selectionArgs,
@@ -73,7 +73,7 @@ public class IDoCareContentProvider extends ContentProvider {
             case REQUEST_ID:
                 if (TextUtils.isEmpty(sortOrder))
                     sortOrder = IDoCareContract.Requests.SORT_ORDER_DEFAULT;
-                cursor = mDAO.queryRequests(
+                cursor = mSQLiteWrapper.queryRequests(
                         projection,
                         IDoCareContract.Requests.COL_REQUEST_ID + " = " + uri.getLastPathSegment()
                                 + (TextUtils.isEmpty(selection) ? "" : " AND " + selection),
@@ -86,7 +86,7 @@ public class IDoCareContentProvider extends ContentProvider {
             case USER_ACTIONS_LIST:
                 if (TextUtils.isEmpty(sortOrder))
                     sortOrder = IDoCareContract.UserActions.SORT_ORDER_DEFAULT;
-                cursor = mDAO.queryUserActions(
+                cursor = mSQLiteWrapper.queryUserActions(
                         projection,
                         selection,
                         selectionArgs,
@@ -98,7 +98,7 @@ public class IDoCareContentProvider extends ContentProvider {
             case USER_ACTION_ID:
                 if (TextUtils.isEmpty(sortOrder))
                     sortOrder = IDoCareContract.UserActions.SORT_ORDER_DEFAULT;
-                cursor = mDAO.queryUserActions(
+                cursor = mSQLiteWrapper.queryUserActions(
                         projection,
                         IDoCareContract.UserActions._ID + " = " + uri.getLastPathSegment()
                                 + (TextUtils.isEmpty(selection) ? "" : " AND " + selection),
@@ -111,7 +111,7 @@ public class IDoCareContentProvider extends ContentProvider {
             case TEMP_ID_MAPPINGS_LIST:
                 if (TextUtils.isEmpty(sortOrder))
                     sortOrder = IDoCareContract.TempIdMappings.SORT_ORDER_DEFAULT;
-                cursor = mDAO.queryTempIdMappings(
+                cursor = mSQLiteWrapper.queryTempIdMappings(
                         projection,
                         selection,
                         selectionArgs,
@@ -123,7 +123,7 @@ public class IDoCareContentProvider extends ContentProvider {
             case TEMP_ID_MAPPING_ID:
                 if (TextUtils.isEmpty(sortOrder))
                     sortOrder = IDoCareContract.TempIdMappings.SORT_ORDER_DEFAULT;
-                cursor = mDAO.queryTempIdMappings(
+                cursor = mSQLiteWrapper.queryTempIdMappings(
                         projection,
                         IDoCareContract.TempIdMappings.COL_TEMP_ID + " = " + uri.getLastPathSegment()
                                 + (TextUtils.isEmpty(selection) ? "" : " AND " + selection),
@@ -168,13 +168,13 @@ public class IDoCareContentProvider extends ContentProvider {
 
         switch(URI_MATCHER.match(uri)) {
             case REQUESTS_LIST:
-                id = mDAO.addNewRequest(values);
+                id = mSQLiteWrapper.addNewRequest(values);
                 break;
             case USER_ACTIONS_LIST:
-                id = mDAO.addNewUserAction(values);
+                id = mSQLiteWrapper.addNewUserAction(values);
                 break;
             case TEMP_ID_MAPPINGS_LIST:
-                id = mDAO.addNewTempIdMapping(values);
+                id = mSQLiteWrapper.addNewTempIdMapping(values);
                 break;
             default:
                 throw new IllegalArgumentException(
@@ -207,7 +207,7 @@ public class IDoCareContentProvider extends ContentProvider {
 
         switch (URI_MATCHER.match(uri)) {
             case REQUESTS_LIST:
-                delCount = mDAO.deleteRequests(selection, selectionArgs);
+                delCount = mSQLiteWrapper.deleteRequests(selection, selectionArgs);
                 break;
 
             case REQUEST_ID:
@@ -216,11 +216,11 @@ public class IDoCareContentProvider extends ContentProvider {
                 if (!TextUtils.isEmpty(selection)) {
                     where += " AND " + selection;
                 }
-                delCount = mDAO.deleteRequests(where, selectionArgs);
+                delCount = mSQLiteWrapper.deleteRequests(where, selectionArgs);
                 break;
 
             case USER_ACTIONS_LIST:
-                delCount = mDAO.deleteUserActions(selection, selectionArgs);
+                delCount = mSQLiteWrapper.deleteUserActions(selection, selectionArgs);
                 break;
 
             case USER_ACTION_ID:
@@ -229,11 +229,11 @@ public class IDoCareContentProvider extends ContentProvider {
                 if (!TextUtils.isEmpty(selection)) {
                     where += " AND " + selection;
                 }
-                delCount = mDAO.deleteUserActions(where, selectionArgs);
+                delCount = mSQLiteWrapper.deleteUserActions(where, selectionArgs);
                 break;
 
             case TEMP_ID_MAPPINGS_LIST:
-                delCount = mDAO.deleteTempIdMappings(selection, selectionArgs);
+                delCount = mSQLiteWrapper.deleteTempIdMappings(selection, selectionArgs);
                 break;
 
             case TEMP_ID_MAPPING_ID:
@@ -242,7 +242,7 @@ public class IDoCareContentProvider extends ContentProvider {
                 if (!TextUtils.isEmpty(selection)) {
                     where += " AND " + selection;
                 }
-                delCount = mDAO.deleteTempIdMappings(where, selectionArgs);
+                delCount = mSQLiteWrapper.deleteTempIdMappings(where, selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
@@ -263,7 +263,7 @@ public class IDoCareContentProvider extends ContentProvider {
 
         switch (URI_MATCHER.match(uri)) {
             case REQUESTS_LIST:
-                updateCount = mDAO.updateRequests(values, selection, selectionArgs);
+                updateCount = mSQLiteWrapper.updateRequests(values, selection, selectionArgs);
                 break;
 
             case REQUEST_ID:
@@ -272,11 +272,11 @@ public class IDoCareContentProvider extends ContentProvider {
                 if (!TextUtils.isEmpty(selection)) {
                     where += " AND " + selection;
                 }
-                updateCount = mDAO.updateRequests(values, where, selectionArgs);
+                updateCount = mSQLiteWrapper.updateRequests(values, where, selectionArgs);
                 break;
 
             case USER_ACTIONS_LIST:
-                updateCount = mDAO.updateUserActions(values, selection, selectionArgs);
+                updateCount = mSQLiteWrapper.updateUserActions(values, selection, selectionArgs);
                 break;
 
             case USER_ACTION_ID:
@@ -285,11 +285,11 @@ public class IDoCareContentProvider extends ContentProvider {
                 if (!TextUtils.isEmpty(selection)) {
                     where += " AND " + selection;
                 }
-                updateCount = mDAO.updateUserActions(values, where, selectionArgs);
+                updateCount = mSQLiteWrapper.updateUserActions(values, where, selectionArgs);
                 break;
 
             case TEMP_ID_MAPPINGS_LIST:
-                updateCount = mDAO.updateTempIdMappings(values, selection, selectionArgs);
+                updateCount = mSQLiteWrapper.updateTempIdMappings(values, selection, selectionArgs);
                 break;
 
             case TEMP_ID_MAPPING_ID:
@@ -298,7 +298,7 @@ public class IDoCareContentProvider extends ContentProvider {
                 if (!TextUtils.isEmpty(selection)) {
                     where += " AND " + selection;
                 }
-                updateCount = mDAO.updateTempIdMappings(values, where, selectionArgs);
+                updateCount = mSQLiteWrapper.updateTempIdMappings(values, where, selectionArgs);
                 break;
 
             default:

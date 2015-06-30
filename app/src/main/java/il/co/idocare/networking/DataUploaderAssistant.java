@@ -1,4 +1,4 @@
-package il.co.idocare.connectivity;
+package il.co.idocare.networking;
 
 import android.accounts.Account;
 import android.content.ContentProviderClient;

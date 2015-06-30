@@ -1,22 +1,22 @@
-package il.co.idocare.connectivity;
+package il.co.idocare.networking;
 
 import android.accounts.Account;
 import android.content.ContentProviderClient;
 import android.util.Log;
 
 import il.co.idocare.Constants;
-import il.co.idocare.connectivity.responsehandlers.RequestsDownloadServerResponseHandler;
-import il.co.idocare.connectivity.responsehandlers.ServerResponseHandler;
+import il.co.idocare.networking.responsehandlers.RequestsDownloadServerResponseHandler;
+import il.co.idocare.networking.responsehandlers.ServerResponseHandler;
 
 /**
  * This class downloads data from the server and updates the local application's cache
  */
-public class ServerDataDownloader implements ServerHttpRequest.OnServerResponseCallback {
+public class DataDownloader implements ServerHttpRequest.OnServerResponseCallback {
 
 
     public final static String GET_ALL_REQUESTS_URL = Constants.ROOT_URL + "/api-04/request";
 
-    private static final String LOG_TAG = ServerDataDownloader.class.getSimpleName();
+    private static final String LOG_TAG = DataDownloader.class.getSimpleName();
 
     private static final int SERVER_REQUEST_TIMEOUT_MILLIS = 30000;
 
@@ -24,7 +24,7 @@ public class ServerDataDownloader implements ServerHttpRequest.OnServerResponseC
     private String mAuthToken;
     private ContentProviderClient mProvider;
 
-    public ServerDataDownloader(Account account, String authToken, ContentProviderClient provider) {
+    public DataDownloader(Account account, String authToken, ContentProviderClient provider) {
         mAccount = account;
         mAuthToken = authToken;
         mProvider = provider;

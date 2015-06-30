@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.connectivity.ServerHttpRequest;
+import il.co.idocare.networking.ServerHttpRequest;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.pojos.RequestItem;
 import il.co.idocare.views.RequestDetailsViewMVC;

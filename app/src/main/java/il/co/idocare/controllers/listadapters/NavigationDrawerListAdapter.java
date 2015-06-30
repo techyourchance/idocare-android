@@ -1,11 +1,10 @@
-package il.co.idocare.controllers.adapters;
+package il.co.idocare.controllers.listadapters;
 
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import il.co.idocare.R;
 import il.co.idocare.pojos.NavigationDrawerEntry;
 import il.co.idocare.views.NavigationDrawerEntryViewMVC;
 

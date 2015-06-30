@@ -1,4 +1,4 @@
-package il.co.idocare.connectivity;
+package il.co.idocare.networking;
 
 import android.accounts.Account;
 import android.content.ContentProviderClient;
@@ -18,8 +18,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import il.co.idocare.connectivity.responsehandlers.ServerResponseHandler;
-import il.co.idocare.connectivity.responsehandlers.UserActionsServerResponseHandler;
+import il.co.idocare.networking.responsehandlers.ServerResponseHandler;
+import il.co.idocare.networking.responsehandlers.UserActionsServerResponseHandler;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.pojos.UserActionItem;
 

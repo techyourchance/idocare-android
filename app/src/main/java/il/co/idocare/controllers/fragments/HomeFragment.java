@@ -7,7 +7,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Message;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,12 +17,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import java.util.Arrays;
-
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.controllers.adapters.HomeFragmentListAdapter;
+import il.co.idocare.controllers.listadapters.HomeFragmentListAdapter;
 import il.co.idocare.pojos.RequestItem;
 import il.co.idocare.views.HomeViewMVC;
 

@@ -1,10 +1,10 @@
-package il.co.idocare.controllers.services;
+package il.co.idocare.services;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import il.co.idocare.connectivity.SyncAdapter;
+import il.co.idocare.networking.SyncAdapter;
 
 /**
  * Bound service to be used by the framework for SyncAdapter enablement
