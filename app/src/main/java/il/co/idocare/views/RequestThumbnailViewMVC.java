@@ -20,6 +20,7 @@ import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.handlermessaging.HandlerMessagingSlave;
 import il.co.idocare.pojos.RequestItem;
+import il.co.idocare.pojos.UserItem;
 
 /**
  * This is the top level View which should be used as a "thumbnail" for requests
@@ -30,8 +31,6 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
         HandlerMessagingSlave {
 
     private static final String LOG_TAG = RequestThumbnailViewMVC.class.getSimpleName();
-
-    private Context mContext;
 
     private Handler mInboxHandler;
 
@@ -55,12 +54,11 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
     public RequestThumbnailViewMVC(Context context) {
         super(context);
 
-        mContext = context;
         mCurrentPictureUrl = "";
 
 
         // Inflate the underlying layout
-        LayoutInflater.from(mContext).inflate(R.layout.layout_request_thumbnail, this, true);
+        LayoutInflater.from(context).inflate(R.layout.layout_request_thumbnail, this, true);
 
         initialize();
     }
@@ -129,23 +127,27 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
 
     /**
      * Update this thumbnail with the details of a particular request
-     * @param requestItem the request which should be displayed
+     * @param request the request which should be displayed
      */
-    public void showRequestThumbnail(RequestItem requestItem) {
+    public void bindRequestItem(RequestItem request) {
 
-        mRequestItem = requestItem;
+        mRequestItem = request;
 
         // Update the UI
         setStatus();
         setColors();
         setTexts();
         setPictures();
-
-        // Update user's details
-        updateUsers();
     }
 
 
+    /**
+     * Update this thumbnail's "created by" views with details of a particular user
+     * @param user the user who's data should be displayed
+     */
+    public void bindCreatedByUser(UserItem user) {
+        mTxtCreatedBy.setText(user.getNickname());
+    }
 
     private void setStatus() {
         if (mRequestItem.getClosedBy() != 0) {
@@ -226,13 +228,6 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
             mCurrentPictureUrl = createdPictures[0];
         }
     }
-
-    private void updateUsers() {
-        long createdBy = mRequestItem.getCreatedBy();
-        // TODO: replace this code to obtain user's name from users' cache
-        mTxtCreatedBy.setText(Long.toString(createdBy));
-    }
-
 
 
 

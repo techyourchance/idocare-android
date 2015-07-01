@@ -77,10 +77,10 @@ public class RequestsDownloadServerResponseHandler extends ServerResponseHandler
 
     }
 
-    private String getIdsForQuery(List<Long> requestsIdsList) {
+    private String getIdsForQuery(List<Long> idsList) {
         StringBuilder idsForQuery = new StringBuilder();
         boolean first = true;
-        for (long id : requestsIdsList) {
+        for (long id : idsList) {
             if (first) {
                 first = false;
                 idsForQuery.append("'").append(String.valueOf(id)).append("'");

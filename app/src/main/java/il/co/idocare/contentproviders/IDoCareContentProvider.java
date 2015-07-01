@@ -17,6 +17,7 @@ public class IDoCareContentProvider extends ContentProvider {
     private static final int REQUEST_ID = 1;
     private static final int USERS_LIST = 10;
     private static final int USER_ID = 11;
+    private static final int UNIQUE_USER_IDS = 12;
     private static final int USER_ACTIONS_LIST = 20;
     private static final int USER_ACTION_ID = 21;
     private static final int TEMP_ID_MAPPINGS_LIST = 30;
@@ -34,6 +35,7 @@ public class IDoCareContentProvider extends ContentProvider {
         URI_MATCHER.addURI(IDoCareContract.AUTHORITY, "requests/*", REQUEST_ID);
         URI_MATCHER.addURI(IDoCareContract.AUTHORITY, "users", USERS_LIST);
         URI_MATCHER.addURI(IDoCareContract.AUTHORITY, "users/*", USER_ID);
+        URI_MATCHER.addURI(IDoCareContract.AUTHORITY, "unique_user_ids", UNIQUE_USER_IDS);
         URI_MATCHER.addURI(IDoCareContract.AUTHORITY, "user_actions", USER_ACTIONS_LIST);
         URI_MATCHER.addURI(IDoCareContract.AUTHORITY, "user_actions/*", USER_ACTION_ID);
         URI_MATCHER.addURI(IDoCareContract.AUTHORITY, "temp_id_mappings", TEMP_ID_MAPPINGS_LIST);
@@ -112,6 +114,18 @@ public class IDoCareContentProvider extends ContentProvider {
                         sortOrder);
                 break;
 
+            case UNIQUE_USER_IDS:
+                if (TextUtils.isEmpty(sortOrder))
+                    sortOrder = IDoCareContract.UniqueUserIds.SORT_ORDER_DEFAULT;
+                cursor = mSQLiteWrapper.queryUniqueUserIds(
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+
             case USER_ACTIONS_LIST:
                 if (TextUtils.isEmpty(sortOrder))
                     sortOrder = IDoCareContract.UserActions.SORT_ORDER_DEFAULT;
@@ -182,6 +196,8 @@ public class IDoCareContentProvider extends ContentProvider {
                 return IDoCareContract.Users.CONTENT_TYPE;
             case USER_ID:
                 return IDoCareContract.Users.CONTENT_ITEM_TYPE;
+            case UNIQUE_USER_IDS:
+                return IDoCareContract.UniqueUserIds.CONTENT_TYPE;
             case USER_ACTIONS_LIST:
                 return IDoCareContract.UserActions.CONTENT_TYPE;
             case USER_ACTION_ID:
@@ -204,7 +220,7 @@ public class IDoCareContentProvider extends ContentProvider {
                 id = mSQLiteWrapper.addNewRequest(values);
                 break;
             case USERS_LIST:
-                id = mSQLiteWrapper.addNewRequest(values);
+                id = mSQLiteWrapper.addNewUser(values);
                 break;
             case USER_ACTIONS_LIST:
                 id = mSQLiteWrapper.addNewUserAction(values);
@@ -294,7 +310,7 @@ public class IDoCareContentProvider extends ContentProvider {
                 delCount = mSQLiteWrapper.deleteTempIdMappings(where, selectionArgs);
                 break;
             default:
-                throw new IllegalArgumentException("Unsupported URI: " + uri);
+                throw new IllegalArgumentException("Unsupported URI for deletion: " + uri);
         }
 
         if (delCount > 0) {
@@ -364,7 +380,7 @@ public class IDoCareContentProvider extends ContentProvider {
                 break;
 
             default:
-                throw new IllegalArgumentException("Unsupported URI: " + uri);
+                throw new IllegalArgumentException("Unsupported URI for update: " + uri);
         }
 
         if (updateCount > 0) {

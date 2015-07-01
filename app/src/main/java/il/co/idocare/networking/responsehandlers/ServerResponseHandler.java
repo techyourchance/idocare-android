@@ -33,7 +33,8 @@ public interface ServerResponseHandler {
         public boolean ensureSuccessfulResponse(int statusCode, String reasonPhrase, String entityString) {
 
             if (statusCode / 100 != 2) {
-                Log.e(LOG_TAG, "unsuccessful status code: " + statusCode + ". Reason phrase: " + reasonPhrase);
+                Log.e(LOG_TAG, "unsuccessful status code: " + statusCode + ". Reason phrase: "
+                        + reasonPhrase + ". Entity:\n" + entityString);
                 return false;
             }
 

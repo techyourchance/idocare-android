@@ -20,18 +20,21 @@ import android.widget.ListView;
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.contentproviders.IDoCareContract;
+import il.co.idocare.controllers.interfaces.RequestsAndUsersCursorAdapter;
 import il.co.idocare.controllers.listadapters.HomeFragmentListAdapter;
 import il.co.idocare.pojos.RequestItem;
 import il.co.idocare.views.HomeViewMVC;
 
 
-public class HomeFragment extends AbstractFragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class HomeFragment extends AbstractFragment implements
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     private final static String LOG_TAG = HomeFragment.class.getSimpleName();
 
-    private final static int LOADER_ID = 0;
+    private final static int REQUESTS_LOADER_ID = 0;
+    private final static int USERS_LOADER_ID = 1;
 
-    HomeFragmentListAdapter mAdapter;
+    RequestsAndUsersCursorAdapter mAdapter;
     HomeViewMVC mHomeViewMVC;
 
 
@@ -57,15 +60,15 @@ public class HomeFragment extends AbstractFragment implements LoaderManager.Load
                 (ListView) mHomeViewMVC.getRootView().findViewById(R.id.list_requests_thumbnails);
         requestThumbnails.setAdapter(mAdapter);
 
-        getLoaderManager().initLoader(LOADER_ID, null, this);
+        getLoaderManager().initLoader(USERS_LOADER_ID, null, this);
+        getLoaderManager().initLoader(REQUESTS_LOADER_ID, null, this);
 
         // TODO: remove this listener from here and put it in MVCView and add message for click
         requestThumbnails.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                // Get the selected item
-                Cursor cursor = (Cursor) mAdapter.getItem(position);
-                long requestId = cursor.getLong(cursor.getColumnIndex(Constants.FIELD_NAME_REQUEST_ID));
+                // Get the selected request ID
+                long requestId = mAdapter.getRequestAtPosition(position).getId();
 
                 // Create a bundle and put the id of the selected item there
                 Bundle args = new Bundle();
@@ -154,7 +157,7 @@ public class HomeFragment extends AbstractFragment implements LoaderManager.Load
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
 
-        if (id == LOADER_ID) {
+        if (id == REQUESTS_LOADER_ID) {
 
             // The data needed for displaying the requests's thumbnail + the _id column which is
             // required by CursorAdapter framework
@@ -175,6 +178,24 @@ public class HomeFragment extends AbstractFragment implements LoaderManager.Load
                     selection,
                     selectionArgs,
                     sortOrder);
+
+        }  else if (id == USERS_LOADER_ID) {
+
+            String[] projection = IDoCareContract.Users.PROJECTION_ALL;
+
+            // Change these values when adding filtering and sorting
+            String selection = null;
+            String[] selectionArgs = null;
+            String sortOrder = null;
+
+            //noinspection ConstantConditions
+            return new CursorLoader(getActivity(),
+                    IDoCareContract.Users.CONTENT_URI,
+                    projection,
+                    selection,
+                    selectionArgs,
+                    sortOrder);
+
         } else {
             Log.e(LOG_TAG, "onCreateLoader() called with unrecognized id: " + id);
             return null;
@@ -184,8 +205,10 @@ public class HomeFragment extends AbstractFragment implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if (loader.getId() == LOADER_ID) {
-            mAdapter.swapCursor(cursor);
+        if (loader.getId() == REQUESTS_LOADER_ID) {
+            mAdapter.swapRequestsCursor(cursor);
+        } else if(loader.getId() == USERS_LOADER_ID) {
+            mAdapter.swapUsersCursor(cursor);
         } else {
             Log.e(LOG_TAG, "onLoadFinished() called with unrecognized loader id: " + loader.getId());
         }
@@ -193,19 +216,21 @@ public class HomeFragment extends AbstractFragment implements LoaderManager.Load
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        if (loader.getId() == LOADER_ID) {
-            // Releasing the resources
-            mAdapter.swapCursor(null);
+        // Releasing the resources
+        if (loader.getId() == REQUESTS_LOADER_ID) {
+            mAdapter.swapRequestsCursor(null);
+        } else if(loader.getId() == USERS_LOADER_ID) {
+            mAdapter.swapUsersCursor(null);
         } else {
             Log.e(LOG_TAG, "onLoaderReset() called with unrecognized loader id: " + loader.getId());
         }
 
     }
 
-
     // End of LoaderCallback methods
     //
     // ---------------------------------------------------------------------------------------------
+
 
 
 

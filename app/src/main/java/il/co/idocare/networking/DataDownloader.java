@@ -2,11 +2,21 @@ package il.co.idocare.networking;
 
 import android.accounts.Account;
 import android.content.ContentProviderClient;
+import android.database.Cursor;
+import android.os.RemoteException;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import il.co.idocare.Constants;
+import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.networking.responsehandlers.RequestsDownloadServerResponseHandler;
 import il.co.idocare.networking.responsehandlers.ServerResponseHandler;
+import il.co.idocare.networking.responsehandlers.UsersDownloadServerResponseHandler;
 
 /**
  * This class downloads data from the server and updates the local application's cache
@@ -15,8 +25,19 @@ public class DataDownloader implements ServerHttpRequest.OnServerResponseCallbac
 
 
     public final static String GET_ALL_REQUESTS_URL = Constants.ROOT_URL + "/api-04/request";
+    public final static String GET_USER_URL = Constants.ROOT_URL + "/api-04/user/get";
 
     private static final String LOG_TAG = DataDownloader.class.getSimpleName();
+
+
+    /*
+     * This object will be used to synchronize access to ContentProviderClient. We don't sync on
+     * the provider itself because it is originally passed to SyncAdapter.onPerformSync() and is
+     * managed externally, therefore we can't know if it is safe to sync on it (well, the current
+     * source code suggests that it is safe, but this can change in future releases of AOSP,
+     * therefore we don't take chances).
+     */
+    private final Object CONTENT_PROVIDER_CLIENT_LOCK = new Object();
 
     private static final int SERVER_REQUEST_TIMEOUT_MILLIS = 30000;
 
@@ -24,13 +45,71 @@ public class DataDownloader implements ServerHttpRequest.OnServerResponseCallbac
     private String mAuthToken;
     private ContentProviderClient mProvider;
 
+    private ThreadPoolExecutor mExecutor;
+
+    private List<Long> mUniqueUserIds;
+
     public DataDownloader(Account account, String authToken, ContentProviderClient provider) {
         mAccount = account;
         mAuthToken = authToken;
         mProvider = provider;
+
+
+        mUniqueUserIds = new ArrayList<>();
+
+        int numOfCores = Runtime.getRuntime().availableProcessors();
+        // TODO: consider using bound queue for executor - will be easier to debug and more efficient because the commands are stored in dispatcher
+        mExecutor = new ThreadPoolExecutor(
+                numOfCores+1,
+                numOfCores+1,
+                60,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>()
+        );
+
     }
 
     public void downloadAll() {
+
+        downloadRequestsData();
+
+        downloadUsersData();
+
+        performCleanup();
+
+    }
+
+    @Override
+    public void serverResponse(int statusCode, String reasonPhrase, String entityString,
+                               Object asyncCompletionToken) {
+
+        String url = (String) asyncCompletionToken;
+
+        ServerResponseHandler responseHandler = null;
+
+        if (url.equals(GET_ALL_REQUESTS_URL)) {
+            responseHandler = new RequestsDownloadServerResponseHandler();
+        } else if (url.equals(GET_USER_URL)) {
+            responseHandler = new UsersDownloadServerResponseHandler();
+        } else {
+            Log.e(LOG_TAG, "receiver serverResponse() callback for unrecognized URL: " + url);
+        }
+
+        if (responseHandler != null) {
+            try {
+                synchronized (CONTENT_PROVIDER_CLIENT_LOCK) {
+                    responseHandler.handleResponse(statusCode, reasonPhrase, entityString, mProvider);
+                }
+            } catch (ServerResponseHandler.ServerResponseHandlerException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+
+
+    private void downloadRequestsData() {
 
         ServerHttpRequest serverRequest = new ServerHttpRequest(GET_ALL_REQUESTS_URL,
                 mAccount, mAuthToken, this, GET_ALL_REQUESTS_URL);
@@ -49,29 +128,89 @@ public class DataDownloader implements ServerHttpRequest.OnServerResponseCallbac
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+
+
+    private void downloadUsersData() {
+
+        mUniqueUserIds.clear();
+
+        Cursor cursor = null;
+        try {
+            synchronized (CONTENT_PROVIDER_CLIENT_LOCK) {
+                cursor = mProvider.query(IDoCareContract.UniqueUserIds.CONTENT_URI,
+                        null, null, null, null);
+            }
+
+            long userId;
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    userId = cursor.getLong(
+                            cursor.getColumnIndexOrThrow(IDoCareContract.UniqueUserIds.COL_USER_ID));
+
+                    if (userId != 0) { // TODO: can we avoid 0 from being present here (maybe DEFAULT NULL for columns in DB?)
+                        mUniqueUserIds.add(userId);
+
+                        ServerHttpRequest serverRequest = createUserServerRequest(userId);
+                        mExecutor.execute(serverRequest);
+                    }
+                } while (cursor.moveToNext());
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+
+        mExecutor.shutdown();
+        try {
+            mExecutor.awaitTermination(30, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 
-    @Override
-    public void serverResponse(int statusCode, String reasonPhrase, String entityString,
-                               Object asyncCompletionToken) {
 
-        String url = (String) asyncCompletionToken;
+    private void performCleanup() {
 
-        if (url.equals(GET_ALL_REQUESTS_URL)) {
+        // Create a list of unique user ids that will be used in delete statement
+        String idsForQuery = getIdsForQuery(mUniqueUserIds);
 
-            // Create an appropriate response handler
-            ServerResponseHandler responseHandler =
-                    new RequestsDownloadServerResponseHandler();
-
-            try {
-                responseHandler.handleResponse(statusCode, reasonPhrase, entityString, mProvider);
-            } catch (Exception e) { // TODO: catch concrete exceptions thrown by handleResponse()
-                e.printStackTrace();
-            }
-
-        } else {
-            Log.e(LOG_TAG, "receiver serverResponse() callback for unrecognized URL: " + url);
+        // Delete users that do not appear in the list of unique referenced users
+        try {
+            mProvider.delete(
+                    IDoCareContract.Users.CONTENT_URI,
+                    IDoCareContract.Users.COL_USER_ID +
+                            " NOT IN ( " + idsForQuery + " )",
+                    null);
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
+    }
+
+
+    private String getIdsForQuery(List<Long> idsList) {
+        StringBuilder idsForQuery = new StringBuilder();
+        boolean first = true;
+        for (long id : idsList) {
+            if (first) {
+                first = false;
+                idsForQuery.append("'").append(String.valueOf(id)).append("'");
+            } else {
+                idsForQuery.append(",'").append(String.valueOf(id)).append("'");
+            }
+        }
+        return idsForQuery.toString();
+    }
+
+    private ServerHttpRequest createUserServerRequest(long userId) {
+        Log.i(LOG_TAG, "creating 'get user data' request for ID: " + userId);
+        ServerHttpRequest serverRequest = new ServerHttpRequest(GET_USER_URL, mAccount, mAuthToken,
+                this, GET_USER_URL);
+        serverRequest.addTextField(Constants.FIELD_NAME_USER_ID, String.valueOf(userId));
+
+        return serverRequest;
     }
 }

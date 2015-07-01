@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import il.co.idocare.controllers.ControllerMVC;
 import il.co.idocare.handlermessaging.HandlerMessagingMaster;
 import il.co.idocare.handlermessaging.HandlerMessagingSlave;
 
@@ -27,7 +26,6 @@ import il.co.idocare.handlermessaging.HandlerMessagingSlave;
  * Fragments of this app should extend this class.
  */
 public abstract class AbstractFragment extends Fragment implements
-        ControllerMVC,
         HandlerMessagingMaster,
         HandlerMessagingSlave {
 

@@ -129,6 +129,22 @@ public class SQLiteWrapper {
     }
 
 
+    public Cursor queryUniqueUserIds(String[] projection, String selection, String[] selectionArgs,
+                                     Object o, Object o1, String sortOrder) {
+
+        String query = "SELECT " + IDoCareContract.Requests.COL_CREATED_BY + " AS "
+                + IDoCareContract.UniqueUserIds.COL_USER_ID  + " FROM " + MySQLiteOpenHelper.REQUESTS_TABLE_NAME
+                + " UNION "
+                + " SELECT " + IDoCareContract.Requests.COL_PICKED_UP_BY + " AS "
+                + IDoCareContract.UniqueUserIds.COL_USER_ID + " FROM " + MySQLiteOpenHelper.REQUESTS_TABLE_NAME
+                + " UNION "
+                + " SELECT " + IDoCareContract.Requests.COL_CLOSED_BY + " AS "
+                + IDoCareContract.UniqueUserIds.COL_USER_ID + " FROM " + MySQLiteOpenHelper.REQUESTS_TABLE_NAME;
+
+        return mHelper.getReadableDatabase().rawQuery(query, null);
+    }
+
+
     public long addNewUserAction(ContentValues contentValues) {
 
         SQLiteDatabase db = mHelper.getWritableDatabase();
@@ -225,6 +241,7 @@ public class SQLiteWrapper {
         return mHelper.getWritableDatabase().delete(MySQLiteOpenHelper.TEMP_ID_MAPPINGS_TABLE_NAME,
                 selection, selectionArgs);
     }
+
 
     /**
      * Custom implementation of SQLiteOpenHelper.

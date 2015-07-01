@@ -274,7 +274,7 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
 
     private void updateCreatedByUser() {
         // TODO: obtain users' data from cache
-        UserItem createdByUserItem = UserItem.createUserItem(0);
+        UserItem createdByUserItem = UserItem.create(0);
 
         mTxtCreatedByNickname.setText(createdByUserItem.getNickname());
 
@@ -357,7 +357,7 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
 
     private void updateClosedByUser() {
         // TODO: obtain user's data from cache
-        UserItem closedByUserItem = UserItem.createUserItem(0);
+        UserItem closedByUserItem = UserItem.create(0);
 
         mTxtClosedByNickname.setText(closedByUserItem.getNickname());
 

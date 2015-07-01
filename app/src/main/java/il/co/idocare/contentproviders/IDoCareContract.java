@@ -75,6 +75,7 @@ public class IDoCareContract {
          * A projection of all columns in the Requests table.
          */
         public static final String[] PROJECTION_ALL = {
+                _ID,
                 COL_REQUEST_ID,
                 COL_CREATED_BY,
                 COL_PICKED_UP_BY,
@@ -140,6 +141,39 @@ public class IDoCareContract {
                 COL_USER_LAST_NAME,
                 COL_USER_REPUTATION,
                 COL_USER_PICTURE
+        };
+
+        /**
+         * The default sort order for queries containing NAME fields.
+         */
+        public static final String SORT_ORDER_DEFAULT = _ID + " DESC";
+    }
+
+
+    /**
+     * This table aggregates all unique user IDs referenced in the DB
+     */
+    public static final class UniqueUserIds implements BaseColumns {
+
+        // Entry fields (correspond to columns in table)
+        public static final String COL_USER_ID = Constants.FIELD_NAME_USER_ID;
+
+        /**
+         * The content URI for this table.
+         */
+        public static final Uri CONTENT_URI =  Uri.withAppendedPath(IDoCareContract.CONTENT_URI, "unique_user_ids");
+
+        /**
+         * The mime type of a directory of user actions.
+         */
+        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.il.co.idocare.unique_user_ids";
+
+        /**
+         * A projection of all columns in the UserActions table.
+         */
+        public static final String[] PROJECTION_ALL = {
+                _ID,
+                COL_USER_ID,
         };
 
         /**
