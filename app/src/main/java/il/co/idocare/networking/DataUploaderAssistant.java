@@ -39,7 +39,7 @@ public class DataUploaderAssistant {
         ServerHttpRequest serverHttpRequest = new ServerHttpRequest(getUserActionUploadUrl(userAction),
                 account, authToken, callback, asyncCompletionToken);
 
-        addUserActionSpecificInfo(serverHttpRequest, userAction, provider);
+        addUserActionSpecificInfo(serverHttpRequest, userAction, provider, account);
 
         return serverHttpRequest;
 
@@ -52,7 +52,7 @@ public class DataUploaderAssistant {
      */
     private static void addUserActionSpecificInfo(
             ServerHttpRequest serverHttpRequest, UserActionItem userAction,
-            ContentProviderClient provider) {
+            ContentProviderClient provider, Account account) {
 
         String entityType = userAction.mEntityType;
         String actionType = userAction.mActionType;
@@ -63,7 +63,7 @@ public class DataUploaderAssistant {
                 switch (actionType) {
 
                     case IDoCareContract.UserActions.ACTION_TYPE_CREATE_REQUEST:
-                        addCreateRequestSpecificInfo(serverHttpRequest, userAction, provider);
+                        addCreateRequestSpecificInfo(serverHttpRequest, userAction, provider, account);
                         break;
 
                     case IDoCareContract.UserActions.ACTION_TYPE_PICKUP_REQUEST:
@@ -103,7 +103,7 @@ public class DataUploaderAssistant {
 
     private static void addCreateRequestSpecificInfo(
             ServerHttpRequest serverHttpRequest, UserActionItem userAction,
-            ContentProviderClient provider) {
+            ContentProviderClient provider, Account account) {
 
 
         RequestItem requestItem = null;
@@ -116,7 +116,7 @@ public class DataUploaderAssistant {
                     null,
                     null);
             if (cursor != null && cursor.moveToFirst()) {
-                requestItem = RequestItem.createRequestItem(cursor);
+                requestItem = RequestItem.create(cursor, Long.valueOf(account.name));
             }
         } catch (RemoteException e) {
             e.printStackTrace();

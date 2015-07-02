@@ -55,7 +55,7 @@ public class HomeFragment extends AbstractFragment implements
 
     private void initializeThumbnailsList() {
 
-        mAdapter = new HomeFragmentListAdapter(getActivity(), null, 0);
+        mAdapter = new HomeFragmentListAdapter(getActivity(), null, 0, Long.valueOf(getActiveAccount().name));
         final ListView requestThumbnails =
                 (ListView) mHomeViewMVC.getRootView().findViewById(R.id.list_requests_thumbnails);
         requestThumbnails.setAdapter(mAdapter);

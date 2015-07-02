@@ -20,7 +20,7 @@ public class RequestItem {
 
 
     public enum RequestStatus {NEW_BY_OTHER, NEW_BY_ME, PICKED_UP_BY_OTHER, PICKED_UP_BY_ME,
-        CLOSED_BY_OTHER, CLOSED_BY_ME}
+        CLOSED_BY_OTHER, CLOSED_BY_ME, UNKNOWN}
 
     /**
      * This String array specifies the fields that are mandatory for RequestItem object in
@@ -74,24 +74,23 @@ public class RequestItem {
     @SerializedName(Constants.FIELD_NAME_CLOSED_REPUTATION)
     private int mClosedReputation;
 
+    private RequestStatus mStatus;
 
-    /**
-     * Create RequestItem object having a particular id
-     * @param id ID of the request
-     * @return newly created RequestItem object
-     */
-    public static RequestItem createRequestItem(long id) {
-        return new RequestItem(id);
+
+    private RequestItem(long id) {
+        mId = id;
     }
 
     /**
      * Create RequestItem object by querying the cursor at the current position.
      * @param cursor the Cursor to be queried
+     * @param activeUserId ID of the active user, or 0 if the user isn't logged in
      * @return newly created RequestItem object
      * @throws IllegalArgumentException if any of the mandatory fields (as specified by
      * {@link RequestItem#MANDATORY_REQUEST_FIELDS}) are missing from the cursor
      */
-    public static RequestItem createRequestItem(Cursor cursor) throws IllegalArgumentException {
+    public static RequestItem create(Cursor cursor, long activeUserId)
+            throws IllegalArgumentException {
         RequestItem request = null;
 
         // Mandatory fields
@@ -109,8 +108,7 @@ public class RequestItem {
             double longitude = cursor.getDouble(cursor.getColumnIndexOrThrow(Constants.FIELD_NAME_LONGITUDE));
 
 
-            request = createRequestItem(requestId);
-            request = RequestItem.createRequestItem(requestId);
+            request = new RequestItem(requestId);
             request.setCreatedBy(createdBy);
             request.setCreatedAt(createdAt);
             request.setCreatedComment(createdComment);
@@ -146,6 +144,7 @@ public class RequestItem {
             request.setClosedReputation(cursor.getInt(i));
         }
 
+        request.setStatus(activeUserId);
 
         return request;
 
@@ -153,24 +152,47 @@ public class RequestItem {
 
     /**
      * Create RequestItem from a string formatted as JSON object
+     * @param jsonObjectString a string formatted as JSON object having request's data
+     * @param activeUserId ID of the active user, or 0 if the user isn't logged in
      */
-    public static RequestItem createRequestItem(String jsonObjectString) {
+    public static RequestItem create(String jsonObjectString, long activeUserId) {
         Gson gson = new Gson();
-        return gson.fromJson(jsonObjectString, RequestItem.class);
+        RequestItem request = gson.fromJson(jsonObjectString, RequestItem.class);
+
+        request.setStatus(activeUserId);
+
+        return request;
     }
 
-    private RequestItem(long id) {
-        mId = id;
+
+
+    private void setStatus(long activeUserId) {
+
+        if (getClosedBy() != 0) {
+            if (activeUserId == getClosedBy())
+                mStatus = RequestStatus.CLOSED_BY_ME;
+            else
+                mStatus = RequestStatus.CLOSED_BY_OTHER;
+        } else if (getPickedUpBy() != 0) {
+            if (activeUserId == getPickedUpBy())
+                mStatus = RequestStatus.PICKED_UP_BY_ME;
+            else
+                mStatus = RequestStatus.PICKED_UP_BY_OTHER;
+        } else if (getCreatedBy() != 0) {
+            if (activeUserId == getCreatedBy())
+                mStatus = RequestStatus.NEW_BY_ME;
+            else
+                mStatus = RequestStatus.NEW_BY_OTHER;
+        } else {
+            throw new IllegalStateException("Could not set request's status! Fields' values:\n" +
+                    "Created by: " + getCreatedBy() + ". Picked up by: " + getPickedUpBy() + "." +
+                    "Closed by: " + getClosedBy());
+        }
     }
 
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // Adapters (converters)
 
     /**
      * Convert this request object to ContentValues object that can be passed to ContentProvider
-     * @return
      */
     public ContentValues toContentValues() {
         ContentValues values = new ContentValues();
@@ -353,6 +375,10 @@ public class RequestItem {
 
     public int getClosedReputation() {
         return mClosedReputation;
+    }
+
+    public RequestItem.RequestStatus getStatus() {
+        return mStatus;
     }
 
 }

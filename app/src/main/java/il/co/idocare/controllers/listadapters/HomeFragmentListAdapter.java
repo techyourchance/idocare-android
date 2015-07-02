@@ -25,9 +25,11 @@ public class HomeFragmentListAdapter extends CursorAdapter implements
 
     private Cursor mUsersCursor;
     private ConcurrentMap<Long, UserItem> mUsersCache;
+    private long mActiveAccountId;
 
-    public HomeFragmentListAdapter(Context context, Cursor cursor, int flags) {
+    public HomeFragmentListAdapter(Context context, Cursor cursor, int flags, long activeAccountId) {
         super(context, cursor, flags);
+        mActiveAccountId = activeAccountId;
         mUsersCache = new ConcurrentHashMap<>(5);
     }
 
@@ -42,7 +44,7 @@ public class HomeFragmentListAdapter extends CursorAdapter implements
         RequestItem request;
 
         try {
-             request = RequestItem.createRequestItem(cursor);
+             request = RequestItem.create(cursor, mActiveAccountId);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             // TODO: consider more sophisticated error handling (maybe destroy the view?)
@@ -97,6 +99,6 @@ public class HomeFragmentListAdapter extends CursorAdapter implements
 
     @Override
     public RequestItem getRequestAtPosition(int position) {
-        return RequestItem.createRequestItem((Cursor) this.getItem(position));
+        return RequestItem.create((Cursor) this.getItem(position), mActiveAccountId);
     }
 }

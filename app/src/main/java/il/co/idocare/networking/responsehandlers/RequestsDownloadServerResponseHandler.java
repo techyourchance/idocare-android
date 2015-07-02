@@ -47,7 +47,7 @@ public class RequestsDownloadServerResponseHandler extends ServerResponseHandler
 
             // Parse the contents of individual JSON objects in the array
             try {
-                request = RequestItem.createRequestItem(requestsJsonArray.getJSONObject(i).toString());
+                request = RequestItem.create(requestsJsonArray.getJSONObject(i).toString(), 0);
                 requestsIdsList.add(request.getId());
             } catch (JSONException e) {
                 e.printStackTrace();

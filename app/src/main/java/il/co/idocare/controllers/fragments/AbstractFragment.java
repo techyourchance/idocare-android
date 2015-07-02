@@ -18,6 +18,7 @@ import java.util.List;
 
 import il.co.idocare.handlermessaging.HandlerMessagingMaster;
 import il.co.idocare.handlermessaging.HandlerMessagingSlave;
+import il.co.idocare.pojos.RequestItem;
 
 
 /**

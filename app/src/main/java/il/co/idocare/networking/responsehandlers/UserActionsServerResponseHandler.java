@@ -46,8 +46,8 @@ public class UserActionsServerResponseHandler extends ServerResponseHandler.Abst
 
                         RequestItem requestItem = null;
                         try {
-                            requestItem = RequestItem.createRequestItem(new JSONObject(entityString)
-                                    .getJSONObject(Constants.FIELD_NAME_RESPONSE_DATA).toString());
+                            requestItem = RequestItem.create(new JSONObject(entityString)
+                                    .getJSONObject(Constants.FIELD_NAME_RESPONSE_DATA).toString(), 0);
                         } catch (JSONException e) {
                             e.printStackTrace();
                             throw new ServerResponseHandlerException();

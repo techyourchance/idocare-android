@@ -2,9 +2,10 @@ package il.co.idocare.views;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Message;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
@@ -25,12 +29,11 @@ import il.co.idocare.pojos.UserItem;
  */
 public class RequestDetailsViewMVC extends AbstractViewMVC {
 
-    private final static String LOG_TAG = "RequestDetailsViewMVC";
+    private final static String LOG_TAG = RequestDetailsViewMVC.class.getSimpleName();
 
     private Context mContext;
 
     private RequestItem mRequestItem;
-    private RequestStatus mRequestStatus;
 
 
     private View mRootView;
@@ -152,22 +155,77 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
      * Show the details of the request
      * @param requestItem the request that should be shown
      */
-    public void showRequest(RequestItem requestItem) {
+    public void bindRequestItem(RequestItem requestItem) {
 
         mRequestItem = requestItem;
 
-        setRequestStatus();
-
         // Handle the status bar
-        populateStatusBarFromRequestItem();
+        configureStatusBar();
         // Handle the views related to initial request
-        populateCreatedViewsFromRequestItem();
+        configureCreatedViews();
         // Handle the views related to pickup info
-        populateClosedViewsFromRequestItem();
+        configureClosedViews();
         // Handle the pickup button functionality
-        populatePickupButtonFromRequestItem();
+        configurePickupButton();
         // Handle the close button functionality
-        populateCloseButtonFromRequestItem();
+        configureClosedButton();
+    }
+
+
+    public void bindCreatedByUser(UserItem user) {
+
+        mTxtCreatedByNickname.setText(user.getNickname());
+
+        if (!TextUtils.isEmpty(user.getPictureUrl())) {
+            String universalImageLoaderUri = user.getPictureUrl();
+            try {
+                new URL(universalImageLoaderUri);
+            } catch (MalformedURLException e) {
+                // The exception means that the current Uri is not a valid URL - it is local
+                // uri and we need to adjust it to the scheme recognized by UIL
+                universalImageLoaderUri = "file://" + universalImageLoaderUri;
+            }
+
+            ImageLoader.getInstance().displayImage(
+                    universalImageLoaderUri,
+                    mImgCreatedByPicture,
+                    Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
+        } else {
+            mImgCreatedByPicture.setImageResource(R.drawable.default_user_picture);
+        }
+
+        mTxtCreatedByReputation.setText(String.valueOf(user.getReputation()));
+    }
+
+
+    public void bindClosedByUser(UserItem user) {
+
+        mTxtClosedByNickname.setText(user.getNickname());
+
+        if (!TextUtils.isEmpty(user.getPictureUrl())) {
+            String universalImageLoaderUri = user.getPictureUrl();
+            try {
+                new URL(universalImageLoaderUri);
+            } catch (MalformedURLException e) {
+                // The exception means that the current Uri is not a valid URL - it is local
+                // uri and we need to adjust it to the scheme recognized by UIL
+                universalImageLoaderUri = "file://" + universalImageLoaderUri;
+            }
+
+            ImageLoader.getInstance().displayImage(
+                    universalImageLoaderUri,
+                    mImgClosedByPicture,
+                    Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
+        } else {
+            mImgClosedByPicture.setImageResource(R.drawable.default_user_picture);
+        }
+
+        mTxtClosedByReputation.setText(String.valueOf(user.getReputation()));
+    }
+
+
+    public void bindPickedUpByUser(UserItem user) {
+        mBtnPickUpRequest.setText("Assigned to " + user.getNickname());
     }
 
 
@@ -175,12 +233,12 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
     /**
      * Handle the status bar text and color
      */
-    private void populateStatusBarFromRequestItem() {
+    private void configureStatusBar() {
 
         int statusColor;
         String statusText;
 
-        switch (mRequestStatus) {
+        switch (mRequestItem.getStatus()) {
             case NEW_BY_OTHER:
                 statusColor = mContext.getResources().getColor(R.color.new_request_color);
                 statusText = mContext.getResources().getString(R.string.txt_new_request_title);
@@ -207,7 +265,9 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
                 break;
             default:
                 statusColor = mContext.getResources().getColor(android.R.color.white);
-                statusText = "Error: request status is not set!";
+                statusText = "-";
+                Log.e(LOG_TAG, "couldn't process the status of the request. Status:" +
+                        mRequestItem.getStatus().name());
         }
 
         mTxtStatus.setBackgroundColor(statusColor);
@@ -222,15 +282,14 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
     /**
      * Handle the views describing the initial request
      */
-    private void populateCreatedViewsFromRequestItem() {
+    private void configureCreatedViews() {
 
+        mTxtCreatedTitle.setText(R.string.txt_created_title); // This should be complemented by "created by" user's nickname
 
-        mTxtCreatedTitle.setText(R.string.txt_created_title);
         mTxtCreatedAt.setText(mRequestItem.getCreatedAt());
         mTxtCreatedReputation.setText(String.valueOf(mRequestItem.getCreatedReputation()));
 
-        if (mRequestItem.getCreatedComment() == null ||
-                mRequestItem.getCreatedComment().isEmpty()) {
+        if (TextUtils.isEmpty(mRequestItem.getCreatedComment())) {
             mTxtCreatedComment.setVisibility(View.GONE);
         } else {
             mTxtCreatedComment.setVisibility(View.VISIBLE);
@@ -238,10 +297,20 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         }
 
         String[] createdPictures = mRequestItem.getCreatedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
-        for (int i=0; i<3; i++) {
-            if (createdPictures.length > i) {
+        for (int i = 0; i < 3; i++) {
+            if (createdPictures.length > i && !TextUtils.isEmpty(createdPictures[i])) {
+
+                String universalImageLoaderUri = createdPictures[i];
+                try {
+                    new URL(universalImageLoaderUri);
+                } catch (MalformedURLException e) {
+                    // The exception means that the current Uri is not a valid URL - it is local
+                    // uri and we need to adjust it to the scheme recognized by UIL
+                    universalImageLoaderUri = "file://" + universalImageLoaderUri;
+                }
+
                 ImageLoader.getInstance().displayImage(
-                        createdPictures[i],
+                        universalImageLoaderUri,
                         mImgCreatedPictures[i],
                         Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
             } else {
@@ -268,34 +337,15 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
             }
         });
 
-        updateCreatedByUser();
-
     }
 
-    private void updateCreatedByUser() {
-        // TODO: obtain users' data from cache
-        UserItem createdByUserItem = UserItem.create(0);
-
-        mTxtCreatedByNickname.setText(createdByUserItem.getNickname());
-
-        if (createdByUserItem.getPictureUrl() != null) {
-            ImageLoader.getInstance().displayImage(
-                    createdByUserItem.getPictureUrl(),
-                    mImgCreatedByPicture,
-                    Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
-        } else {
-            mImgCreatedByPicture.setImageResource(R.drawable.default_user_picture);
-        }
-
-        mTxtCreatedByReputation.setText(String.valueOf(createdByUserItem.getReputation()));
-    }
 
     /**
      * Handle the views describing the info about request's closure
      */
-    private void populateClosedViewsFromRequestItem() {
-        if (mRequestStatus != RequestStatus.CLOSED_BY_OTHER &&
-                mRequestStatus != RequestStatus.CLOSED_BY_ME) {
+    private void configureClosedViews() {
+        if (mRequestItem.getStatus() != RequestStatus.CLOSED_BY_OTHER &&
+                mRequestItem.getStatus() != RequestStatus.CLOSED_BY_ME) {
             // Hide all "closed" views if the request is not closed
             mRootView.findViewById(R.id.element_closed_by).setVisibility(View.GONE);
             mRootView.findViewById(R.id.element_closed_pictures).setVisibility(View.GONE);
@@ -309,12 +359,11 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         mRootView.findViewById(R.id.btn_close_request).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.line_users_separator).setVisibility(View.VISIBLE);
 
-        mTxtClosedByTitle.setText(R.string.txt_closed_by_title);
+        mTxtClosedByTitle.setText(R.string.txt_closed_by_title); // This should be complemented by "closed by" user's nickname
         mTxtClosedAt.setText(mRequestItem.getClosedAt());
         mTxtClosedReputation.setText(String.valueOf(mRequestItem.getClosedReputation()));
 
-        if (mRequestItem.getClosedComment() == null ||
-                mRequestItem.getClosedComment().isEmpty()) {
+        if (TextUtils.isEmpty(mRequestItem.getClosedComment())) {
             mTxtClosedComment.setVisibility(View.GONE);
         } else {
             mTxtClosedComment.setVisibility(View.VISIBLE);
@@ -323,9 +372,19 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         
         String[] closedPictures = mRequestItem.getClosedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
         for (int i=0; i<3; i++) {
-            if (closedPictures.length > i) {
+            if (closedPictures.length > i&& !TextUtils.isEmpty(closedPictures[i])) {
+
+                String universalImageLoaderUri = closedPictures[i];
+                try {
+                    new URL(universalImageLoaderUri);
+                } catch (MalformedURLException e) {
+                    // The exception means that the current Uri is not a valid URL - it is local
+                    // uri and we need to adjust it to the scheme recognized by UIL
+                    universalImageLoaderUri = "file://" + universalImageLoaderUri;
+                }
+
                 ImageLoader.getInstance().displayImage(
-                        closedPictures[i],
+                        universalImageLoaderUri,
                         mImgClosedPictures[i],
                         Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
             } else {
@@ -351,36 +410,16 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
             }
         });
 
-        updateClosedByUser();
-
     }
 
-    private void updateClosedByUser() {
-        // TODO: obtain user's data from cache
-        UserItem closedByUserItem = UserItem.create(0);
-
-        mTxtClosedByNickname.setText(closedByUserItem.getNickname());
-
-        if (closedByUserItem.getPictureUrl() != null) {
-            ImageLoader.getInstance().displayImage(
-                    closedByUserItem.getPictureUrl(),
-                    mImgClosedByPicture,
-                    Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
-        } else {
-            mImgClosedByPicture.setImageResource(R.drawable.default_user_picture);
-        }
-
-        mTxtClosedByReputation.setText(String.valueOf(closedByUserItem.getReputation()));
-    }
 
     /**
      * Handle the view of the pickup button
      */
-    private void populatePickupButtonFromRequestItem() {
+    private void configurePickupButton() {
 
-
-        if (mRequestStatus == RequestStatus.NEW_BY_ME ||
-                mRequestStatus == RequestStatus.NEW_BY_OTHER) {
+        if (mRequestItem.getStatus() == RequestStatus.NEW_BY_ME ||
+                mRequestItem.getStatus() == RequestStatus.NEW_BY_OTHER) {
             mBtnPickUpRequest.setVisibility(View.VISIBLE);
             mBtnPickUpRequest.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -390,9 +429,8 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
                 }
             });
         }
-        else if (mRequestStatus == RequestStatus.PICKED_UP_BY_OTHER) {
+        else if (mRequestItem.getStatus() == RequestStatus.PICKED_UP_BY_OTHER) {
             mBtnPickUpRequest.setClickable(false);
-            updatePickedUpByUser();
         }
         else {
             mBtnPickUpRequest.setVisibility(View.GONE);
@@ -400,19 +438,14 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
 
     }
 
-    private void updatePickedUpByUser() {
-        long pickedUpBy = mRequestItem.getPickedUpBy();
-        // TODO: obtain user's data from local cache
-        mBtnPickUpRequest.setText("Assigned to " + "SOMEUSER");
-    }
 
 
     /**
      * Handle the view of the close button
      */
-    private void populateCloseButtonFromRequestItem() {
+    private void configureClosedButton() {
 
-        if (mRequestStatus == RequestStatus.PICKED_UP_BY_ME) {
+        if (mRequestItem.getStatus() == RequestStatus.PICKED_UP_BY_ME) {
             mBtnCloseRequest.setVisibility(View.VISIBLE);
             mBtnCloseRequest.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -426,37 +459,5 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         }
 
     }
-
-    /**
-     * Determine the status of the request based on its contents
-     */
-    private void setRequestStatus() {
-
-        // TODO: request status should be a part of the RequestItem object
-        SharedPreferences prefs =
-                mContext.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
-        boolean userLoggedIn = prefs.contains(Constants.FIELD_NAME_USER_ID);
-        long userId = prefs.getLong(Constants.FIELD_NAME_USER_ID, 0);
-
-        if (mRequestItem.getClosedBy() != 0) {
-            if (userLoggedIn && (userId == mRequestItem.getClosedBy()))
-                mRequestStatus = RequestStatus.CLOSED_BY_ME;
-            else
-                mRequestStatus = RequestStatus.CLOSED_BY_OTHER;
-        } else if (mRequestItem.getPickedUpBy() != 0) {
-            if (userLoggedIn && (userId == mRequestItem.getPickedUpBy()))
-                mRequestStatus = RequestStatus.PICKED_UP_BY_ME;
-            else
-                mRequestStatus = RequestStatus.PICKED_UP_BY_OTHER;
-        } else if (mRequestItem.getCreatedBy() != 0) {
-            if (userLoggedIn && (userId == mRequestItem.getCreatedBy()))
-                mRequestStatus = RequestStatus.NEW_BY_ME;
-            else
-                mRequestStatus = RequestStatus.NEW_BY_OTHER;
-        } else {
-            // TODO: some error
-        }
-    }
-
 
 }
