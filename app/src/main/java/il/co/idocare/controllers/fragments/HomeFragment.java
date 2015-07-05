@@ -20,8 +20,10 @@ import android.widget.ListView;
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.controllers.interfaces.RequestsAndUsersCursorAdapter;
+import il.co.idocare.controllers.interfaces.RequestsCombinedCursorAdapter;
 import il.co.idocare.controllers.listadapters.HomeFragmentListAdapter;
+import il.co.idocare.controllers.listadapters.RequestUserActionApplierImpl;
+import il.co.idocare.controllers.listadapters.UserUserActionApplierImpl;
 import il.co.idocare.pojos.RequestItem;
 import il.co.idocare.views.HomeViewMVC;
 
@@ -33,8 +35,9 @@ public class HomeFragment extends AbstractFragment implements
 
     private final static int REQUESTS_LOADER_ID = 0;
     private final static int USERS_LOADER_ID = 1;
+    private final static int USER_ACTIONS_LOADER_ID = 2;
 
-    RequestsAndUsersCursorAdapter mAdapter;
+    RequestsCombinedCursorAdapter mAdapter;
     HomeViewMVC mHomeViewMVC;
 
 
@@ -55,13 +58,15 @@ public class HomeFragment extends AbstractFragment implements
 
     private void initializeThumbnailsList() {
 
-        mAdapter = new HomeFragmentListAdapter(getActivity(), null, 0, Long.valueOf(getActiveAccount().name));
+        mAdapter = new HomeFragmentListAdapter(getActivity(), null, 0, Long.valueOf(getActiveAccount().name),
+                new RequestUserActionApplierImpl(), new UserUserActionApplierImpl());
         final ListView requestThumbnails =
                 (ListView) mHomeViewMVC.getRootView().findViewById(R.id.list_requests_thumbnails);
         requestThumbnails.setAdapter(mAdapter);
 
-        getLoaderManager().initLoader(USERS_LOADER_ID, null, this);
         getLoaderManager().initLoader(REQUESTS_LOADER_ID, null, this);
+        getLoaderManager().initLoader(USERS_LOADER_ID, null, this);
+        getLoaderManager().initLoader(USER_ACTIONS_LOADER_ID, null, this);
 
         // TODO: remove this listener from here and put it in MVCView and add message for click
         requestThumbnails.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -80,11 +85,6 @@ public class HomeFragment extends AbstractFragment implements
 
 
 
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
     }
 
     @Override
@@ -196,6 +196,23 @@ public class HomeFragment extends AbstractFragment implements
                     selectionArgs,
                     sortOrder);
 
+        } else if (id == USER_ACTIONS_LOADER_ID) {
+
+            String[] projection = IDoCareContract.UserActions.PROJECTION_ALL;
+
+            // Change these values when adding filtering and sorting
+            String selection = null;
+            String[] selectionArgs = null;
+            String sortOrder = null;
+
+            //noinspection ConstantConditions
+            return new CursorLoader(getActivity(),
+                    IDoCareContract.UserActions.CONTENT_URI,
+                    projection,
+                    selection,
+                    selectionArgs,
+                    sortOrder);
+
         } else {
             Log.e(LOG_TAG, "onCreateLoader() called with unrecognized id: " + id);
             return null;
@@ -209,6 +226,8 @@ public class HomeFragment extends AbstractFragment implements
             mAdapter.swapRequestsCursor(cursor);
         } else if(loader.getId() == USERS_LOADER_ID) {
             mAdapter.swapUsersCursor(cursor);
+        } else if (loader.getId() == USER_ACTIONS_LOADER_ID) {
+            mAdapter.swapUserActionsCursor(cursor);
         } else {
             Log.e(LOG_TAG, "onLoadFinished() called with unrecognized loader id: " + loader.getId());
         }
@@ -221,6 +240,8 @@ public class HomeFragment extends AbstractFragment implements
             mAdapter.swapRequestsCursor(null);
         } else if(loader.getId() == USERS_LOADER_ID) {
             mAdapter.swapUsersCursor(null);
+        } else if (loader.getId() == USER_ACTIONS_LOADER_ID) {
+            mAdapter.swapUserActionsCursor(null);
         } else {
             Log.e(LOG_TAG, "onLoaderReset() called with unrecognized loader id: " + loader.getId());
         }

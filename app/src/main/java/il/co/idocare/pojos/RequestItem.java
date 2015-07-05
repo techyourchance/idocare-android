@@ -164,6 +164,35 @@ public class RequestItem {
         return request;
     }
 
+    /**
+     * Create a copy of the existing RequestItem
+     */
+    public static RequestItem create (RequestItem other) {
+        RequestItem newRequest = new RequestItem(other.getId());
+        newRequest.setCreatedBy(other.getCreatedBy())
+                .setCreatedAt(other.getCreatedAt())
+                .setCreatedComment(other.getCreatedComment())
+                .setCreatedPictures(other.getCreatedPictures())
+                .setCreatedReputation(other.getCreatedReputation())
+                .setLatitude(other.getLatitude())
+                .setLongitude(other.getLongitude())
+                .setCreatedPollutionLevel(other.getCreatedPollutionLevel())
+                .setPickedUpBy(other.getPickedUpBy())
+                .setPickedUpAt(other.getPickedUpAt())
+                .setClosedBy(other.getClosedBy())
+                .setClosedAt(other.getClosedAt())
+                .setClosedComment(other.getClosedComment())
+                .setClosedPictures(other.getClosedPictures())
+                .setClosedReputation(other.getClosedReputation())
+                .setStatus(other.getStatus());
+
+        return newRequest;
+    }
+
+
+    private void setStatus(RequestStatus status) {
+        mStatus = status;
+    }
 
 
     private void setStatus(long activeUserId) {
