@@ -1,6 +1,7 @@
 package il.co.idocare.controllers.fragments;
 
 import android.app.LoaderManager;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.CursorLoader;
@@ -122,11 +123,84 @@ public class RequestDetailsFragment extends AbstractFragment implements
     }
 
 
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // User actions handling
+
+
     private void pickupRequest() {
-        // TODO: write
+
+        if (mRequestItem.getPickedUpBy() != 0) {
+            Log.e(LOG_TAG, "tried to pickup an already picked up request");
+            return;
+        }
+
+        new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                showProgressDialog("Please wait...", "Updating the request...");
+            }
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+                ContentValues userActionCV = new ContentValues(5);
+                userActionCV.put(IDoCareContract.UserActions.COL_TIMESTAMP, System.currentTimeMillis());
+                userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_TYPE,
+                        IDoCareContract.UserActions.ENTITY_TYPE_REQUEST);
+                userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_ID, mRequestItem.getId());
+                userActionCV.put(IDoCareContract.UserActions.COL_ACTION_TYPE,
+                        IDoCareContract.UserActions.ACTION_TYPE_PICKUP_REQUEST);
+                userActionCV.put(IDoCareContract.UserActions.COL_ACTION_PARAM,
+                        getActiveAccount().name);
+
+                Uri newUri = getContentResolver().insert(
+                        IDoCareContract.UserActions.CONTENT_URI,
+                        userActionCV
+                );
+
+                if (newUri != null) {
+                    ContentValues requestCV = new ContentValues(1);
+                    requestCV.put(IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG, 1);
+                    int updated = getContentResolver().update(
+                            ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI,
+                                    mRequestItem.getId()),
+                            requestCV,
+                            null,
+                            null
+                    );
+                    if (updated != 1)
+                        Log.e(LOG_TAG, "failed to set 'LOCALLY_MODIFIED' flag on request entry" +
+                                "after a vote");
+                }
+
+                // Request pickup is time critical action - need to be uploaded to the server ASAP
+                Bundle settingsBundle = new Bundle();
+                settingsBundle.putBoolean(
+                        ContentResolver.SYNC_EXTRAS_MANUAL, true);
+                settingsBundle.putBoolean(
+                        ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+                ContentResolver.requestSync(getActiveAccount(), IDoCareContract.AUTHORITY,
+                        settingsBundle);
+
+                return (Void) null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                dismissProgressDialog();
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
     }
 
     private void closeRequest() {
+
         if (mRequestItem == null) {
             Log.e(LOG_TAG, "closeRequest() was called, but there is no data about the request");
             return;
@@ -136,6 +210,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
         args.putLong(Constants.FIELD_NAME_REQUEST_ID, mRequestItem.getId());
         replaceFragment(CloseRequestFragment.class, true, args);
     }
+
 
     private void voteForRequest(final int amount, final boolean voteForClosed) {
 
@@ -192,6 +267,12 @@ public class RequestDetailsFragment extends AbstractFragment implements
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
     }
+
+
+
+    // End of user actions handling
+    //
+    // ---------------------------------------------------------------------------------------------
 
 
 

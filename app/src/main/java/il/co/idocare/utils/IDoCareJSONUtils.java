@@ -67,17 +67,4 @@ public class IDoCareJSONUtils {
 
 
 
-    private static String formatDate(String stringDate) {
-        try {
-            SimpleDateFormat sdfIn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date date = sdfIn.parse(stringDate);
-            SimpleDateFormat sdfOut = new SimpleDateFormat("dd/MM/yy 'at' HH:mm ");
-            return sdfOut.format(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return "date error";
-        }
-    }
-
-
 }

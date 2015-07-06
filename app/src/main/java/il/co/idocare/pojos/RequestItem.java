@@ -3,12 +3,14 @@ package il.co.idocare.pojos;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract.Requests;
+import il.co.idocare.utils.UtilMethods;
 
 /**
  * This object contains data about a single request (users involved, state, location, etc)
@@ -144,7 +146,9 @@ public class RequestItem {
             request.setClosedReputation(cursor.getInt(i));
         }
 
+
         request.setStatus(activeUserId);
+        request.formatDates();
 
         return request;
 
@@ -160,6 +164,7 @@ public class RequestItem {
         RequestItem request = gson.fromJson(jsonObjectString, RequestItem.class);
 
         request.setStatus(activeUserId);
+        request.formatDates();
 
         return request;
     }
@@ -189,6 +194,14 @@ public class RequestItem {
         return newRequest;
     }
 
+    private void formatDates() {
+        if (!TextUtils.isEmpty(getCreatedAt()))
+            setCreatedAt(UtilMethods.formatDate(getCreatedAt()));
+        if (!TextUtils.isEmpty(getPickedUpAt()))
+            setPickedUpAt(UtilMethods.formatDate(getPickedUpAt()));
+        if (!TextUtils.isEmpty(getClosedAt()))
+            setClosedAt(UtilMethods.formatDate(getClosedAt()));
+    }
 
     private void setStatus(RequestStatus status) {
         mStatus = status;

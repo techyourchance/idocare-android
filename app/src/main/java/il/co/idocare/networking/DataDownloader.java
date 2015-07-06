@@ -206,7 +206,6 @@ public class DataDownloader implements ServerHttpRequest.OnServerResponseCallbac
     }
 
     private ServerHttpRequest createUserServerRequest(long userId) {
-        Log.i(LOG_TAG, "creating 'get user data' request for ID: " + userId);
         ServerHttpRequest serverRequest = new ServerHttpRequest(GET_USER_URL, mAccount, mAuthToken,
                 this, GET_USER_URL);
         serverRequest.addTextField(Constants.FIELD_NAME_USER_ID, String.valueOf(userId));

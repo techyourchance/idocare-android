@@ -23,6 +23,7 @@ import il.co.idocare.R;
 import il.co.idocare.pojos.RequestItem;
 import il.co.idocare.pojos.RequestItem.RequestStatus;
 import il.co.idocare.pojos.UserItem;
+import il.co.idocare.utils.UtilMethods;
 
 /**
  * MVC View for New Request screen.
@@ -428,9 +429,6 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
                             0, 0, null);
                 }
             });
-        }
-        else if (mRequestItem.getStatus() == RequestStatus.PICKED_UP_BY_OTHER) {
-            mBtnPickUpRequest.setClickable(false);
         }
         else {
             mBtnPickUpRequest.setVisibility(View.GONE);

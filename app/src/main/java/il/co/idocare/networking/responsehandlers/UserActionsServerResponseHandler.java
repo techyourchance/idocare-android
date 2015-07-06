@@ -66,8 +66,17 @@ public class UserActionsServerResponseHandler extends ServerResponseHandler.Abst
                         break;
 
                     case IDoCareContract.UserActions.ACTION_TYPE_PICKUP_REQUEST:
-                        throw new UnsupportedOperationException("'" + actionType + "' action type" +
-                                "is not supported yet!");
+
+                        requestItem = extractRequestFromEntityString(entityString);
+
+                        updated = updateRequestData(provider, requestItem);
+
+                        if (updated != 1) {
+                            Log.e(LOG_TAG, "the amount of updated request entries after uploading" +
+                                    "a pickup to the server is incorrect. Entries updated: " + updated);
+                        }
+
+                        break;
                     case IDoCareContract.UserActions.ACTION_TYPE_CLOSE_REQUEST:
                         throw new UnsupportedOperationException("'" + actionType + "' action type" +
                                 "is not supported yet!");

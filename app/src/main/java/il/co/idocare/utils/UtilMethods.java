@@ -14,6 +14,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class UtilMethods {
 
@@ -167,4 +170,41 @@ public class UtilMethods {
     public static void setPaddingPx(View view, int paddingPx) {
         view.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
     }
+
+
+    /**
+     * Format a date string (either from the server or timestamp) to easily readable string
+     */
+    public static String formatDate(String stringDate) {
+        // TODO: adjust to locale, timezone etc...
+
+        Date date = null;
+        try {
+            SimpleDateFormat sdfServer = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            date = sdfServer.parse(stringDate);
+        } catch (ParseException e) {
+            // TODO: need anything here?
+        }
+
+        try {
+            long timestamp = Long.valueOf(stringDate);
+            date = new Date(timestamp);
+        } catch (NumberFormatException e) {
+            // TODO: need anything here?
+        }
+
+
+        SimpleDateFormat sdfOut = new SimpleDateFormat("dd/MM/yy 'at' HH:mm ");
+
+        if (date != null) {
+            return sdfOut.format(date);
+        } else {
+            return stringDate;
+        }
+    }
+
+    public static String formatDate(long timestamp) {
+        return formatDate(String.valueOf(timestamp));
+    }
+
 }

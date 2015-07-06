@@ -21,6 +21,7 @@ import il.co.idocare.R;
 import il.co.idocare.handlermessaging.HandlerMessagingSlave;
 import il.co.idocare.pojos.RequestItem;
 import il.co.idocare.pojos.UserItem;
+import il.co.idocare.utils.UtilMethods;
 
 /**
  * This is the top level View which should be used as a "thumbnail" for requests

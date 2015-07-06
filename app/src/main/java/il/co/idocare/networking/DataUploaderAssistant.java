@@ -75,8 +75,8 @@ public class DataUploaderAssistant {
                         break;
 
                     case IDoCareContract.UserActions.ACTION_TYPE_PICKUP_REQUEST:
-                        throw new UnsupportedOperationException("'" + actionType + "' action type" +
-                                "is not supported yet!");
+                        addPickupSpecificInfo(serverHttpRequest, userAction);
+                        break;
                     case IDoCareContract.UserActions.ACTION_TYPE_CLOSE_REQUEST:
                         throw new UnsupportedOperationException("'" + actionType + "' action type" +
                                 "is not supported yet!");
@@ -162,6 +162,16 @@ public class DataUploaderAssistant {
                 String.valueOf(userAction.mEntityId));
         serverHttpRequest.addTextField(Constants.FIELD_NAME_ENTITY_PARAM,
                 userAction.mEntityParam);
+
+    }
+
+
+    private void addPickupSpecificInfo(ServerHttpRequest serverHttpRequest,
+                                     UserActionItem userAction) {
+        serverHttpRequest.addStandardHeaders();
+
+        serverHttpRequest.addTextField(Constants.FIELD_NAME_REQUEST_ID,
+                String.valueOf(userAction.mEntityId));
 
     }
 

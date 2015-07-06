@@ -97,6 +97,15 @@ public class StartupActivity extends AbstractActivity {
             @Override
             protected void onPostExecute(Boolean authSuccessful) {
                 if (authSuccessful) {
+                    // Perform immediate sync at startup
+                    Bundle settingsBundle = new Bundle();
+                    settingsBundle.putBoolean(
+                            ContentResolver.SYNC_EXTRAS_MANUAL, true);
+                    settingsBundle.putBoolean(
+                            ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+                    ContentResolver.requestSync(getActiveAccount(), IDoCareContract.AUTHORITY,
+                            settingsBundle);
+
                     Intent intent = new Intent(StartupActivity.this, MainActivity.class);
                     startActivity(intent);
                 } else {
