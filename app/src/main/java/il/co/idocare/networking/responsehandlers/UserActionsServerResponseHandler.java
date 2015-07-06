@@ -33,10 +33,13 @@ public class UserActionsServerResponseHandler extends ServerResponseHandler.Abst
                                ContentProviderClient provider) throws ServerResponseHandlerException{
 
         if (!ensureSuccessfulResponse(statusCode, reasonPhrase, entityString))
-            return;
+            throw  new ServerResponseHandlerException();
 
         String entityType = mUserAction.mEntityType;
         String actionType = mUserAction.mActionType;
+
+        RequestItem requestItem;
+        int updated;
 
         switch (entityType) {
 
@@ -44,29 +47,9 @@ public class UserActionsServerResponseHandler extends ServerResponseHandler.Abst
                 switch (actionType) {
                     case IDoCareContract.UserActions.ACTION_TYPE_CREATE_REQUEST:
 
-                        RequestItem requestItem = null;
-                        try {
-                            requestItem = RequestItem.create(new JSONObject(entityString)
-                                    .getJSONObject(Constants.FIELD_NAME_RESPONSE_DATA).toString(), 0);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            throw new ServerResponseHandlerException();
-                        }
+                        requestItem = extractRequestFromEntityString(entityString);
 
-                        // Update the locally cached request with the actual data from the server
-                        int updated = -1;
-                        try {
-                            updated = provider.update(
-                                    ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI,
-                                            mUserAction.mEntityId),
-                                    requestItem.toContentValues(),
-                                    null,
-                                    null
-                            );
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                            throw new ServerResponseHandlerException();
-                        }
+                        updated = updateRequestData(provider, requestItem);
 
                         if (updated != 1) {
                             Log.e(LOG_TAG, "the amount of updated request entries after uploading" +
@@ -89,8 +72,18 @@ public class UserActionsServerResponseHandler extends ServerResponseHandler.Abst
                         throw new UnsupportedOperationException("'" + actionType + "' action type" +
                                 "is not supported yet!");
                     case IDoCareContract.UserActions.ACTION_TYPE_VOTE:
-                        throw new UnsupportedOperationException("'" + actionType + "' action type" +
-                                "is not supported yet!");
+
+                        requestItem = extractRequestFromEntityString(entityString);
+
+                        updated = updateRequestData(provider, requestItem);
+
+                        if (updated != 1) {
+                            Log.e(LOG_TAG, "the amount of updated request entries after uploading" +
+                                    "a vote to the server is incorrect. Entries updated: " + updated);
+                        }
+
+                        break;
+
                     default:
                         throw new IllegalArgumentException("unknown action type '" + actionType
                                 + "' for entity '" + entityType + "'");
@@ -114,6 +107,39 @@ public class UserActionsServerResponseHandler extends ServerResponseHandler.Abst
             default:
                 throw new IllegalArgumentException("unknown entity type '" + entityType + "'");
         }
+    }
+
+    private int updateRequestData(ContentProviderClient provider, RequestItem request) throws
+            ServerResponseHandlerException{
+
+        // Update the locally cached request with the actual data from the server
+        int updated = -1;
+        try {
+            updated = provider.update(
+                    ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI,
+                            mUserAction.mEntityId),
+                    request.toContentValues(),
+                    null,
+                    null
+            );
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            throw new ServerResponseHandlerException();
+        }
+        return updated;
+    }
+
+    private RequestItem extractRequestFromEntityString(String entityString) throws
+    ServerResponseHandlerException {
+        RequestItem requestItem = null;
+        try {
+            requestItem = RequestItem.create(new JSONObject(entityString)
+                    .getJSONObject(Constants.FIELD_NAME_RESPONSE_DATA).toString(), 0);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            throw new ServerResponseHandlerException();
+        }
+        return requestItem;
     }
 
     private void updateEntityIdReferences(ContentProviderClient provider, long oldId,

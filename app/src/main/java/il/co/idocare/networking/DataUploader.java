@@ -62,12 +62,16 @@ public class DataUploader implements ServerHttpRequest.OnServerResponseCallback{
       */
     private ContentProviderClient mProvider;
 
+    private DataUploaderAssistant mAssistant;
+
 
     public DataUploader(Account account, String authToken,
                         ContentProviderClient provider) {
         mAccount = account;
         mAuthToken = authToken;
         mProvider = provider;
+
+        mAssistant = new DataUploaderAssistant(account, authToken, provider);
 
 
         int numOfCores = Runtime.getRuntime().availableProcessors();
@@ -103,8 +107,8 @@ public class DataUploader implements ServerHttpRequest.OnServerResponseCallback{
                 synchronized (CONTENT_PROVIDER_CLIENT_LOCK) {
                     // UserActionItem will be used to determine the type of the request, as well as
                     // Asynchronous Completion Token for the callback
-                    serverRequest = DataUploaderAssistant.createUserActionServerRequest(userAction,
-                            mAccount, mAuthToken, this, userAction, mProvider);
+                    serverRequest = mAssistant.createUserActionServerRequest(userAction,
+                            this, userAction);
                 }
 
                 mExecutor.execute(serverRequest);
@@ -228,6 +232,7 @@ public class DataUploader implements ServerHttpRequest.OnServerResponseCallback{
             // forever.
             // TODO: add some error handling here.... Let the dispatcher know of error for retry
             mDispatcher.dispatchedUserActionUploaded(userAction);
+            return;
         }
 
 

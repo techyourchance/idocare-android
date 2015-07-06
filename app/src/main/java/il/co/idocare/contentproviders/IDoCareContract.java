@@ -203,8 +203,8 @@ public class IDoCareContract {
         // Any change/addition to these values should be reflected to UserActionsComparator
         public static final String ENTITY_TYPE_REQUEST = "entity_type_request";
         public static final String ENTITY_TYPE_ARTICLE = "entity_type_article";
-        public static final String ENTITY_PARAM_REQUEST_CREATED = "entity_param_request_created";
-        public static final String ENTITY_PARAM_REQUEST_CLOSED = "entity_param_request_closed";
+        public static final String ENTITY_PARAM_REQUEST_CREATED = "created";
+        public static final String ENTITY_PARAM_REQUEST_CLOSED = "closed";
         public static final String ACTION_TYPE_CREATE_REQUEST= "action_type_create_request";
         public static final String ACTION_TYPE_PICKUP_REQUEST = "action_type_pickup_request";
         public static final String ACTION_TYPE_CLOSE_REQUEST = "action_type_close_request";

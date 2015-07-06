@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Message;
@@ -136,18 +137,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
         replaceFragment(CloseRequestFragment.class, true, args);
     }
 
-    private void voteForRequest(int amount, boolean voteForClosed) {
-        final ContentValues cv = new ContentValues();
-        cv.put(IDoCareContract.UserActions.COL_TIMESTAMP, System.currentTimeMillis());
-        cv.put(IDoCareContract.UserActions.COL_ENTITY_TYPE,
-                IDoCareContract.UserActions.ENTITY_TYPE_REQUEST);
-        cv.put(IDoCareContract.UserActions.COL_ENTITY_ID, mRequestItem.getId());
-        cv.put(IDoCareContract.UserActions.COL_ENTITY_PARAM, voteForClosed ?
-                IDoCareContract.UserActions.ENTITY_PARAM_REQUEST_CLOSED :
-                IDoCareContract.UserActions.ENTITY_PARAM_REQUEST_CREATED);
-        cv.put(IDoCareContract.UserActions.COL_ACTION_TYPE,
-                IDoCareContract.UserActions.ACTION_TYPE_VOTE);
-        cv.put(IDoCareContract.UserActions.COL_ACTION_PARAM, String.valueOf(amount));
+    private void voteForRequest(final int amount, final boolean voteForClosed) {
 
         new AsyncTask<Void, Void, Void>() {
 
@@ -159,10 +149,38 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
             @Override
             protected Void doInBackground(Void... voids) {
-                getContentResolver().insert(
+
+                ContentValues userActionCV = new ContentValues(6);
+                userActionCV.put(IDoCareContract.UserActions.COL_TIMESTAMP, System.currentTimeMillis());
+                userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_TYPE,
+                        IDoCareContract.UserActions.ENTITY_TYPE_REQUEST);
+                userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_ID, mRequestItem.getId());
+                userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_PARAM, voteForClosed ?
+                        IDoCareContract.UserActions.ENTITY_PARAM_REQUEST_CLOSED :
+                        IDoCareContract.UserActions.ENTITY_PARAM_REQUEST_CREATED);
+                userActionCV.put(IDoCareContract.UserActions.COL_ACTION_TYPE,
+                        IDoCareContract.UserActions.ACTION_TYPE_VOTE);
+                userActionCV.put(IDoCareContract.UserActions.COL_ACTION_PARAM, String.valueOf(amount));
+
+                Uri newUri = getContentResolver().insert(
                         IDoCareContract.UserActions.CONTENT_URI,
-                        cv
+                        userActionCV
                 );
+
+                if (newUri != null) {
+                    ContentValues requestCV = new ContentValues(1);
+                    requestCV.put(IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG, 1);
+                    int updated = getContentResolver().update(
+                            ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI,
+                                    mRequestItem.getId()),
+                            requestCV,
+                            null,
+                            null
+                    );
+                    if (updated != 1)
+                        Log.e(LOG_TAG, "failed to set 'LOCALLY_MODIFIED' flag on request entry" +
+                                "after a vote");
+                }
                 return (Void) null;
             }
 

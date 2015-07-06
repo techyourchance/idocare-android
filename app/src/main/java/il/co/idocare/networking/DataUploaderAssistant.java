@@ -28,18 +28,27 @@ public class DataUploaderAssistant {
     public final static String VOTE_ARTICLE_URL = Constants.ROOT_URL + "/api-04/article/vote";
 
 
+    private Account mAccount;
+    private String mAuthToken;
+    private ContentProviderClient mProvider;
+
+    public DataUploaderAssistant(Account account, String authToken, ContentProviderClient provider) {
+        mAccount = account;
+        mAuthToken = authToken;
+        mProvider = provider;
+    }
+
     /**
      * This method constructs an appropriate ServerHttpRequest based on the details of UserActionItem
      */
-    public static ServerHttpRequest createUserActionServerRequest(
-            UserActionItem userAction, Account account, String authToken,
-            ServerHttpRequest.OnServerResponseCallback callback, Object asyncCompletionToken,
-            ContentProviderClient provider) {
+    public ServerHttpRequest createUserActionServerRequest(
+            UserActionItem userAction, ServerHttpRequest.OnServerResponseCallback callback,
+            Object asyncCompletionToken) {
 
         ServerHttpRequest serverHttpRequest = new ServerHttpRequest(getUserActionUploadUrl(userAction),
-                account, authToken, callback, asyncCompletionToken);
+                mAccount, mAuthToken, callback, asyncCompletionToken);
 
-        addUserActionSpecificInfo(serverHttpRequest, userAction, provider, account);
+        addUserActionSpecificInfo(serverHttpRequest, userAction);
 
         return serverHttpRequest;
 
@@ -50,9 +59,8 @@ public class DataUploaderAssistant {
      * This method adds headers and fields to ServerHttpRequest based on the information
      * about user's action
      */
-    private static void addUserActionSpecificInfo(
-            ServerHttpRequest serverHttpRequest, UserActionItem userAction,
-            ContentProviderClient provider, Account account) {
+    private void addUserActionSpecificInfo(ServerHttpRequest serverHttpRequest,
+                                           UserActionItem userAction) {
 
         String entityType = userAction.mEntityType;
         String actionType = userAction.mActionType;
@@ -63,7 +71,7 @@ public class DataUploaderAssistant {
                 switch (actionType) {
 
                     case IDoCareContract.UserActions.ACTION_TYPE_CREATE_REQUEST:
-                        addCreateRequestSpecificInfo(serverHttpRequest, userAction, provider, account);
+                        addCreateRequestSpecificInfo(serverHttpRequest, userAction);
                         break;
 
                     case IDoCareContract.UserActions.ACTION_TYPE_PICKUP_REQUEST:
@@ -73,8 +81,8 @@ public class DataUploaderAssistant {
                         throw new UnsupportedOperationException("'" + actionType + "' action type" +
                                 "is not supported yet!");
                     case IDoCareContract.UserActions.ACTION_TYPE_VOTE:
-                        throw new UnsupportedOperationException("'" + actionType + "' action type" +
-                                "is not supported yet!");
+                        addVoteSpecificInfo(serverHttpRequest, userAction);
+                        break;
                     default:
                         throw new IllegalArgumentException("unknown action type '" + actionType
                                 + "' for entity '" + entityType + "'");
@@ -101,14 +109,11 @@ public class DataUploaderAssistant {
 
     }
 
-    private static void addCreateRequestSpecificInfo(
-            ServerHttpRequest serverHttpRequest, UserActionItem userAction,
-            ContentProviderClient provider, Account account) {
-
-
+    private void addCreateRequestSpecificInfo(ServerHttpRequest serverHttpRequest,
+                                              UserActionItem userAction) {
         RequestItem requestItem = null;
         try {
-            Cursor cursor = provider.query(
+            Cursor cursor = mProvider.query(
                     ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI,
                             userAction.mEntityId),
                     IDoCareContract.Requests.PROJECTION_ALL,
@@ -116,7 +121,7 @@ public class DataUploaderAssistant {
                     null,
                     null);
             if (cursor != null && cursor.moveToFirst()) {
-                requestItem = RequestItem.create(cursor, Long.valueOf(account.name));
+                requestItem = RequestItem.create(cursor, Long.valueOf(mAccount.name));
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -143,8 +148,20 @@ public class DataUploaderAssistant {
                 serverHttpRequest.addPictureField(Constants.FIELD_NAME_CREATED_PICTURES,
                         "picture" + String.valueOf(i), createdPicturesUris[i]);
             }
-
         }
+    }
+
+
+    private void addVoteSpecificInfo(ServerHttpRequest serverHttpRequest,
+                                     UserActionItem userAction) {
+        serverHttpRequest.addStandardHeaders();
+
+        serverHttpRequest.addTextField(Constants.FIELD_NAME_SCORE,
+                userAction.mActionParam);
+        serverHttpRequest.addTextField(Constants.FIELD_NAME_ENTITY_ID,
+                String.valueOf(userAction.mEntityId));
+        serverHttpRequest.addTextField(Constants.FIELD_NAME_ENTITY_PARAM,
+                userAction.mEntityParam);
 
     }
 
@@ -152,7 +169,7 @@ public class DataUploaderAssistant {
      * Get URL of the appropriate server API based on the type of user action that needs to be
      * uploaded
      */
-    private static String getUserActionUploadUrl(UserActionItem userAction) {
+    private String getUserActionUploadUrl(UserActionItem userAction) {
         String entityType = userAction.mEntityType;
         String actionType = userAction.mActionType;
 
