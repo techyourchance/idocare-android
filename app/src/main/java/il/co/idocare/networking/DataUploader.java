@@ -562,6 +562,7 @@ public class DataUploader implements ServerHttpRequest.OnServerResponseCallback{
                 // Remove the action from the dispatched list
                 mDispatchedUserActions.get(entityId).remove(userAction);
 
+
                 if (mDispatchedUserActions.get(entityId).isEmpty() &&
                         mNonDispatchedUserActions.get(entityId).isEmpty()) {
                     // If both the dispatched and the non-dispatched lists for this entity are
@@ -582,6 +583,7 @@ public class DataUploader implements ServerHttpRequest.OnServerResponseCallback{
                      */
                     DISPATCHER_LOCK.notifyAll();
                 }
+
 
 
                 // There are user actions that their uploading changes IDs of entities (e.g. new requests
@@ -661,10 +663,10 @@ public class DataUploader implements ServerHttpRequest.OnServerResponseCallback{
                 map.put(newId, map.remove(oldId));
 
                 // Check whether the element of the map is a List
-                if (map.get(newId).getClass().isAssignableFrom(List.class)) {
+                if (List.class.isAssignableFrom(map.get(newId).getClass())) {
                     for (Object item : (List)map.get(newId)) {
                         // Check whether the element of the list is UserActionItem
-                        if (item.getClass().isAssignableFrom(UserActionItem.class)) {
+                        if (UserActionItem.class.isAssignableFrom(item.getClass())) {
                             ((UserActionItem)item).mEntityId = newId;
                         }
                     }
