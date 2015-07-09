@@ -132,8 +132,8 @@ public class DataUploader implements ServerHttpRequest.OnServerResponseCallback{
     private void performCleanup() {
         clearLocallyModifiedFlags();
 
-        // TODO: review this step - is there any scenario that might require the mappings to survive?
-        clearTempIdMappings();
+        // TODO: we need these mappings to survive in order to be used to re-create loaders in fragments - try to find workaround!
+        // clearTempIdMappings();
 
 
     }

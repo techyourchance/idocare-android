@@ -49,19 +49,27 @@ public class UserActionsServerResponseHandler extends ServerResponseHandler.Abst
 
                         requestItem = extractRequestFromEntityString(entityString);
 
+                        /*
+                        The update of request data will change the ID of the entity from the temp ID
+                        assigned locally to the permanent ID assigned by the server. We will need to
+                        update all references of the old ID to the new ID... But:
+
+                        It is crucial that the below method (which stores in DB the mapping
+                        from the old ID to the new ID) will be called  BEFORE the update of
+                        the actual request data - the update of the request data might trigger data
+                        re-queries on the UI thread, in which case we want the mapping to the new ID
+                        to already reside in DB (otherwise there will be race conditions between
+                        mapping storage here and mapping queries on the UI thread). Huh...
+                         */
+                        updateEntityIdReferences(provider, mUserAction.mEntityId, requestItem.getId());
+
+                        // Update the actual request data
                         updated = updateRequestData(provider, requestItem);
 
                         if (updated != 1) {
                             Log.e(LOG_TAG, "the amount of updated request entries after uploading" +
                                     "a new request to the server is incorrect. Entries updated: " + updated);
                         }
-
-                        /*
-                        The above update changed the ID of the entity from the temp ID assigned
-                        locally to the permanent ID assigned by the server. We need to update all
-                        references to the old temp ID...
-                         */
-                        updateEntityIdReferences(provider, mUserAction.mEntityId, requestItem.getId());
 
                         break;
 

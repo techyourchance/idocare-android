@@ -40,7 +40,9 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
     private RequestDetailsViewMVC mRequestDetailsViewMVC;
 
+    private long mRequestId;
     private RequestItem mRequestItem;
+
     private Cursor mUsersCursor;
     private Cursor mUserActionsCursor;
 
@@ -52,6 +54,15 @@ public class RequestDetailsFragment extends AbstractFragment implements
                 new RequestDetailsViewMVC(getActivity(), container, savedInstanceState);
 
         setActionBarTitle(getTitle());
+
+
+        Bundle args = getArguments();
+        if (args == null) {
+            // TODO: handle this error somehow (maybe pop back stack?)
+            Log.e(LOG_TAG, "RequestDetailsFragment was started with no arguments");
+        } else {
+            mRequestId = args.getLong(Constants.FIELD_NAME_REQUEST_ID);
+        }
 
         getLoaderManager().initLoader(REQUEST_LOADER, null, this);
 
@@ -77,6 +88,19 @@ public class RequestDetailsFragment extends AbstractFragment implements
         mRequestDetailsViewMVC.removeOutboxHandler(getInboxHandler());
         removeOutboxHandler(mRequestDetailsViewMVC.getInboxHandler());
 
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(Constants.FIELD_NAME_REQUEST_ID, mRequestId);
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        mRequestId = savedInstanceState.getLong(Constants.FIELD_NAME_REQUEST_ID);
     }
 
     @Override
@@ -152,7 +176,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
                 userActionCV.put(IDoCareContract.UserActions.COL_TIMESTAMP, System.currentTimeMillis());
                 userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_TYPE,
                         IDoCareContract.UserActions.ENTITY_TYPE_REQUEST);
-                userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_ID, mRequestItem.getId());
+                userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_ID, mRequestId);
                 userActionCV.put(IDoCareContract.UserActions.COL_ACTION_TYPE,
                         IDoCareContract.UserActions.ACTION_TYPE_PICKUP_REQUEST);
                 userActionCV.put(IDoCareContract.UserActions.COL_ACTION_PARAM,
@@ -168,7 +192,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
                     requestCV.put(IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG, 1);
                     int updated = getContentResolver().update(
                             ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI,
-                                    mRequestItem.getId()),
+                                    mRequestId),
                             requestCV,
                             null,
                             null
@@ -207,7 +231,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
         }
 
         Bundle args = new Bundle();
-        args.putLong(Constants.FIELD_NAME_REQUEST_ID, mRequestItem.getId());
+        args.putLong(Constants.FIELD_NAME_REQUEST_ID, mRequestId);
         replaceFragment(CloseRequestFragment.class, true, args);
     }
 
@@ -229,7 +253,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
                 userActionCV.put(IDoCareContract.UserActions.COL_TIMESTAMP, System.currentTimeMillis());
                 userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_TYPE,
                         IDoCareContract.UserActions.ENTITY_TYPE_REQUEST);
-                userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_ID, mRequestItem.getId());
+                userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_ID, mRequestId);
                 userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_PARAM, voteForClosed ?
                         IDoCareContract.UserActions.ENTITY_PARAM_REQUEST_CLOSED :
                         IDoCareContract.UserActions.ENTITY_PARAM_REQUEST_CREATED);
@@ -247,7 +271,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
                     requestCV.put(IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG, 1);
                     int updated = getContentResolver().update(
                             ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI,
-                                    mRequestItem.getId()),
+                                    mRequestId),
                             requestCV,
                             null,
                             null
@@ -285,15 +309,6 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
         if (id == REQUEST_LOADER) {
 
-            Bundle args = getArguments();
-            if (args == null) {
-                // TODO: handle this error somehow (maybe pop back stack?)
-                return null;
-            }
-
-            long requestId = args.getLong(Constants.FIELD_NAME_REQUEST_ID);
-
-
             String[] projection = IDoCareContract.Requests.PROJECTION_ALL;
 
             // Change these values when adding filtering and sorting
@@ -303,7 +318,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
             //noinspection ConstantConditions
             return new CursorLoader(getActivity(),
-                    ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI, requestId),
+                    ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI, mRequestId),
                     projection,
                     selection,
                     selectionArgs,
@@ -363,7 +378,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
                     IDoCareContract.UserActions.COL_ENTITY_ID + " = ?";
 
             String[] selectionArgs = new String[] {IDoCareContract.UserActions.ENTITY_TYPE_REQUEST,
-                    String.valueOf(mRequestItem.getId())};
+                    String.valueOf(mRequestId)};
 
             String sortOrder = null;
 
@@ -401,8 +416,27 @@ public class RequestDetailsFragment extends AbstractFragment implements
                 }
 
             } else {
-                Log.e(LOG_TAG, "REQUEST_LOADER returned null or empty cursor");
-                // TODO: think of how to handle this error - the returned cursor is empty!
+                // If the returned cursor is empty, this might indicate that the ID of the request
+                // changed (due to uploading to the server) - if it is the case, we need to restart
+                // the loader
+                if (cursor != null) {
+                    Cursor idMappingCursor = null;
+                    idMappingCursor = getContentResolver().query(
+                            ContentUris.withAppendedId(IDoCareContract.TempIdMappings.CONTENT_URI,
+                                    mRequestId),
+                            IDoCareContract.TempIdMappings.PROJECTION_ALL,
+                            null,
+                            null,
+                            null
+                    );
+                    if (idMappingCursor != null && idMappingCursor.moveToFirst()) {
+                        mRequestId = idMappingCursor.getLong(idMappingCursor.getColumnIndexOrThrow(
+                                IDoCareContract.TempIdMappings.COL_PERMANENT_ID));
+
+                        getLoaderManager().restartLoader(REQUEST_LOADER, null, this);
+                    }
+                    if (idMappingCursor != null) idMappingCursor.close();
+                }
             }
 
         } else if (loader.getId() == USERS_LOADER) {

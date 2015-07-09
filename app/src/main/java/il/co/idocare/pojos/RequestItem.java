@@ -76,6 +76,8 @@ public class RequestItem {
     @SerializedName(Constants.FIELD_NAME_CLOSED_REPUTATION)
     private int mClosedReputation;
 
+
+    private long mActiveUserId;
     private RequestStatus mStatus;
 
 
@@ -147,7 +149,8 @@ public class RequestItem {
         }
 
 
-        request.setStatus(activeUserId);
+        request.setActiveUserId(activeUserId);
+        request.setStatus();
         request.formatDates();
 
         return request;
@@ -163,7 +166,8 @@ public class RequestItem {
         Gson gson = new Gson();
         RequestItem request = gson.fromJson(jsonObjectString, RequestItem.class);
 
-        request.setStatus(activeUserId);
+        request.setActiveUserId(activeUserId);
+        request.setStatus();
         request.formatDates();
 
         return request;
@@ -189,7 +193,8 @@ public class RequestItem {
                 .setClosedComment(other.getClosedComment())
                 .setClosedPictures(other.getClosedPictures())
                 .setClosedReputation(other.getClosedReputation())
-                .setStatus(other.getStatus());
+                .setStatus(other.getStatus())
+                .setActiveUserId(other.getActiveUserId());
 
         return newRequest;
     }
@@ -203,25 +208,22 @@ public class RequestItem {
             setClosedAt(UtilMethods.formatDate(getClosedAt()));
     }
 
-    private void setStatus(RequestStatus status) {
-        mStatus = status;
-    }
 
 
-    private void setStatus(long activeUserId) {
+    private void setStatus() {
 
         if (getClosedBy() != 0) {
-            if (activeUserId == getClosedBy())
+            if (mActiveUserId == getClosedBy())
                 mStatus = RequestStatus.CLOSED_BY_ME;
             else
                 mStatus = RequestStatus.CLOSED_BY_OTHER;
         } else if (getPickedUpBy() != 0) {
-            if (activeUserId == getPickedUpBy())
+            if (mActiveUserId == getPickedUpBy())
                 mStatus = RequestStatus.PICKED_UP_BY_ME;
             else
                 mStatus = RequestStatus.PICKED_UP_BY_OTHER;
         } else if (getCreatedBy() != 0) {
-            if (activeUserId == getCreatedBy())
+            if (mActiveUserId == getCreatedBy())
                 mStatus = RequestStatus.NEW_BY_ME;
             else
                 mStatus = RequestStatus.NEW_BY_OTHER;
@@ -268,6 +270,7 @@ public class RequestItem {
 
     public RequestItem setCreatedBy(long user) {
         mCreatedBy = user;
+        setStatus();
         return this;
     }
 
@@ -312,6 +315,7 @@ public class RequestItem {
 
     public RequestItem setPickedUpBy(long user) {
         mPickedUpBy = user;
+        setStatus();
         return this;
     }
 
@@ -323,6 +327,7 @@ public class RequestItem {
 
     public RequestItem setClosedBy(long user) {
         mClosedBy = user;
+        setStatus();
         return this;
     }
 
@@ -348,6 +353,20 @@ public class RequestItem {
         return this;
     }
 
+
+    private RequestItem setStatus(RequestStatus status) {
+        mStatus = status;
+        return this;
+    }
+
+    /**
+     * Active user ID is only used for determination of RequestItem's status
+     */
+    public RequestItem setActiveUserId(long userId) {
+        mActiveUserId = userId;
+        setStatus();
+        return this;
+    }
 
 
     // ---------------------------------------------------------------------------------------------
@@ -422,5 +441,10 @@ public class RequestItem {
     public RequestItem.RequestStatus getStatus() {
         return mStatus;
     }
+
+    public long getActiveUserId() {
+        return mActiveUserId;
+    }
+
 
 }

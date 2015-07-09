@@ -39,7 +39,7 @@ public class DataDownloader implements ServerHttpRequest.OnServerResponseCallbac
      */
     private final Object CONTENT_PROVIDER_CLIENT_LOCK = new Object();
 
-    private static final int SERVER_REQUEST_TIMEOUT_MILLIS = 30000;
+    private static final int SERVER_REQUEST_TIMEOUT_MILLIS = 60000;
 
     private Account mAccount;
     private String mAuthToken;
