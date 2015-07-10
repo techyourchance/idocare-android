@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import il.co.idocare.controllers.interfaces.MyFragmentInterface;
 import il.co.idocare.handlermessaging.HandlerMessagingMaster;
 import il.co.idocare.handlermessaging.HandlerMessagingSlave;
 import il.co.idocare.pojos.RequestItem;
@@ -27,45 +28,24 @@ import il.co.idocare.pojos.RequestItem;
  * Fragments of this app should extend this class.
  */
 public abstract class AbstractFragment extends Fragment implements
+        MyFragmentInterface,
         HandlerMessagingMaster,
         HandlerMessagingSlave {
 
-    IDoCareFragmentCallback mCallback;
+    MyFragmentInterface.IDoCareFragmentCallback mCallback;
 
     HandlerThread mInboxHandlerThread;
     Handler mInboxHandler;
     final List<Handler> mOutboxHandlers = new ArrayList<Handler>();
     private ProgressDialog mProgressDialog;
 
-    /**
-     * Top level fragment =  a fragment which does not have parent in navigation hierarchy
-     * @return true if this fragment is a "top level fragment"
-     */
-    public abstract boolean isTopLevelFragment();
-
-    /**
-     * If {@link #isTopLevelFragment() isTopLevelFragment} returns false, then this method should
-     * be used to obtain the parent of this fragment in the navigation hierarchy.<br>
-     * This information might be used, for example, when navigating to a "non-top-level fragment"
-     * via Navigation Drawer - in this case the UP button on Action Bar should bring the user to the
-     * fragment returned by this method (which might be different from previously shown fragment).
-     * @return the class of the navigation hierarchy parent of this fragment, or null (for top
-     *         level fragments)
-     */
-    public abstract Class<? extends AbstractFragment> getNavHierParentFragment();
-
-    /**
-     * Get fragment's title
-     * @return fragment's title, or null if the fragment does not have a title
-     */
-    public abstract String getTitle();
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
         try {
-            mCallback = (IDoCareFragmentCallback) activity;
+            mCallback = (MyFragmentInterface.IDoCareFragmentCallback) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement IDoCareFragmentCallback");
@@ -75,18 +55,16 @@ public abstract class AbstractFragment extends Fragment implements
 
 
     /**
-     * Call to this method replaces the currently shown fragment with a new one
-     * @param claz the class of the new fragment.
-     * @param addToBackStack whether the old fragment should be added to the back stack.
-     * @param args arguments to be set for the new fragment
+     * See {@link IDoCareFragmentCallback#replaceFragment(Class, boolean, boolean, Bundle)}
      */
     public void replaceFragment(Class<? extends Fragment> claz, boolean addToBackStack,
-                                 Bundle args) {
-        mCallback.replaceFragment(claz, addToBackStack, args);
+                                 boolean clearBackStack, Bundle args) {
+        mCallback.replaceFragment(claz, addToBackStack, clearBackStack, args);
     }
 
+
     /**
-     * Change ActionBar title
+     * See {@link IDoCareFragmentCallback#setActionBarTitle(String)}
      */
     public void setActionBarTitle(String title) {
         mCallback.setActionBarTitle(title);
@@ -120,19 +98,15 @@ public abstract class AbstractFragment extends Fragment implements
 
 
     /**
-     * This method obtains the auth token for the active account (as specified in SharedPreferences).
-     * If no IDoCare accounts registered on the device, or active account is not set, or the auth
-     * token is not valid - the user will be prompted for credentials using AccountManager's APIs.
-     *
-     * This method might block and should not be called on the main thread.
-     * @return AccountManagerFuture object as returned by GetAuthToken() of AccountManager.
+     * See {@link IDoCareFragmentCallback#getAuthTokenForActiveAccount()}
      */
     public String getAuthTokenForActiveAccount() throws AuthenticatorException, OperationCanceledException, IOException {
         return mCallback.getAuthTokenForActiveAccount();
     }
 
+
     /**
-     * @return the active account as specified in SharedPreferences, null if no account specified
+     * See {@link IDoCareFragmentCallback#getActiveAccount()}
      */
     public Account getActiveAccount() {
         return mCallback.getActiveAccount();
@@ -203,51 +177,6 @@ public abstract class AbstractFragment extends Fragment implements
 
 
     // End of MVC Controller methods
-    //
-    // ---------------------------------------------------------------------------------------------
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // Inner classes and interfaces
-
-    /**
-     * The enclosing activity must implement this interface
-     */
-    public interface IDoCareFragmentCallback {
-
-        /**
-         * Call to this method replaces the currently shown fragment with a new one
-         * @param claz the class of the new fragment
-         * @param addToBackStack whether the old fragment should be added to the back stack
-         * @param args arguments to be set for the new fragment
-         */
-        public void replaceFragment(Class<? extends Fragment> claz, boolean addToBackStack,
-                                    Bundle args);
-
-        /**
-         * Change ActionBar title
-         */
-        public void setActionBarTitle(String title);
-
-        /**
-         * This method obtains the auth token for the active account (as specified in SharedPreferences).
-         * If no IDoCare accounts registered on the device, or active account is not set, or the auth
-         * token is not valid - the user will be prompted for credentials using AccountManager's APIs.
-         *
-         * This method might block and should not be called on the main thread.
-         * @return AccountManagerFuture object as returned by GetAuthToken() of AccountManager.
-         */
-        public String getAuthTokenForActiveAccount() throws AuthenticatorException, OperationCanceledException, IOException;
-
-        /**
-         * @return the active account as specified in SharedPreferences, null if no account specified
-         */
-        public Account getActiveAccount();
-
-    }
-
-
-    // End of inner classes and interfaces
     //
     // ---------------------------------------------------------------------------------------------
 

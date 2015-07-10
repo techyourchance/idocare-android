@@ -11,22 +11,41 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.IOException;
 
 import il.co.idocare.R;
 import il.co.idocare.authentication.AccountAuthenticator;
-import il.co.idocare.controllers.fragments.AbstractFragment;
+import il.co.idocare.controllers.interfaces.MyFragmentInterface;
 
 /**
  * This is a wrapper around a standard Activity class which provides few convenience methods
  */
 public abstract class AbstractActivity extends Activity implements
-        AbstractFragment.IDoCareFragmentCallback {
+        MyFragmentInterface.IDoCareFragmentCallback{
 
     private static final String LOG_TAG = AbstractActivity.class.getSimpleName();
-    private static final String ACTIVE_ACCOUNT_NAME_KEY = "idocare_active_account_name";
 
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        getFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                manageNavigateUpButton();
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (onNavigateUp()) {
+            return;
+        }
+
+        super.onBackPressed();
+    }
 
 
     // ---------------------------------------------------------------------------------------------
@@ -34,8 +53,15 @@ public abstract class AbstractActivity extends Activity implements
     // Fragments management
 
     // TODO: maybe we need to preserve the state of the replaced fragments?
+    @Override
     public void replaceFragment(Class<? extends Fragment> claz, boolean addToBackStack,
-                                Bundle args) {
+                                boolean clearBackStack, Bundle args) {
+
+        if (clearBackStack) {
+            // Remove all entries from back stack
+            getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+
 
         if (isFragmentShown(claz)) {
             // The requested fragment is already shown - nothing to do
@@ -59,22 +85,22 @@ public abstract class AbstractActivity extends Activity implements
             return;
         }
 
-
-        // If the new fragment is a subclass of AbstractFragment
-        if (AbstractFragment.class.isAssignableFrom(claz)) {
-
-            if (((AbstractFragment) newFragment).isTopLevelFragment()) {
-                // Top level fragments don't have UP button
-                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            } else if (addToBackStack) {
-                ft.addToBackStack(null);
-            }
-
+        if (addToBackStack) {
+            ft.addToBackStack(null);
         }
 
         // Change to a new fragment
         ft.replace(R.id.frame_contents, newFragment, claz.getClass().getSimpleName());
         ft.commit();
+
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getFragmentManager().executePendingTransactions();
+                manageNavigateUpButton();
+            }
+        });
 
     }
 
@@ -113,6 +139,57 @@ public abstract class AbstractActivity extends Activity implements
     }
 
     // End of action bar management
+    //
+    // ---------------------------------------------------------------------------------------------
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Up navigation button management
+
+    private void manageNavigateUpButton() {
+        if (getActionBar() != null) {
+            // The "navigate up" button should be enabled if either there are entries in the
+            // back stack, or the currently shown fragment has a hierarchical parent
+
+            boolean hasBackstackEntries = getFragmentManager().getBackStackEntryCount() > 0;
+
+            Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
+
+            boolean hasHierParent = currFragment != null &&
+                    MyFragmentInterface.class.isAssignableFrom(currFragment.getClass()) &&
+                    ((MyFragmentInterface)currFragment).getNavHierParentFragment() != null;
+
+            getActionBar().setDisplayHomeAsUpEnabled(hasBackstackEntries || hasHierParent);
+        }
+    }
+
+    @Override
+    public boolean onNavigateUp() {
+
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+            return true;
+        } else {
+            Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
+            // Check if currently shown fragment is of type MyFragmentInterface
+            if (currFragment != null &&
+                    MyFragmentInterface.class.isAssignableFrom(currFragment.getClass())) {
+                // Get the hierarchical parent of the currently shown fragment
+                Class<? extends Fragment> hierParent =
+                        ((MyFragmentInterface)currFragment).getNavHierParentFragment();
+
+                if (hierParent != null) {
+                    replaceFragment(hierParent, false, true, null);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    // End of  up navigation button management
     //
     // ---------------------------------------------------------------------------------------------
 

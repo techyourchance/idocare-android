@@ -251,7 +251,7 @@ public class NewRequestFragment extends AbstractFragment {
             @Override
             protected void onPostExecute(Void aVoid) {
                 dismissProgressDialog();
-                replaceFragment(HomeFragment.class, false, null);
+                replaceFragment(HomeFragment.class, false, true, null);
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[] {null});
 

@@ -79,7 +79,7 @@ public class HomeFragment extends AbstractFragment implements
                 Bundle args = new Bundle();
                 args.putLong(Constants.FIELD_NAME_REQUEST_ID, requestId);
                 // Replace with RequestDetailsFragment and pass the bundle as argument
-                replaceFragment(RequestDetailsFragment.class, true, args);
+                replaceFragment(RequestDetailsFragment.class, true, false, args);
             }
         });
 
@@ -141,7 +141,7 @@ public class HomeFragment extends AbstractFragment implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add_new_request:
-                replaceFragment(NewRequestFragment.class, true, null);
+                replaceFragment(NewRequestFragment.class, true, false, null);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

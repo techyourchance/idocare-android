@@ -42,7 +42,7 @@ public class StartupActivity extends AbstractActivity {
         the functionality of startup activity in the future (if such a need arises)
          */
         if (savedInstanceState == null) {
-            replaceFragment(SplashFragment.class, false, null);
+            replaceFragment(SplashFragment.class, false, true, null);
         }
     }
 

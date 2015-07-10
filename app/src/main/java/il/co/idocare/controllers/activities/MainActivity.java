@@ -3,7 +3,6 @@ package il.co.idocare.controllers.activities;
 import android.accounts.Account;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -32,16 +31,24 @@ import il.co.idocare.controllers.fragments.NewRequestFragment;
 import il.co.idocare.pojos.NavigationDrawerEntry;
 
 
-public class MainActivity extends AbstractActivity implements
-        FragmentManager.OnBackStackChangedListener {
+public class MainActivity extends AbstractActivity {
 
     private static final String LOG_TAG = "MainActivity";
 
 
     public GoogleApiClient mGoogleApiClient;
 
+    @Override
+    public void onBackPressed() {
 
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawerLayout.isDrawerVisible(Gravity.START)) {
+            drawerLayout.closeDrawer(Gravity.START);
+            return;
+        }
 
+        super.onBackPressed();
+    }
 
     // ---------------------------------------------------------------------------------------------
     //
@@ -58,7 +65,7 @@ public class MainActivity extends AbstractActivity implements
 
         // Show Home fragment if the app is not restored
         if (savedInstanceState == null) {
-            replaceFragment(HomeFragment.class, false, null);
+            replaceFragment(HomeFragment.class, false, true, null);
         }
 
         initUniversalImageLoader();
@@ -66,10 +73,6 @@ public class MainActivity extends AbstractActivity implements
         buildGoogleApiClient();
 
         setupDrawer();
-
-        // This callback will be used to show/hide up (back) button in actionbar
-        getFragmentManager().addOnBackStackChangedListener(this);
-
 
     }
 
@@ -80,9 +83,6 @@ public class MainActivity extends AbstractActivity implements
         if (mGoogleApiClient != null) mGoogleApiClient.connect();
 
         enableAutomaticSync();
-
-        // TODO: verify that this call resolves the missing UP button when the activity is restarted
-        onBackStackChanged();
 
     }
 
@@ -111,30 +111,6 @@ public class MainActivity extends AbstractActivity implements
     }
 
     // End of activity lifecycle management
-    //
-    // ---------------------------------------------------------------------------------------------
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // Back stack management
-
-
-    @Override
-    public void onBackStackChanged() {
-        if (getActionBar() != null) {
-            // Enable Up button only  if there are entries in the back stack
-            boolean hasBackstackEntries = getFragmentManager().getBackStackEntryCount() > 0;
-            getActionBar().setDisplayHomeAsUpEnabled(hasBackstackEntries);
-        }
-    }
-
-    @Override
-    public boolean onNavigateUp() {
-        getFragmentManager().popBackStack();
-        return true;
-    }
-
-    // End of back stack management
     //
     // ---------------------------------------------------------------------------------------------
 
@@ -183,12 +159,12 @@ public class MainActivity extends AbstractActivity implements
 
                 String chosenEntry = adapter.getItem(position).getTitle();
 
-                // Can't do switch/case on Strings :(
+
                 if (chosenEntry.equals(getResources().getString(R.string.nav_drawer_entry_home))) {
-                    replaceFragment(HomeFragment.class, false, null);
+                    replaceFragment(HomeFragment.class, false, true, null);
                 }
                 else if (chosenEntry.equals(getResources().getString(R.string.nav_drawer_entry_new_request))) {
-                    replaceFragment(NewRequestFragment.class, false, null);
+                    replaceFragment(NewRequestFragment.class, false, true, null);
                 }
                 else if (chosenEntry.equals(getResources().getString(R.string.nav_drawer_entry_logout))) {
                     MainActivity.this.logOutCurrentUser();
@@ -196,11 +172,6 @@ public class MainActivity extends AbstractActivity implements
                 else {
                     Log.e(LOG_TAG, "drawer entry \"" + chosenEntry + "\" has no functionality");
                 }
-
-                // Clear back-stack
-                // TODO: this is correct only if all entries in the drawer are "top level"
-                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
             }
         });
     }
@@ -211,16 +182,16 @@ public class MainActivity extends AbstractActivity implements
 
         drawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
 
-            private boolean mIsDrawerVisibleLast = false;
+            private boolean isDrawerVisibleLast = false;
 
             @Override
             public void onDrawerSlide(View view, float v) {
-                boolean isDrawerVivible = drawerLayout.isDrawerVisible(Gravity.START);
+                boolean isDrawerVisible = drawerLayout.isDrawerVisible(Gravity.START);
 
                 // For performance update the action bar only when the state of drawer changes
-                if (isDrawerVivible != mIsDrawerVisibleLast) {
+                if (isDrawerVisible != isDrawerVisibleLast) {
 
-                    if (isDrawerVivible) {
+                    if (isDrawerVisible) {
                         setActionBarTitle("");
                     } else {
                         Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
@@ -231,7 +202,7 @@ public class MainActivity extends AbstractActivity implements
 
                     invalidateOptionsMenu();
 
-                    mIsDrawerVisibleLast = isDrawerVivible;
+                    isDrawerVisibleLast = isDrawerVisible;
                 }
             }
 

@@ -233,7 +233,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
         Bundle args = new Bundle();
         args.putLong(Constants.FIELD_NAME_REQUEST_ID, mRequestId);
-        replaceFragment(CloseRequestFragment.class, true, args);
+        replaceFragment(CloseRequestFragment.class, true, false, args);
     }
 
 

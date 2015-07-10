@@ -262,7 +262,7 @@ public class CloseRequestFragment extends AbstractFragment {
                 Bundle args = new Bundle();
                 args.putLong(Constants.FIELD_NAME_REQUEST_ID, mRequestId);
 
-                replaceFragment(RequestDetailsFragment.class, false, args);
+                replaceFragment(RequestDetailsFragment.class, false, true, args);
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[] {null});
 
