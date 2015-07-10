@@ -219,11 +219,13 @@ public class NewRequestFragment extends AbstractFragment {
         // Generate a temporary ID for this request - the actual ID will be assigned by the server
         long tempId = UUID.randomUUID().getLeastSignificantBits();
 
+        long timestamp = System.currentTimeMillis();
 
         // Create entries for a newly created request
         final ContentValues requestCV = new ContentValues();
         requestCV.put(IDoCareContract.Requests.COL_REQUEST_ID, tempId);
         requestCV.put(IDoCareContract.Requests.COL_CREATED_BY, createdBy);
+        requestCV.put(IDoCareContract.Requests.COL_CREATED_AT, timestamp);
         requestCV.put(IDoCareContract.Requests.COL_CREATED_COMMENT, createdComment);
         requestCV.put(IDoCareContract.Requests.COL_CREATED_PICTURES, createdPictures);
         requestCV.put(IDoCareContract.Requests.COL_LONGITUDE, longitude);
@@ -232,6 +234,7 @@ public class NewRequestFragment extends AbstractFragment {
 
         // Create entries for user action corresponding to request's creation
         final ContentValues userActionCV = new ContentValues();
+        userActionCV.put(IDoCareContract.UserActions.COL_TIMESTAMP, timestamp);
         userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_TYPE,
                 IDoCareContract.UserActions.ENTITY_TYPE_REQUEST);
         userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_ID, tempId);

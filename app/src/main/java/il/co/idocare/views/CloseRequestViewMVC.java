@@ -20,7 +20,9 @@ import il.co.idocare.R;
  */
 public class CloseRequestViewMVC extends AbstractViewMVC {
 
-    private final static String LOG_TAG = "CloseRequestViewMVC";
+    public static final String KEY_CLOSED_COMMENT = Constants.FIELD_NAME_CLOSED_COMMENT;
+
+    private final static String LOG_TAG = CloseRequestViewMVC.class.getSimpleName();
 
 
     private View mRootView;
@@ -81,8 +83,7 @@ public class CloseRequestViewMVC extends AbstractViewMVC {
     @Override
     public Bundle getViewState() {
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.FIELD_NAME_CLOSED_COMMENT,
-                mEdtClosedComment.getText().toString());
+        bundle.putString(KEY_CLOSED_COMMENT, mEdtClosedComment.getText().toString());
         return bundle;
     }
 }

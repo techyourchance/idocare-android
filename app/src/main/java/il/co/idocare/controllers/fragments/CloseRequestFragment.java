@@ -1,16 +1,24 @@
 package il.co.idocare.controllers.fragments;
 
 import android.app.Activity;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -21,14 +29,15 @@ import java.util.Locale;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
+import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.networking.ServerHttpRequest;
 import il.co.idocare.utils.UtilMethods;
 import il.co.idocare.views.CloseRequestViewMVC;
 
 
-public class CloseRequestFragment extends AbstractFragment implements ServerHttpRequest.OnServerResponseCallback {
+public class CloseRequestFragment extends AbstractFragment {
 
-    private final static String LOG_TAG = "CloseRequestFragment";
+    private final static String LOG_TAG = CloseRequestFragment.class.getSimpleName();
 
 
 
@@ -59,7 +68,6 @@ public class CloseRequestFragment extends AbstractFragment implements ServerHttp
 
         // Restore state from bundle (if required)
         restoreSavedStateIfNeeded(savedInstanceState);
-
 
         setActionBarTitle(getTitle());
 
@@ -181,72 +189,84 @@ public class CloseRequestFragment extends AbstractFragment implements ServerHttp
     }
 
     /**
-     * Create, populate and execute a new server request of type "close request" based
-     * on the contents of fragment's views
+     * Store information about request closure in a local database
      */
     private void closeRequest() {
 
-//        String id = getActiveAccount().name;
-//        if (TextUtils.isEmpty(id)) {
-//            // TODO: decide what to do
-//            return;
-//        }
-//
-//
-//        showProgressDialog("Please wait...", "Closing the request...");
-//
-//        Bundle closeRequestBundle = mCloseRequestViewMVC.getViewState();
-//
-//        ServerRequest serverRequest = new ServerRequest(ServerRequest.CLOSE_REQUEST_URL,
-//                ServerRequest.ServerRequestTag.CLOSE_REQUEST, this);
-//
-//        try {
-//            IDoCareHttpUtils.addStandardHeaders(serverRequest, id, getAuthTokenForActiveAccount());
-//        } catch (AuthenticatorException e) {
-//            e.printStackTrace();
-//        } catch (OperationCanceledException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        // Set request ID
-//        serverRequest.addTextField(FIELD_NAME_REQUEST_ID, String.valueOf(mRequestId));
-//
-//        // Set closed comment
-//        if (closeRequestBundle.getString(FIELD_NAME_CLOSED_COMMENT).length() > 0) {
-//            serverRequest.addTextField(FIELD_NAME_CLOSED_COMMENT,
-//                    closeRequestBundle.getString(FIELD_NAME_CLOSED_COMMENT));
-//        }
-//
-//        // Set closed pictures
-//        for (int i = 0; i < mCameraPicturesPaths.size(); i++) {
-//            serverRequest.addPicture(FIELD_NAME_CLOSED_PICTURES,
-//                    "picture" + String.valueOf(i) + ".jpg", mCameraPicturesPaths.get(i));
-//        }
-//
-//        serverRequest.execute();
+        String closedBy = getActiveAccount().name;
+        if (TextUtils.isEmpty(closedBy)) {
+            Toast.makeText(getActivity(), "No active account found", Toast.LENGTH_LONG).show();
+            Log.i(LOG_TAG, "No active account found - request close failed");
+            return;
+        }
+
+        showProgressDialog("Please wait...", "Closing the request...");
+
+        StringBuilder sb = new StringBuilder("");
+        for (int i=0; i<mCameraPicturesPaths.size(); i++) {
+            sb.append(mCameraPicturesPaths.get(i));
+            if (i < mCameraPicturesPaths.size()-1) sb.append(", ");
+        }
+        String closedPictures = sb.toString();
+
+        Bundle bundleCloseRequest = mCloseRequestViewMVC.getViewState();
+        String closedComment =
+                bundleCloseRequest.getString(CloseRequestViewMVC.KEY_CLOSED_COMMENT);
+
+        // Create JSON object containing comment and pictures
+
+        JSONObject userActionParamJson = new JSONObject();
+        try {
+            userActionParamJson.put(Constants.FIELD_NAME_CLOSED_BY, closedBy);
+            userActionParamJson.put(Constants.FIELD_NAME_CLOSED_COMMENT, closedComment);
+            userActionParamJson.put(Constants.FIELD_NAME_CLOSED_PICTURES, closedPictures);
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            dismissProgressDialog();
+            return;
+        }
+        String userActionParam = userActionParamJson.toString();
+
+        // Entries to update request with LOCALLY_MODIFIED flag
+        final ContentValues requestCV = new ContentValues();
+        requestCV.put(IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG, 1);
+
+        // Create entries for user action corresponding to request's close
+        final ContentValues userActionCV = new ContentValues();
+        userActionCV.put(IDoCareContract.UserActions.COL_TIMESTAMP, System.currentTimeMillis());
+        userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_TYPE,
+                IDoCareContract.UserActions.ENTITY_TYPE_REQUEST);
+        userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_ID, mRequestId);
+        userActionCV.put(IDoCareContract.UserActions.COL_ACTION_TYPE,
+                IDoCareContract.UserActions.ACTION_TYPE_CLOSE_REQUEST);
+        userActionCV.put(IDoCareContract.UserActions.COL_ACTION_PARAM, userActionParam);
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                getContentResolver().update(
+                        ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI, mRequestId),
+                        requestCV,
+                        null,
+                        null);
+                getContentResolver().insert(IDoCareContract.UserActions.CONTENT_URI, userActionCV);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                dismissProgressDialog();
+
+                // Create a bundle and put the id there
+                Bundle args = new Bundle();
+                args.putLong(Constants.FIELD_NAME_REQUEST_ID, mRequestId);
+
+                replaceFragment(RequestDetailsFragment.class, false, args);
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[] {null});
+
 
     }
 
-//
-//    @Override
-//    public void serverResponse(UserActionItem userAction, int statusCode, String reasonPhrase, String entityString) {
-//
-//        if (userAction == ServerRequest.ServerRequestTag.CLOSE_REQUEST) {
-//            if (responseStatusOk && IDoCareJSONUtils.verifySuccessfulStatus(entityString)) {
-//                dismissProgressDialog();
-//                // TODO: need to update local sql db
-//                replaceFragment(HomeFragment.class, false, null);
-//                Toast.makeText(getActivity(), "Request closed successfully", Toast.LENGTH_SHORT).show();
-//            }
-//        } else {
-//            Log.e(LOG_TAG, "serverResponse was called with unrecognized tag: " + userAction.toString());
-//        }
-//    }
-
-    @Override
-    public void serverResponse(int statusCode, String reasonPhrase, String entityString, Object asyncCompletionToken) {
-
-    }
 }

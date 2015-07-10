@@ -2,6 +2,10 @@ package il.co.idocare.controllers.listadapters;
 
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.interfaces.RequestUserActionApplier;
 import il.co.idocare.pojos.RequestItem;
@@ -45,6 +49,32 @@ public class RequestUserActionApplierImpl implements RequestUserActionApplier {
                 } else {
                     Log.e(LOG_TAG, "tried to apply PICKUP_REQUEST user action to request which" +
                             "has already been picked up");
+                }
+                break;
+
+            case IDoCareContract.UserActions.ACTION_TYPE_CLOSE_REQUEST:
+                if (request.getClosedBy() == 0) {
+                    String closedBy;
+                    String closedComment;
+                    String closedPictures;
+                    try {
+                        JSONObject userActionParamJson = new JSONObject(userAction.mActionParam);
+                        closedBy = userActionParamJson.getString(Constants.FIELD_NAME_CLOSED_BY);
+                        closedComment = userActionParamJson.getString(Constants.FIELD_NAME_CLOSED_COMMENT);
+                        closedPictures = userActionParamJson.getString(Constants.FIELD_NAME_CLOSED_PICTURES);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(LOG_TAG, "Couldn't parse CLOSE_REQUEST action's param as JSON");
+                        break;
+                    }
+
+                    request.setClosedBy(Long.valueOf(closedBy));
+                    request.setClosedAt(UtilMethods.formatDate(userAction.mTimestamp));
+                    request.setClosedComment(closedComment);
+                    request.setClosedPictures(closedPictures);
+                } else {
+                    Log.e(LOG_TAG, "tried to apply CLOSE_REQUEST user action to request which" +
+                            "has already been closed");
                 }
                 break;
 

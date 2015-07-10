@@ -41,6 +41,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
     private RequestDetailsViewMVC mRequestDetailsViewMVC;
 
     private long mRequestId;
+    private RequestItem mRawRequestItem;
     private RequestItem mRequestItem;
 
     private Cursor mUsersCursor;
@@ -403,14 +404,13 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
             if (cursor != null && cursor.moveToFirst()) {
 
-                mRequestItem = RequestItem.create(cursor, Long.valueOf(getActiveAccount().name));
+                mRawRequestItem = RequestItem.create(cursor, Long.valueOf(getActiveAccount().name));
 
-                refreshView();
+                if (mRawRequestItem != null) {
 
-                if (mRequestItem != null) {
-                    // Once got request's data - init users and user actions loaders
-                    if (getLoaderManager().getLoader(USERS_LOADER) == null)
-                        getLoaderManager().initLoader(USERS_LOADER, null, this);
+                    refreshRequest();
+
+                    // Once got request's data - init user actions loader
                     if (getLoaderManager().getLoader(USER_ACTIONS_LOADER) == null)
                         getLoaderManager().initLoader(USER_ACTIONS_LOADER, null, this);
                 }
@@ -442,12 +442,17 @@ public class RequestDetailsFragment extends AbstractFragment implements
         } else if (loader.getId() == USERS_LOADER) {
 
             mUsersCursor = cursor;
-            refreshView();
+            refreshUsers();
 
         } else if (loader.getId() == USER_ACTIONS_LOADER) {
 
             mUserActionsCursor = cursor;
-            refreshView();
+
+            refreshRequest();
+
+            // Once got users actions and applied them to the request - restart users loader
+            // TODO: this is wasteful operation - users loaders should be restarted only if data for new user should be fetched!
+            getLoaderManager().restartLoader(USERS_LOADER, null, this);
 
         } else {
             Log.e(LOG_TAG, "onLoadFinished() called with unrecognized loader id: " + loader.getId());
@@ -474,12 +479,9 @@ public class RequestDetailsFragment extends AbstractFragment implements
     // ---------------------------------------------------------------------------------------------
 
 
+    private void refreshRequest() {
 
-
-    private void refreshView() {
-
-        RequestItem combinedRequestItem = RequestItem.create(mRequestItem);
-
+        RequestItem combinedRequestItem = RequestItem.create(mRawRequestItem);
 
         if (mUserActionsCursor != null && mUserActionsCursor.moveToFirst()) {
 
@@ -491,22 +493,41 @@ public class RequestDetailsFragment extends AbstractFragment implements
             } while (mUserActionsCursor.moveToNext());
         }
 
-        mRequestDetailsViewMVC.bindRequestItem(combinedRequestItem);
+        mRequestItem = combinedRequestItem;
+
+        mRequestDetailsViewMVC.bindRequestItem(mRequestItem);
+
+        refreshUsers();
+
+    }
+
+
+    private void refreshUsers() {
+
 
         if (mUsersCursor != null && mUsersCursor.moveToFirst()) {
             do {
                 UserItem user = UserItem.create(mUsersCursor);
 
-                if (user.getId() == combinedRequestItem.getCreatedBy()) {
+                boolean used = false;
+
+                if (user.getId() == mRequestItem.getCreatedBy()) {
                     mRequestDetailsViewMVC.bindCreatedByUser(user);
-                } else if (user.getId() == combinedRequestItem.getPickedUpBy()) {
+                    used = true;
+                }
+                if (user.getId() == mRequestItem.getPickedUpBy()) {
                     mRequestDetailsViewMVC.bindPickedUpByUser(user);
-                } else if (user.getId() == combinedRequestItem.getClosedBy()) {
+                    used = true;
+                }
+                if (user.getId() == mRequestItem.getClosedBy()) {
                     mRequestDetailsViewMVC.bindClosedByUser(user);
-                } else {
+                    used = true;
+                }
+
+                if (!used)
                     Log.e(LOG_TAG, "user's data returned in the mUsersCursor does not correspond to" +
                             "either of creating, picking up or closing user IDs in the request.");
-                }
+
 
             } while (mUsersCursor.moveToNext());
         }

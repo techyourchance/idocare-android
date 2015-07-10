@@ -8,6 +8,9 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.pojos.RequestItem;
@@ -75,14 +78,17 @@ public class DataUploaderAssistant {
                         break;
 
                     case IDoCareContract.UserActions.ACTION_TYPE_PICKUP_REQUEST:
-                        addPickupSpecificInfo(serverHttpRequest, userAction);
+                        addPickupRequestSpecificInfo(serverHttpRequest, userAction);
                         break;
+
                     case IDoCareContract.UserActions.ACTION_TYPE_CLOSE_REQUEST:
-                        throw new UnsupportedOperationException("'" + actionType + "' action type" +
-                                "is not supported yet!");
+                        addCloseRequestSpecificInfo(serverHttpRequest, userAction);
+                        break;
+
                     case IDoCareContract.UserActions.ACTION_TYPE_VOTE:
                         addVoteSpecificInfo(serverHttpRequest, userAction);
                         break;
+
                     default:
                         throw new IllegalArgumentException("unknown action type '" + actionType
                                 + "' for entity '" + entityType + "'");
@@ -145,8 +151,10 @@ public class DataUploaderAssistant {
             String[] createdPicturesUris =
                     requestItem.getCreatedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
             for (int i = 0; i < createdPicturesUris.length; i++) {
-                serverHttpRequest.addPictureField(Constants.FIELD_NAME_CREATED_PICTURES,
-                        "picture" + String.valueOf(i), createdPicturesUris[i]);
+                if (!TextUtils.isEmpty(createdPicturesUris[i])) {
+                    serverHttpRequest.addPictureField(Constants.FIELD_NAME_CREATED_PICTURES,
+                            "picture" + String.valueOf(i), createdPicturesUris[i]);
+                }
             }
         }
     }
@@ -156,24 +164,67 @@ public class DataUploaderAssistant {
                                      UserActionItem userAction) {
         serverHttpRequest.addStandardHeaders();
 
-        serverHttpRequest.addTextField(Constants.FIELD_NAME_SCORE,
-                userAction.mActionParam);
+        if (!TextUtils.isEmpty(userAction.mActionParam)) {
+            serverHttpRequest.addTextField(Constants.FIELD_NAME_SCORE, userAction.mActionParam);
+        }
+
         serverHttpRequest.addTextField(Constants.FIELD_NAME_ENTITY_ID,
                 String.valueOf(userAction.mEntityId));
-        serverHttpRequest.addTextField(Constants.FIELD_NAME_ENTITY_PARAM,
-                userAction.mEntityParam);
+
+        if (!TextUtils.isEmpty(userAction.mEntityParam)) {
+            serverHttpRequest.addTextField(Constants.FIELD_NAME_ENTITY_PARAM, userAction.mEntityParam);
+        }
 
     }
 
 
-    private void addPickupSpecificInfo(ServerHttpRequest serverHttpRequest,
-                                     UserActionItem userAction) {
+    private void addPickupRequestSpecificInfo(ServerHttpRequest serverHttpRequest,
+                                              UserActionItem userAction) {
         serverHttpRequest.addStandardHeaders();
 
         serverHttpRequest.addTextField(Constants.FIELD_NAME_REQUEST_ID,
                 String.valueOf(userAction.mEntityId));
 
     }
+
+
+    private void addCloseRequestSpecificInfo(ServerHttpRequest serverHttpRequest,
+                                             UserActionItem userAction) {
+        String closedComment = null;
+        String closedPictures = null;
+
+        try {
+            JSONObject json = new JSONObject(userAction.mActionParam);
+            closedComment = json.getString(Constants.FIELD_NAME_CLOSED_COMMENT);
+            closedPictures = json.getString(Constants.FIELD_NAME_CLOSED_PICTURES);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, "couldn't parse CLOSED_REQUEST action param as JSON object");
+        }
+
+        serverHttpRequest.addStandardHeaders();
+
+        serverHttpRequest.addTextField(Constants.FIELD_NAME_REQUEST_ID,
+                String.valueOf(userAction.mEntityId));
+
+        if (!TextUtils.isEmpty(closedComment)) {
+            serverHttpRequest.addTextField(Constants.FIELD_NAME_CLOSED_COMMENT, closedComment);
+        }
+
+        if (!TextUtils.isEmpty(closedPictures)) {
+            String[] closedPicturesUris =
+                    closedPictures.split(Constants.PICTURES_LIST_SEPARATOR);
+            for (int i = 0; i < closedPicturesUris.length; i++) {
+                if (!TextUtils.isEmpty(closedPicturesUris[i])) {
+                    serverHttpRequest.addPictureField(Constants.FIELD_NAME_CLOSED_PICTURES,
+                            "picture" + String.valueOf(i), closedPicturesUris[i]);
+                }
+            }
+        }
+
+
+    }
+
 
     /**
      * Get URL of the appropriate server API based on the type of user action that needs to be
