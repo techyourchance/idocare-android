@@ -82,6 +82,9 @@
             android:writePermission="il.co.idocare.provider.WRITE" >
         </provider>
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCJMl3iqa_187Ux3vO4xc7qZ7vwZqofBos"/>
 
 
     </application>
