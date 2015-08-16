@@ -95,13 +95,17 @@ public class RequestDetailsFragment extends AbstractFragment implements
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putLong(Constants.FIELD_NAME_REQUEST_ID, mRequestId);
+	if (outState != null) {
+	    outState.putLong(Constants.FIELD_NAME_REQUEST_ID, mRequestId);
+	}
     }
 
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        mRequestId = savedInstanceState.getLong(Constants.FIELD_NAME_REQUEST_ID);
+	if (savedInstanceState != null) {
+	    mRequestId = savedInstanceState.getLong(Constants.FIELD_NAME_REQUEST_ID);
+	}
     }
 
     @Override
