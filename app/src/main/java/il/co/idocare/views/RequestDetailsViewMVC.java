@@ -13,6 +13,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.net.MalformedURLException;
@@ -61,6 +70,8 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
     private ImageView[] mImgClosedPictures;
     private ImageView mImgClosedVoteUp;
     private ImageView mImgClosedVoteDown;
+
+    private MapView mMapPreview;
 
     private Button mBtnPickUpRequest;
     private Button mBtnCloseRequest;
@@ -143,6 +154,9 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         mImgClosedPictures[0] = (ImageView) includedView.findViewById(R.id.img_picture0);
         mImgClosedPictures[1] = (ImageView) includedView.findViewById(R.id.img_picture1);
         mImgClosedPictures[2] = (ImageView) includedView.findViewById(R.id.img_picture2);
+
+        // The map
+        mMapPreview = (MapView) mRootView.findViewById(R.id.map_preview);
 
         // "Close" button
         mBtnPickUpRequest = (Button) mRootView.findViewById(R.id.btn_pickup_request);
@@ -416,7 +430,18 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
     }
 
     private void configureLocationViews() {
-        mTxtFineLocation.setText(mRequestItem.getLocation()); // TODO: enhance
+        GoogleMap map = mMapPreview.getMap();
+
+        MapsInitializer.initialize(getRootView().getContext());
+        map.setMyLocationEnabled(false); // Don't show my location
+        map.setBuildingsEnabled(false); // Don't show 3D buildings
+        map.getUiSettings().setMapToolbarEnabled(false); // No toolbar needed in a lite preview
+
+        LatLng location = new LatLng(mRequestItem.getLatitude(), mRequestItem.getLongitude());
+        // Center the camera at request location
+        map.moveCamera(CameraUpdateFactory.newLatLng(location));
+        // Put a marker
+        map.addMarker(new MarkerOptions().position(location));
     }
 
     /**

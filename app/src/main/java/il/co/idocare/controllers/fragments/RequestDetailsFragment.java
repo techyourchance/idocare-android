@@ -16,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.MapView;
+
 import java.util.ArrayList;
 
 import il.co.idocare.Constants;
@@ -56,7 +58,6 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
         setActionBarTitle(getTitle());
 
-
         Bundle args = getArguments();
         if (args == null) {
             // TODO: handle this error somehow (maybe pop back stack?)
@@ -64,6 +65,10 @@ public class RequestDetailsFragment extends AbstractFragment implements
         } else {
             mRequestId = args.getLong(Constants.FIELD_NAME_REQUEST_ID);
         }
+
+        // Initialize the map inside the MVC view
+        ((MapView)mRequestDetailsViewMVC.getRootView().findViewById(R.id.map_preview))
+                .onCreate(savedInstanceState);
 
         getLoaderManager().initLoader(REQUEST_LOADER, null, this);
 
