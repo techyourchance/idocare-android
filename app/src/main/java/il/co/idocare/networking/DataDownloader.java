@@ -14,8 +14,9 @@ import java.util.concurrent.TimeUnit;
 
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
+import il.co.idocare.networking.interfaces.ServerResponseHandlerFactory;
 import il.co.idocare.networking.responsehandlers.RequestsDownloadServerResponseHandler;
-import il.co.idocare.networking.responsehandlers.ServerResponseHandler;
+import il.co.idocare.networking.interfaces.ServerResponseHandler;
 import il.co.idocare.networking.responsehandlers.UsersDownloadServerResponseHandler;
 
 /**
@@ -24,8 +25,6 @@ import il.co.idocare.networking.responsehandlers.UsersDownloadServerResponseHand
 public class DataDownloader implements ServerHttpRequest.OnServerResponseCallback {
 
 
-    public final static String GET_ALL_REQUESTS_URL = Constants.ROOT_URL + "/api-04/request";
-    public final static String GET_USER_URL = Constants.ROOT_URL + "/api-04/user/get";
 
     private static final String LOG_TAG = DataDownloader.class.getSimpleName();
 
@@ -44,16 +43,18 @@ public class DataDownloader implements ServerHttpRequest.OnServerResponseCallbac
     private Account mAccount;
     private String mAuthToken;
     private ContentProviderClient mProvider;
+    private ServerResponseHandlerFactory mServerResponseHandlerFactory;
 
     private ThreadPoolExecutor mExecutor;
 
     private List<Long> mUniqueUserIds;
 
-    public DataDownloader(Account account, String authToken, ContentProviderClient provider) {
+    public DataDownloader(Account account, String authToken, ContentProviderClient provider,
+                          ServerResponseHandlerFactory serverResponseHandlerFactory) {
         mAccount = account;
         mAuthToken = authToken;
         mProvider = provider;
-
+        mServerResponseHandlerFactory = serverResponseHandlerFactory;
 
         mUniqueUserIds = new ArrayList<>();
 
@@ -85,15 +86,7 @@ public class DataDownloader implements ServerHttpRequest.OnServerResponseCallbac
 
         String url = (String) asyncCompletionToken;
 
-        ServerResponseHandler responseHandler = null;
-
-        if (url.equals(GET_ALL_REQUESTS_URL)) {
-            responseHandler = new RequestsDownloadServerResponseHandler();
-        } else if (url.equals(GET_USER_URL)) {
-            responseHandler = new UsersDownloadServerResponseHandler();
-        } else {
-            Log.e(LOG_TAG, "receiver serverResponse() callback for unrecognized URL: " + url);
-        }
+        ServerResponseHandler responseHandler = mServerResponseHandlerFactory.newInstance(url);
 
         if (responseHandler != null) {
             try {
@@ -111,8 +104,8 @@ public class DataDownloader implements ServerHttpRequest.OnServerResponseCallbac
 
     private void downloadRequestsData() {
 
-        ServerHttpRequest serverRequest = new ServerHttpRequest(GET_ALL_REQUESTS_URL,
-                mAccount, mAuthToken, this, GET_ALL_REQUESTS_URL);
+        ServerHttpRequest serverRequest = new ServerHttpRequest(Constants.GET_ALL_REQUESTS_URL,
+                mAccount, mAuthToken, this, Constants.GET_ALL_REQUESTS_URL);
 
         if (mAccount != null) serverRequest.addStandardHeaders();
 
@@ -206,8 +199,8 @@ public class DataDownloader implements ServerHttpRequest.OnServerResponseCallbac
     }
 
     private ServerHttpRequest createUserServerRequest(long userId) {
-        ServerHttpRequest serverRequest = new ServerHttpRequest(GET_USER_URL, mAccount, mAuthToken,
-                this, GET_USER_URL);
+        ServerHttpRequest serverRequest = new ServerHttpRequest(Constants.GET_USER_URL,
+                mAccount, mAuthToken, this, Constants.GET_USER_URL);
         serverRequest.addTextField(Constants.FIELD_NAME_USER_ID, String.valueOf(userId));
 
         return serverRequest;

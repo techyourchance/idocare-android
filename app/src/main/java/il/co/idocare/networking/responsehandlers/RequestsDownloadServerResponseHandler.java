@@ -10,17 +10,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
+import il.co.idocare.networking.interfaces.ServerResponseHandler;
 import il.co.idocare.pojos.RequestItem;
 
 /**
  * This class processes a response from the server containing array of requests
  */
-public class RequestsDownloadServerResponseHandler extends ServerResponseHandler.AbstractServerResponseHandler {
+public class RequestsDownloadServerResponseHandler extends AbstractServerResponseHandler {
 
     private static final String LOG_TAG = RequestsDownloadServerResponseHandler.class.getSimpleName();
 
@@ -47,12 +49,13 @@ public class RequestsDownloadServerResponseHandler extends ServerResponseHandler
 
             // Parse the contents of individual JSON objects in the array
             try {
-                request = RequestItem.create(requestsJsonArray.getJSONObject(i).toString(), 0);
-                requestsIdsList.add(request.getId());
+                request = RequestItem.create(requestsJsonArray.getJSONObject(i).toString());
             } catch (JSONException e) {
                 e.printStackTrace();
                 continue;
             }
+
+            requestsIdsList.add(request.getId());
 
             // Handle the update or the insertion of a single request entry
             updateOrInsertEntry(request, provider);
@@ -93,35 +96,27 @@ public class RequestsDownloadServerResponseHandler extends ServerResponseHandler
 
     private void updateOrInsertEntry(RequestItem request, ContentProviderClient provider) {
 
-        if (request == null) return;
-
         Cursor cursor = null;
         try {
-            // We need to know whether there is a request with the same ID in the cache and
-            // if it is - check its "locally modified" flag
+            // We need to know whether there is a request with the same ID in DB
             cursor = provider.query(
                     ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI,
                             request.getId()),
-                    new String[]{IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG},
+                    new String[]{IDoCareContract.Requests._ID},
                     null,
                     null,
                     null
             );
 
             if (cursor != null && cursor.moveToFirst()) {
-                // There is a request with this ID in the local cache
-                boolean locallyModified = cursor.getInt(cursor.getColumnIndex(
-                        IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG)) > 0;
-                if (!locallyModified) {
-                    // Update the corresponding request entry unless it is locally modified
-                    provider.update(
-                            ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI,
-                                    request.getId()),
-                            request.toContentValues(),
-                            IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG + " = 0",
-                            null
-                    );
-                }
+                // Update the corresponding request entry unless it is locally modified
+                provider.update(
+                        ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI,
+                                request.getId()),
+                        request.toContentValues(),
+                        IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG + " = 0",
+                        null
+                );
             } else {
                 // Insert a new request entry
                 provider.insert(IDoCareContract.Requests.CONTENT_URI, request.toContentValues());

@@ -166,6 +166,8 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         configureCreatedViews();
         // Handle the views related to pickup info
         configureClosedViews();
+        // Configure location
+        configureLocationViews();
         // Handle the pickup button functionality
         configurePickupButton();
         // Handle the close button functionality
@@ -413,6 +415,9 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
 
     }
 
+    private void configureLocationViews() {
+        mTxtFineLocation.setText(mRequestItem.getLocation()); // TODO: enhance
+    }
 
     /**
      * Handle the view of the pickup button

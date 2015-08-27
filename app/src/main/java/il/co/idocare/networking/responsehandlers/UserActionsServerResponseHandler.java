@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
+import il.co.idocare.networking.interfaces.ServerResponseHandler;
 import il.co.idocare.pojos.RequestItem;
 import il.co.idocare.pojos.UserActionItem;
 
@@ -18,7 +19,7 @@ import il.co.idocare.pojos.UserActionItem;
  * Instances of this class handle server's responses to user's actions uploading
  */
 
-public class UserActionsServerResponseHandler extends ServerResponseHandler.AbstractServerResponseHandler {
+public class UserActionsServerResponseHandler extends AbstractServerResponseHandler {
 
     private static final String LOG_TAG = UserActionsServerResponseHandler.class.getSimpleName();
 
@@ -161,7 +162,7 @@ public class UserActionsServerResponseHandler extends ServerResponseHandler.Abst
         RequestItem requestItem = null;
         try {
             requestItem = RequestItem.create(new JSONObject(entityString)
-                    .getJSONObject(Constants.FIELD_NAME_RESPONSE_DATA).toString(), 0);
+                    .getJSONObject(Constants.FIELD_NAME_RESPONSE_DATA).toString());
         } catch (JSONException e) {
             e.printStackTrace();
             throw new ServerResponseHandlerException();

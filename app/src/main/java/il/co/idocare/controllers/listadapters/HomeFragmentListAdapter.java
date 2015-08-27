@@ -1,5 +1,7 @@
 package il.co.idocare.controllers.listadapters;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.view.View;
@@ -11,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import il.co.idocare.authentication.AccountAuthenticator;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.interfaces.RequestUserActionApplier;
 import il.co.idocare.controllers.interfaces.RequestsCombinedCursorAdapter;
@@ -66,7 +69,7 @@ public class HomeFragmentListAdapter extends CursorAdapter implements
         RequestItem request;
 
         try {
-             request = RequestItem.create(cursor, mActiveAccountId);
+            request = RequestItem.create(cursor);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             // TODO: consider more sophisticated error handling (maybe destroy the view?)
@@ -77,6 +80,13 @@ public class HomeFragmentListAdapter extends CursorAdapter implements
             for (UserActionItem userAction : mUserActionsCache.get(request.getId())) {
                 request = mRequestUserActionApplier.applyUserAction(request, userAction);
             }
+        }
+
+        // Set request's status
+        // TODO: remove this in favor of an external dependency (Asana #47055190657814)
+        Account account = getActiveAccount(context);
+        if (account != null) {
+            request.setStatus(Long.valueOf(account.name));
         }
 
 
@@ -153,6 +163,16 @@ public class HomeFragmentListAdapter extends CursorAdapter implements
 
     @Override
     public RequestItem getRequestAtPosition(int position) {
-        return RequestItem.create((Cursor) this.getItem(position), mActiveAccountId);
+        return RequestItem.create((Cursor) this.getItem(position));
+    }
+
+    // TODO: remove this in favor of an external dependency (Asana #47055190657814)
+    public Account getActiveAccount(Context context) {
+        Account[] accounts = AccountManager.get(context).getAccountsByType(AccountAuthenticator.ACCOUNT_TYPE);
+        if (accounts.length > 0) {
+            return accounts[0];
+        } else {
+            return null;
+        }
     }
 }

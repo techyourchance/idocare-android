@@ -14,6 +14,7 @@ import android.util.Log;
 import java.io.IOException;
 
 import il.co.idocare.authentication.AccountAuthenticator;
+import il.co.idocare.networking.interfaces.ServerResponseHandlerFactory;
 
 /**
  * Our sync adapter
@@ -65,9 +66,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         // and the respective ContentProvider will be updated
         dataUploader.uploadAll();
 
+        ServerResponseHandlerFactory serverResponseHandlerFactory =
+                new SimpleServerResponseHandlerFactory();
 
         DataDownloader dataDownloader =
-                new DataDownloader(account, authToken, provider);
+                new DataDownloader(account, authToken, provider, serverResponseHandlerFactory);
 
         // This call will block until all relevant data will be synchronized from the server
         // and the respective ContentProvider will be updated

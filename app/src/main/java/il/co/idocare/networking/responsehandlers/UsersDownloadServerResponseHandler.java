@@ -2,26 +2,21 @@ package il.co.idocare.networking.responsehandlers;
 
 import android.content.ContentProviderClient;
 import android.content.ContentUris;
-import android.database.Cursor;
 import android.os.RemoteException;
 import android.util.Log;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.pojos.RequestItem;
+import il.co.idocare.networking.interfaces.ServerResponseHandler;
 import il.co.idocare.pojos.UserItem;
 
 /**
  * This class processes a response from the server containing information about a particular user
  */
-public class UsersDownloadServerResponseHandler extends ServerResponseHandler.AbstractServerResponseHandler {
+public class UsersDownloadServerResponseHandler extends AbstractServerResponseHandler {
 
     private static final String LOG_TAG = UsersDownloadServerResponseHandler.class.getSimpleName();
 

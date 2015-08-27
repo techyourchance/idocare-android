@@ -7,7 +7,7 @@ import il.co.idocare.pojos.UserItem;
 /**
  * Created by Vasiliy on 7/5/2015.
  */
-public class UserUserActionApplierImpl implements UserUserActionApplier {
+public class UserActionsOnUserApplierImpl implements UserUserActionApplier {
 
 
     @Override

@@ -22,8 +22,8 @@ import il.co.idocare.R;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.interfaces.RequestsCombinedCursorAdapter;
 import il.co.idocare.controllers.listadapters.HomeFragmentListAdapter;
-import il.co.idocare.controllers.listadapters.RequestUserActionApplierImpl;
-import il.co.idocare.controllers.listadapters.UserUserActionApplierImpl;
+import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
+import il.co.idocare.controllers.listadapters.UserActionsOnUserApplierImpl;
 import il.co.idocare.pojos.RequestItem;
 import il.co.idocare.views.HomeViewMVC;
 
@@ -59,7 +59,7 @@ public class HomeFragment extends AbstractFragment implements
     private void initializeThumbnailsList() {
 
         mAdapter = new HomeFragmentListAdapter(getActivity(), null, 0, Long.valueOf(getActiveAccount().name),
-                new RequestUserActionApplierImpl(), new UserUserActionApplierImpl());
+                new UserActionsOnRequestApplierImpl(), new UserActionsOnUserApplierImpl());
         final ListView requestThumbnails =
                 (ListView) mHomeViewMVC.getRootView().findViewById(R.id.list_requests_thumbnails);
         requestThumbnails.setAdapter(mAdapter);
@@ -163,7 +163,8 @@ public class HomeFragment extends AbstractFragment implements
             // required by CursorAdapter framework
             String[] projection = new String[RequestItem.MANDATORY_REQUEST_FIELDS.length + 1];
             projection[0] = IDoCareContract.Requests._ID;
-            System.arraycopy(RequestItem.MANDATORY_REQUEST_FIELDS, 0, projection, 1, RequestItem.MANDATORY_REQUEST_FIELDS.length);
+            System.arraycopy(RequestItem.MANDATORY_REQUEST_FIELDS, 0, projection, 1,
+                    RequestItem.MANDATORY_REQUEST_FIELDS.length);
 
 
             // Change these values when adding filtering and sorting

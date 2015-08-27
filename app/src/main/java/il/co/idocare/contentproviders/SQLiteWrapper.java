@@ -250,7 +250,7 @@ public class SQLiteWrapper {
 
         private static final String LOG_TAG = MySQLiteOpenHelper.class.getSimpleName();
 
-        private static final int DATABASE_VERSION = 1;
+        private static final int DATABASE_VERSION = 1; 
 
         private static final String DATABASE_NAME = "idocare_db";
 
@@ -268,41 +268,42 @@ public class SQLiteWrapper {
                 + IDoCareContract.Requests.COL_CREATED_AT + " DATETIME, "
                 + IDoCareContract.Requests.COL_PICKED_UP_AT + " DATETIME, "
                 + IDoCareContract.Requests.COL_CLOSED_AT + " DATETIME, "
-                + IDoCareContract.Requests.COL_CREATED_COMMENT + " VARCHAR(1000), "
-                + IDoCareContract.Requests.COL_CLOSED_COMMENT + " VARCHAR(1000), "
+                + IDoCareContract.Requests.COL_CREATED_COMMENT + " TEXT, "
+                + IDoCareContract.Requests.COL_CLOSED_COMMENT + " TEXT, "
                 + IDoCareContract.Requests.COL_LATITUDE + " REAL, "
                 + IDoCareContract.Requests.COL_LONGITUDE + " REAL, "
-                + IDoCareContract.Requests.COL_CREATED_PICTURES + " VARCHAR(1000), "
-                + IDoCareContract.Requests.COL_CLOSED_PICTURES + " VARCHAR(1000), "
+                + IDoCareContract.Requests.COL_CREATED_PICTURES + " TEXT, "
+                + IDoCareContract.Requests.COL_CLOSED_PICTURES + " TEXT, "
                 + IDoCareContract.Requests.COL_POLLUTION_LEVEL + " INTEGER, "
                 + IDoCareContract.Requests.COL_CLOSED_BY + " INTEGER, "
                 + IDoCareContract.Requests.COL_CREATED_REPUTATION + " INTEGER DEFAULT 0, "
                 + IDoCareContract.Requests.COL_CLOSED_REPUTATION + " INTEGER DEFAULT 0, "
+                + IDoCareContract.Requests.COL_LOCATION + " TEXT, "
                 + IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG + " INTEGER DEFAULT 0);";
 
 
         private static final String CREATE_USERS_TABLE = "CREATE TABLE " + USERS_TABLE_NAME + " ( "
                 + IDoCareContract.Users._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + IDoCareContract.Users.COL_USER_ID + " INTEGER, "
-                + IDoCareContract.Users.COL_USER_NICKNAME + " VARCHAR(1000), "
-                + IDoCareContract.Users.COL_USER_FIRST_NAME + " VARCHAR(1000), "
-                + IDoCareContract.Users.COL_USER_LAST_NAME + " VARCHAR(1000), "
+                + IDoCareContract.Users.COL_USER_NICKNAME + " TEXT, "
+                + IDoCareContract.Users.COL_USER_FIRST_NAME + " TEXT, "
+                + IDoCareContract.Users.COL_USER_LAST_NAME + " TEXT, "
                 + IDoCareContract.Users.COL_USER_REPUTATION + " INTEGER, "
-                + IDoCareContract.Users.COL_USER_PICTURE + " VARCHAR(1000) ); ";
+                + IDoCareContract.Users.COL_USER_PICTURE + " TEXT ); ";
 
 
         private static final String CREATE_USER_ACTIONS_TABLE =
                 "CREATE TABLE " + USER_ACTIONS_TABLE_NAME + " ( "
                 + IDoCareContract.UserActions._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + IDoCareContract.UserActions.COL_TIMESTAMP + " INTEGER, "
-                + IDoCareContract.UserActions.COL_ENTITY_TYPE + " VARCHAR(1000), "
+                + IDoCareContract.UserActions.COL_ENTITY_TYPE + " TEXT, "
                 + IDoCareContract.UserActions.COL_ENTITY_ID + " INTEGER, "
-                + IDoCareContract.UserActions.COL_ENTITY_PARAM + " VARCHAR(        1000), "
-                + IDoCareContract.UserActions.COL_ACTION_TYPE + " VARCHAR(1000), "
-                + IDoCareContract.UserActions.COL_ACTION_PARAM + " VARCHAR(1000), "
+                + IDoCareContract.UserActions.COL_ENTITY_PARAM + " TEXT, "
+                + IDoCareContract.UserActions.COL_ACTION_TYPE + " TEXT, "
+                + IDoCareContract.UserActions.COL_ACTION_PARAM + " TEXT, "
                 + IDoCareContract.UserActions.COL_SERVER_RESPONSE_STATUS_CODE + " INTEGER DEFAULT 0, "
-                + IDoCareContract.UserActions.COL_SERVER_RESPONSE_REASON_PHRASE + " VARCHAR(1000) DEFAULT '', "
-                + IDoCareContract.UserActions.COL_SERVER_RESPONSE_ENTITY + " VARCHAR(10000) DEFAULT '' );";
+                + IDoCareContract.UserActions.COL_SERVER_RESPONSE_REASON_PHRASE + " TEXT DEFAULT '', "
+                + IDoCareContract.UserActions.COL_SERVER_RESPONSE_ENTITY + " TEXT DEFAULT '' );";
 
 
         private static final String CREATE_TEMP_ID_MAPPINGS_TABLE =

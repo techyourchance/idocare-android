@@ -127,7 +127,7 @@ public class DataUploaderAssistant {
                     null,
                     null);
             if (cursor != null && cursor.moveToFirst()) {
-                requestItem = RequestItem.create(cursor, Long.valueOf(mAccount.name));
+                requestItem = RequestItem.create(cursor);
             }
         } catch (RemoteException e) {
             e.printStackTrace();

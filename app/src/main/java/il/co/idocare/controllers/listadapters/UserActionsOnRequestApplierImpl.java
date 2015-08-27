@@ -15,9 +15,9 @@ import il.co.idocare.utils.UtilMethods;
 /**
  * Created by Vasiliy on 7/5/2015.
  */
-public class RequestUserActionApplierImpl implements RequestUserActionApplier {
+public class UserActionsOnRequestApplierImpl implements RequestUserActionApplier {
 
-    private static final String LOG_TAG = RequestUserActionApplierImpl.class.getSimpleName();
+    private static final String LOG_TAG = UserActionsOnRequestApplierImpl.class.getSimpleName();
 
 
 

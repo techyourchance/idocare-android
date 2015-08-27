@@ -9,9 +9,23 @@ public class Constants {
     public static final java.lang.String PICTURES_LIST_SEPARATOR = ", ";
 
 
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // URLs
+
     private final static String DEV_ROOT_URL = "http://dev-04.idocare.co.il";
     private final static String QA_ROOT_URL = "http://qa-04.idocare.co.il";
+
     public final static String ROOT_URL = DEV_ROOT_URL;
+
+
+    public final static String GET_ALL_REQUESTS_URL = ROOT_URL + "/api-04/request";
+    public final static String GET_USER_URL = ROOT_URL + "/api-04/user/get";
+
+    // End of URLs
+    //
+    // ---------------------------------------------------------------------------------------------
 
 
     // ---------------------------------------------------------------------------------------------
@@ -55,6 +69,8 @@ public class Constants {
     public static final String FIELD_NAME_CLOSED_COMMENT = "closed_comment";
     public static final String FIELD_NAME_CLOSED_PICTURES = "closed_pictures";
     public static final String FIELD_NAME_CLOSED_REPUTATION = "closed_reputation";
+
+    public static final String FIELD_NAME_LOCATION= "location";
 
     // End of fields' names
     //

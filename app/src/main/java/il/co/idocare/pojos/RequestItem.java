@@ -4,9 +4,12 @@ package il.co.idocare.pojos;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.Locale;
 
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract.Requests;
@@ -44,41 +47,40 @@ public class RequestItem {
 
 
     @SerializedName(Constants.FIELD_NAME_REQUEST_ID)
-    private long mId;
+    private long mId = 0;
     @SerializedName(Constants.FIELD_NAME_CREATED_BY)
-    private long mCreatedBy;
+    private long mCreatedBy = 0;
     @SerializedName(Constants.FIELD_NAME_CREATED_AT)
-    private String mCreatedAt;
+    private String mCreatedAt = null;
     @SerializedName(Constants.FIELD_NAME_CREATED_COMMENT)
-    private String mCreatedComment;
+    private String mCreatedComment = null;
     @SerializedName(Constants.FIELD_NAME_CREATED_PICTURES)
-    private String mCreatedPictures;
+    private String mCreatedPictures = null;
     @SerializedName(Constants.FIELD_NAME_CREATED_REPUTATION)
-    private int mCreatedReputation;
+    private int mCreatedReputation = 0;
     @SerializedName(Constants.FIELD_NAME_LATITUDE)
-    private double mLat;
+    private double mLat = 0;
     @SerializedName(Constants.FIELD_NAME_LONGITUDE)
-    private double mLong;
+    private double mLong = 0;
     @SerializedName(Constants.FIELD_NAME_CREATED_POLLUTION_LEVEL)
-    private int mCreatedPollutionLevel;
+    private int mCreatedPollutionLevel = 0;
     @SerializedName(Constants.FIELD_NAME_PICKED_UP_BY)
-    private long mPickedUpBy;
+    private long mPickedUpBy = 0;
     @SerializedName(Constants.FIELD_NAME_PICKED_UP_AT)
-    private String mPickedUpAt;
+    private String mPickedUpAt = null;
     @SerializedName(Constants.FIELD_NAME_CLOSED_BY)
-    private long mClosedBy;
+    private long mClosedBy = 0;
     @SerializedName(Constants.FIELD_NAME_CLOSED_AT)
-    private String mClosedAt;
+    private String mClosedAt = null;
     @SerializedName(Constants.FIELD_NAME_CLOSED_COMMENT)
-    private String mClosedComment;
+    private String mClosedComment = null;
     @SerializedName(Constants.FIELD_NAME_CLOSED_PICTURES)
-    private String mClosedPictures;
+    private String mClosedPictures = null;
     @SerializedName(Constants.FIELD_NAME_CLOSED_REPUTATION)
-    private int mClosedReputation;
+    private int mClosedReputation = 0;
 
-
-    private long mActiveUserId;
-    private RequestStatus mStatus;
+    private String mLocation = null;
+    private RequestStatus mStatus = RequestStatus.UNKNOWN;
 
 
     private RequestItem(long id) {
@@ -88,12 +90,11 @@ public class RequestItem {
     /**
      * Create RequestItem object by querying the cursor at the current position.
      * @param cursor the Cursor to be queried
-     * @param activeUserId ID of the active user, or 0 if the user isn't logged in
      * @return newly created RequestItem object
      * @throws IllegalArgumentException if any of the mandatory fields (as specified by
      * {@link RequestItem#MANDATORY_REQUEST_FIELDS}) are missing from the cursor
      */
-    public static RequestItem create(Cursor cursor, long activeUserId)
+    public static RequestItem create(Cursor cursor)
             throws IllegalArgumentException {
         RequestItem request = null;
 
@@ -147,10 +148,10 @@ public class RequestItem {
         if ((i = cursor.getColumnIndex(Constants.FIELD_NAME_CLOSED_REPUTATION)) != -1) {
             request.setClosedReputation(cursor.getInt(i));
         }
+        if ((i = cursor.getColumnIndex(Constants.FIELD_NAME_LOCATION)) != -1) {
+            request.setLocation(cursor.getString(i));
+        }
 
-
-        request.setActiveUserId(activeUserId);
-        request.setStatus();
         request.formatDates();
 
         return request;
@@ -160,14 +161,11 @@ public class RequestItem {
     /**
      * Create RequestItem from a string formatted as JSON object
      * @param jsonObjectString a string formatted as JSON object having request's data
-     * @param activeUserId ID of the active user, or 0 if the user isn't logged in
      */
-    public static RequestItem create(String jsonObjectString, long activeUserId) {
+    public static RequestItem create(String jsonObjectString) {
         Gson gson = new Gson();
         RequestItem request = gson.fromJson(jsonObjectString, RequestItem.class);
 
-        request.setActiveUserId(activeUserId);
-        request.setStatus();
         request.formatDates();
 
         return request;
@@ -193,12 +191,15 @@ public class RequestItem {
                 .setClosedComment(other.getClosedComment())
                 .setClosedPictures(other.getClosedPictures())
                 .setClosedReputation(other.getClosedReputation())
-                .setStatus(other.getStatus())
-                .setActiveUserId(other.getActiveUserId());
+                .setLocation(other.getLocation())
+                .setStatus(other.getStatus());
 
         return newRequest;
     }
 
+    /*
+    TODO: why is this method here? Why formatting dates at all? If formatting - not here!
+     */
     private void formatDates() {
         if (!TextUtils.isEmpty(getCreatedAt()))
             setCreatedAt(UtilMethods.formatDate(getCreatedAt()));
@@ -209,28 +210,34 @@ public class RequestItem {
     }
 
 
-
-    private void setStatus() {
+    /**
+     * This method will set a correct status for this request based on the ID of the currently
+     * active user.
+     * @param activeUserId
+     */
+    public void setStatus(long activeUserId) {
 
         if (getClosedBy() != 0) {
-            if (mActiveUserId == getClosedBy())
-                mStatus = RequestStatus.CLOSED_BY_ME;
+            if (activeUserId == getClosedBy())
+                setStatus(RequestStatus.CLOSED_BY_ME);
             else
-                mStatus = RequestStatus.CLOSED_BY_OTHER;
+                setStatus(RequestStatus.CLOSED_BY_OTHER);
         } else if (getPickedUpBy() != 0) {
-            if (mActiveUserId == getPickedUpBy())
-                mStatus = RequestStatus.PICKED_UP_BY_ME;
+            if (activeUserId == getPickedUpBy())
+                setStatus(RequestStatus.PICKED_UP_BY_ME);
             else
-                mStatus = RequestStatus.PICKED_UP_BY_OTHER;
+                setStatus(RequestStatus.PICKED_UP_BY_OTHER);
         } else if (getCreatedBy() != 0) {
-            if (mActiveUserId == getCreatedBy())
-                mStatus = RequestStatus.NEW_BY_ME;
+            if (activeUserId == getCreatedBy())
+                setStatus(RequestStatus.NEW_BY_ME);
             else
-                mStatus = RequestStatus.NEW_BY_OTHER;
+                setStatus(RequestStatus.NEW_BY_OTHER);
         } else {
-            throw new IllegalStateException("Could not set request's status! Fields' values:\n" +
-                    "Created by: " + getCreatedBy() + ". Picked up by: " + getPickedUpBy() + "." +
-                    "Closed by: " + getClosedBy());
+            Log.e(LOG_TAG, "Could not set request status! Supplied user ID: " + activeUserId +
+                    "\nFields values:" +
+                    "\nCreated by: " + getCreatedBy() +
+                    "\nPicked up by: " + getPickedUpBy() +
+                    "\nClosed by: " + getClosedBy());
         }
     }
 
@@ -257,6 +264,7 @@ public class RequestItem {
         values.put(Requests.COL_CLOSED_COMMENT, getClosedComment());
         values.put(Requests.COL_CLOSED_PICTURES, getClosedPictures());
         values.put(Requests.COL_CLOSED_REPUTATION, getClosedReputation());
+        values.put(Requests.COL_LOCATION, getLocation());
 
         return values;
     }
@@ -270,7 +278,6 @@ public class RequestItem {
 
     public RequestItem setCreatedBy(long user) {
         mCreatedBy = user;
-        setStatus();
         return this;
     }
 
@@ -315,7 +322,6 @@ public class RequestItem {
 
     public RequestItem setPickedUpBy(long user) {
         mPickedUpBy = user;
-        setStatus();
         return this;
     }
 
@@ -327,7 +333,6 @@ public class RequestItem {
 
     public RequestItem setClosedBy(long user) {
         mClosedBy = user;
-        setStatus();
         return this;
     }
 
@@ -353,18 +358,13 @@ public class RequestItem {
         return this;
     }
 
-
-    private RequestItem setStatus(RequestStatus status) {
-        mStatus = status;
+    public RequestItem setLocation(String location) {
+        mLocation = location;
         return this;
     }
 
-    /**
-     * Active user ID is only used for determination of RequestItem's status
-     */
-    public RequestItem setActiveUserId(long userId) {
-        mActiveUserId = userId;
-        setStatus();
+    private RequestItem setStatus(RequestStatus status) {
+        mStatus = status;
         return this;
     }
 
@@ -438,13 +438,14 @@ public class RequestItem {
         return mClosedReputation;
     }
 
+    public String getLocation() {
+        return mLocation;
+    }
+
     public RequestItem.RequestStatus getStatus() {
         return mStatus;
     }
 
-    public long getActiveUserId() {
-        return mActiveUserId;
-    }
 
 
 }

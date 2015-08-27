@@ -18,7 +18,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import il.co.idocare.networking.responsehandlers.ServerResponseHandler;
+import il.co.idocare.networking.interfaces.ServerResponseHandler;
 import il.co.idocare.networking.responsehandlers.UserActionsServerResponseHandler;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.pojos.UserActionItem;

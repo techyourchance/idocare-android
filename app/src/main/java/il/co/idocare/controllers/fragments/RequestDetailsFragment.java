@@ -22,7 +22,7 @@ import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.interfaces.RequestUserActionApplier;
-import il.co.idocare.controllers.listadapters.RequestUserActionApplierImpl;
+import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
 import il.co.idocare.pojos.RequestItem;
 import il.co.idocare.pojos.UserActionItem;
 import il.co.idocare.pojos.UserItem;
@@ -408,7 +408,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
             if (cursor != null && cursor.moveToFirst()) {
 
-                mRawRequestItem = RequestItem.create(cursor, Long.valueOf(getActiveAccount().name));
+                mRawRequestItem = RequestItem.create(cursor);
 
                 if (mRawRequestItem != null) {
 
@@ -489,7 +489,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
         if (mUserActionsCursor != null && mUserActionsCursor.moveToFirst()) {
 
-            RequestUserActionApplier requestUserActionApplier = new RequestUserActionApplierImpl();
+            RequestUserActionApplier requestUserActionApplier = new UserActionsOnRequestApplierImpl();
             do {
                 UserActionItem userAction = UserActionItem.create(mUserActionsCursor);
                 combinedRequestItem = requestUserActionApplier.applyUserAction(combinedRequestItem,
@@ -498,6 +498,8 @@ public class RequestDetailsFragment extends AbstractFragment implements
         }
 
         mRequestItem = combinedRequestItem;
+
+        mRequestItem.setStatus(Long.valueOf(getActiveAccount().name));
 
         mRequestDetailsViewMVC.bindRequestItem(mRequestItem);
 
