@@ -77,6 +77,7 @@
             android:layout_marginStart="@dimen/fragment_default_padding"
             android:layout_marginRight="@dimen/fragment_default_padding"
             android:layout_marginEnd="@dimen/fragment_default_padding"
+            android:layout_marginBottom="@dimen/fragment_default_margin"
             map:liteMode="true"
             map:cameraZoom="@integer/map_preview_lite_default_zoom"/>
 
