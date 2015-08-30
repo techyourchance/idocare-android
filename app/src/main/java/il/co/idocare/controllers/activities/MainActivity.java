@@ -23,7 +23,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.controllers.fragments.MyFragmentInterface;
+import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
 import il.co.idocare.controllers.listadapters.NavigationDrawerListAdapter;
 import il.co.idocare.controllers.fragments.HomeFragment;
 import il.co.idocare.R;
@@ -198,8 +198,8 @@ public class MainActivity extends AbstractActivity {
                     } else {
                         Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
                         if (currFragment != null &&
-                                MyFragmentInterface.class.isAssignableFrom(currFragment.getClass())) {
-                            setActionBarTitle(((MyFragmentInterface)currFragment).getTitle());
+                                IDoCareFragmentInterface.class.isAssignableFrom(currFragment.getClass())) {
+                            setActionBarTitle(((IDoCareFragmentInterface)currFragment).getTitle());
                         }
                     }
 

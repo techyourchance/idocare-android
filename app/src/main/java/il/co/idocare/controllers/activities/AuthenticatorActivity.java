@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 import android.util.Base64;
 import android.util.Log;
@@ -21,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.authentication.AccountAuthenticator;
 import il.co.idocare.networking.ServerHttpRequest;
@@ -30,7 +30,8 @@ import il.co.idocare.views.AuthenticateViewMVC;
 /**
  * Created by Vasiliy on 4/30/2015.
  */
-public class AuthenticatorActivity extends AccountAuthenticatorActivity implements ServerHttpRequest.OnServerResponseCallback {
+public class AuthenticatorActivity extends AccountAuthenticatorActivity implements
+        ServerHttpRequest.OnServerResponseCallback {
 
     public final static String ARG_ACCOUNT_NAME = "arg_account_name";
     public final static String ARG_AUTH_TOKEN_TYPE = "arg_auth_type";
@@ -46,16 +47,11 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
 
     private AuthenticateViewMVC mViewMVC;
 
-    private final List<Handler> mOutboxHandlers = new ArrayList<Handler>();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mViewMVC = new AuthenticateViewMVC(LayoutInflater.from(this), null);
-
-        mViewMVC.addOutboxHandler(getInboxHandler());
-        addOutboxHandler(mViewMVC.getInboxHandler());
 
         setContentView(mViewMVC.getRootView());
 
@@ -64,6 +60,33 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
 //        }
 
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+        EventBus.getDefault().register(mViewMVC);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(mViewMVC);
+    }
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // EventBus events handling
+
+    public void onEvent(AuthenticateViewMVC.LoginButtonClickEvent event) {
+        sendLoginRequest();
+    }
+
+    // End of EventBus events handling
+    //
+    // ---------------------------------------------------------------------------------------------
 
 
     /**
@@ -95,7 +118,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
 
         new Thread(serverRequest).start();
 
-        notifyOutboxHandlers(Constants.MessageType.C_LOGIN_REQUEST_SENT.ordinal(), 0, 0, null);
+        EventBus.getDefault().post(new AuthenticateViewMVC.LoginRequestSentEvent());
 
     }
 
@@ -105,8 +128,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
                                Object asyncCompletionToken) {
         String url = (String) asyncCompletionToken;
         if (url.equals(LOGIN_URL)) {
-
-            notifyOutboxHandlers(Constants.MessageType.C_LOGIN_RESPONSE_RECEIVED.ordinal(), 0, 0, null);
 
             Bundle data = null;
 
@@ -127,6 +148,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
         } else {
             Log.e(LOG_TAG, "receiver serverResponse() callback for unrecognized URL: " + url);
         }
+
+        // If we got here - login was unsuccessful
+        EventBus.getDefault().post(new AuthenticateViewMVC.LoginFailedEvent());
     }
 
 
@@ -176,6 +200,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
         prefs.edit().putString(AccountManager.KEY_ACCOUNT_NAME, accountName).apply();
         prefs.edit().putString(AccountManager.KEY_ACCOUNT_TYPE, accountType).apply();
 
+        // Notify of successful login
+        EventBus.getDefault().post(new AuthenticateViewMVC.LoginSuccessfulEvent());
+
 
         final Intent result = new Intent();
         result.putExtras(data);
@@ -213,41 +240,5 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
         return data;
     }
 
-    private Handler getInboxHandler() {
-        return new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                switch (Constants.MESSAGE_TYPE_VALUES[msg.what]) {
-                    case V_LOGIN_BUTTON_CLICK:
-                        sendLoginRequest();
-                        break;
-                    default:
-                        Log.w(LOG_TAG, "Message of type "
-                                + Constants.MESSAGE_TYPE_VALUES[msg.what].toString() + " wasn't consumed");
-                }
-            }
-        };
-    }
-
-
-    private void addOutboxHandler(Handler handler) {
-        // Not sure that there will be use case that requires sync, but just as precaution...
-        synchronized (mOutboxHandlers) {
-            if (!mOutboxHandlers.contains(handler)) {
-                mOutboxHandlers.add(handler);
-            }
-        }
-    }
-
-
-    private void notifyOutboxHandlers(int what, int arg1, int arg2, Object obj) {
-        // Not sure that there will be use case that requires sync, but just as precaution...
-        synchronized (mOutboxHandlers) {
-            for (Handler handler : mOutboxHandlers) {
-                Message msg = Message.obtain(handler, what, arg1, arg2, obj);
-                msg.sendToTarget();
-            }
-        }
-    }
 
 }

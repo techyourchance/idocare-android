@@ -12,13 +12,14 @@ import android.widget.ImageView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 
 /**
  * MVC View for Close Request screen.
  */
-public class CloseRequestViewMVC extends AbstractViewMVC {
+public class CloseRequestViewMVC implements ViewMVC {
 
     public static final String KEY_CLOSED_COMMENT = Constants.FIELD_NAME_CLOSED_COMMENT;
 
@@ -43,8 +44,7 @@ public class CloseRequestViewMVC extends AbstractViewMVC {
         viewTakePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                notifyOutboxHandlers(Constants.MessageType.V_TAKE_PICTURE_BUTTON_CLICKED.ordinal(),
-                        0, 0, null);
+                EventBus.getDefault().post(new TakePictureButtonClickEvent());
             }
         });
 
@@ -52,8 +52,7 @@ public class CloseRequestViewMVC extends AbstractViewMVC {
         btnCloseRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                notifyOutboxHandlers(Constants.MessageType.V_CLOSE_REQUEST_BUTTON_CLICKED.ordinal(),
-                        0, 0, null);
+                EventBus.getDefault().post(new CloseRequestButtonClickEvent());
             }
         });
     }
@@ -71,11 +70,6 @@ public class CloseRequestViewMVC extends AbstractViewMVC {
     }
 
     @Override
-    protected void handleMessage(Message msg) {
-        // TODO: complete this method
-    }
-
-    @Override
     public View getRootView() {
         return mRootView;
     }
@@ -86,4 +80,18 @@ public class CloseRequestViewMVC extends AbstractViewMVC {
         bundle.putString(KEY_CLOSED_COMMENT, mEdtClosedComment.getText().toString());
         return bundle;
     }
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // EventBus events
+
+    public static class CloseRequestButtonClickEvent {}
+
+    public static class TakePictureButtonClickEvent {}
+
+
+    // End of EventBus events
+    //
+    // ---------------------------------------------------------------------------------------------
+
 }

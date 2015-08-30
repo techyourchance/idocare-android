@@ -2,7 +2,6 @@ package il.co.idocare.views;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -18,7 +17,6 @@ import java.net.URL;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.handlermessaging.HandlerMessagingSlave;
 import il.co.idocare.pojos.RequestItem;
 import il.co.idocare.pojos.UserItem;
 import il.co.idocare.utils.UtilMethods;
@@ -27,13 +25,9 @@ import il.co.idocare.utils.UtilMethods;
  * This is the top level View which should be used as a "thumbnail" for requests
  * when they are displayed in a list.
  */
-public class RequestThumbnailViewMVC extends RelativeLayout implements
-        ViewMVC,
-        HandlerMessagingSlave {
+public class RequestThumbnailViewMVC extends RelativeLayout implements ViewMVC{
 
     private static final String LOG_TAG = RequestThumbnailViewMVC.class.getSimpleName();
-
-    private Handler mInboxHandler;
 
     private RequestItem mRequestItem;
 
@@ -94,37 +88,10 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements
 
 
     @Override
-    public Handler getInboxHandler() {
-
-        // Since most of the work done in MVC Views consist of manipulations on underlying
-        // Android Views, it will be convenient (and less error prone) if MVC View's inbox Handler
-        // will be running on UI thread.
-        if (mInboxHandler == null) {
-            mInboxHandler = new Handler() {
-                @Override
-                public void handleMessage(Message msg) {
-                    RequestThumbnailViewMVC.this.handleMessage(msg);
-                }
-            };
-        }
-        return mInboxHandler;
-    }
-
-
-    @Override
     public Bundle getViewState() {
         return null;
     }
 
-
-    private void handleMessage(Message msg) {
-        // TODO: write request/user update logic
-        switch (Constants.MESSAGE_TYPE_VALUES[msg.what]) {
-
-            default:
-                break;
-        }
-    }
 
     /**
      * Update this thumbnail with the details of a particular request

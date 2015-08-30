@@ -11,7 +11,7 @@ import java.io.IOException;
 /**
  *
  */
-public interface MyFragmentInterface {
+public interface IDoCareFragmentInterface {
 
 
     /**

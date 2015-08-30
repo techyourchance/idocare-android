@@ -10,13 +10,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 
 /**
  * MVC View of the Home screen.
  */
-public class AuthenticateViewMVC extends AbstractViewMVC {
+public class AuthenticateViewMVC implements ViewMVC {
 
     public static final String VIEW_STATE_USERNAME = "username";
     public static final String VIEW_STATE_PASSWORD = "password";
@@ -38,8 +39,7 @@ public class AuthenticateViewMVC extends AbstractViewMVC {
         mBtnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                notifyOutboxHandlers(Constants.MessageType.V_LOGIN_BUTTON_CLICK.ordinal(),
-                        0, 0, null);
+                EventBus.getDefault().post(new LoginButtonClickEvent());
             }
         });
 
@@ -60,21 +60,28 @@ public class AuthenticateViewMVC extends AbstractViewMVC {
         return bundle;
     }
 
-    @Override
-    protected void handleMessage(Message msg) {
 
-        switch (Constants.MESSAGE_TYPE_VALUES[msg.what]) {
-            case C_LOGIN_REQUEST_SENT:
-                authenticationInitiated();
-                break;
-            case C_LOGIN_RESPONSE_RECEIVED:
-                authenticationCompleted();
-                break;
-            default:
-                Log.w(LOG_TAG, "Message of type "
-                        + Constants.MESSAGE_TYPE_VALUES[msg.what].toString() + " wasn't consumed");
-        }
+    // ---------------------------------------------------------------------------------------------
+    //
+    // EventBus events handling
+
+    public void onEventMainThread(LoginRequestSentEvent event) {
+        authenticationInitiated();
     }
+
+    public void onEventMainThread(LoginSuccessfulEvent event) {
+        // TODO: do we need anything here?
+    }
+
+    public void onEventMainThread(LoginFailedEvent event) {
+        authenticationFailed();
+    }
+
+    // End of EventBus events handling
+    //
+    // ---------------------------------------------------------------------------------------------
+
+
 
     private void authenticationInitiated() {
         // Disable UI components
@@ -87,11 +94,28 @@ public class AuthenticateViewMVC extends AbstractViewMVC {
         mBtnLogin.setEnabled(false);
     }
 
-    private void authenticationCompleted() {
+    private void authenticationFailed() {
         mEdtUsername.setKeyListener((KeyListener) mEdtUsername.getTag());
         mEdtUsername.setText("");
         mEdtPassword.setKeyListener((KeyListener) mEdtPassword.getTag());
         mEdtPassword.setText("");
         mBtnLogin.setEnabled(true);
     }
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // EventBus events
+
+    public static class LoginRequestSentEvent {}
+
+    public static class LoginSuccessfulEvent {}
+
+    public static class LoginFailedEvent {}
+
+    public static class LoginButtonClickEvent {}
+
+    // End of EventBus events
+    //
+    // ---------------------------------------------------------------------------------------------
+
 }

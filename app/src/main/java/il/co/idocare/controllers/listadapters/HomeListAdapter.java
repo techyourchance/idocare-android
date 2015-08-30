@@ -26,10 +26,10 @@ import il.co.idocare.views.RequestThumbnailViewMVC;
 /**
  * Customized CursorAdapter that is used for displaying the list of requests on HomeFragment.
  */
-public class HomeFragmentListAdapter extends CursorAdapter implements
+public class HomeListAdapter extends CursorAdapter implements
         RequestsCombinedCursorAdapter {
 
-    private final static String LOG_TAG = HomeFragmentListAdapter.class.getSimpleName();
+    private final static String LOG_TAG = HomeListAdapter.class.getSimpleName();
 
     private Cursor mUsersCursor;
     private Cursor mUserActionsCursor;
@@ -44,9 +44,9 @@ public class HomeFragmentListAdapter extends CursorAdapter implements
 
     private long mActiveAccountId;
 
-    public HomeFragmentListAdapter(Context context, Cursor cursor, int flags, long activeAccountId,
-                                   RequestUserActionApplier requestUserActionApplier,
-                                   UserUserActionApplier userUserActionApplier) {
+    public HomeListAdapter(Context context, Cursor cursor, int flags, long activeAccountId,
+                           RequestUserActionApplier requestUserActionApplier,
+                           UserUserActionApplier userUserActionApplier) {
         super(context, cursor, flags);
 
         mActiveAccountId = activeAccountId;

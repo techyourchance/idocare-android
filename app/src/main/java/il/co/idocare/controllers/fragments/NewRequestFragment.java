@@ -49,17 +49,13 @@ public class NewRequestFragment extends AbstractFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mViewMVC = new NewRequestViewMVC(inflater, container);
-        // Provide inbox Handler to the MVC View
-        mViewMVC.addOutboxHandler(getInboxHandler());
-        // Add MVC View's Handler to the set of outbox Handlers
-        addOutboxHandler(mViewMVC.getInboxHandler());
 
+        setActionBarTitle(getTitle());
 
         // Restore state from bundle (if required)
         restoreSavedStateIfNeeded(savedInstanceState);
 
 
-        setActionBarTitle(getTitle());
 
         return mViewMVC.getRootView();
     }
@@ -98,19 +94,23 @@ public class NewRequestFragment extends AbstractFragment {
         return getResources().getString(R.string.new_request_fragment_title);
     }
 
-    @Override
-    protected void handleMessage(Message msg) {
-        switch (Constants.MESSAGE_TYPE_VALUES[msg.what]) {
-            case V_CREATE_NEW_REQUEST_BUTTON_CLICKED:
-                createRequest();
-                break;
-            case V_TAKE_PICTURE_BUTTON_CLICKED:
-                takePictureWithCamera();
-                break;
-            default:
-                break;
-        }
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // EventBus events handling
+
+    public void onEvent(NewRequestViewMVC.TakePictureButtonClickEvent event) {
+        takePictureWithCamera();
     }
+
+    public void onEvent(NewRequestViewMVC.CreateNewRequestButtonClickEvent event) {
+        createRequest();
+    }
+
+    // End of EventBus events handling
+    //
+    // ---------------------------------------------------------------------------------------------
 
     @Override
     public void onSaveInstanceState(Bundle outState) {

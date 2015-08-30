@@ -13,13 +13,14 @@ import android.widget.RatingBar;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 
 /**
  * MVC View for New Request screen.
  */
-public class NewRequestViewMVC extends AbstractViewMVC {
+public class NewRequestViewMVC implements ViewMVC {
 
     public final static String KEY_CREATED_COMMENT = Constants.FIELD_NAME_CREATED_COMMENT;
     public final static String KEY_CREATED_POLLUTION_LEVEL = Constants.FIELD_NAME_CREATED_POLLUTION_LEVEL;
@@ -46,8 +47,7 @@ public class NewRequestViewMVC extends AbstractViewMVC {
         viewTakePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                notifyOutboxHandlers(Constants.MessageType.V_TAKE_PICTURE_BUTTON_CLICKED.ordinal(),
-                        0, 0, null);
+                EventBus.getDefault().post(new TakePictureButtonClickEvent());
             }
         });
 
@@ -55,8 +55,7 @@ public class NewRequestViewMVC extends AbstractViewMVC {
         btnCreateNewRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                notifyOutboxHandlers(Constants.MessageType.V_CREATE_NEW_REQUEST_BUTTON_CLICKED.ordinal(),
-                        0, 0, null);
+                EventBus.getDefault().post(new CreateNewRequestButtonClickEvent());
             }
         });
     }
@@ -73,10 +72,6 @@ public class NewRequestViewMVC extends AbstractViewMVC {
                 Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
     }
 
-    @Override
-    protected void handleMessage(Message msg) {
-        // TODO: complete this method
-    }
 
     @Override
     public View getRootView() {
@@ -92,4 +87,19 @@ public class NewRequestViewMVC extends AbstractViewMVC {
                 String.valueOf(mRatingbarPollutionLevel.getRating()));
         return bundle;
     }
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // EventBus events
+
+    public static class CreateNewRequestButtonClickEvent {}
+
+    public static class TakePictureButtonClickEvent {}
+
+
+    // End of EventBus events
+    //
+    // ---------------------------------------------------------------------------------------------
+
 }

@@ -52,11 +52,6 @@ public class CloseRequestFragment extends AbstractFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mCloseRequestViewMVC = new CloseRequestViewMVC(inflater, container);
-        // Provide inbox Handler to the MVC View
-        mCloseRequestViewMVC.addOutboxHandler(getInboxHandler());
-        // Add MVC View's Handler to the set of outbox Handlers
-        addOutboxHandler(mCloseRequestViewMVC.getInboxHandler());
-
 
         Bundle args = getArguments();
         if (args != null) {
@@ -107,19 +102,24 @@ public class CloseRequestFragment extends AbstractFragment {
         return getResources().getString(R.string.close_request_fragment_title);
     }
 
-    @Override
-    protected void handleMessage(Message msg) {
-        switch (Constants.MESSAGE_TYPE_VALUES[msg.what]) {
-            case V_CLOSE_REQUEST_BUTTON_CLICKED:
-                closeRequest();
-                break;
-            case V_TAKE_PICTURE_BUTTON_CLICKED:
-                takePictureWithCamera();
-                break;
-            default:
-                break;
-        }
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // EventBus events handling
+
+    public void onEvent(CloseRequestViewMVC.TakePictureButtonClickEvent event) {
+        takePictureWithCamera();
     }
+
+    public void onEvent(CloseRequestViewMVC.CloseRequestButtonClickEvent event) {
+        closeRequest();
+    }
+
+    // End of EventBus events handling
+    //
+    // ---------------------------------------------------------------------------------------------
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {

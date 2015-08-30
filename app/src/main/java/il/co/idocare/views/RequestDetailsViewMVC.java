@@ -27,6 +27,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.pojos.RequestItem;
@@ -37,7 +38,7 @@ import il.co.idocare.utils.UtilMethods;
 /**
  * MVC View for New Request screen.
  */
-public class RequestDetailsViewMVC extends AbstractViewMVC {
+public class RequestDetailsViewMVC implements ViewMVC {
 
     private final static String LOG_TAG = RequestDetailsViewMVC.class.getSimpleName();
 
@@ -85,15 +86,6 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
 
         initialize();
 
-    }
-
-
-    @Override
-    protected void handleMessage(Message msg) {
-        switch (Constants.MESSAGE_TYPE_VALUES[msg.what]) {
-            default:
-                break;
-        }
     }
 
     @Override
@@ -341,16 +333,14 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         mImgCreatedVoteUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                notifyOutboxHandlers(Constants.MessageType.V_CREATED_VOTE_UP_BUTTON_CLICKED.ordinal(),
-                        0, 0, null);
+                EventBus.getDefault().post(new CreatedVoteUpButtonClickEvent());
             }
         });
 
         mImgCreatedVoteDown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                notifyOutboxHandlers(Constants.MessageType.V_CREATED_VOTE_DOWN_BUTTON_CLICKED.ordinal(),
-                        0, 0, null);
+                EventBus.getDefault().post(new CreatedVoteDownButtonClickEvent());
             }
         });
 
@@ -414,16 +404,14 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         mImgClosedVoteUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                notifyOutboxHandlers(Constants.MessageType.V_CLOSED_VOTE_UP_BUTTON_CLICKED.ordinal(),
-                        0, 0, null);
+                EventBus.getDefault().post(new ClosedVoteUpButtonClickEvent());
             }
         });
 
         mImgClosedVoteDown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                notifyOutboxHandlers(Constants.MessageType.V_CLOSED_VOTE_DOWN_BUTTON_CLICKED.ordinal(),
-                        0, 0, null);
+                EventBus.getDefault().post(new ClosedVoteDownButtonClickEvent());
             }
         });
 
@@ -458,8 +446,7 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
             mBtnPickUpRequest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    notifyOutboxHandlers(Constants.MessageType.V_PICKUP_REQUEST_BUTTON_CLICKED.ordinal(),
-                            0, 0, null);
+                    EventBus.getDefault().post(new PickupRequestButtonClickEvent());
                 }
             });
         }
@@ -481,8 +468,7 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
             mBtnCloseRequest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    notifyOutboxHandlers(Constants.MessageType.V_CLOSE_REQUEST_BUTTON_CLICKED.ordinal(),
-                            0, 0, null);
+                    EventBus.getDefault().post(new CloseRequestButtonClickEvent());
                 }
             });
         } else {
@@ -490,5 +476,29 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
         }
 
     }
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // EventBus events
+
+    public static class CloseRequestButtonClickEvent {}
+
+    public static class PickupRequestButtonClickEvent {}
+
+    public static class ClosedVoteUpButtonClickEvent {}
+
+    public static class ClosedVoteDownButtonClickEvent {}
+
+    public static class CreatedVoteUpButtonClickEvent {}
+
+    public static class CreatedVoteDownButtonClickEvent {}
+
+
+
+    // End of EventBus events
+    //
+    // ---------------------------------------------------------------------------------------------
+
 
 }

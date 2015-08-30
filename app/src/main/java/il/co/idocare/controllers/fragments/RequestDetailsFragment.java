@@ -76,28 +76,6 @@ public class RequestDetailsFragment extends AbstractFragment implements
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-
-        // Provide inbox Handler to the MVC View
-        mRequestDetailsViewMVC.addOutboxHandler(getInboxHandler());
-        // Add MVC View's Handler to the set of outbox Handlers
-        addOutboxHandler(mRequestDetailsViewMVC.getInboxHandler());
-
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // Remove "listener" handlers between this MVC controller and MVC views
-        mRequestDetailsViewMVC.removeOutboxHandler(getInboxHandler());
-        removeOutboxHandler(mRequestDetailsViewMVC.getInboxHandler());
-
-    }
-
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 	if (outState != null) {
@@ -129,33 +107,39 @@ public class RequestDetailsFragment extends AbstractFragment implements
     }
 
 
-    @Override
-    protected void handleMessage(Message msg) {
-        // TODO: complete this method
-        switch (Constants.MESSAGE_TYPE_VALUES[msg.what]) {
-            case V_PICKUP_REQUEST_BUTTON_CLICKED:
-                pickupRequest();
-                break;
-            case V_CLOSE_REQUEST_BUTTON_CLICKED:
-                closeRequest();
-                break;
-            case V_CREATED_VOTE_UP_BUTTON_CLICKED:
-                voteForRequest(1, false);
-                break;
-            case V_CREATED_VOTE_DOWN_BUTTON_CLICKED:
-                voteForRequest(-1, false);
-                break;
-            case V_CLOSED_VOTE_UP_BUTTON_CLICKED:
-                voteForRequest(1, true);
-                break;
-            case V_CLOSED_VOTE_DOWN_BUTTON_CLICKED:
-                voteForRequest(-1, true);
-                break;
-            default:
-                break;
-        }
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // EventBus events handling
+
+    public void onEvent(RequestDetailsViewMVC.PickupRequestButtonClickEvent event) {
+        pickupRequest();
     }
 
+    public void onEvent(RequestDetailsViewMVC.CloseRequestButtonClickEvent event) {
+        closeRequest();
+    }
+
+    public void onEvent(RequestDetailsViewMVC.CreatedVoteUpButtonClickEvent event) {
+        voteForRequest(1, false);
+    }
+
+    public void onEvent(RequestDetailsViewMVC.CreatedVoteDownButtonClickEvent event) {
+        voteForRequest(-1, false);
+    }
+
+    public void onEvent(RequestDetailsViewMVC.ClosedVoteUpButtonClickEvent event) {
+        voteForRequest(1, true);
+    }
+
+    public void onEvent(RequestDetailsViewMVC.ClosedVoteDownButtonClickEvent event) {
+        voteForRequest(-1, true);
+    }
+
+
+    // End of EventBus events handling
+    //
+    // ---------------------------------------------------------------------------------------------
 
 
 

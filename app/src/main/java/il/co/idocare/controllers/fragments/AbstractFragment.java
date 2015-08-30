@@ -8,16 +8,10 @@ import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Message;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import il.co.idocare.handlermessaging.HandlerMessagingMaster;
-import il.co.idocare.handlermessaging.HandlerMessagingSlave;
+import de.greenrobot.event.EventBus;
 
 
 /**
@@ -26,15 +20,10 @@ import il.co.idocare.handlermessaging.HandlerMessagingSlave;
  * Fragments of this app should extend this class.
  */
 public abstract class AbstractFragment extends Fragment implements
-        MyFragmentInterface,
-        HandlerMessagingMaster,
-        HandlerMessagingSlave {
+        IDoCareFragmentInterface {
 
     IDoCareFragmentCallback mCallback;
 
-    HandlerThread mInboxHandlerThread;
-    Handler mInboxHandler;
-    final List<Handler> mOutboxHandlers = new ArrayList<Handler>();
     private ProgressDialog mProgressDialog;
 
 
@@ -113,68 +102,21 @@ public abstract class AbstractFragment extends Fragment implements
     
     // ---------------------------------------------------------------------------------------------
     //
-    // MVC Controller methods
-
-
-    /**
-     * Handle the message received by the inbox Handler
-     * @param msg message to handle
-     */
-    protected abstract void handleMessage(Message msg);
+    // EventBus configuration
 
     @Override
-    public Handler getInboxHandler() {
-        // TODO: consider changing all handlers to run on the main thread.
-        // Inbox Handler will be running on a separate thread
-        // The cast into Object is due to this:
-        // http://stackoverflow.com/questions/18505973/android-studio-ambiguous-method-call-getclass
-        if (mInboxHandlerThread == null) {
-            mInboxHandlerThread = new HandlerThread(((Object)this).getClass().getSimpleName());
-            mInboxHandlerThread.start();
-        }
-        if (mInboxHandler == null) {
-            mInboxHandler = new Handler(mInboxHandlerThread.getLooper()) {
-                @Override
-                public void handleMessage(Message msg) {
-                    AbstractFragment.this.handleMessage(msg);
-                }
-            };
-        }
-        return mInboxHandler;
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
     }
 
     @Override
-    public void addOutboxHandler(Handler handler) {
-        // Not sure that there will be use case that requires sync, but just as precaution...
-        synchronized (mOutboxHandlers) {
-            if (!mOutboxHandlers.contains(handler)) {
-                mOutboxHandlers.add(handler);
-            }
-        }
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
-    @Override
-    public void removeOutboxHandler(Handler handler) {
-        // Not sure that there will be use case that requires sync, but just as precaution...
-        synchronized (mOutboxHandlers) {
-            mOutboxHandlers.remove(handler);
-        }
-    }
-
-    @Override
-    public void notifyOutboxHandlers(int what, int arg1, int arg2, Object obj) {
-        // Not sure that there will be use case that requires sync, but just as precaution...
-        synchronized (mOutboxHandlers) {
-            for (Handler handler : mOutboxHandlers) {
-                Message msg = Message.obtain(handler, what, arg1, arg2, obj);
-                msg.sendToTarget();
-            }
-        }
-    }
-
-
-
-    // End of MVC Controller methods
+    // End of EventBus configuration
     //
     // ---------------------------------------------------------------------------------------------
 

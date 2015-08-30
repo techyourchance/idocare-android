@@ -6,7 +6,6 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,14 +13,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.interfaces.RequestsCombinedCursorAdapter;
-import il.co.idocare.controllers.listadapters.HomeFragmentListAdapter;
+import il.co.idocare.controllers.listadapters.HomeListAdapter;
 import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
 import il.co.idocare.controllers.listadapters.UserActionsOnUserApplierImpl;
 import il.co.idocare.pojos.RequestItem;
@@ -49,61 +46,21 @@ public class HomeFragment extends AbstractFragment implements
         // This is required for automatic refresh of action bar options upon fragment's loading
         setHasOptionsMenu(true);
 
-        initializeThumbnailsList(); // TODO: move the adapter and the click listener to MVC view
-
         setActionBarTitle(getTitle());
 
-        return mHomeViewMVC.getRootView();
-    }
-
-    private void initializeThumbnailsList() {
-
-        mAdapter = new HomeFragmentListAdapter(getActivity(), null, 0, Long.valueOf(getActiveAccount().name),
+        // Create an adapter and pass the reference to MVC view
+        mAdapter = new HomeListAdapter(getActivity(), null, 0, Long.valueOf(getActiveAccount().name),
                 new UserActionsOnRequestApplierImpl(), new UserActionsOnUserApplierImpl());
-        final ListView requestThumbnails =
-                (ListView) mHomeViewMVC.getRootView().findViewById(R.id.list_requests_thumbnails);
-        requestThumbnails.setAdapter(mAdapter);
+        mHomeViewMVC.setListAdapter(mAdapter);
 
+        // Initiate loaders
         getLoaderManager().initLoader(REQUESTS_LOADER_ID, null, this);
         getLoaderManager().initLoader(USERS_LOADER_ID, null, this);
         getLoaderManager().initLoader(USER_ACTIONS_LOADER_ID, null, this);
 
-        // TODO: remove this listener from here and put it in MVCView and add message for click
-        requestThumbnails.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                // Get the selected request ID
-                long requestId = mAdapter.getRequestAtPosition(position).getId();
-
-                // Create a bundle and put the id of the selected item there
-                Bundle args = new Bundle();
-                args.putLong(Constants.FIELD_NAME_REQUEST_ID, requestId);
-                // Replace with RequestDetailsFragment and pass the bundle as argument
-                replaceFragment(RequestDetailsFragment.class, true, false, args);
-            }
-        });
-
-
-
+        return mHomeViewMVC.getRootView();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Provide inbox Handler to the MVC View
-        mHomeViewMVC.addOutboxHandler(getInboxHandler());
-        // Add MVC View's Handler to the set of outbox Handlers
-        addOutboxHandler(mHomeViewMVC.getInboxHandler());
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        // Remove "listener" handlers between the MVC controller and MVC views
-        mHomeViewMVC.removeOutboxHandler(getInboxHandler());
-        removeOutboxHandler(mHomeViewMVC.getInboxHandler());
-
-    }
 
     @Override
     public boolean isTopLevelFragment() {
@@ -118,16 +75,6 @@ public class HomeFragment extends AbstractFragment implements
     @Override
     public String getTitle() {
         return getResources().getString(R.string.home_fragment_title);
-    }
-
-    @Override
-    protected void handleMessage(Message msg) {
-
-        switch (Constants.MESSAGE_TYPE_VALUES[msg.what]) {
-
-            default:
-                break;
-        }
     }
 
 
@@ -147,6 +94,28 @@ public class HomeFragment extends AbstractFragment implements
                 return super.onOptionsItemSelected(item);
         }
     }
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // EventBus events handling
+
+    public void onEvent(HomeViewMVC.ListItemClickEvent event) {
+        // Get the selected request ID
+        long requestId = mAdapter.getRequestAtPosition(event.mPosition).getId();
+
+        // Create a bundle and put the id of the selected item there
+        Bundle args = new Bundle();
+        args.putLong(Constants.FIELD_NAME_REQUEST_ID, requestId);
+        // Replace with RequestDetailsFragment and pass the bundle as argument
+        replaceFragment(RequestDetailsFragment.class, true, false, args);
+    }
+
+
+    // End of EventBus events handling
+    //
+    // ---------------------------------------------------------------------------------------------
+
 
 
 

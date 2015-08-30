@@ -17,7 +17,7 @@ import java.io.IOException;
 import il.co.idocare.R;
 import il.co.idocare.authentication.AccountAuthenticator;
 import il.co.idocare.controllers.fragments.IDoCareFragmentCallback;
-import il.co.idocare.controllers.fragments.MyFragmentInterface;
+import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
 
 /**
  * This is a wrapper around a standard Activity class which provides few convenience methods
@@ -157,8 +157,8 @@ public abstract class AbstractActivity extends Activity implements
             Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
 
             boolean hasHierParent = currFragment != null &&
-                    MyFragmentInterface.class.isAssignableFrom(currFragment.getClass()) &&
-                    ((MyFragmentInterface)currFragment).getNavHierParentFragment() != null;
+                    IDoCareFragmentInterface.class.isAssignableFrom(currFragment.getClass()) &&
+                    ((IDoCareFragmentInterface)currFragment).getNavHierParentFragment() != null;
 
             getActionBar().setDisplayHomeAsUpEnabled(hasBackstackEntries || hasHierParent);
         }
@@ -172,12 +172,12 @@ public abstract class AbstractActivity extends Activity implements
             return true;
         } else {
             Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
-            // Check if currently shown fragment is of type MyFragmentInterface
+            // Check if currently shown fragment is of type IDoCareFragmentInterface
             if (currFragment != null &&
-                    MyFragmentInterface.class.isAssignableFrom(currFragment.getClass())) {
+                    IDoCareFragmentInterface.class.isAssignableFrom(currFragment.getClass())) {
                 // Get the hierarchical parent of the currently shown fragment
                 Class<? extends Fragment> hierParent =
-                        ((MyFragmentInterface)currFragment).getNavHierParentFragment();
+                        ((IDoCareFragmentInterface)currFragment).getNavHierParentFragment();
 
                 if (hierParent != null) {
                     replaceFragment(hierParent, false, true, null);
