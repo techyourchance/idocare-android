@@ -16,10 +16,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import il.co.idocare.controllers.interfaces.MyFragmentInterface;
 import il.co.idocare.handlermessaging.HandlerMessagingMaster;
 import il.co.idocare.handlermessaging.HandlerMessagingSlave;
-import il.co.idocare.pojos.RequestItem;
 
 
 /**
@@ -32,7 +30,7 @@ public abstract class AbstractFragment extends Fragment implements
         HandlerMessagingMaster,
         HandlerMessagingSlave {
 
-    MyFragmentInterface.IDoCareFragmentCallback mCallback;
+    IDoCareFragmentCallback mCallback;
 
     HandlerThread mInboxHandlerThread;
     Handler mInboxHandler;
@@ -45,7 +43,7 @@ public abstract class AbstractFragment extends Fragment implements
         super.onAttach(activity);
 
         try {
-            mCallback = (MyFragmentInterface.IDoCareFragmentCallback) activity;
+            mCallback = (IDoCareFragmentCallback) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement IDoCareFragmentCallback");

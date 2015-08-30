@@ -23,9 +23,9 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
+import il.co.idocare.controllers.fragments.MyFragmentInterface;
 import il.co.idocare.controllers.listadapters.NavigationDrawerListAdapter;
 import il.co.idocare.controllers.fragments.HomeFragment;
-import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.R;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
 import il.co.idocare.pojos.NavigationDrawerEntry;
@@ -38,17 +38,7 @@ public class MainActivity extends AbstractActivity {
 
     public GoogleApiClient mGoogleApiClient;
 
-    @Override
-    public void onBackPressed() {
 
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawerLayout.isDrawerVisible(Gravity.START)) {
-            drawerLayout.closeDrawer(Gravity.START);
-            return;
-        }
-
-        super.onBackPressed();
-    }
 
     // ---------------------------------------------------------------------------------------------
     //
@@ -117,6 +107,18 @@ public class MainActivity extends AbstractActivity {
     // ---------------------------------------------------------------------------------------------
     //
     // Navigation drawer management
+
+    @Override
+    public void onBackPressed() {
+
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawerLayout.isDrawerVisible(Gravity.START)) {
+            drawerLayout.closeDrawer(Gravity.START);
+            return;
+        }
+
+        super.onBackPressed();
+    }
 
     /**
      * Initiate the navigation drawer
@@ -195,8 +197,9 @@ public class MainActivity extends AbstractActivity {
                         setActionBarTitle("");
                     } else {
                         Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
-                        if (currFragment != null) {
-                            setActionBarTitle(((AbstractFragment)currFragment).getTitle());
+                        if (currFragment != null &&
+                                MyFragmentInterface.class.isAssignableFrom(currFragment.getClass())) {
+                            setActionBarTitle(((MyFragmentInterface)currFragment).getTitle());
                         }
                     }
 

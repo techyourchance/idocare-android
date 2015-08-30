@@ -11,19 +11,19 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.io.IOException;
 
 import il.co.idocare.R;
 import il.co.idocare.authentication.AccountAuthenticator;
-import il.co.idocare.controllers.interfaces.MyFragmentInterface;
+import il.co.idocare.controllers.fragments.IDoCareFragmentCallback;
+import il.co.idocare.controllers.fragments.MyFragmentInterface;
 
 /**
  * This is a wrapper around a standard Activity class which provides few convenience methods
  */
 public abstract class AbstractActivity extends Activity implements
-        MyFragmentInterface.IDoCareFragmentCallback{
+        IDoCareFragmentCallback {
 
     private static final String LOG_TAG = AbstractActivity.class.getSimpleName();
 
@@ -189,7 +189,7 @@ public abstract class AbstractActivity extends Activity implements
         return false;
     }
 
-    // End of  up navigation button management
+    // End of up navigation button management
     //
     // ---------------------------------------------------------------------------------------------
 
