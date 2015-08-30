@@ -281,12 +281,14 @@ public class ServerHttpRequest implements Runnable {
         boolean isMultipart = (mPicturesFields != null && mPicturesFields.size() > 0);
 
         if (isMultipart ) {
-            MultipartEntityBuilder multipartEntity = MultipartEntityBuilder.create();
+            MultipartEntityBuilder multipartEntity =
+                    MultipartEntityBuilder.create();
 
             // Create text fields
             if (mTextFields != null) {
                 for (String name : mTextFields.keySet()) {
-                    multipartEntity.addPart(name, new StringBody(mTextFields.get(name), ContentType.TEXT_PLAIN));
+                    multipartEntity.addPart(name, new StringBody(mTextFields.get(name),
+                            ContentType.create(ContentType.TEXT_PLAIN.getMimeType(), "UTF-8")));
                 }
             }
 
@@ -318,7 +320,7 @@ public class ServerHttpRequest implements Runnable {
                     nameValuePairs.add(new BasicNameValuePair(name, mTextFields.get(name)));
                 }
 
-                httpEntity = new UrlEncodedFormEntity(nameValuePairs);
+                httpEntity = new UrlEncodedFormEntity(nameValuePairs, "UTF-8");
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
