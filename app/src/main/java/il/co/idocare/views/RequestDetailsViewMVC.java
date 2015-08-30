@@ -430,6 +430,9 @@ public class RequestDetailsViewMVC extends AbstractViewMVC {
     }
 
     private void configureLocationViews() {
+
+        mTxtFineLocation.setText(mRequestItem.getLocation());
+
         GoogleMap map = mMapPreview.getMap();
 
         MapsInitializer.initialize(getRootView().getContext());

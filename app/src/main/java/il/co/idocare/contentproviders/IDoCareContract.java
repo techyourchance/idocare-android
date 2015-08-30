@@ -96,7 +96,8 @@ public class IDoCareContract {
                 COL_POLLUTION_LEVEL,
                 COL_CREATED_REPUTATION,
                 COL_CLOSED_REPUTATION,
-                COL_CLOSED_BY};
+                COL_CLOSED_BY,
+                COL_LOCATION};
 
         // TODO: add column containing "timestamp" (latest activity time) and make default sort by this column
 		/**

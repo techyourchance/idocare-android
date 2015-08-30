@@ -14,6 +14,8 @@ import android.util.Log;
 import java.io.IOException;
 
 import il.co.idocare.authentication.AccountAuthenticator;
+import il.co.idocare.location.OpenStreetMapsReverseGeocoderFactory;
+import il.co.idocare.location.ReverseGeocoderFactory;
 import il.co.idocare.networking.interfaces.ServerResponseHandlerFactory;
 
 /**
@@ -66,8 +68,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         // and the respective ContentProvider will be updated
         dataUploader.uploadAll();
 
+        ReverseGeocoderFactory reverseGeocoderFactory =
+                new OpenStreetMapsReverseGeocoderFactory();
+
         ServerResponseHandlerFactory serverResponseHandlerFactory =
-                new SimpleServerResponseHandlerFactory();
+                new SimpleServerResponseHandlerFactory(reverseGeocoderFactory);
 
         DataDownloader dataDownloader =
                 new DataDownloader(account, authToken, provider, serverResponseHandlerFactory);

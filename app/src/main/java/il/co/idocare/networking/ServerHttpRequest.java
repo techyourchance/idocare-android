@@ -20,6 +20,7 @@ import ch.boye.httpclientandroidlib.HttpResponse;
 import ch.boye.httpclientandroidlib.NameValuePair;
 import ch.boye.httpclientandroidlib.client.ClientProtocolException;
 import ch.boye.httpclientandroidlib.client.entity.UrlEncodedFormEntity;
+import ch.boye.httpclientandroidlib.client.methods.CloseableHttpResponse;
 import ch.boye.httpclientandroidlib.client.methods.HttpEntityEnclosingRequestBase;
 import ch.boye.httpclientandroidlib.client.methods.HttpPost;
 import ch.boye.httpclientandroidlib.client.methods.HttpUriRequest;
@@ -114,7 +115,7 @@ public class ServerHttpRequest implements Runnable {
             }
         }
 
-        HttpResponse httpResponse = null;
+        CloseableHttpResponse httpResponse = null;
         String responseEntityString = "";
 
         //noinspection TryWithIdenticalCatches
@@ -125,6 +126,8 @@ public class ServerHttpRequest implements Runnable {
                 responseEntityString = EntityUtils.toString(httpResponse.getEntity());
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                httpResponse.close();
             }
 
 
@@ -157,6 +160,7 @@ public class ServerHttpRequest implements Runnable {
                 httpResponse.getStatusLine().getReasonPhrase(),
                 responseEntityString,
                 mAsyncCompletionToken);
+
 
     }
 

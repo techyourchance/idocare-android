@@ -4,6 +4,7 @@ import android.content.ContentProviderClient;
 import android.content.ContentUris;
 import android.database.Cursor;
 import android.os.RemoteException;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -13,9 +14,11 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
+import il.co.idocare.location.ReverseGeocoder;
 import il.co.idocare.networking.interfaces.ServerResponseHandler;
 import il.co.idocare.pojos.RequestItem;
 
@@ -25,6 +28,15 @@ import il.co.idocare.pojos.RequestItem;
 public class RequestsDownloadServerResponseHandler extends AbstractServerResponseHandler {
 
     private static final String LOG_TAG = RequestsDownloadServerResponseHandler.class.getSimpleName();
+
+    private ReverseGeocoder mReverseGeocoder;
+
+    public RequestsDownloadServerResponseHandler(ReverseGeocoder reverseGeocoder) {
+        if (reverseGeocoder == null)
+            throw new IllegalArgumentException("must provide valid reverse geocoder");
+
+        mReverseGeocoder = reverseGeocoder;
+    }
 
     @Override
     public void handleResponse(int statusCode, String reasonPhrase, String entityString,
@@ -43,6 +55,7 @@ public class RequestsDownloadServerResponseHandler extends AbstractServerRespons
         List<Long> requestsIdsList = new ArrayList<>(requestsJsonArray.length());
 
         RequestItem request;
+        String location;
         for (int i = 0; i < requestsJsonArray.length(); i++) {
 
             request = null;
@@ -102,13 +115,22 @@ public class RequestsDownloadServerResponseHandler extends AbstractServerRespons
             cursor = provider.query(
                     ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI,
                             request.getId()),
-                    new String[]{IDoCareContract.Requests._ID},
+                    new String[]{IDoCareContract.Requests.COL_LOCATION},
                     null,
                     null,
                     null
             );
 
             if (cursor != null && cursor.moveToFirst()) {
+                // Check whether a location need to be updated
+                String currLocation = cursor.getString(
+                        cursor.getColumnIndex(IDoCareContract.Requests.COL_LOCATION));
+                if (TextUtils.isEmpty(currLocation))
+                    fetchLocationInfoFromReverseGeocoder(request); // Get a new location
+                else
+                    request.setLocation(currLocation); // Keep the current location
+
+
                 // Update the corresponding request entry unless it is locally modified
                 provider.update(
                         ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI,
@@ -118,6 +140,8 @@ public class RequestsDownloadServerResponseHandler extends AbstractServerRespons
                         null
                 );
             } else {
+                // Obtain the location
+                fetchLocationInfoFromReverseGeocoder(request);
                 // Insert a new request entry
                 provider.insert(IDoCareContract.Requests.CONTENT_URI, request.toContentValues());
             }
@@ -126,6 +150,13 @@ public class RequestsDownloadServerResponseHandler extends AbstractServerRespons
         } finally {
             if (cursor != null) cursor.close();
         }
+    }
+
+    private void fetchLocationInfoFromReverseGeocoder(RequestItem request) {
+        String location = mReverseGeocoder.getFromLocation(request.getLatitude(),
+                request.getLongitude(), Locale.getDefault());
+        if (!TextUtils.isEmpty(location))
+            request.setLocation(location);
     }
 
     private JSONArray extractJsonArrayFromData(String entityString) {
