@@ -234,7 +234,19 @@ public class RequestDetailsViewMVC implements ViewMVC {
 
 
     public void bindPickedUpByUser(UserItem user) {
-        mBtnPickUpRequest.setText("Assigned to " + user.getNickname());
+        if (mRequestItem.isPickedUp()) {
+            if (mRequestItem.getStatus() == RequestItem.RequestStatus.PICKED_UP_BY_OTHER) {
+                mTxtStatus.setText(
+                        mContext.getResources().getString(R.string.txt_picked_up_request_title)
+                                + " " +
+                                mContext.getResources().getString(R.string.txt_by) + " " + user.getNickname());
+            } else {
+                mTxtStatus.setText(
+                        mContext.getResources().getString(R.string.txt_picked_up_request_title)
+                                + " " +
+                                mContext.getResources().getString(R.string.txt_by_me));
+            }
+        }
     }
 
 
@@ -247,36 +259,15 @@ public class RequestDetailsViewMVC implements ViewMVC {
         int statusColor;
         String statusText;
 
-        switch (mRequestItem.getStatus()) {
-            case NEW_BY_OTHER:
-                statusColor = mContext.getResources().getColor(R.color.new_request_color);
-                statusText = mContext.getResources().getString(R.string.txt_new_request_title);
-                break;
-            case NEW_BY_ME:
-                statusColor = mContext.getResources().getColor(R.color.new_request_color);
-                statusText = mContext.getResources().getString(R.string.txt_new_request_title);
-                break;
-            case PICKED_UP_BY_OTHER:
-                statusColor = mContext.getResources().getColor(R.color.picked_up_request_color);
-                statusText = mContext.getResources().getString(R.string.txt_picked_up_request_title);
-                break;
-            case PICKED_UP_BY_ME:
-                statusColor = mContext.getResources().getColor(R.color.picked_up_request_color);
-                statusText = mContext.getResources().getString(R.string.txt_picked_up_request_title);
-                break;
-            case CLOSED_BY_OTHER:
-                statusColor = mContext.getResources().getColor(R.color.closed_request_color);
-                statusText = mContext.getResources().getString(R.string.txt_closed_request_title);
-                break;
-            case CLOSED_BY_ME:
-                statusColor = mContext.getResources().getColor(R.color.closed_request_color);
-                statusText = mContext.getResources().getString(R.string.txt_closed_request_title);
-                break;
-            default:
-                statusColor = mContext.getResources().getColor(android.R.color.white);
-                statusText = "-";
-                Log.e(LOG_TAG, "couldn't process the status of the request. Status:" +
-                        mRequestItem.getStatus().name());
+        if (mRequestItem.isClosed()) {
+            statusColor = mContext.getResources().getColor(R.color.closed_request_color);
+            statusText = mContext.getResources().getString(R.string.txt_closed_request_title);
+        } else if (mRequestItem.isPickedUp()) {
+            statusColor = mContext.getResources().getColor(R.color.picked_up_request_color);
+            statusText = mContext.getResources().getString(R.string.txt_picked_up_request_title);
+        } else {
+            statusColor = mContext.getResources().getColor(R.color.new_request_color);
+            statusText = mContext.getResources().getString(R.string.txt_new_request_title);
         }
 
         mTxtStatus.setBackgroundColor(statusColor);
