@@ -2,7 +2,6 @@ package il.co.idocare.views;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Message;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +18,6 @@ import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.pojos.RequestItem;
 import il.co.idocare.pojos.UserItem;
-import il.co.idocare.utils.UtilMethods;
 
 /**
  * This is the top level View which should be used as a "thumbnail" for requests
@@ -38,9 +36,6 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements ViewMVC{
     private TextView mTxtCreatedBy;
     private TextView mTxtCreatedAt;
     private TextView mTxtCreatedReputation;
-
-    private boolean mIsClosed;
-    private boolean mIsPickedUp;
 
     private String mCurrentPictureUrl;
 
@@ -82,8 +77,6 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements ViewMVC{
         mTxtCreatedAt = (TextView) findViewById(R.id.txt_created_at);
         mTxtCreatedReputation = (TextView) findViewById(R.id.txt_votes);
 
-        mIsClosed = false;
-        mIsPickedUp = false;
     }
 
 
@@ -102,7 +95,6 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements ViewMVC{
         mRequestItem = request;
 
         // Update the UI
-        setStatus();
         setColors();
         setTexts();
         setPictures();
@@ -117,26 +109,29 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements ViewMVC{
         mTxtCreatedBy.setText(user.getNickname());
     }
 
-    private void setStatus() {
-        if (mRequestItem.getClosedBy() != 0) {
-            mIsClosed = true;
-        }
-        else if (mRequestItem.getPickedUpBy() != 0) {
-            mIsClosed = false;
-            mIsPickedUp = true;
-        }
-        else {
-            mIsClosed = false;
-            mIsPickedUp = false;
+    /**
+     * Update this thumbnail's "picked up by" views with details of a particular user
+     * @param user the user who's data should be displayed
+     */
+    public void bindPickedUpByUser(UserItem user) {
+        if (mRequestItem.isPickedUp() ) {
+            if (mRequestItem.getStatus() == RequestItem.RequestStatus.PICKED_UP_BY_OTHER) {
+                mTxtRequestStatus.setText(
+                        getResources().getString(R.string.txt_picked_up_request_title) + " " +
+                                getResources().getString(R.string.txt_by) + " " + user.getNickname());
+            } else {
+                mTxtRequestStatus.setText(
+                        getResources().getString(R.string.txt_picked_up_request_title) + " " +
+                                getResources().getString(R.string.txt_by_me));
+            }
         }
     }
-
     private void setColors() {
         int statusColor;
 
-        if (mIsClosed)
+        if (mRequestItem.isClosed())
             statusColor = getResources().getColor(R.color.closed_request_color);
-        else if (mIsPickedUp)
+        else if (mRequestItem.isPickedUp())
             statusColor = getResources().getColor(R.color.picked_up_request_color);
         else
             statusColor = getResources().getColor(R.color.new_request_color);
@@ -146,9 +141,9 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements ViewMVC{
     }
 
     private void setTexts() {
-        if (mIsClosed)
+        if (mRequestItem.isClosed())
             mTxtRequestStatus.setText(getResources().getString(R.string.txt_closed_request_title));
-        else if (mIsPickedUp)
+        else if (mRequestItem.isPickedUp())
             mTxtRequestStatus.setText(getResources().getString(R.string.txt_picked_up_request_title));
         else
             mTxtRequestStatus.setText(getResources().getString(R.string.txt_new_request_title));

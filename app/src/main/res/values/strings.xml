@@ -34,6 +34,8 @@
     <string name="close_request_fragment_title">Close request</string>
     <string name="request_details_fragment_title">Request details</string>
     <string name="self_voting_error_message">You can\'t vote for yourself</string>
+    <string name="txt_by">by</string>
+    <string name="txt_by_me">by me</string>
 
 
 </resources>

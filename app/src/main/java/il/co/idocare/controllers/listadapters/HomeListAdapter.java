@@ -97,6 +97,14 @@ public class HomeListAdapter extends CursorAdapter implements
             ((RequestThumbnailViewMVC) view).bindCreatedByUser(createdByUser);
         else
             ((RequestThumbnailViewMVC) view).bindCreatedByUser(UserItem.createAnonymousUser());
+
+        if (request.isPickedUp()) {
+            UserItem pickedUpByUser = getUser(request.getPickedUpBy());
+            if (pickedUpByUser != null)
+                ((RequestThumbnailViewMVC) view).bindPickedUpByUser(pickedUpByUser);
+            else
+                ((RequestThumbnailViewMVC) view).bindPickedUpByUser(UserItem.createAnonymousUser());
+        }
     }
 
     private UserItem getUser(long id) {

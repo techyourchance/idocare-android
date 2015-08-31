@@ -271,6 +271,18 @@ public class RequestItem {
 
 
 
+    public boolean isClosed() {
+        if (mStatus == RequestStatus.UNKNOWN)
+            throw new IllegalStateException("request's status wasn't set");
+        return mStatus == RequestStatus.CLOSED_BY_OTHER || mStatus == RequestStatus.CLOSED_BY_ME;
+    }
+
+    public boolean isPickedUp() {
+        if (mStatus == RequestStatus.UNKNOWN)
+            throw new IllegalStateException("request's status wasn't set");
+        return mStatus == RequestStatus.PICKED_UP_BY_ME || mStatus == RequestStatus.PICKED_UP_BY_OTHER;
+    }
+
 
     // ---------------------------------------------------------------------------------------------
     //
