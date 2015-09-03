@@ -27,15 +27,28 @@ public abstract class AbstractActivity extends Activity implements
 
     private static final String LOG_TAG = AbstractActivity.class.getSimpleName();
 
+
+    private FragmentManager.OnBackStackChangedListener onBackStackChangedListener =
+            new FragmentManager.OnBackStackChangedListener() {
+                @Override
+                public void onBackStackChanged() {
+                    manageNavigateUpButton();
+                }
+            };
+
+
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        getFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-            @Override
-            public void onBackStackChanged() {
-                manageNavigateUpButton();
-            }
-        });
+    protected void onResume() {
+        super.onResume();
+        getFragmentManager().addOnBackStackChangedListener(onBackStackChangedListener);
+
+        manageNavigateUpButton();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        getFragmentManager().removeOnBackStackChangedListener(onBackStackChangedListener);
     }
 
     @Override
