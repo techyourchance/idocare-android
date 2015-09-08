@@ -35,11 +35,11 @@
 
     <Button
         android:id="@+id/btn_login"
-        android:layout_width="@dimen/default_button_width"
+        android:layout_width="@dimen/wide_button_width"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:background="@drawable/login_button_background"
-        android:text="@string/btn_login_text"
+        android:background="@drawable/horizontal_gradient_green_button_background"
+        android:text="@string/btn_login_capital"
         android:textColor="@android:color/white"/>
 
 </LinearLayout>

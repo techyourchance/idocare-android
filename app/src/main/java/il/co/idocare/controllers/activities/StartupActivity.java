@@ -1,23 +1,14 @@
 package il.co.idocare.controllers.activities;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
-import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
 
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
+import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.authentication.AccountAuthenticator;
-import il.co.idocare.contentproviders.IDoCareContract;
+import il.co.idocare.authentication.UserStateManager;
 import il.co.idocare.controllers.fragments.SplashFragment;
 
 /**
@@ -28,91 +19,78 @@ public class StartupActivity extends AbstractActivity {
     private static final String LOG_TAG = StartupActivity.class.getSimpleName();
 
 
+    private long mInitTime;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_startup);
+        setContentView(R.layout.activity_single_frame_layout);
 
 
-        /*
-        VZ: Since all we do in SplashFragment is just show some graphics, and there are no other
-        fragments shown in StartupActivity, we could make this activity fragmentless (thus
-        simplifying things). I chose to keep "fragmentation" in order to be able to easily extend
-        the functionality of startup activity in the future (if such a need arises)
-         */
         if (savedInstanceState == null) {
+
+            mInitTime = System.currentTimeMillis();
+
             replaceFragment(SplashFragment.class, false, true, null);
+
         }
     }
+
 
     @Override
     protected void onResume() {
         super.onResume();
 
+        // This asynctask waits for a predefined amount of time and then switches to MainActivity
+        new AsyncTask<Void, Void, Void>() {
 
-        // Ask for an auth token
-        final AccountManagerFuture<Bundle> future = AccountManager.get(this).getAuthTokenByFeatures(
-                AccountAuthenticator.ACCOUNT_TYPE,
-                AccountAuthenticator.AUTH_TOKEN_TYPE_DEFAULT,
-                null,
-                this,
-                null,
-                null,
-                null,
-                null);
-
-        // This async task waits for an auth token to be obtained and handles errors (if any)
-        new AsyncTask<Void, Void, Boolean>() {
             @Override
-            protected Boolean doInBackground(Void... voids) {
+            protected Void doInBackground(Void... voids) {
 
-                Long initTime = System.currentTimeMillis();
+                long currTime = System.currentTimeMillis();
 
-                try {
-                    Bundle result = future.getResult();
-
-                    // Make sure that the splash fragment is shown at least 5 seconds
-                    long currTime = System.currentTimeMillis();
-                    if (currTime < initTime + 2*1000) {
-                        try {
-                            Thread.sleep(initTime + 2*1000 - currTime);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                if (currTime < mInitTime + 2*1000) {
+                    try {
+                        Thread.sleep(mInitTime + 2*1000 - currTime);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-
-                    return true;
-                } catch (AuthenticatorException e) {
-                    e.printStackTrace();
-                } catch (OperationCanceledException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
 
-                return false;
+                return null;
+
             }
 
             @Override
-            protected void onPostExecute(Boolean authSuccessful) {
-                if (authSuccessful) {
-                    // Perform immediate sync at startup
-                    Bundle settingsBundle = new Bundle();
-                    settingsBundle.putBoolean(
-                            ContentResolver.SYNC_EXTRAS_MANUAL, true);
-                    settingsBundle.putBoolean(
-                            ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-                    ContentResolver.requestSync(getActiveAccount(), IDoCareContract.AUTHORITY,
-                            settingsBundle);
+            protected void onPostExecute(Void obj) {
 
-                    Intent intent = new Intent(StartupActivity.this, MainActivity.class);
-                    startActivity(intent);
+                UserStateManager userStateManager = new UserStateManager(StartupActivity.this);
+
+                Intent intent;
+
+                if (userStateManager.isLoggedIn()) {
+                    // If the user is logged in - show the MainFragment
+                    intent = new Intent(StartupActivity.this, MainActivity.class);
                 } else {
-                    // TODO: consider handling this error case in a different way
-                    Log.i(LOG_TAG, "Could not obtain auth token");
-                    Toast.makeText(StartupActivity.this, "Could not obtain auth token", Toast.LENGTH_LONG).show();
+                    SharedPreferences prefs =
+                            getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
+
+                    if (prefs.getInt(Constants.LOGIN_SKIPPED_KEY, 0) > 0) {
+                        // If the user has already chosen to skip login at startup - switch to
+                        // MainActivity right away.
+                        intent = new Intent(StartupActivity.this, MainActivity.class);
+                    } else {
+                        // Present a login screen to the user, but make sure that LoginActivity knows
+                        // that is has been started from StartupActivity
+                        intent = new Intent(StartupActivity.this, LoginActivity.class);
+                        intent.putExtra(LoginActivity.ARG_LAUNCHED_FROM_STARTUP_ACTIVITY, 1);
+                    }
                 }
+
+                startActivity(intent);
+                finish();
+
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }

@@ -9,8 +9,11 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+
+import com.facebook.FacebookSdk;
 
 import java.io.IOException;
 
@@ -38,6 +41,12 @@ public abstract class AbstractActivity extends Activity implements
 
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         getFragmentManager().addOnBackStackChangedListener(onBackStackChangedListener);
@@ -59,6 +68,8 @@ public abstract class AbstractActivity extends Activity implements
 
         super.onBackPressed();
     }
+
+
 
 
     // ---------------------------------------------------------------------------------------------
@@ -128,6 +139,24 @@ public abstract class AbstractActivity extends Activity implements
 
         return (currFragment == null && claz == null) || (
                 currFragment != null && claz.isInstance(currFragment));
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        /*
+        This code is required in order to support Facebook's LoginButton functionality -
+        since we do not use support Fragments, we can't use LoginButton.setFragment() call,
+        thus not allowing the Fragments to receive onActivityResult() notifications after FB
+        login events. This code redirects the call to the visible fragment.
+        NOTE: this code is based on the assumption that all subclasses will have FrameLayout
+              named "frame_contents"
+         */
+        Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
+        if (currFragment != null)
+            currFragment.onActivityResult(requestCode, resultCode, data);
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     // End of fragments management
@@ -217,7 +246,7 @@ public abstract class AbstractActivity extends Activity implements
     public String getAuthTokenForActiveAccount() throws AuthenticatorException, OperationCanceledException, IOException {
 
         AccountManagerFuture<Bundle> future = AccountManager.get(this).getAuthTokenByFeatures(
-                AccountAuthenticator.ACCOUNT_TYPE,
+                AccountAuthenticator.ACCOUNT_TYPE_DEFAULT,
                 AccountAuthenticator.AUTH_TOKEN_TYPE_DEFAULT,
                 null,
                 this,
@@ -232,7 +261,7 @@ public abstract class AbstractActivity extends Activity implements
 
     @Override
     public Account getActiveAccount() {
-        Account[] accounts = AccountManager.get(this).getAccountsByType(AccountAuthenticator.ACCOUNT_TYPE);
+        Account[] accounts = AccountManager.get(this).getAccountsByType(AccountAuthenticator.ACCOUNT_TYPE_DEFAULT);
         if (accounts.length > 0) {
             return accounts[0];
         } else {

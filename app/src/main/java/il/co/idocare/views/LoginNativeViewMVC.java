@@ -1,9 +1,7 @@
 package il.co.idocare.views;
 
 import android.os.Bundle;
-import android.os.Message;
 import android.text.method.KeyListener;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,18 +9,17 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import de.greenrobot.event.EventBus;
-import il.co.idocare.Constants;
 import il.co.idocare.R;
 
 /**
  * MVC View of the Home screen.
  */
-public class AuthenticateViewMVC implements ViewMVC {
+public class LoginNativeViewMVC implements ViewMVC {
 
     public static final String VIEW_STATE_USERNAME = "username";
     public static final String VIEW_STATE_PASSWORD = "password";
 
-    private final static String LOG_TAG = AuthenticateViewMVC.class.getSimpleName();
+    private final static String LOG_TAG = LoginNativeViewMVC.class.getSimpleName();
 
     View mRootView;
 
@@ -31,8 +28,8 @@ public class AuthenticateViewMVC implements ViewMVC {
     EditText mEdtPassword;
 
 
-    public AuthenticateViewMVC(LayoutInflater inflater, ViewGroup container) {
-        mRootView = inflater.inflate(R.layout.activity_authenticate, container, false);
+    public LoginNativeViewMVC(LayoutInflater inflater, ViewGroup container) {
+        mRootView = inflater.inflate(R.layout.fragment_login_native, container, false);
 
 
         mBtnLogin = (Button) mRootView.findViewById(R.id.btn_login);

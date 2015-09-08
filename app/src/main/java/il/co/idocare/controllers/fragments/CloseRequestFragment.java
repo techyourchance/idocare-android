@@ -193,7 +193,7 @@ public class CloseRequestFragment extends AbstractFragment {
      */
     private void closeRequest() {
 
-        String closedBy = getActiveAccount().name;
+        String closedBy = getActiveAccount() != null ? getActiveAccount().name : null;
         if (TextUtils.isEmpty(closedBy)) {
             Toast.makeText(getActivity(), "No active account found", Toast.LENGTH_LONG).show();
             Log.i(LOG_TAG, "No active account found - request close failed");

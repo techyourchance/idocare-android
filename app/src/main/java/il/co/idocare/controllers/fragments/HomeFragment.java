@@ -49,7 +49,7 @@ public class HomeFragment extends AbstractFragment implements
         setActionBarTitle(getTitle());
 
         // Create an adapter and pass the reference to MVC view
-        mAdapter = new HomeListAdapter(getActivity(), null, 0, Long.valueOf(getActiveAccount().name),
+        mAdapter = new HomeListAdapter(getActivity(), null, 0,
                 new UserActionsOnRequestApplierImpl(), new UserActionsOnUserApplierImpl());
         mHomeViewMVC.setListAdapter(mAdapter);
 

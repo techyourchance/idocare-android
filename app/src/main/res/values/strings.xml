@@ -13,7 +13,6 @@
     <string name="image_request_thumbnail_content_description">Cleanup request thumbnail</string>
     <string name="login_username_hint">Username:</string>
     <string name="login_password_hint">Password:</string>
-    <string name="btn_login_text">LOG IN</string>
     <string name="img_logo_accessibility">IDoCare logo</string>
     <string name="img_grass_accessibility">Grass picture</string>
     <string name="img_request_thumbnail_accessibility">Request thumbnail picture</string>
@@ -36,6 +35,14 @@
     <string name="self_voting_error_message">You can\'t vote for yourself</string>
     <string name="txt_by">by</string>
     <string name="txt_by_me">by me</string>
+    <string name="btn_sign_up">Sign up</string>
+    <string name="btn_login">Log in</string>
+    <string name="btn_login_capital">LOG IN</string>
+
+
+
+    <string name="facebook_app_id">534844050003392</string>
+    <string name="btn_skip_login">Skip</string>
 
 
 </resources>

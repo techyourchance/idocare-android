@@ -90,6 +90,16 @@ public class Constants {
      */
     public final static String PREFERENCES_FILE = "idocare_preferences";
 
+    /**
+     * An integer with a strictly positive value should be written to SharedPreferences if
+     * the user chooses to skip login when the app starts
+     */
+    public final static String LOGIN_SKIPPED_KEY = "login_skipped";
+
+
+
+
+
     // TODO: alter the configuration of UIL according to our needs
     public final static DisplayImageOptions DEFAULT_DISPLAY_IMAGE_OPTIONS =
             new DisplayImageOptions.Builder()

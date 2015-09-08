@@ -6,4 +6,6 @@
         android:startColor="#006838"
         android:endColor="#8BC53F"
         android:type="linear"/>
+
+    <corners android:radius="@dimen/button_corners_radius"/>
 </shape>

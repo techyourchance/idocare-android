@@ -42,14 +42,11 @@ public class HomeListAdapter extends CursorAdapter implements
     private Map<Long, UserItem> mUsersCache;
     private Map<Long, List<UserActionItem>> mUserActionsCache;
 
-    private long mActiveAccountId;
-
-    public HomeListAdapter(Context context, Cursor cursor, int flags, long activeAccountId,
+    public HomeListAdapter(Context context, Cursor cursor, int flags,
                            RequestUserActionApplier requestUserActionApplier,
                            UserUserActionApplier userUserActionApplier) {
         super(context, cursor, flags);
 
-        mActiveAccountId = activeAccountId;
         mRequestUserActionApplier = requestUserActionApplier;
         mUserUserActionApplier = userUserActionApplier;
 
@@ -176,7 +173,7 @@ public class HomeListAdapter extends CursorAdapter implements
 
     // TODO: remove this in favor of an external dependency (Asana #47055190657814)
     public Account getActiveAccount(Context context) {
-        Account[] accounts = AccountManager.get(context).getAccountsByType(AccountAuthenticator.ACCOUNT_TYPE);
+        Account[] accounts = AccountManager.get(context).getAccountsByType(AccountAuthenticator.ACCOUNT_TYPE_DEFAULT);
         if (accounts.length > 0) {
             return accounts[0];
         } else {

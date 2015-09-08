@@ -185,7 +185,7 @@ public class NewRequestFragment extends AbstractFragment {
      */
     private void createRequest() {
 
-        String createdBy = getActiveAccount().name;
+        String createdBy = getActiveAccount() != null ? getActiveAccount().name : null;
         if (TextUtils.isEmpty(createdBy)) {
             Toast.makeText(getActivity(), "No active account found", Toast.LENGTH_LONG).show();
             Log.i(LOG_TAG, "No active account found - request creation failed");

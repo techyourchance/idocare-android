@@ -83,7 +83,7 @@
 
         <Button
             android:id="@+id/btn_pickup_request"
-            android:layout_width="@dimen/default_button_width"
+            android:layout_width="@dimen/wide_button_width"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/fragment_default_margin"
@@ -95,7 +95,7 @@
 
         <Button
             android:id="@+id/btn_close_request"
-            android:layout_width="@dimen/default_button_width"
+            android:layout_width="@dimen/wide_button_width"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/fragment_default_margin"

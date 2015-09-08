@@ -1,78 +1,83 @@
-package il.co.idocare.controllers.activities;
+package il.co.idocare.controllers.fragments;
 
-import android.accounts.Account;
-import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
-import android.content.Context;
+import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Message;
+import android.support.annotation.Nullable;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.authentication.AccountAuthenticator;
+import il.co.idocare.authentication.UserStateManager;
+import il.co.idocare.controllers.activities.LoginActivity;
+import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.networking.ServerHttpRequest;
 import il.co.idocare.utils.IDoCareJSONUtils;
-import il.co.idocare.views.AuthenticateViewMVC;
+import il.co.idocare.views.LoginNativeViewMVC;
 
 /**
- * Created by Vasiliy on 4/30/2015.
+ * This fragment handles native login flow
  */
-public class AuthenticatorActivity extends AccountAuthenticatorActivity implements
+public class LoginNativeFragment extends AbstractFragment implements
         ServerHttpRequest.OnServerResponseCallback {
 
-    public final static String ARG_ACCOUNT_NAME = "arg_account_name";
-    public final static String ARG_AUTH_TOKEN_TYPE = "arg_auth_type";
-    public static final String ARG_ACCOUNT_TYPE = "arg_account_type";
-    public static final String ARG_IS_ADDING_NEW_ACCOUNT = "arg_is_adding_new_account";
 
+    private static final String LOG_TAG = LoginNativeFragment.class.getSimpleName();
 
     private final static String LOGIN_URL = Constants.ROOT_URL + "/api-04/user/login";
 
-    private static final String LOG_TAG = AuthenticatorActivity.class.getSimpleName();
-
     private static final String KEY_ERROR_MSG = "key_error_msg";
 
-    private AuthenticateViewMVC mViewMVC;
 
+    private LoginNativeViewMVC mLoginNativeViewMVC;
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mLoginNativeViewMVC = new LoginNativeViewMVC(inflater, container);
 
-        mViewMVC = new AuthenticateViewMVC(LayoutInflater.from(this), null);
 
-        setContentView(mViewMVC.getRootView());
-
-//        if (accountName != null) {
-//            ((TextView)findViewById(R.id.accountName)).setText(accountName);
-//        }
-
+        return mLoginNativeViewMVC.getRootView();
     }
 
     @Override
-    protected void onStart() {
+    public boolean isTopLevelFragment() {
+        return false;
+    }
+
+    @Override
+    public Class<? extends Fragment> getNavHierParentFragment() {
+        return LoginChooserFragment.class;
+    }
+
+    @Override
+    public String getTitle() {
+        return "Log in";
+    }
+
+    @Override
+    public void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
-        EventBus.getDefault().register(mViewMVC);
+        EventBus.getDefault().register(mLoginNativeViewMVC);
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
-        EventBus.getDefault().unregister(mViewMVC);
+        EventBus.getDefault().unregister(mLoginNativeViewMVC);
     }
 
 
@@ -80,7 +85,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
     //
     // EventBus events handling
 
-    public void onEvent(AuthenticateViewMVC.LoginButtonClickEvent event) {
+    public void onEvent(LoginNativeViewMVC.LoginButtonClickEvent event) {
         sendLoginRequest();
     }
 
@@ -89,18 +94,19 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
     // ---------------------------------------------------------------------------------------------
 
 
+
     /**
      * Initiate login server request
      */
     private void sendLoginRequest() {
 
-        Bundle userDataBundle = mViewMVC.getViewState();
+        Bundle userDataBundle = mLoginNativeViewMVC.getViewState();
 
         byte[] usernameBytes;
         byte[] passwordBytes;
         try {
-            usernameBytes = ("fuckyouhackers" + userDataBundle.getString(AuthenticateViewMVC.VIEW_STATE_USERNAME)).getBytes("UTF-8");
-            passwordBytes = ("fuckyouhackers" + userDataBundle.getString(AuthenticateViewMVC.VIEW_STATE_PASSWORD)).getBytes("UTF-8");
+            usernameBytes = ("fuckyouhackers" + userDataBundle.getString(LoginNativeViewMVC.VIEW_STATE_USERNAME)).getBytes("UTF-8");
+            passwordBytes = ("fuckyouhackers" + userDataBundle.getString(LoginNativeViewMVC.VIEW_STATE_PASSWORD)).getBytes("UTF-8");
         } catch (UnsupportedEncodingException e ) {
             // Really? Not supporting UTF-8???
             return;
@@ -118,9 +124,10 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
 
         new Thread(serverRequest).start();
 
-        EventBus.getDefault().post(new AuthenticateViewMVC.LoginRequestSentEvent());
+        EventBus.getDefault().post(new LoginNativeViewMVC.LoginRequestSentEvent());
 
     }
+
 
 
     @Override
@@ -149,67 +156,59 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
             Log.e(LOG_TAG, "receiver serverResponse() callback for unrecognized URL: " + url);
         }
 
-        // If we got here - login was unsuccessful
-        EventBus.getDefault().post(new AuthenticateViewMVC.LoginFailedEvent());
     }
 
 
     private void finishLogin(Bundle data) {
 
-        AccountManager accountManager = AccountManager.get(this);
 
         if (data.containsKey(KEY_ERROR_MSG)) {
-            runOnUiThread(
+            getActivity().runOnUiThread(
                     new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(AuthenticatorActivity.this,
-                                    "Login failed", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), "Login failed", Toast.LENGTH_LONG).show();
                         }
                     }
             );
 
             Log.i(LOG_TAG, "Login failed. Error message:\n" +
                     data.get(KEY_ERROR_MSG));
+            EventBus.getDefault().post(new LoginNativeViewMVC.LoginFailedEvent());
             return;
         }
 
         String accountName = data.getString(AccountManager.KEY_ACCOUNT_NAME);
         String accountType = data.getString(AccountManager.KEY_ACCOUNT_TYPE);
         String authToken = data.getString(AccountManager.KEY_AUTHTOKEN);
-        String authTokenType = getIntent().getStringExtra(ARG_AUTH_TOKEN_TYPE);
-        if (authTokenType == null) authTokenType = AccountAuthenticator.AUTH_TOKEN_TYPE_DEFAULT;
 
 
+        UserStateManager userStateManager = new UserStateManager(getActivity());
 
-        final Account account = new Account(accountName, accountType);
+        if (userStateManager.addNativeAccount(accountName, accountType, authToken)) {
+            // Notify of successful login
+            EventBus.getDefault().post(new LoginNativeViewMVC.LoginSuccessfulEvent());
 
-        if (getIntent().getBooleanExtra(ARG_IS_ADDING_NEW_ACCOUNT, false)) {
-
-            // Creating the account on the device and setting the auth token we got
-            // (Not setting the auth token will cause another call to the server to authenticate the user)
-            accountManager.addAccountExplicitly(account, null, null);
-            accountManager.setAuthToken(account, authTokenType, authToken);
         } else {
-            accountManager.setAuthToken(account, authTokenType, authToken);
+            EventBus.getDefault().post(new LoginNativeViewMVC.LoginFailedEvent());
+            return;
         }
-
-        // Remember the account as a default account for the app
-        SharedPreferences prefs =
-                this.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
-        prefs.edit().putString(AccountManager.KEY_ACCOUNT_NAME, accountName).apply();
-        prefs.edit().putString(AccountManager.KEY_ACCOUNT_TYPE, accountType).apply();
-
-        // Notify of successful login
-        EventBus.getDefault().post(new AuthenticateViewMVC.LoginSuccessfulEvent());
-
 
         final Intent result = new Intent();
         result.putExtras(data);
 
-        setAccountAuthenticatorResult(data);
-        setResult(RESULT_OK, result);
-        finish();
+        // This code is crap, but no time to think of a better approach
+        // TODO: find a solution without casting (or, at least, not at this stage)
+        ((LoginActivity)getActivity()).setAccountAuthenticatorResult(data);
+        ((LoginActivity)getActivity()).setResult(Activity.RESULT_OK, result);
+        ((LoginActivity)getActivity()).finish();
+
+        if (getArguments().containsKey(LoginActivity.ARG_LAUNCHED_FROM_STARTUP_ACTIVITY)) {
+            // If the enclosing activity was launched from StartupActivity then switch to
+            // MainActivity (otherwise rely on backstack)
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            startActivity(intent);
+        }
     }
 
 
@@ -229,7 +228,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
             String authToken = dataObj.getString(Constants.FIELD_NAME_USER_AUTH_TOKEN);
 
             data.putString(AccountManager.KEY_ACCOUNT_NAME, String.valueOf(userId));
-            data.putString(AccountManager.KEY_ACCOUNT_TYPE, getIntent().getStringExtra(ARG_ACCOUNT_TYPE));
+            data.putString(AccountManager.KEY_ACCOUNT_TYPE,
+                    getArguments().getString(LoginActivity.ARG_ACCOUNT_TYPE,
+                            AccountAuthenticator.ACCOUNT_TYPE_DEFAULT));
             data.putString(AccountManager.KEY_AUTHTOKEN, authToken);
 
         } catch (JSONException e) {
@@ -239,6 +240,4 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
 
         return data;
     }
-
-
 }

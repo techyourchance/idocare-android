@@ -1,14 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="new_request_color">#F98F03</color>
-    <color name="picked_up_request_color">#8BC53F</color>
-    <color name="closed_request_color">#298225</color>
-    <color name="faded_text">#B3B3B3</color>
-    <color name="line_separator">#808080</color>
-    <color name="picture_background">#E6E6E6</color>
-    <color name="text_on_picture_background">#808080</color>
-    <color name="fragment_bg_dark">#CCCCCC</color>
-    <color name="fragment_bg_light">#F6F6F6</color>
+
+    <!-- These are the colors used in the app. All other colors just reference one of these -->
+    <color name="dark_green">#298225</color>
+    <color name="light_green">#8BC53F</color>
+    <color name="light_orange">#F98F03</color>
+    <color name="gray">#808080</color>
+    <color name="gray_light_1">#B3B3B3</color>
+    <color name="gray_light_2">#CCCCCC</color>
+    <color name="gray_light_3">#E6E6E6</color>
+    <color name="gray_light_4">#E6E6E6</color>
+
+
+
+    <!-- The below colors are defined for readability and maintainability. All of them should
+         reference one of the colors above -->
+
+    <color name="new_request_color">@color/light_orange</color>
+    <color name="picked_up_request_color">@color/light_green</color>
+    <color name="closed_request_color">@color/dark_green</color>
+
+
+    <color name="faded_text">@color/gray_light_1</color>
+
+    <color name="line_separator">@color/gray</color>
+
+    <color name="picture_background">@color/gray_light_3</color>
+    <color name="text_on_picture_background">@color/gray</color>
+
+    <color name="fragment_bg_dark">@color/gray_light_2</color>
+    <color name="fragment_bg_light">@color/gray_light_4</color>
 
 
 </resources>
