@@ -2,7 +2,9 @@ package il.co.idocare.controllers.fragments;
 
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -49,7 +51,6 @@ public class LoginNativeFragment extends AbstractFragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mLoginNativeViewMVC = new LoginNativeViewMVC(inflater, container);
 
-
         return mLoginNativeViewMVC.getRootView();
     }
 
@@ -80,6 +81,23 @@ public class LoginNativeFragment extends AbstractFragment implements
         EventBus.getDefault().unregister(mLoginNativeViewMVC);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        UserStateManager userStateManager = new UserStateManager(getActivity());
+        if (userStateManager.isLoggedIn()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("IDoCare does not currently support multiple accounts")
+                    .setCancelable(false)
+                    .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            ((LoginActivity) getActivity()).finish();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+    }
 
     // ---------------------------------------------------------------------------------------------
     //
@@ -118,7 +136,7 @@ public class LoginNativeFragment extends AbstractFragment implements
         serverRequest.addHeader(Constants.HttpHeader.USER_USERNAME.getValue(),
                 Base64.encodeToString(usernameBytes, Base64.NO_WRAP));
 
-        serverRequest.addTextField(Constants.FIELD_NAME_USER_PASSWORD,
+        serverRequest.addTextField(Constants.FIELD_NAME_USER_PASSWORD_LOGIN,
                 Base64.encodeToString(passwordBytes, Base64.NO_WRAP));
 
 

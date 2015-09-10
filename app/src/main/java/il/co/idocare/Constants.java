@@ -36,14 +36,19 @@ public class Constants {
     public static final String FIELD_NAME_RESPONSE_MESSAGE = "message";
     public static final String FIELD_NAME_RESPONSE_DATA = "data";
 
+
     public static final String FIELD_NAME_USER_ID = "user_data_id";
+    public static final String FIELD_NAME_USER_EMAIL = "user_data_email";
     public static final String FIELD_NAME_USER_NICKNAME = "user_data_nickname";
     public static final String FIELD_NAME_USER_FIRST_NAME = "user_data_first_name";
     public static final String FIELD_NAME_USER_LAST_NAME = "user_data_last_name";
     public static final String FIELD_NAME_USER_REPUTATION = "user_data_reputation";
     public static final String FIELD_NAME_USER_PICTURE = "user_data_picture";
-    public static final String FIELD_NAME_USER_PASSWORD = "user_data_auth";
+    // TODO: the below two fields must be identical in name and in encoding
+    public static final String FIELD_NAME_USER_PASSWORD_LOGIN = "user_data_auth";
+    public static final String FIELD_NAME_USER_PASSWORD_SIGNUP = "user_data_password";
     public static final String FIELD_NAME_USER_AUTH_TOKEN = "user_data_public_key";
+    public static final String FIELD_NAME_USER_FACEBOOK_ID= "user_data_fb_id";
 
     public static final String FIELD_NAME_ENTITY_ID = "entity_id";
     public static final String FIELD_NAME_ENTITY_PARAM = "entity_param";

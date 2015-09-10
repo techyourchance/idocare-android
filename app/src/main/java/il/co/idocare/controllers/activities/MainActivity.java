@@ -22,6 +22,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import il.co.idocare.Constants;
+import il.co.idocare.authentication.UserStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
 import il.co.idocare.controllers.listadapters.NavigationDrawerListAdapter;
@@ -236,6 +237,11 @@ public class MainActivity extends AbstractActivity {
     // User session management
 
     private void logOutCurrentUser() {
+        UserStateManager userStateManager = new UserStateManager(this);
+
+        if (userStateManager.isLoggedIn()) {
+            userStateManager.logOut();
+        }
 
     }
 

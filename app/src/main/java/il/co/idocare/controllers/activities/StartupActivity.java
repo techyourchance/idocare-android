@@ -69,7 +69,9 @@ public class StartupActivity extends AbstractActivity {
 
                 Intent intent;
 
-                if (userStateManager.isLoggedIn()) {
+                //this code don't need to know about hte exact mechanism the user used to log in
+                // TODO: remove unhealthy dependencies once proper login flow established
+                if (userStateManager.isLoggedInNative()) {
                     // If the user is logged in - show the MainFragment
                     intent = new Intent(StartupActivity.this, MainActivity.class);
                 } else {
@@ -86,6 +88,10 @@ public class StartupActivity extends AbstractActivity {
                         intent = new Intent(StartupActivity.this, LoginActivity.class);
                         intent.putExtra(LoginActivity.ARG_LAUNCHED_FROM_STARTUP_ACTIVITY, 1);
                     }
+
+                    // TODO: remove once proper login flow established
+                    if (userStateManager.isLoggedInWithFacebook())
+                        userStateManager.logOut();
                 }
 
                 startActivity(intent);

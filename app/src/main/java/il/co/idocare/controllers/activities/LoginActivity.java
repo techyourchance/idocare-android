@@ -5,16 +5,18 @@ import android.accounts.AccountManager;
 import android.os.Bundle;
 
 import il.co.idocare.R;
+import il.co.idocare.authentication.AccountAuthenticator;
 import il.co.idocare.controllers.fragments.LoginChooserFragment;
+import il.co.idocare.controllers.fragments.LoginNativeFragment;
 
 /**
- * Created by Vasiliy on 4/30/2015.
+ * This activity takes care of login process. This activity is also used by AccountAuthenticator
+ * service.
  */
 public class LoginActivity extends AbstractActivity {
 
     public final static String ARG_ACCOUNT_NAME = "il.co.idocare.accountName";
     public static final String ARG_ACCOUNT_TYPE = "il.co.idocare.accountType";
-    public static final String ARG_IS_ADDING_NEW_ACCOUNT = "il.co.idocare.isAddingNewAccount";
 
     /**
      * When set to a strictly positive integer, this entry in the launching intent's extra
@@ -38,7 +40,14 @@ public class LoginActivity extends AbstractActivity {
         setContentView(R.layout.activity_single_frame_layout);
 
         if (savedInstanceState == null) {
-            replaceFragment(LoginChooserFragment.class, false, true, getIntent().getExtras());
+            if (getIntent().hasExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE)) {
+                // If the above extra is present - this activity was started by
+                // AccountAuthenticator. Therefore - show native login right away!
+                replaceFragment(LoginNativeFragment.class, false, true, getIntent().getExtras());
+            } else {
+                replaceFragment(LoginChooserFragment.class, false, true, getIntent().getExtras());
+            }
+
         }
 
 
