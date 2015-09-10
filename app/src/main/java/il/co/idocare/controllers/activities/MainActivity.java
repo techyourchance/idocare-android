@@ -74,6 +74,7 @@ public class MainActivity extends AbstractActivity {
         if (mGoogleApiClient != null) mGoogleApiClient.connect();
 
         enableAutomaticSync();
+        requestImmediateSync();
 
     }
 
@@ -247,29 +248,29 @@ public class MainActivity extends AbstractActivity {
 
 
     private void enableAutomaticSync() {
-//        Account acc = getActiveAccount();
-//        ContentResolver.setIsSyncable(acc, IDoCareContract.AUTHORITY, 1);
-//        ContentResolver.setSyncAutomatically(acc, IDoCareContract.AUTHORITY, true);
+        Account acc = getActiveAccount();
+        ContentResolver.setIsSyncable(acc, IDoCareContract.AUTHORITY, 1);
+        ContentResolver.setSyncAutomatically(acc, IDoCareContract.AUTHORITY, true);
     }
 
     private void disableAutomaticSync() {
-//        Account acc = getActiveAccount();
-//        ContentResolver.setIsSyncable(acc, IDoCareContract.AUTHORITY, 0);
+        Account acc = getActiveAccount();
+        ContentResolver.setIsSyncable(acc, IDoCareContract.AUTHORITY, 0);
     }
 
-    private void requestImmediateSync() {
-//        Account acc = getActiveAccount();
-//        // Pass the settings flags by inserting them in a bundle
-//        Bundle settingsBundle = new Bundle();
-//        settingsBundle.putBoolean(
-//                ContentResolver.SYNC_EXTRAS_MANUAL, true);
-//        settingsBundle.putBoolean(
-//                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-//        /*
-//         * Request the sync for the default account, authority, and
-//         * manual sync settings
-//         */
-//        ContentResolver.requestSync(acc, IDoCareContract.AUTHORITY, settingsBundle);
+    public void requestImmediateSync() {
+        Account acc = getActiveAccount();
+        // Pass the settings flags by inserting them in a bundle
+        Bundle settingsBundle = new Bundle();
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        /*
+         * Request the sync for the default account, authority, and
+         * manual sync settings
+         */
+        ContentResolver.requestSync(acc, IDoCareContract.AUTHORITY, settingsBundle);
     }
 
     // End of user session management

@@ -251,6 +251,7 @@ public class NewRequestFragment extends AbstractFragment {
             @Override
             protected void onPostExecute(Void aVoid) {
                 dismissProgressDialog();
+                ((MainActivity)getActivity()).requestImmediateSync(); // TODO: remove this after geocoder and names appear without sync
                 replaceFragment(HomeFragment.class, false, true, null);
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[] {null});
