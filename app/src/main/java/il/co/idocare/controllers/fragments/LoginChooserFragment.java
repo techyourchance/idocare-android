@@ -80,6 +80,8 @@ public class LoginChooserFragment extends AbstractFragment {
         btnLoginFB.setReadPermissions("public_profile", "email");
         btnLoginFB.registerCallback(mFacebookCallbackManager, new LoginFacebookCallback());
 
+        // The below code resizes Facebook login button
+
         float fbIconScale = 1.45F;
         Drawable drawable = getActivity().getResources().getDrawable(
                 com.facebook.R.drawable.com_facebook_button_icon);
