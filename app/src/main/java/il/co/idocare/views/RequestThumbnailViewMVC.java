@@ -149,7 +149,7 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements ViewMVC{
             mTxtRequestStatus.setText(getResources().getString(R.string.txt_new_request_title));
 
         // TODO: need to set city name
-        mTxtRequestLocation.setText("TODO City Name");
+        mTxtRequestLocation.setText("");
 
         mTxtCreatedComment.setText(mRequestItem.getCreatedComment());
         mTxtCreatedAt.setText(mRequestItem.getCreatedAt());

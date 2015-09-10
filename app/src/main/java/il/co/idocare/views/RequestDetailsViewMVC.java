@@ -274,7 +274,7 @@ public class RequestDetailsViewMVC implements ViewMVC {
         mTxtStatus.setText(statusText);
 
         mTxtCoarseLocation.setBackgroundColor(statusColor);
-        mTxtCoarseLocation.setText("TODO coarse loc");
+        mTxtCoarseLocation.setText("");
 
 
     }
