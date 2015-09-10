@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import de.greenrobot.event.EventBus;
 import il.co.idocare.R;
@@ -37,8 +38,8 @@ public class LoginChooserViewMVC implements ViewMVC {
             }
         });
 
-        Button btnSkipLogin = (Button) getRootView().findViewById(R.id.btn_choose_skip_login);
-        btnSkipLogin.setOnClickListener(new View.OnClickListener() {
+        TextView txtSkipLogin = (TextView) getRootView().findViewById(R.id.txt_choose_skip_login);
+        txtSkipLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 EventBus.getDefault().post(new SkipLoginClickEvent());

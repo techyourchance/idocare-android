@@ -27,8 +27,8 @@
     <dimen name="request_status_bar_height">25sp</dimen>
     <dimen name="request_thumbnail_status_bar_height">20sp</dimen>
     <dimen name="long_button_horizontal_padding">60dp</dimen>
-    <dimen name="wide_button_width">250dp</dimen>
-    <dimen name="narrow_button_width">120dp</dimen>
+    <dimen name="wide_button_width">260dp</dimen>
+    <dimen name="narrow_button_width">125dp</dimen>
     <dimen name="two_narrow_buttons_horizontal_spacing">10dp</dimen>
     <dimen name="frame_contents_padding">10dp</dimen>
 
@@ -38,5 +38,15 @@
 
     <dimen name="map_preview_height">150dp</dimen>
     <dimen name="button_corners_radius">6dp</dimen>
+    <dimen name="wide_button_height">40dp</dimen>
+    <dimen name="narrow_button_height">40dp</dimen>
+
+    <dimen name="fb_margin_override_top">13dp</dimen>
+    <dimen name="fb_margin_override_bottom">13dp</dimen>
+    <!--The next value changes the margin between the FB icon and the left border:-->
+    <dimen name="fb_margin_override_lr">10dp</dimen>
+    <!--The next value changes the margin between the FB icon and the login text:-->
+    <dimen name="fb_margin_override_textpadding">17dp</dimen>
+    <dimen name="user_small_picture_size">30dp</dimen>
 
 </resources>

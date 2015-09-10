@@ -9,15 +9,19 @@
     android:padding="@dimen/border_background_width">
 
 
-    <EditText
-        android:id="@+id/edt_created_comment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text"
-        android:hint="@string/edt_closed_comment_hint"/>
 
     <!-- Include camera control layout -->
     <include layout="@layout/element_camera_control_linear" />
+
+
+    <EditText
+        android:id="@+id/edt_created_comment"
+        android:layout_width="281dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:inputType="text"
+        android:hint="@string/edt_closed_comment_hint"/>
+
 
     <RatingBar
         android:id="@+id/ratingbar_pollution_level"
@@ -27,13 +31,14 @@
         android:layout_marginTop="@dimen/fragment_default_margin"
         android:numStars="5"
         android:stepSize="1"
-        android:rating="2"/>
+        android:rating="2"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/btn_create_new_request"
         android:layout_gravity="center_horizontal"
         android:layout_width="@dimen/wide_button_width"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/wide_button_height"
         android:layout_marginTop="@dimen/fragment_default_margin"
         android:background="@color/new_request_color"
         android:text="@string/btn_create_new_request"

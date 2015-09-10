@@ -21,6 +21,10 @@
         <include android:id="@+id/element_created_by"
             layout="@layout/element_user_details_and_comment"/>
 
+        <!-- Include "created" pictures -->
+        <include  android:id="@+id/element_created_pictures"
+            layout="@layout/element_pictures_row_linear"/>
+
         <View
             android:id="@+id/line_users_separator"
             android:layout_width="match_parent"
@@ -36,10 +40,6 @@
         <!-- Include "closed by" details-->
         <include android:id="@+id/element_closed_by"
             layout="@layout/element_user_details_and_comment"/>
-
-        <!-- Include "created" pictures -->
-        <include  android:id="@+id/element_created_pictures"
-            layout="@layout/element_pictures_row_linear"/>
 
         <!-- Include "closed" pictures -->
         <include  android:id="@+id/element_closed_pictures"
@@ -84,7 +84,7 @@
         <Button
             android:id="@+id/btn_pickup_request"
             android:layout_width="@dimen/wide_button_width"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/wide_button_height"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/fragment_default_margin"
             android:layout_marginBottom="@dimen/fragment_default_margin"
@@ -96,7 +96,7 @@
         <Button
             android:id="@+id/btn_close_request"
             android:layout_width="@dimen/wide_button_width"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/wide_button_height"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/fragment_default_margin"
             android:layout_marginBottom="@dimen/fragment_default_margin"

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -79,6 +80,22 @@ public class LoginChooserFragment extends AbstractFragment {
         btnLoginFB.setReadPermissions("public_profile", "email");
         btnLoginFB.registerCallback(mFacebookCallbackManager, new LoginFacebookCallback());
 
+        float fbIconScale = 1.45F;
+        Drawable drawable = getActivity().getResources().getDrawable(
+                com.facebook.R.drawable.com_facebook_button_icon);
+        drawable.setBounds(0, 0, (int)(drawable.getIntrinsicWidth()*fbIconScale),
+                (int)(drawable.getIntrinsicHeight()*fbIconScale));
+        btnLoginFB.setCompoundDrawables(drawable, null, null, null);
+        btnLoginFB.setCompoundDrawablePadding(getActivity().getResources().
+                getDimensionPixelSize(R.dimen.fb_margin_override_textpadding));
+        btnLoginFB.setPadding(
+                getActivity().getResources().getDimensionPixelSize(
+                        R.dimen.fb_margin_override_lr),
+                getActivity().getResources().getDimensionPixelSize(
+                        R.dimen.fb_margin_override_top),
+                0,
+                getActivity().getResources().getDimensionPixelSize(
+                        R.dimen.fb_margin_override_bottom));
     }
 
     @Override

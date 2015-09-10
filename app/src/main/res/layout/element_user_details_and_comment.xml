@@ -3,7 +3,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:paddingLeft="@dimen/fragment_default_padding"
     android:paddingStart="@dimen/fragment_default_padding"
     android:paddingRight="@dimen/fragment_default_padding"
@@ -19,8 +19,8 @@
 
     <ImageView
         android:id="@+id/img_user_picture"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/user_small_picture_size"
+        android:layout_height="@dimen/user_small_picture_size"
         android:layout_below="@id/txt_title"
         android:contentDescription="@string/img_user_picture_accessibility"/>
 
@@ -79,23 +79,23 @@
         android:layout_below="@id/txt_title"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="9dp"
         android:src="@drawable/ic_plus"
         android:contentDescription="@string/btn_vote_up_accessibility" />
 
 
     <FrameLayout
         android:id="@+id/frame_reputation"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_below="@id/txt_title"
         android:layout_toLeftOf="@id/img_vote_up"
         android:layout_toStartOf="@id/img_vote_up"
-        android:layout_marginTop="2dp">
+        android:layout_marginTop="1dp">
 
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:src="@drawable/ic_star_large"
             android:layout_gravity="center"/>
 
@@ -104,7 +104,7 @@
             android:id="@+id/txt_votes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="19dp"
+            android:layout_marginTop="15dp"
             android:layout_gravity="center_horizontal"
             android:text="666"/>
 
@@ -119,7 +119,7 @@
         android:layout_below="@id/txt_title"
         android:layout_toLeftOf="@id/frame_reputation"
         android:layout_toStartOf="@id/frame_reputation"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="9dp"
         android:src="@drawable/ic_minus"
         android:contentDescription="@string/btn_vote_down_accessibility" />
 
