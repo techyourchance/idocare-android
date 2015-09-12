@@ -16,9 +16,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ch.boye.httpclientandroidlib.HttpEntity;
-import ch.boye.httpclientandroidlib.HttpResponse;
 import ch.boye.httpclientandroidlib.NameValuePair;
 import ch.boye.httpclientandroidlib.client.ClientProtocolException;
+import ch.boye.httpclientandroidlib.client.ResponseHandler;
 import ch.boye.httpclientandroidlib.client.entity.UrlEncodedFormEntity;
 import ch.boye.httpclientandroidlib.client.methods.CloseableHttpResponse;
 import ch.boye.httpclientandroidlib.client.methods.HttpEntityEnclosingRequestBase;
@@ -33,135 +33,58 @@ import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
 import ch.boye.httpclientandroidlib.util.EntityUtils;
 import il.co.idocare.Constants;
 
-public class ServerHttpRequest implements Runnable {
-
-
-
-    // URLs used to issue requests to the server
-    public final static String LOGIN_URL = Constants.ROOT_URL + "/api-04/user/login";
-    public final static String GET_USER_DATA_URL = Constants.ROOT_URL + "/api-04/user/get";
-    public final static String ADD_USER_URL = Constants.ROOT_URL + "/api-04/user/add";
-    public final static String GET_ALL_ARTICLES_URL = Constants.ROOT_URL + "/api-04/article";
-    public final static String GET_REQUEST_URL = Constants.ROOT_URL + "/api-04/request/get";
-
-
-    /**
-     * Classes implementing this interface are eligible to be used as callback targets once
-     * server response for a particular request is received
-     */
-    public interface OnServerResponseCallback {
-        /**
-         * This callback method will be called by ServerRequest object once the response from
-         * the server will be received
-         *
-         * @param statusCode   status code of server response
-         * @param reasonPhrase reason phrase for the status code of server response
-         * @param entityString entity part of server response
-         * @param asyncCompletionToken the Object passed to the ServerRequest which calls this
-         *                             callback at creation time
-         */
-        public void serverResponse(int statusCode, String reasonPhrase, String entityString,
-                                   Object asyncCompletionToken);
-    }
-
-    /**
-     * Http method selector enum
-     */
-    public enum HttpMethod {
-        GET, POST
-    }
+public class ServerHttpRequest {
 
 
     private final static String LOG_TAG = ServerHttpRequest.class.getSimpleName();
 
-    private Account mAccount;
-    private String mAuthToken;
-    private OnServerResponseCallback mCallback;
-    private Object mAsyncCompletionToken;
 
-    private HttpUriRequest mHttpRequest;
+    private String mUrl;
 
+    private Map<String, String> mHeaders;
     private Map<String, String> mTextFields;
     private Map<String, Map<String, String>> mPicturesFields;
 
 
-    public ServerHttpRequest(String url, Account account, String authToken,
-                             OnServerResponseCallback callback, Object asyncCompletionToken) {
-        mAccount = account;
-        mAuthToken = authToken;
-        mCallback = callback;
-        mAsyncCompletionToken = asyncCompletionToken;
-
-        // We have only POSTs for now
-        mHttpRequest =  new HttpPost(url);
+    public ServerHttpRequest(String url) {
+        if (TextUtils.isEmpty(url))
+            throw new IllegalArgumentException("parameter must be non-empty");
+        mUrl = url;
     }
 
-    @Override
-    public void run() {
 
-        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-        StringBuilder httpResponseBuffer = new StringBuilder();
+
+    public CloseableHttpResponse execute() {
+
+        // Currently we have only posts
+        HttpPost request = new HttpPost(mUrl);
+
+        // Adding headers (if required)
+        if (mHeaders != null) {
+            for (String headerName : mHeaders.keySet()) {
+                request.addHeader(headerName, mHeaders.get(headerName));
+            }
+        }
 
         // Adding an entity (if required)
         HttpEntity httpEntity = createHttpEntity();
-
         if (httpEntity != null) {
-            try {
-                HttpEntityEnclosingRequestBase entityEnclosingRequest =
-                        (HttpEntityEnclosingRequestBase) mHttpRequest;
-                entityEnclosingRequest.setEntity(httpEntity);
-            } catch (ClassCastException e) {
-                e.printStackTrace();
-            }
+            request.setEntity(httpEntity);
         }
 
+
+        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         CloseableHttpResponse httpResponse = null;
-        String responseEntityString = "";
 
-        //noinspection TryWithIdenticalCatches
         try {
-            httpResponse = httpClient.execute(mHttpRequest);
-
-            try {
-                responseEntityString = EntityUtils.toString(httpResponse.getEntity());
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                httpResponse.close();
-            }
-
-
+            httpResponse = httpClient.execute(request);
         } catch (ClientProtocolException e) {
             e.printStackTrace();
-            /*
-            Let the callback know that this server request failed
-            TODO: this is an error case. Make sure that the callback treats it as such!!!
-             */
-            mCallback.serverResponse(0, "", "", mAsyncCompletionToken);
-            return;
         } catch (IOException e) {
             e.printStackTrace();
-            /*
-            Let the callback know that this server request failed
-            TODO: this is an error case. Make sure that the callback treats it as such!!!
-             */
-            mCallback.serverResponse(0, "", "", mAsyncCompletionToken);
-            return;
-        } finally {
-            try {
-                if (httpClient != null) httpClient.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
 
-        mCallback.serverResponse(
-                httpResponse.getStatusLine().getStatusCode(),
-                httpResponse.getStatusLine().getReasonPhrase(),
-                responseEntityString,
-                mAsyncCompletionToken);
-
-
+        return httpResponse;
     }
 
     /**
@@ -188,12 +111,11 @@ public class ServerHttpRequest implements Runnable {
      * @param uri local URI of the picture
      */
     public void addPictureField(String fieldName, String pictureName, String uri) {
-        if (TextUtils.isEmpty(fieldName)) {
-            throw new IllegalArgumentException("the name of the field must be non-empty");
+        if (TextUtils.isEmpty(fieldName) || TextUtils.isEmpty(pictureName)
+                || TextUtils.isEmpty(uri)) {
+            throw new IllegalArgumentException("all parameters must be non-empty");
         }
-        if (TextUtils.isEmpty(pictureName)) {
-            throw new IllegalArgumentException("the name of the picture must be non-empty");
-        }
+
         if (mPicturesFields == null)
             mPicturesFields = new HashMap<>(1);
 
@@ -211,64 +133,19 @@ public class ServerHttpRequest implements Runnable {
     }
 
     /**
-     * Add a new header to Http request.
+     * Add a header to this request.
      */
     public void addHeader(String name, String value) {
-        if (TextUtils.isEmpty(name)) {
-            throw new IllegalArgumentException("the name of the header must be non-empty");
-        }
-        mHttpRequest.addHeader(name, value);
-    }
-
-    /**
-     * Add "standard" headers to Http request. Standard headers are:<br>
-     * User ID<br>
-     * Authentication token<br>
-     * Timestamp<br>
-     * @throws IllegalStateException if this ServerRequest is not associated with a particular account
-     */
-    public void addStandardHeaders() throws IllegalStateException{
-        if (mAccount == null) {
-            throw new IllegalStateException("can't add standard headers because there is no " +
-                    "associated account.");
+        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(value)) {
+            throw new IllegalArgumentException("all parameters must be non-empty");
         }
 
-        String accountId = mAccount.name;
+        if (mHeaders == null)
+            mHeaders = new HashMap<>(1);
 
-        mHttpRequest.addHeader(Constants.HttpHeader.USER_ID.getValue(), accountId);
-
-        long timestamp = System.currentTimeMillis();
-        String token = generateAuthToken(accountId +
-                mAuthToken +
-                String.valueOf(timestamp));
-
-        mHttpRequest.addHeader(Constants.HttpHeader.USER_TOKEN.getValue(), token);
-        mHttpRequest.addHeader(Constants.HttpHeader.USER_TIMESTAMP.getValue(), String.valueOf(timestamp));
+        mHeaders.put(name, value);
     }
 
-
-    /**
-     * This method generates the authentication token from a string of text
-     * @param arg string of text from which auth token will be generated
-     * @return auth token
-     */
-    private static String generateAuthToken(String arg) {
-        MessageDigest digest=null;
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-            digest.reset();
-            byte[] resultBytes = digest.digest(arg.getBytes("UTF-8"));
-            return (String
-                    .format("%0" + (resultBytes.length * 2) + "X", new BigInteger(1, resultBytes)))
-                    .toLowerCase();
-        } catch (NoSuchAlgorithmException e1) {
-            e1.printStackTrace();
-            return null;
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     /**
      * This method creates an appropriate entity for the request
@@ -277,7 +154,7 @@ public class ServerHttpRequest implements Runnable {
 
         HttpEntity httpEntity = null;
 
-        // Use multipart body if pictures should be attached
+        // Use multipart entity if pictures should be attached
         boolean isMultipart = (mPicturesFields != null && mPicturesFields.size() > 0);
 
         if (isMultipart ) {

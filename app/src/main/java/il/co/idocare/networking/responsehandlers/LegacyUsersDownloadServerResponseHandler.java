@@ -10,15 +10,14 @@ import org.json.JSONObject;
 
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.networking.interfaces.ServerResponseHandler;
 import il.co.idocare.pojos.UserItem;
 
 /**
  * This class processes a response from the server containing information about a particular user
  */
-public class UsersDownloadServerResponseHandler extends AbstractServerResponseHandler {
+public class LegacyUsersDownloadServerResponseHandler extends LegacyAbstractServerResponseHandler {
 
-    private static final String LOG_TAG = UsersDownloadServerResponseHandler.class.getSimpleName();
+    private static final String LOG_TAG = LegacyUsersDownloadServerResponseHandler.class.getSimpleName();
 
     @Override
     public void handleResponse(int statusCode, String reasonPhrase, String entityString,

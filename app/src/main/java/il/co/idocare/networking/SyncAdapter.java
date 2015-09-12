@@ -16,7 +16,7 @@ import java.io.IOException;
 import il.co.idocare.authentication.AccountAuthenticator;
 import il.co.idocare.location.OpenStreetMapsReverseGeocoderFactory;
 import il.co.idocare.location.ReverseGeocoderFactory;
-import il.co.idocare.networking.interfaces.ServerResponseHandlerFactory;
+import il.co.idocare.networking.interfaces.LegacyServerResponseHandlerFactory;
 
 /**
  * Our sync adapter
@@ -71,8 +71,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         ReverseGeocoderFactory reverseGeocoderFactory =
                 new OpenStreetMapsReverseGeocoderFactory();
 
-        ServerResponseHandlerFactory serverResponseHandlerFactory =
-                new SimpleServerResponseHandlerFactory(reverseGeocoderFactory);
+        LegacyServerResponseHandlerFactory serverResponseHandlerFactory =
+                new LegacySimpleServerResponseHandlerFactory(reverseGeocoderFactory);
 
         DataDownloader dataDownloader =
                 new DataDownloader(account, authToken, provider, serverResponseHandlerFactory);

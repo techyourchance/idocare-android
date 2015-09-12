@@ -7,14 +7,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import il.co.idocare.Constants;
-import il.co.idocare.networking.interfaces.ServerResponseHandler;
+import il.co.idocare.networking.interfaces.LegacyServerResponseHandler;
 
 /**
  * A class containing some convenience methods which are common to ServerResponseHandlers.
  */
-public abstract class AbstractServerResponseHandler implements ServerResponseHandler {
+public abstract class LegacyAbstractServerResponseHandler implements LegacyServerResponseHandler {
 
-    private static final String LOG_TAG = AbstractServerResponseHandler.class.getSimpleName();
+    private static final String LOG_TAG = LegacyAbstractServerResponseHandler.class.getSimpleName();
 
 
     public boolean ensureSuccessfulResponse(int statusCode, String reasonPhrase, String entityString) {
@@ -35,7 +35,7 @@ public abstract class AbstractServerResponseHandler implements ServerResponseHan
         try {
             JSONObject jsonObj = new JSONObject(entityString);
 
-            String status = jsonObj.getString(Constants.FIELD_NAME_RESPONSE_STATUS);
+            String status = jsonObj.getString(Constants.FIELD_NAME_INTERNAL_STATUS);
             String message = jsonObj.getString(Constants.FIELD_NAME_RESPONSE_MESSAGE);
 
             if (!status.equals("success")) {

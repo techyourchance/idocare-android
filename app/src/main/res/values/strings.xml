@@ -32,7 +32,6 @@
     <string name="new_request_fragment_title">New request</string>
     <string name="close_request_fragment_title">Close request</string>
     <string name="request_details_fragment_title">Request details</string>
-    <string name="self_voting_error_message">You can\'t vote for yourself</string>
     <string name="txt_by">by</string>
     <string name="txt_by_me">by me</string>
     <string name="btn_sign_up">Sign up</string>
@@ -43,6 +42,8 @@
 
     <string name="facebook_app_id">534844050003392</string>
     <string name="btn_skip_login">Skip</string>
+
+    <string name="msg_login_failed">incorrect username or password</string>
 
 
 </resources>

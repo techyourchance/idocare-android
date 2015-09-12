@@ -11,7 +11,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -19,19 +18,18 @@ import java.util.Locale;
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.location.ReverseGeocoder;
-import il.co.idocare.networking.interfaces.ServerResponseHandler;
 import il.co.idocare.pojos.RequestItem;
 
 /**
  * This class processes a response from the server containing array of requests
  */
-public class RequestsDownloadServerResponseHandler extends AbstractServerResponseHandler {
+public class LegacyRequestsDownloadServerResponseHandler extends LegacyAbstractServerResponseHandler {
 
-    private static final String LOG_TAG = RequestsDownloadServerResponseHandler.class.getSimpleName();
+    private static final String LOG_TAG = LegacyRequestsDownloadServerResponseHandler.class.getSimpleName();
 
     private ReverseGeocoder mReverseGeocoder;
 
-    public RequestsDownloadServerResponseHandler(ReverseGeocoder reverseGeocoder) {
+    public LegacyRequestsDownloadServerResponseHandler(ReverseGeocoder reverseGeocoder) {
         if (reverseGeocoder == null)
             throw new IllegalArgumentException("must provide valid reverse geocoder");
 

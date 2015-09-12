@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import de.greenrobot.event.EventBus;
 import il.co.idocare.R;
@@ -92,10 +93,19 @@ public class LoginNativeViewMVC implements ViewMVC {
     }
 
     private void authenticationFailed() {
+
+        Toast.makeText(
+                getRootView().getContext(),
+                getRootView().getContext().getResources().getString(R.string.msg_login_failed),
+                Toast.LENGTH_LONG).show();
+
         mEdtUsername.setKeyListener((KeyListener) mEdtUsername.getTag());
         mEdtUsername.setText("");
         mEdtPassword.setKeyListener((KeyListener) mEdtPassword.getTag());
         mEdtPassword.setText("");
+
+        mEdtUsername.requestFocus();
+
         mBtnLogin.setEnabled(true);
     }
 

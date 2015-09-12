@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,11 +45,15 @@ public class LoginChooserFragment extends AbstractFragment {
 
     private CallbackManager mFacebookCallbackManager;
 
+    private UserStateManager mUserStateManager;
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mLoginChooserViewMVC = new LoginChooserViewMVC(inflater, container);
+
+        mUserStateManager = new UserStateManager(getActivity());
 
         initializeFacebookLogin();
 
@@ -81,7 +86,6 @@ public class LoginChooserFragment extends AbstractFragment {
         btnLoginFB.registerCallback(mFacebookCallbackManager, new LoginFacebookCallback());
 
         // The below code resizes Facebook login button
-
         float fbIconScale = 1.45F;
         Drawable drawable = getActivity().getResources().getDrawable(
                 com.facebook.R.drawable.com_facebook_button_icon);
@@ -106,6 +110,20 @@ public class LoginChooserFragment extends AbstractFragment {
         mFacebookCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
+    private void finishActivity() {
+        if (getActivity().getIntent().hasExtra(LoginActivity.ARG_LAUNCHED_FROM_STARTUP_ACTIVITY)) {
+            // If the enclosing activity has this flag then it was launched from StartupActivity.
+            // If this is the case, then activity back stack will be empty and we need explicitly
+            // designate the activity that should be started
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            startActivity(intent);
+            getActivity().finish();
+        } else {
+            // Just finish the enclosing activity and rely on activities back stack
+            getActivity().finish();
+        }
+
+    }
 
     // ---------------------------------------------------------------------------------------------
     //
@@ -113,19 +131,9 @@ public class LoginChooserFragment extends AbstractFragment {
 
     public void onEvent(LoginChooserViewMVC.SkipLoginClickEvent event) {
 
-        // Write to SharedPreferences an indicator of user willing to skip login
-        SharedPreferences prefs = getActivity().getSharedPreferences(Constants.PREFERENCES_FILE,
-                Context.MODE_PRIVATE);
-        prefs.edit().putInt(Constants.LOGIN_SKIPPED_KEY, 1).apply();
+        mUserStateManager.setLoginSkipped(true);
 
-        if (getArguments() != null &&
-                getArguments().containsKey(LoginActivity.ARG_LAUNCHED_FROM_STARTUP_ACTIVITY)) {
-            // If the enclosing activity was launched from StartupActivity then switch to
-            // MainActivity (otherwise rely on backstack)
-            Intent intent = new Intent(getActivity(), MainActivity.class);
-            startActivity(intent);
-        }
-        getActivity().finish();
+        finishActivity();
     }
 
 
@@ -161,15 +169,14 @@ public class LoginChooserFragment extends AbstractFragment {
 
             final AccessToken accessToken = loginResult.getAccessToken();
 
-            final UserStateManager userStateManager = new UserStateManager(getActivity());
-
-            LoginChooserFragment.this.showProgressDialog("Logging in", "Please wait...");
+            LoginChooserFragment.this.showProgressDialog("Synchronizing with Facebook",
+                    "Please wait while we are synchronizing with your Facebook profile...");
 
             new Thread(new Runnable() {
                 @Override
                 public void run() {
 
-                    if (!userStateManager.addFacebookAccount(accessToken)) {
+                    if (!mUserStateManager.addFacebookAccount(accessToken)) {
 
                         LoginManager.getInstance().logOut();
 
@@ -179,14 +186,8 @@ public class LoginChooserFragment extends AbstractFragment {
                         @Override
                         public void run() {
                             LoginChooserFragment.this.dismissProgressDialog();
-                            if (getArguments() != null &&
-                                    getArguments().containsKey(LoginActivity.ARG_LAUNCHED_FROM_STARTUP_ACTIVITY)) {
-                                // If the enclosing activity was launched from StartupActivity then switch to
-                                // MainActivity (otherwise rely on backstack)
-                                Intent intent = new Intent(getActivity(), MainActivity.class);
-                                startActivity(intent);
-                                getActivity().finish();
-                            }
+
+                            finishActivity();
                         }
                     });
 
@@ -222,7 +223,7 @@ public class LoginChooserFragment extends AbstractFragment {
                     "In order to grant us this permission, Facebook login flow requires that " +
                     "you will remove IDoCare from apps list at your Facebook page " +
                     "(Settings->Apps), and then re-try Facebook login." +
-                    "\nSorry for inconvenience")
+                    "\nWe apologize for inconvenience")
                     .setCancelable(false)
                     .setPositiveButton("Close", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -231,7 +232,6 @@ public class LoginChooserFragment extends AbstractFragment {
                     });
             AlertDialog alert = builder.create();
             alert.show();
-
         }
 
     }

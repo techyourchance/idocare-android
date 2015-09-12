@@ -42,13 +42,13 @@ public class DataUploaderAssistant {
     }
 
     /**
-     * This method constructs an appropriate ServerHttpRequest based on the details of UserActionItem
+     * This method constructs an appropriate LegacyServerHttpRequest based on the details of UserActionItem
      */
-    public ServerHttpRequest createUserActionServerRequest(
-            UserActionItem userAction, ServerHttpRequest.OnServerResponseCallback callback,
+    public LegacyServerHttpRequest createUserActionServerRequest(
+            UserActionItem userAction, LegacyServerHttpRequest.OnServerResponseCallback callback,
             Object asyncCompletionToken) {
 
-        ServerHttpRequest serverHttpRequest = new ServerHttpRequest(getUserActionUploadUrl(userAction),
+        LegacyServerHttpRequest serverHttpRequest = new LegacyServerHttpRequest(getUserActionUploadUrl(userAction),
                 mAccount, mAuthToken, callback, asyncCompletionToken);
 
         addUserActionSpecificInfo(serverHttpRequest, userAction);
@@ -59,10 +59,10 @@ public class DataUploaderAssistant {
 
 
     /**
-     * This method adds headers and fields to ServerHttpRequest based on the information
+     * This method adds headers and fields to LegacyServerHttpRequest based on the information
      * about user's action
      */
-    private void addUserActionSpecificInfo(ServerHttpRequest serverHttpRequest,
+    private void addUserActionSpecificInfo(LegacyServerHttpRequest serverHttpRequest,
                                            UserActionItem userAction) {
 
         String entityType = userAction.mEntityType;
@@ -115,7 +115,7 @@ public class DataUploaderAssistant {
 
     }
 
-    private void addCreateRequestSpecificInfo(ServerHttpRequest serverHttpRequest,
+    private void addCreateRequestSpecificInfo(LegacyServerHttpRequest serverHttpRequest,
                                               UserActionItem userAction) {
         RequestItem requestItem = null;
         try {
@@ -160,7 +160,7 @@ public class DataUploaderAssistant {
     }
 
 
-    private void addVoteSpecificInfo(ServerHttpRequest serverHttpRequest,
+    private void addVoteSpecificInfo(LegacyServerHttpRequest serverHttpRequest,
                                      UserActionItem userAction) {
         serverHttpRequest.addStandardHeaders();
 
@@ -178,7 +178,7 @@ public class DataUploaderAssistant {
     }
 
 
-    private void addPickupRequestSpecificInfo(ServerHttpRequest serverHttpRequest,
+    private void addPickupRequestSpecificInfo(LegacyServerHttpRequest serverHttpRequest,
                                               UserActionItem userAction) {
         serverHttpRequest.addStandardHeaders();
 
@@ -188,7 +188,7 @@ public class DataUploaderAssistant {
     }
 
 
-    private void addCloseRequestSpecificInfo(ServerHttpRequest serverHttpRequest,
+    private void addCloseRequestSpecificInfo(LegacyServerHttpRequest serverHttpRequest,
                                              UserActionItem userAction) {
         String closedComment = null;
         String closedPictures = null;

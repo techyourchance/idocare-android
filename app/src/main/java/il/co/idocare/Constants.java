@@ -14,14 +14,20 @@ public class Constants {
     //
     // URLs
 
+    // Host
     private final static String DEV_ROOT_URL = "http://dev-04.idocare.co.il";
     private final static String QA_ROOT_URL = "http://qa-04.idocare.co.il";
-
     public final static String ROOT_URL = DEV_ROOT_URL;
 
+    // Nodes
+    public final static String SIGN_UP_NATIVE_URL = ROOT_URL + "/api-04/user/add";
+    public final static String LOG_IN_NATIVE_URL = ROOT_URL + "/api-04/user/login";
+    public final static String GET_NATIVE_USER_DATA_URL = ROOT_URL + "/api-04/user/get";
 
     public final static String GET_ALL_REQUESTS_URL = ROOT_URL + "/api-04/request";
-    public final static String GET_USER_URL = ROOT_URL + "/api-04/user/get";
+    public final static String GET_REQUEST_DATA_URL = ROOT_URL + "/api-04/request/get";
+    
+    public final static String GET_ALL_ARTICLES_URL = ROOT_URL + "/api-04/article";
 
     // End of URLs
     //
@@ -32,7 +38,7 @@ public class Constants {
     //
     // Names of fields used in communication with the server
 
-    public static final String FIELD_NAME_RESPONSE_STATUS = "status";
+    public static final String FIELD_NAME_INTERNAL_STATUS = "status";
     public static final String FIELD_NAME_RESPONSE_MESSAGE = "message";
     public static final String FIELD_NAME_RESPONSE_DATA = "data";
 
@@ -47,7 +53,7 @@ public class Constants {
     // TODO: the below two fields must be identical in name and in encoding
     public static final String FIELD_NAME_USER_PASSWORD_LOGIN = "user_data_auth";
     public static final String FIELD_NAME_USER_PASSWORD_SIGNUP = "user_data_password";
-    public static final String FIELD_NAME_USER_AUTH_TOKEN = "user_data_public_key";
+    public static final String FIELD_NAME_USER_PUBLIC_KEY = "user_data_public_key";
     public static final String FIELD_NAME_USER_FACEBOOK_ID= "user_data_fb_id";
 
     public static final String FIELD_NAME_ENTITY_ID = "entity_id";

@@ -3,8 +3,11 @@ package il.co.idocare.authentication;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 
 import com.facebook.AccessToken;
@@ -24,12 +27,17 @@ import ch.boye.httpclientandroidlib.HttpResponse;
 import ch.boye.httpclientandroidlib.NameValuePair;
 import ch.boye.httpclientandroidlib.client.HttpClient;
 import ch.boye.httpclientandroidlib.client.entity.UrlEncodedFormEntity;
+import ch.boye.httpclientandroidlib.client.methods.CloseableHttpResponse;
 import ch.boye.httpclientandroidlib.client.methods.HttpPost;
 import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
 import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
 import ch.boye.httpclientandroidlib.util.EntityUtils;
 import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
+import il.co.idocare.networking.ServerHttpRequest;
+import il.co.idocare.networking.responsehandlers.NativeLoginResponseHandler;
+import il.co.idocare.networking.responsehandlers.NativeSignupResponseHandler;
+import il.co.idocare.networking.responsehandlers.ServerHttpResponseHandler;
 import il.co.idocare.utils.IDoCareJSONUtils;
 
 /**
@@ -38,12 +46,15 @@ import il.co.idocare.utils.IDoCareJSONUtils;
  */
 public class UserStateManager {
 
+    public static final String KEY_ERROR_MSG = "il.co.idocare.authentication." +
+            UserStateManager.class.getSimpleName() + ".KEY_ERROR_MSG";
+
     private static final String LOG_TAG = UserStateManager.class.getSimpleName();
 
-    private static final String SIGN_UP_NATIVE_URL = Constants.ROOT_URL + "/api-04/user/add";
 
 
     private Context mContext;
+
     private AccountManager mAccountManager;
 
     public UserStateManager(Context context) {
@@ -86,27 +97,93 @@ public class UserStateManager {
         if (accounts.length == 0) return false;
 
         if (accounts.length > 1) {
-            Log.e(LOG_TAG, "There is more than a single native account on the device. " +
+            Log.e(LOG_TAG, "There is more than one native account on the device. " +
                     "Using the first one returned." +
                     "\nTotal native accounts: " + String.valueOf(accounts.length));
         }
         return true;
     }
 
+    /**
+     * Try to perform a native log in with the provided credentials. The result info is
+     * encapsulated in the returned Bundle object.<br>
+     * NOTE: this method mustn't be called from UI thread!
+     * @param username
+     * @param password
+     * @return a Bundle having at least the following fields in case of successful login:<br>
+     *     {@link AccountManager#KEY_ACCOUNT_NAME}<br>
+     *     {@link AccountManager#KEY_AUTHTOKEN}<br>
+     *     or, in case login attempt failed:<br>
+     *     {@link UserStateManager#KEY_ERROR_MSG}
+     */
+    public Bundle logInNative(String username, String password) {
+
+        Bundle loginResult = new Bundle();
+
+        // Encode username and password
+        byte[] usernameBytes;
+        byte[] passwordBytes;
+        try {
+            usernameBytes = ("fuckyouhackers" + username).getBytes("UTF-8");
+            passwordBytes = ("fuckyouhackers" + password).getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e ) {
+            // Really? Not supporting UTF-8???
+            e.printStackTrace();
+            loginResult.putString(KEY_ERROR_MSG, e.getMessage());
+            return loginResult;
+        }
+
+        ServerHttpRequest request = new ServerHttpRequest(Constants.LOG_IN_NATIVE_URL);
+
+        // Add encoded header
+        request.addHeader(Constants.HttpHeader.USER_USERNAME.getValue(),
+                Base64.encodeToString(usernameBytes, Base64.NO_WRAP));
+
+        // Add encoded parameter
+        request.addTextField(Constants.FIELD_NAME_USER_PASSWORD_LOGIN,
+                Base64.encodeToString(passwordBytes, Base64.NO_WRAP));
+
+        CloseableHttpResponse response = request.execute();
+
+        if (response == null) {
+            loginResult.putString(KEY_ERROR_MSG, "could not obtain response to login request");
+            return loginResult;
+        }
+
+        // Parse the response
+        loginResult = UserStateManager.handleResponse(response, new NativeLoginResponseHandler());
+
+        // Check for common errors
+        UserStateManager.checkForCommonErrors(loginResult);
+        if (loginResult.containsKey(KEY_ERROR_MSG))
+            return loginResult;
+
+        addNativeAccount(loginResult);
+        if (loginResult.containsKey(KEY_ERROR_MSG))
+            return loginResult;
+
+
+        EventBus.getDefault().post(new UserLoggedInEvent());
+
+        return loginResult;
+    }
+
 
     /**
-     * Call to this method will add a new account and set its auth token. If the required account
-     * already exists - call to this method will only update its auth token
-     * @param accountName
-     * @param accountType
-     * @param authToken
-     * @return true if the account was successfully added; false if could not add the account for
-     *         any reason
+     * Call to this method will add a new account and set its auth token. Account's details are
+     * obtained from the provided Bundle. If the required account already exists - call to
+     * this method will only update its auth token.<br>
+     * The result is written back into the provided Bundle.
      */
-    public boolean addNativeAccount(String accountName, String accountType, String authToken) {
+    public void addNativeAccount(Bundle result) {
 
-        if (TextUtils.isEmpty(accountName) || TextUtils.isEmpty(accountType) || TextUtils.isEmpty(authToken))
-            throw new IllegalArgumentException("all parameters must be non-empty");
+        String accountName = result.getString(ServerHttpResponseHandler.KEY_USER_ID);
+        String authToken = result.getString(ServerHttpResponseHandler.KEY_PUBLIC_KEY);
+
+        if (TextUtils.isEmpty(accountName) || TextUtils.isEmpty(authToken))
+            throw new IllegalArgumentException("account name and auth token must be non-empty");
+
+        String accountType = AccountAuthenticator.ACCOUNT_TYPE_DEFAULT;
 
         Account account = new Account(accountName, accountType);
         mAccountManager.addAccountExplicitly(account, null, null);
@@ -120,9 +197,14 @@ public class UserStateManager {
          TODO: reconsider single account approach and this particular implementation
           */
         boolean addedSuccessfully = Arrays.asList(existingAccounts).contains(account);
-        // If the required account wasn't added - return
-        if (!addedSuccessfully) return false;
-        // If the required account exists - update its authToken and remove all other accounts
+
+        // If the required account wasn't added - set error flag and return
+        if (!addedSuccessfully) {
+            result.putString(KEY_ERROR_MSG, "failed to add native account");
+            return;
+        }
+
+        // The required account exists - update its authToken and remove all other accounts
         for (Account acc : existingAccounts) {
             if (acc.equals(account)) {
                 setNativeAccountAuthToken(accountName, accountType, authToken);
@@ -131,9 +213,9 @@ public class UserStateManager {
             }
         }
 
-        EventBus.getDefault().post(new UserLoginEvent());
-
-        return true;
+        // Put account's details into the bundle under "global" keys
+        result.putString(AccountManager.KEY_ACCOUNT_NAME, accountName);
+        result.putString(AccountManager.KEY_AUTHTOKEN, authToken);
     }
 
     public void setNativeAccountAuthToken(String accountName, String accountType,
@@ -143,6 +225,14 @@ public class UserStateManager {
     }
 
 
+    /**
+     * This method should be called after successful FB login. Currently it creates a new
+     * native Account with credentials built from user's details as obtained from facebook.<br>
+     * NOTE: this method mustn't be called from main thread
+     * TODO: refactor/remove this method once correct FB login flow implemented
+     * @param accessToken
+     * @return true if FB account was set up successfully, false otherwise
+     */
     public boolean addFacebookAccount(AccessToken accessToken) {
 
         // Construct a request to fetch user's details
@@ -153,10 +243,12 @@ public class UserStateManager {
 
         GraphResponse response = GraphRequest.executeAndWait(request);
 
-        Log.v(LOG_TAG, response.getRawResponse());
+        Log.v(LOG_TAG, "Contents of facebook/me response: " + response.getRawResponse());
 
         if (response.getError() != null) {
-            Log.e(LOG_TAG, response.getRawResponse());
+            Log.e(LOG_TAG, "facebook/me returned error response: " +
+                    response.getError().getErrorMessage());
+            // TODO: facebook errors should be processed - there is a way to recover from some of them
             return false;
         }
 
@@ -165,7 +257,6 @@ public class UserStateManager {
             Log.e(LOG_TAG, "couldn't obtain JSON object from FB response");
             return false;
         }
-
 
         String facebookId;
         String email;
@@ -186,90 +277,69 @@ public class UserStateManager {
             return false;
         }
 
-        if (!signUpNative(email, password, nickname, firstName, lastName, facebookId)) {
-            Log.e(LOG_TAG, "native signup failed!");
-            return false;
+        // Try to log in - this will fail if a native account corresponding to this FB account
+        // hasn't been created yet
+        Bundle loginResult = logInNative(email, facebookId);
+        if (loginResult.containsKey(KEY_ERROR_MSG)) {
+            Log.v(LOG_TAG, "native login into FB shadowed account failed. Error message: " +
+                    loginResult.getString(KEY_ERROR_MSG));
+            // Login failed therefore we need to try to create a new native account for this FB user
+            Bundle signupResult =
+                    signUpNative(email, password, nickname, firstName, lastName, facebookId);
+            if (signupResult.containsKey(KEY_ERROR_MSG)) {
+                Log.v(LOG_TAG, "native signup for FB shadowed account failed. Error message: " +
+                        signupResult.getString(KEY_ERROR_MSG));
+                // Both login and signup attempts failed - FB login flow failed
+                return false;
+            }
         }
 
-        EventBus.getDefault().post(new UserLoginEvent());
         return true;
     }
 
     /**
      * Do not call this method from UI thread!
-     * @param email
-     * @param password
-     * @param nickname
-     * @param firstName
-     * @param lastName
-     * @param facebookId
      * @return
      */
-    public boolean signUpNative(String email, String password, String nickname, String firstName,
-                                String lastName, String facebookId) {
-        HttpPost request = new HttpPost(SIGN_UP_NATIVE_URL);
+    public Bundle signUpNative(String email, String password, String nickname, String firstName,
+                                String lastName, @Nullable String facebookId) {
 
-        ArrayList<NameValuePair> parameters = new ArrayList<>(6);
-        parameters.add(new BasicNameValuePair(Constants.FIELD_NAME_USER_EMAIL, email));
-        parameters.add(new BasicNameValuePair(Constants.FIELD_NAME_USER_PASSWORD_SIGNUP, password));
-        parameters.add(new BasicNameValuePair(Constants.FIELD_NAME_USER_NICKNAME, nickname));
-        parameters.add(new BasicNameValuePair(Constants.FIELD_NAME_USER_FIRST_NAME, firstName));
-        parameters.add(new BasicNameValuePair(Constants.FIELD_NAME_USER_LAST_NAME, lastName));
+        ServerHttpRequest request = new ServerHttpRequest(Constants.SIGN_UP_NATIVE_URL);
+
+        request.addTextField(Constants.FIELD_NAME_USER_EMAIL, email);
+        request.addTextField(Constants.FIELD_NAME_USER_PASSWORD_SIGNUP, password);
+        request.addTextField(Constants.FIELD_NAME_USER_NICKNAME, nickname);
+        request.addTextField(Constants.FIELD_NAME_USER_FIRST_NAME, firstName);
+        request.addTextField(Constants.FIELD_NAME_USER_LAST_NAME, lastName);
         if (!TextUtils.isEmpty(facebookId))
-            parameters.add(new BasicNameValuePair(Constants.FIELD_NAME_USER_FACEBOOK_ID, facebookId));
+            request.addTextField(Constants.FIELD_NAME_USER_FACEBOOK_ID, facebookId);
 
-        try {
-            request.setEntity(new UrlEncodedFormEntity(parameters));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return false;
+
+        CloseableHttpResponse response = request.execute();
+
+        Bundle signupResult = new Bundle();
+
+        if (response == null) {
+            signupResult.putString(KEY_ERROR_MSG, "could not obtain response to signup request");
+            return signupResult;
         }
 
-        HttpClient httpClient = HttpClientBuilder.create().build();
+        // Parse the response
+        signupResult = UserStateManager.handleResponse(response, new NativeSignupResponseHandler());
 
-        HttpResponse response;
-        try {
-             response = httpClient.execute(request);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
+        // Check for common errors
+        UserStateManager.checkForCommonErrors(signupResult);
+        if (signupResult.containsKey(KEY_ERROR_MSG))
+            return signupResult;
 
-        if (response.getStatusLine().getStatusCode() / 100 != 2) {
-            Log.e(LOG_TAG, "unsuccessfull server response on sign up: " + response.getStatusLine().toString());
-            return false;
-        }
+        addNativeAccount(signupResult);
+        if (signupResult.containsKey(KEY_ERROR_MSG))
+            return signupResult;
 
-        String jsonData = null;
-        try {
-            jsonData = EntityUtils.toString(response.getEntity());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
 
-        String userId;
-        String authToken;
+        EventBus.getDefault().post(new UserLoggedInEvent());
 
-        try {
-
-            if (!IDoCareJSONUtils.verifySuccessfulStatus(jsonData)) {
-                Log.e(LOG_TAG, "unsuccessfull server status in JSON: " + jsonData);
-                return false;
-            }
-
-            JSONObject dataObj = IDoCareJSONUtils.extractDataJSONObject(jsonData);
-
-            userId = dataObj.getString(Constants.FIELD_NAME_USER_ID);
-            authToken = dataObj.getString(Constants.FIELD_NAME_USER_AUTH_TOKEN);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        return addNativeAccount(userId, AccountAuthenticator.ACCOUNT_TYPE_DEFAULT, authToken);
-
+        return signupResult;
     }
 
     /**
@@ -289,7 +359,7 @@ public class UserStateManager {
         }
 
         if (loggedOut) {
-            EventBus.getDefault().post(new UserLogoutEvent());
+            EventBus.getDefault().post(new UserLoggedOutEvent());
         }
     }
 
@@ -301,13 +371,86 @@ public class UserStateManager {
         LoginManager.getInstance().logOut();
     }
 
+
+    /**
+     * Set the value of "user chose to skip login" flag
+     * @param loginSkipped true in order to set the flag, false to clear it
+     */
+    public void setLoginSkipped(boolean loginSkipped) {
+        // Write to SharedPreferences an indicator of user willing to skip login
+        SharedPreferences prefs = mContext.getSharedPreferences(Constants.PREFERENCES_FILE,
+                Context.MODE_PRIVATE);
+        if (loginSkipped)
+            prefs.edit().putInt(Constants.LOGIN_SKIPPED_KEY, 1).apply();
+        else
+            prefs.edit().remove(Constants.LOGIN_SKIPPED_KEY).apply();
+    }
+
+    public boolean isLoginSkipped() {
+        SharedPreferences prefs = mContext.getSharedPreferences(Constants.PREFERENCES_FILE,
+                Context.MODE_PRIVATE);
+        return prefs.contains(Constants.LOGIN_SKIPPED_KEY);
+    }
+
+
+    /**
+     * Use the provided response handle in order to parse the provided response. The resulting
+     * Bundle contains all the relevant information - parsed details and error indicators (if
+     * there were any errors)
+     * @param response
+     * @param responseHandler
+     * @return
+     */
+    private static Bundle handleResponse(CloseableHttpResponse response,
+                                         ServerHttpResponseHandler responseHandler) {
+        Bundle result = new Bundle();
+
+        try {
+            result = responseHandler.handleResponse(response);
+        } catch (IOException e) {
+            e.printStackTrace();
+            result.putString(KEY_ERROR_MSG, "could not handle response to login request");
+            return result;
+        } finally {
+            try {
+                response.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Check the provided Bundle for existence of common error keys and set KEY_ERROR_MESSAGE
+     * field if there are any
+     * @param result
+     */
+    private static void checkForCommonErrors(Bundle result) {
+        if (result.containsKey(KEY_ERROR_MSG)) {
+            // the result already contains error message - nothing to do
+        }
+        else if (!result.containsKey(ServerHttpResponseHandler.KEY_RESPONSE_STATUS_OK)) {
+            result.putString(KEY_ERROR_MSG, "unsuccessful HTTP response code: "
+                    + result.getInt(ServerHttpResponseHandler.KEY_RESPONSE_STATUS_CODE));
+        }
+        else if (!result.containsKey(ServerHttpResponseHandler.KEY_INTERNAL_STATUS_SUCCESS)) {
+            result.putString(KEY_ERROR_MSG, "unsuccessful internal status");
+        }
+        else if (result.containsKey(ServerHttpResponseHandler.KEY_ERROR_TYPE)) {
+            result.putString(KEY_ERROR_MSG,
+                    result.getString(ServerHttpResponseHandler.KEY_ERROR_TYPE));
+        }
+    }
+
+
     // ---------------------------------------------------------------------------------------------
     //
     // EventBus events
 
-    private static class UserLoginEvent {}
+    public static class UserLoggedInEvent {}
 
-    public static class UserLogoutEvent {}
+    public static class UserLoggedOutEvent {}
 
     // End of EventBus events
     //

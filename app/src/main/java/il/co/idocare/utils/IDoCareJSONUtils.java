@@ -1,21 +1,11 @@
 package il.co.idocare.utils;
 
-import android.content.ContentValues;
 import android.util.Log;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import il.co.idocare.Constants;
-import il.co.idocare.pojos.RequestItem;
-import il.co.idocare.pojos.UserItem;
 
 /**
  * Created by Vasiliy on 2/17/2015.
@@ -34,7 +24,7 @@ public class IDoCareJSONUtils {
         try {
             JSONObject jsonObj = new JSONObject(jsonString);
 
-            String status = jsonObj.getString(Constants.FIELD_NAME_RESPONSE_STATUS);
+            String status = jsonObj.getString(Constants.FIELD_NAME_INTERNAL_STATUS);
             String message = jsonObj.getString(Constants.FIELD_NAME_RESPONSE_MESSAGE);
 
             if (status.equals("success")) {

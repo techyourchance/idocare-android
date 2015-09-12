@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -30,7 +29,6 @@ import java.util.Locale;
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.networking.ServerHttpRequest;
 import il.co.idocare.utils.UtilMethods;
 import il.co.idocare.views.CloseRequestViewMVC;
 

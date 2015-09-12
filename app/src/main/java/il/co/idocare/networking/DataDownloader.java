@@ -4,7 +4,6 @@ import android.accounts.Account;
 import android.content.ContentProviderClient;
 import android.database.Cursor;
 import android.os.RemoteException;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,15 +13,13 @@ import java.util.concurrent.TimeUnit;
 
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.networking.interfaces.ServerResponseHandlerFactory;
-import il.co.idocare.networking.responsehandlers.RequestsDownloadServerResponseHandler;
-import il.co.idocare.networking.interfaces.ServerResponseHandler;
-import il.co.idocare.networking.responsehandlers.UsersDownloadServerResponseHandler;
+import il.co.idocare.networking.interfaces.LegacyServerResponseHandler;
+import il.co.idocare.networking.interfaces.LegacyServerResponseHandlerFactory;
 
 /**
  * This class downloads data from the server and updates the local application's cache
  */
-public class DataDownloader implements ServerHttpRequest.OnServerResponseCallback {
+public class DataDownloader implements LegacyServerHttpRequest.OnServerResponseCallback {
 
 
 
@@ -43,14 +40,14 @@ public class DataDownloader implements ServerHttpRequest.OnServerResponseCallbac
     private Account mAccount;
     private String mAuthToken;
     private ContentProviderClient mProvider;
-    private ServerResponseHandlerFactory mServerResponseHandlerFactory;
+    private LegacyServerResponseHandlerFactory mServerResponseHandlerFactory;
 
     private ThreadPoolExecutor mExecutor;
 
     private List<Long> mUniqueUserIds;
 
     public DataDownloader(Account account, String authToken, ContentProviderClient provider,
-                          ServerResponseHandlerFactory serverResponseHandlerFactory) {
+                          LegacyServerResponseHandlerFactory serverResponseHandlerFactory) {
         mAccount = account;
         mAuthToken = authToken;
         mProvider = provider;
@@ -86,14 +83,14 @@ public class DataDownloader implements ServerHttpRequest.OnServerResponseCallbac
 
         String url = (String) asyncCompletionToken;
 
-        ServerResponseHandler responseHandler = mServerResponseHandlerFactory.newInstance(url);
+        LegacyServerResponseHandler responseHandler = mServerResponseHandlerFactory.newInstance(url);
 
         if (responseHandler != null) {
             try {
                 synchronized (CONTENT_PROVIDER_CLIENT_LOCK) {
                     responseHandler.handleResponse(statusCode, reasonPhrase, entityString, mProvider);
                 }
-            } catch (ServerResponseHandler.ServerResponseHandlerException e) {
+            } catch (LegacyServerResponseHandler.ServerResponseHandlerException e) {
                 e.printStackTrace();
             }
         }
@@ -104,7 +101,7 @@ public class DataDownloader implements ServerHttpRequest.OnServerResponseCallbac
 
     private void downloadRequestsData() {
 
-        ServerHttpRequest serverRequest = new ServerHttpRequest(Constants.GET_ALL_REQUESTS_URL,
+        LegacyServerHttpRequest serverRequest = new LegacyServerHttpRequest(Constants.GET_ALL_REQUESTS_URL,
                 mAccount, mAuthToken, this, Constants.GET_ALL_REQUESTS_URL);
 
         if (mAccount != null) serverRequest.addStandardHeaders();
@@ -145,7 +142,7 @@ public class DataDownloader implements ServerHttpRequest.OnServerResponseCallbac
                     if (userId != 0) { // TODO: can we avoid 0 from being present here (maybe DEFAULT NULL for columns in DB?)
                         mUniqueUserIds.add(userId);
 
-                        ServerHttpRequest serverRequest = createUserServerRequest(userId);
+                        LegacyServerHttpRequest serverRequest = createUserServerRequest(userId);
                         mExecutor.execute(serverRequest);
                     }
                 } while (cursor.moveToNext());
@@ -198,9 +195,9 @@ public class DataDownloader implements ServerHttpRequest.OnServerResponseCallbac
         return idsForQuery.toString();
     }
 
-    private ServerHttpRequest createUserServerRequest(long userId) {
-        ServerHttpRequest serverRequest = new ServerHttpRequest(Constants.GET_USER_URL,
-                mAccount, mAuthToken, this, Constants.GET_USER_URL);
+    private LegacyServerHttpRequest createUserServerRequest(long userId) {
+        LegacyServerHttpRequest serverRequest = new LegacyServerHttpRequest(Constants.GET_NATIVE_USER_DATA_URL,
+                mAccount, mAuthToken, this, Constants.GET_NATIVE_USER_DATA_URL);
         serverRequest.addTextField(Constants.FIELD_NAME_USER_ID, String.valueOf(userId));
 
         return serverRequest;

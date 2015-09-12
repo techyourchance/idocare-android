@@ -18,15 +18,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import il.co.idocare.networking.interfaces.ServerResponseHandler;
-import il.co.idocare.networking.responsehandlers.UserActionsServerResponseHandler;
+import il.co.idocare.networking.interfaces.LegacyServerResponseHandler;
+import il.co.idocare.networking.responsehandlers.LegacyUserActionsServerResponseHandler;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.pojos.UserActionItem;
 
 /**
  * This class synchronizes the local modifications made by the user to the server.
  */
-public class DataUploader implements ServerHttpRequest.OnServerResponseCallback{
+public class DataUploader implements LegacyServerHttpRequest.OnServerResponseCallback{
 
     private static final String LOG_TAG = DataUploader.class.getSimpleName();
 
@@ -212,8 +212,8 @@ public class DataUploader implements ServerHttpRequest.OnServerResponseCallback{
 
 
         // Create an appropriate response handler
-        ServerResponseHandler responseHandler =
-                new UserActionsServerResponseHandler(userAction);
+        LegacyServerResponseHandler responseHandler =
+                new LegacyUserActionsServerResponseHandler(userAction);
 
         try {
             // When handling responses the response handler can use ContentProviderClient, therefore
@@ -226,7 +226,7 @@ public class DataUploader implements ServerHttpRequest.OnServerResponseCallback{
             // Notify the dispatcher that the user's action has been uploaded
             mDispatcher.dispatchedUserActionUploaded(userAction);
 
-        } catch (ServerResponseHandler.ServerResponseHandlerException e) {
+        } catch (LegacyServerResponseHandler.ServerResponseHandlerException e) {
             e.printStackTrace();
             // Let dispatcher know that the action completed, otherwise it will be waiting there
             // forever.

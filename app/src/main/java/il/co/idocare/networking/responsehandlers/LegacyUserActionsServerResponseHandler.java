@@ -11,7 +11,6 @@ import org.json.JSONObject;
 
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.networking.interfaces.ServerResponseHandler;
 import il.co.idocare.pojos.RequestItem;
 import il.co.idocare.pojos.UserActionItem;
 
@@ -19,13 +18,13 @@ import il.co.idocare.pojos.UserActionItem;
  * Instances of this class handle server's responses to user's actions uploading
  */
 
-public class UserActionsServerResponseHandler extends AbstractServerResponseHandler {
+public class LegacyUserActionsServerResponseHandler extends LegacyAbstractServerResponseHandler {
 
-    private static final String LOG_TAG = UserActionsServerResponseHandler.class.getSimpleName();
+    private static final String LOG_TAG = LegacyUserActionsServerResponseHandler.class.getSimpleName();
 
     private UserActionItem mUserAction;
 
-    public UserActionsServerResponseHandler(UserActionItem userAction) {
+    public LegacyUserActionsServerResponseHandler(UserActionItem userAction) {
         mUserAction = userAction;
     }
 
