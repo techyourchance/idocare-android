@@ -41,7 +41,7 @@ public class DataUploader implements LegacyServerHttpRequest.OnServerResponseCal
     private final Object CONTENT_PROVIDER_CLIENT_LOCK = new Object();
 
 
-    private Account mAccount;
+    private String mUserId;
     private String mAuthToken;
     private UserActionsDispatcher mDispatcher;
     private ThreadPoolExecutor mExecutor;
@@ -65,13 +65,13 @@ public class DataUploader implements LegacyServerHttpRequest.OnServerResponseCal
     private DataUploaderAssistant mAssistant;
 
 
-    public DataUploader(Account account, String authToken,
+    public DataUploader(String userId, String authToken,
                         ContentProviderClient provider) {
-        mAccount = account;
+        mUserId = userId;
         mAuthToken = authToken;
         mProvider = provider;
 
-        mAssistant = new DataUploaderAssistant(account, authToken, provider);
+        mAssistant = new DataUploaderAssistant(mUserId, authToken, provider);
 
 
         int numOfCores = Runtime.getRuntime().availableProcessors();

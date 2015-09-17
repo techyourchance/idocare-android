@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import il.co.idocare.R;
 import il.co.idocare.authentication.AccountAuthenticator;
+import il.co.idocare.authentication.UserStateManager;
 import il.co.idocare.controllers.fragments.IDoCareFragmentCallback;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
 
@@ -39,11 +40,16 @@ public abstract class AbstractActivity extends Activity implements
                 }
             };
 
+    private UserStateManager mUserStateManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mUserStateManager = new UserStateManager(this);
+
         FacebookSdk.sdkInitialize(getApplicationContext());
+
     }
 
     @Override
@@ -236,43 +242,9 @@ public abstract class AbstractActivity extends Activity implements
     // ---------------------------------------------------------------------------------------------
 
 
-
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // Accounts management
-
     @Override
-    public String getAuthTokenForActiveAccount() throws AuthenticatorException, OperationCanceledException, IOException {
-
-        AccountManagerFuture<Bundle> future = AccountManager.get(this).getAuthTokenByFeatures(
-                AccountAuthenticator.ACCOUNT_TYPE_DEFAULT,
-                AccountAuthenticator.AUTH_TOKEN_TYPE_DEFAULT,
-                null,
-                this,
-                null,
-                null,
-                null,
-                null
-        );
-
-        return future.getResult().getString(AccountManager.KEY_AUTHTOKEN);
+    public UserStateManager getUserStateManager() {
+        return mUserStateManager;
     }
-
-    @Override
-    public Account getActiveAccount() {
-        Account[] accounts = AccountManager.get(this).getAccountsByType(AccountAuthenticator.ACCOUNT_TYPE_DEFAULT);
-        if (accounts.length > 0) {
-            return accounts[0];
-        } else {
-            return null;
-        }
-    }
-
-    // End of accounts management
-    //
-    // ---------------------------------------------------------------------------------------------
-
-
 
 }

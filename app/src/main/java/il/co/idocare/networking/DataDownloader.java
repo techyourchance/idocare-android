@@ -37,7 +37,7 @@ public class DataDownloader implements LegacyServerHttpRequest.OnServerResponseC
 
     private static final int SERVER_REQUEST_TIMEOUT_MILLIS = 60000;
 
-    private Account mAccount;
+    private String mUserId;
     private String mAuthToken;
     private ContentProviderClient mProvider;
     private LegacyServerResponseHandlerFactory mServerResponseHandlerFactory;
@@ -46,9 +46,9 @@ public class DataDownloader implements LegacyServerHttpRequest.OnServerResponseC
 
     private List<Long> mUniqueUserIds;
 
-    public DataDownloader(Account account, String authToken, ContentProviderClient provider,
+    public DataDownloader(String userId, String authToken, ContentProviderClient provider,
                           LegacyServerResponseHandlerFactory serverResponseHandlerFactory) {
-        mAccount = account;
+        mUserId = userId;
         mAuthToken = authToken;
         mProvider = provider;
         mServerResponseHandlerFactory = serverResponseHandlerFactory;
@@ -102,9 +102,9 @@ public class DataDownloader implements LegacyServerHttpRequest.OnServerResponseC
     private void downloadRequestsData() {
 
         LegacyServerHttpRequest serverRequest = new LegacyServerHttpRequest(Constants.GET_ALL_REQUESTS_URL,
-                mAccount, mAuthToken, this, Constants.GET_ALL_REQUESTS_URL);
+                mUserId, mAuthToken, this, Constants.GET_ALL_REQUESTS_URL);
 
-        if (mAccount != null) serverRequest.addStandardHeaders();
+        if (mUserId != null) serverRequest.addStandardHeaders();
 
         Thread workerThread = new Thread(serverRequest);
         workerThread.start();
@@ -197,7 +197,7 @@ public class DataDownloader implements LegacyServerHttpRequest.OnServerResponseC
 
     private LegacyServerHttpRequest createUserServerRequest(long userId) {
         LegacyServerHttpRequest serverRequest = new LegacyServerHttpRequest(Constants.GET_NATIVE_USER_DATA_URL,
-                mAccount, mAuthToken, this, Constants.GET_NATIVE_USER_DATA_URL);
+                mUserId, mAuthToken, this, Constants.GET_NATIVE_USER_DATA_URL);
         serverRequest.addTextField(Constants.FIELD_NAME_USER_ID, String.valueOf(userId));
 
         return serverRequest;

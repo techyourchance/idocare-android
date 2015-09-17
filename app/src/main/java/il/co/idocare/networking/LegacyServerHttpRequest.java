@@ -73,7 +73,7 @@ public class LegacyServerHttpRequest implements Runnable {
 
     private final static String LOG_TAG = LegacyServerHttpRequest.class.getSimpleName();
 
-    private Account mAccount;
+    private String mUserId;
     private String mAuthToken;
     private OnServerResponseCallback mCallback;
     private Object mAsyncCompletionToken;
@@ -84,9 +84,9 @@ public class LegacyServerHttpRequest implements Runnable {
     private Map<String, Map<String, String>> mPicturesFields;
 
 
-    public LegacyServerHttpRequest(String url, Account account, String authToken,
+    public LegacyServerHttpRequest(String url, String userId, String authToken,
                                    OnServerResponseCallback callback, Object asyncCompletionToken) {
-        mAccount = account;
+        mUserId = userId;
         mAuthToken = authToken;
         mCallback = callback;
         mAsyncCompletionToken = asyncCompletionToken;
@@ -227,17 +227,14 @@ public class LegacyServerHttpRequest implements Runnable {
      * @throws IllegalStateException if this ServerRequest is not associated with a particular account
      */
     public void addStandardHeaders() throws IllegalStateException{
-        if (mAccount == null) {
-            throw new IllegalStateException("can't add standard headers because there is no " +
-                    "associated account.");
+        if (TextUtils.isEmpty(mUserId) || TextUtils.isEmpty(mAuthToken)) {
+            throw new IllegalStateException("can't add standard headers without user ID or auth token");
         }
 
-        String accountId = mAccount.name;
-
-        mHttpRequest.addHeader(Constants.HttpHeader.USER_ID.getValue(), accountId);
+        mHttpRequest.addHeader(Constants.HttpHeader.USER_ID.getValue(), mUserId);
 
         long timestamp = System.currentTimeMillis();
-        String token = generateAuthToken(accountId +
+        String token = generateAuthToken(mUserId +
                 mAuthToken +
                 String.valueOf(timestamp));
 

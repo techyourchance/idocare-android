@@ -11,10 +11,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.MapView;
 
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
+import il.co.idocare.authentication.UserStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.interfaces.RequestUserActionApplier;
 import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
@@ -42,6 +45,8 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
     private RequestDetailsViewMVC mRequestDetailsViewMVC;
 
+    private UserStateManager mUserStateManager;
+
     private long mRequestId;
     private RequestItem mRawRequestItem;
     private RequestItem mRequestItem;
@@ -55,6 +60,8 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
         mRequestDetailsViewMVC =
                 new RequestDetailsViewMVC(getActivity(), container, savedInstanceState);
+
+        mUserStateManager = new UserStateManager(getActivity());
 
         setActionBarTitle(getTitle());
 
@@ -155,6 +162,14 @@ public class RequestDetailsFragment extends AbstractFragment implements
             return;
         }
 
+        final String pickedUpBy = mUserStateManager.getActiveAccountUserId();
+
+        if (TextUtils.isEmpty(pickedUpBy)) {
+            // TODO: advice the user to signup/login at this point
+            Toast.makeText(getActivity(), "No active account found", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         new AsyncTask<Void, Void, Void>() {
 
             @Override
@@ -173,8 +188,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
                 userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_ID, mRequestId);
                 userActionCV.put(IDoCareContract.UserActions.COL_ACTION_TYPE,
                         IDoCareContract.UserActions.ACTION_TYPE_PICKUP_REQUEST);
-                userActionCV.put(IDoCareContract.UserActions.COL_ACTION_PARAM,
-                        getActiveAccount().name);
+                userActionCV.put(IDoCareContract.UserActions.COL_ACTION_PARAM, pickedUpBy);
 
                 Uri newUri = getContentResolver().insert(
                         IDoCareContract.UserActions.CONTENT_URI,
@@ -488,7 +502,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
         mRequestItem = combinedRequestItem;
 
-        mRequestItem.setStatus(Long.valueOf(getActiveAccount().name));
+        mRequestItem.setStatus(mUserStateManager.getActiveAccountUserId());
 
         mRequestDetailsViewMVC.bindRequestItem(mRequestItem);
 

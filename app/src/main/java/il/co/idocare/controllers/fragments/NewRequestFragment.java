@@ -29,6 +29,7 @@ import java.util.UUID;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
+import il.co.idocare.authentication.UserStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.utils.UtilMethods;
@@ -184,11 +185,13 @@ public class NewRequestFragment extends AbstractFragment {
      * action to the local cache of user actions
      */
     private void createRequest() {
+        UserStateManager userStateManager = new UserStateManager(getActivity());
 
-        String createdBy = getActiveAccount() != null ? getActiveAccount().name : null;
+        String createdBy = userStateManager.getActiveAccountUserId();
+
         if (TextUtils.isEmpty(createdBy)) {
+            // TODO: advice the user to signup/login at this point
             Toast.makeText(getActivity(), "No active account found", Toast.LENGTH_LONG).show();
-            Log.i(LOG_TAG, "No active account found - request creation failed");
             return;
         }
         

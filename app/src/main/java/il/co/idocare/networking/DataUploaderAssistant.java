@@ -31,12 +31,12 @@ public class DataUploaderAssistant {
     public final static String VOTE_ARTICLE_URL = Constants.ROOT_URL + "/api-04/article/vote";
 
 
-    private Account mAccount;
+    private String mUserId;
     private String mAuthToken;
     private ContentProviderClient mProvider;
 
-    public DataUploaderAssistant(Account account, String authToken, ContentProviderClient provider) {
-        mAccount = account;
+    public DataUploaderAssistant(String userId, String authToken, ContentProviderClient provider) {
+        mUserId = userId;
         mAuthToken = authToken;
         mProvider = provider;
     }
@@ -49,7 +49,7 @@ public class DataUploaderAssistant {
             Object asyncCompletionToken) {
 
         LegacyServerHttpRequest serverHttpRequest = new LegacyServerHttpRequest(getUserActionUploadUrl(userAction),
-                mAccount, mAuthToken, callback, asyncCompletionToken);
+                mUserId, mAuthToken, callback, asyncCompletionToken);
 
         addUserActionSpecificInfo(serverHttpRequest, userAction);
 

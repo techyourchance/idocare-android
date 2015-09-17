@@ -8,6 +8,8 @@ import android.os.Bundle;
 
 import java.io.IOException;
 
+import il.co.idocare.authentication.UserStateManager;
+
 /**
  * The enclosing activity must implement this interface
  */
@@ -30,21 +32,11 @@ public interface IDoCareFragmentCallback {
      */
     public void setActionBarTitle(String title);
 
+
     /**
-     * This method obtains the auth token for the active account (as specified in SharedPreferences).
-     * If no IDoCare accounts registered on the device, or active account is not set, or the auth
-     * token is not valid - the user will be prompted for credentials using AccountManager's APIs.
      *
-     * This method might block and should not be called on the main thread.
-     * @return AccountManagerFuture object as returned by GetAuthToken() of AccountManager.
+     * @return get a reference to UserStateManager object
      */
-    public String getAuthTokenForActiveAccount() throws AuthenticatorException,
-            OperationCanceledException, IOException;
-
-    /**
-     * @return the active account as specified in SharedPreferences, null if no account specified
-     */
-    public Account getActiveAccount();
-
+    public UserStateManager getUserStateManager();
 }
 

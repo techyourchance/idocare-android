@@ -33,6 +33,9 @@ public interface ServerHttpResponseHandler extends ResponseHandler<Bundle> {
 
     public final static String KEY_PUBLIC_KEY = Constants.FIELD_NAME_USER_PUBLIC_KEY;
 
+    public final static String KEY_USERNAME =
+            "il.co.idocare.networking.responsehandlers.KEY_USERNAME";
+
 
 
     // ---------------------------------------------------------------------------------------------

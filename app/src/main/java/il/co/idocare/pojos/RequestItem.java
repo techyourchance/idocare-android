@@ -241,6 +241,18 @@ public class RequestItem {
         }
     }
 
+    /**
+     * This method will set a correct status for this request based on the ID of the currently
+     * active user.
+     * @param activeUserId
+     */
+    public void setStatus(String activeUserId) {
+        if (TextUtils.isEmpty(activeUserId))
+            setStatus(0);
+        else
+            setStatus(Long.valueOf(activeUserId));
+    }
+
 
     /**
      * Convert this request object to ContentValues object that can be passed to ContentProvider

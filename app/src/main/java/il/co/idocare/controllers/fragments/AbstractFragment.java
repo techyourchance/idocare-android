@@ -12,6 +12,7 @@ import android.os.Bundle;
 import java.io.IOException;
 
 import de.greenrobot.event.EventBus;
+import il.co.idocare.authentication.UserStateManager;
 
 
 /**
@@ -85,18 +86,18 @@ public abstract class AbstractFragment extends Fragment implements
 
 
     /**
-     * See {@link IDoCareFragmentCallback#getAuthTokenForActiveAccount()}
+     * See {@link UserStateManager#getActiveAccountAuthToken()}
      */
-    public String getAuthTokenForActiveAccount() throws AuthenticatorException, OperationCanceledException, IOException {
-        return mCallback.getAuthTokenForActiveAccount();
+    public String getActiveAccountAuthToken() {
+        return mCallback.getUserStateManager().getActiveAccountAuthToken();
     }
 
 
     /**
-     * See {@link IDoCareFragmentCallback#getActiveAccount()}
+     * See {@link UserStateManager#getActiveAccount()}
      */
     public Account getActiveAccount() {
-        return mCallback.getActiveAccount();
+        return mCallback.getUserStateManager().getActiveAccount();
     }
 
     

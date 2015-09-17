@@ -20,25 +20,15 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Arrays;
 
-import ch.boye.httpclientandroidlib.HttpResponse;
-import ch.boye.httpclientandroidlib.NameValuePair;
-import ch.boye.httpclientandroidlib.client.HttpClient;
-import ch.boye.httpclientandroidlib.client.entity.UrlEncodedFormEntity;
 import ch.boye.httpclientandroidlib.client.methods.CloseableHttpResponse;
-import ch.boye.httpclientandroidlib.client.methods.HttpPost;
-import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
-import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
-import ch.boye.httpclientandroidlib.util.EntityUtils;
 import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.networking.ServerHttpRequest;
 import il.co.idocare.networking.responsehandlers.NativeLoginResponseHandler;
 import il.co.idocare.networking.responsehandlers.NativeSignupResponseHandler;
 import il.co.idocare.networking.responsehandlers.ServerHttpResponseHandler;
-import il.co.idocare.utils.IDoCareJSONUtils;
 
 /**
  * This class manages the login state of the user - it aggregates information from all login
@@ -91,17 +81,7 @@ public class UserStateManager {
     }
 
     public boolean isLoggedInNative() {
-        Account[] accounts =
-                mAccountManager.getAccountsByType(AccountAuthenticator.ACCOUNT_TYPE_DEFAULT);
-
-        if (accounts.length == 0) return false;
-
-        if (accounts.length > 1) {
-            Log.e(LOG_TAG, "There is more than one native account on the device. " +
-                    "Using the first one returned." +
-                    "\nTotal native accounts: " + String.valueOf(accounts.length));
-        }
-        return true;
+        return getActiveAccount() != null;
     }
 
     /**
@@ -158,6 +138,9 @@ public class UserStateManager {
         if (loginResult.containsKey(KEY_ERROR_MSG))
             return loginResult;
 
+        // Account name should be added manually because the response does not contain this data
+        loginResult.putString(ServerHttpResponseHandler.KEY_USERNAME, username);
+
         addNativeAccount(loginResult);
         if (loginResult.containsKey(KEY_ERROR_MSG))
             return loginResult;
@@ -177,16 +160,19 @@ public class UserStateManager {
      */
     public void addNativeAccount(Bundle result) {
 
-        String accountName = result.getString(ServerHttpResponseHandler.KEY_USER_ID);
+        String username = result.getString(ServerHttpResponseHandler.KEY_USERNAME);
+        String userId = result.getString(ServerHttpResponseHandler.KEY_USER_ID);
         String authToken = result.getString(ServerHttpResponseHandler.KEY_PUBLIC_KEY);
 
-        if (TextUtils.isEmpty(accountName) || TextUtils.isEmpty(authToken))
-            throw new IllegalArgumentException("account name and auth token must be non-empty");
+        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(userId) || TextUtils.isEmpty(authToken))
+            throw new IllegalArgumentException("account name, user ID and auth token must be non-empty");
 
         String accountType = AccountAuthenticator.ACCOUNT_TYPE_DEFAULT;
 
-        Account account = new Account(accountName, accountType);
-        mAccountManager.addAccountExplicitly(account, null, null);
+        Account account = new Account(username, accountType);
+        Bundle userdata = new Bundle(1);
+        userdata.putString(Constants.FIELD_NAME_USER_ID, userId);
+        mAccountManager.addAccountExplicitly(account, null, userdata);
 
         Account[] existingAccounts =
                 mAccountManager.getAccountsByType(AccountAuthenticator.ACCOUNT_TYPE_DEFAULT);
@@ -207,14 +193,14 @@ public class UserStateManager {
         // The required account exists - update its authToken and remove all other accounts
         for (Account acc : existingAccounts) {
             if (acc.equals(account)) {
-                setNativeAccountAuthToken(accountName, accountType, authToken);
+                setNativeAccountAuthToken(username, accountType, authToken);
             } else {
                 mAccountManager.removeAccountExplicitly(acc);
             }
         }
 
         // Put account's details into the bundle under "global" keys
-        result.putString(AccountManager.KEY_ACCOUNT_NAME, accountName);
+        result.putString(AccountManager.KEY_ACCOUNT_NAME, username);
         result.putString(AccountManager.KEY_AUTHTOKEN, authToken);
     }
 
@@ -298,8 +284,8 @@ public class UserStateManager {
     }
 
     /**
+     * Perform native signup<br>
      * Do not call this method from UI thread!
-     * @return
      */
     public Bundle signUpNative(String email, String password, String nickname, String firstName,
                                 String lastName, @Nullable String facebookId) {
@@ -331,6 +317,10 @@ public class UserStateManager {
         UserStateManager.checkForCommonErrors(signupResult);
         if (signupResult.containsKey(KEY_ERROR_MSG))
             return signupResult;
+
+
+        // Account name should be added manually because the response does not contain this data
+        signupResult.putString(ServerHttpResponseHandler.KEY_USERNAME, email);
 
         addNativeAccount(signupResult);
         if (signupResult.containsKey(KEY_ERROR_MSG))
@@ -443,6 +433,56 @@ public class UserStateManager {
         }
     }
 
+
+    /**
+     *
+     * @return active user account, or null if there is no native account registered on the device
+     */
+    public Account getActiveAccount() {
+        Account[] accounts =
+                mAccountManager.getAccountsByType(AccountAuthenticator.ACCOUNT_TYPE_DEFAULT);
+
+        if (accounts.length == 0) return null;
+
+        if (accounts.length > 1) {
+            Log.e(LOG_TAG, "There is more than one native account on the device. " +
+                    "Using the first one returned." +
+                    "\nTotal native accounts: " + String.valueOf(accounts.length));
+        }
+
+        return accounts[0];
+    }
+
+    /**
+     *
+     * @return user ID string associated with the active account, or null if there is no
+     *         native account registered on the device
+     */
+    public String getActiveAccountUserId() {
+        Account account = getActiveAccount();
+
+        if (account != null)
+            return mAccountManager.getUserData(account, Constants.FIELD_NAME_USER_ID);
+        else
+            return null;
+
+    }
+
+
+    /**
+     *
+     * @return auth token associated with the active account, or null if there is no
+     *         native account registered on the device or there is no auth token for an active
+     *         account
+     */
+    public String getActiveAccountAuthToken() {
+        Account account = getActiveAccount();
+
+        if (account != null)
+            return mAccountManager.peekAuthToken(account, AccountAuthenticator.AUTH_TOKEN_TYPE_DEFAULT);
+        else
+            return null;
+    }
 
     // ---------------------------------------------------------------------------------------------
     //

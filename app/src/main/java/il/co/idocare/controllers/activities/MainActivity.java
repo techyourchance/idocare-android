@@ -248,18 +248,18 @@ public class MainActivity extends AbstractActivity {
 
 
     private void enableAutomaticSync() {
-        Account acc = getActiveAccount();
+        Account acc = getUserStateManager().getActiveAccount();
         ContentResolver.setIsSyncable(acc, IDoCareContract.AUTHORITY, 1);
         ContentResolver.setSyncAutomatically(acc, IDoCareContract.AUTHORITY, true);
     }
 
     private void disableAutomaticSync() {
-        Account acc = getActiveAccount();
+        Account acc = getUserStateManager().getActiveAccount();
         ContentResolver.setIsSyncable(acc, IDoCareContract.AUTHORITY, 0);
     }
 
     public void requestImmediateSync() {
-        Account acc = getActiveAccount();
+        Account acc = getUserStateManager().getActiveAccount();
         // Pass the settings flags by inserting them in a bundle
         Bundle settingsBundle = new Bundle();
         settingsBundle.putBoolean(

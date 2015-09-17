@@ -13,6 +13,7 @@ import android.util.Log;
 
 import java.io.IOException;
 
+import il.co.idocare.Constants;
 import il.co.idocare.authentication.AccountAuthenticator;
 import il.co.idocare.location.OpenStreetMapsReverseGeocoderFactory;
 import il.co.idocare.location.ReverseGeocoderFactory;
@@ -56,13 +57,15 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         String authToken = getAuthToken(account);
         if (authToken == null) {
-            Log.e(LOG_TAG, "Couldn't obtain auth token for the account" + account.name);
+            Log.e(LOG_TAG, "Couldn't obtain auth token for the account");
             // TODO: what do we do in that case? Need to use "open" APIs
             return;
         }
 
+        String userId = AccountManager.get(getContext()).getUserData(account, Constants.FIELD_NAME_USER_ID);
+
         DataUploader dataUploader =
-                new DataUploader(account, authToken, provider);
+                new DataUploader(userId, authToken, provider);
 
         // This call will block until all local actions will be synchronized to the server
         // and the respective ContentProvider will be updated
@@ -75,7 +78,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 new LegacySimpleServerResponseHandlerFactory(reverseGeocoderFactory);
 
         DataDownloader dataDownloader =
-                new DataDownloader(account, authToken, provider, serverResponseHandlerFactory);
+                new DataDownloader(userId, authToken, provider, serverResponseHandlerFactory);
 
         // This call will block until all relevant data will be synchronized from the server
         // and the respective ContentProvider will be updated
