@@ -2,6 +2,9 @@ package il.co.idocare.authentication;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -280,6 +283,10 @@ public class UserStateManager {
             }
         }
 
+        // We need to designate the newly created native account as FB account
+        Account account = getActiveAccount();
+        mAccountManager.setUserData(account, Constants.FIELD_NAME_USER_FACEBOOK_ID, facebookId);
+
         return true;
     }
 
@@ -333,24 +340,44 @@ public class UserStateManager {
     }
 
     /**
-     * Log out currently logged in user. This method assumes that the user will be logged in using
-     * only one mechanism - either native, or Facebook, or...
+     * Log out the active user
+     * TODO: this method should be rewritten once proper FB authentication implemented
      */
     public void logOut() {
-        boolean loggedOut = false;
-        if (isLoggedInWithFacebook()) {
-            logOutFacebook();
-            // Need to logout native because FB login also creates native acc on device (workaround)
-            // TODO: remove this statement once proper FB login implemented
-            logOutNative();
-            loggedOut = true;
-        } else if (isLoggedInNative()) {
-            logOutNative();
-        }
+        final Account account = getActiveAccount();
 
-        if (loggedOut) {
-            EventBus.getDefault().post(new UserLoggedOutEvent());
-        }
+        if (account == null) return; // Not logged in user
+
+        final boolean isFacebookAccount =
+                mAccountManager.getUserData(account, Constants.FIELD_NAME_USER_FACEBOOK_ID) != null;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AccountManagerFuture<Boolean> future = mAccountManager.removeAccount(account,
+                        null, null);
+                try {
+                    boolean accountRemoved = future.getResult();
+                } catch (OperationCanceledException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (AuthenticatorException e) {
+                    e.printStackTrace();
+                }
+
+                if (isLoggedInNative()) {
+                    Log.e(LOG_TAG, "logout process failed");
+                    return;
+                }
+
+                if (isFacebookAccount) {
+                    LoginManager.getInstance().logOut();
+                }
+
+                EventBus.getDefault().post(new UserLoggedOutEvent());
+
+            }
+        }).start();
     }
 
     private void logOutNative() {
