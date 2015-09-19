@@ -20,7 +20,7 @@ public class SplashFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_splash_screen, container, false);
+        View view = inflater.inflate(R.layout.layout_splash_screen, container, false);
 
         // This is a full screen fragment - remove any padding
         UtilMethods.setPaddingPx(getActivity().findViewById(R.id.frame_contents), 0);

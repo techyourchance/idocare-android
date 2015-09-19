@@ -24,7 +24,7 @@ public class HomeViewMVC implements ViewMVC {
     private HomeListAdapter mAdapter;
 
     public HomeViewMVC(LayoutInflater inflater, ViewGroup container) {
-        mRootView = inflater.inflate(R.layout.fragment_home, container, false);
+        mRootView = inflater.inflate(R.layout.layout_home, container, false);
 
         mListView = (ListView) mRootView.findViewById(R.id.list_requests_thumbnails);
 

@@ -1,7 +1,6 @@
 package il.co.idocare.views;
 
 import android.os.Bundle;
-import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +34,7 @@ public class NewRequestViewMVC implements ViewMVC {
     private ImageView[] mImgPictures = new ImageView[3];
 
     public NewRequestViewMVC(LayoutInflater inflater, ViewGroup container) {
-        mRootView = inflater.inflate(R.layout.fragment_new_request, container, false);
+        mRootView = inflater.inflate(R.layout.layout_new_request, container, false);
 
         mEdtCreatedComment = (EditText) mRootView.findViewById(R.id.edt_created_comment);
         mRatingbarPollutionLevel = (RatingBar) mRootView.findViewById(R.id.ratingbar_pollution_level);

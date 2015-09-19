@@ -36,7 +36,7 @@ public class NavigationDrawerEntryViewMVC extends RelativeLayout implements View
     private void init(Context context) {
 
         // Inflate the underlying layout
-        LayoutInflater.from(context).inflate(R.layout.layout_nav_drawer_entry, this, true);
+        LayoutInflater.from(context).inflate(R.layout.element_nav_drawer_entry, this, true);
 
 //        // This padding is required in order not to hide the border when colorizing inner views
 //        int padding = (int) getResources().getDimension(R.dimen.border_background_width);

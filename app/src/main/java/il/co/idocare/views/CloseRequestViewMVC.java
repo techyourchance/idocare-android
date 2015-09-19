@@ -1,7 +1,6 @@
 package il.co.idocare.views;
 
 import android.os.Bundle;
-import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +32,7 @@ public class CloseRequestViewMVC implements ViewMVC {
 
 
     public CloseRequestViewMVC(LayoutInflater inflater, ViewGroup container) {
-        mRootView = inflater.inflate(R.layout.fragment_close_request, container, false);
+        mRootView = inflater.inflate(R.layout.layout_close_request, container, false);
 
         mEdtClosedComment = (EditText) mRootView.findViewById(R.id.edt_closed_comment);
         mImgPictures[0] = (ImageView) mRootView.findViewById(R.id.img_picture0);

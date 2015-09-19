@@ -25,7 +25,7 @@ public class StartupActivity extends AbstractActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_single_frame_layout);
+        setContentView(R.layout.layout_single_frame);
 
 
         if (savedInstanceState == null) {

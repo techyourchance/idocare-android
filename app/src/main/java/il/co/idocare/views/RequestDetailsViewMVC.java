@@ -75,7 +75,7 @@ public class RequestDetailsViewMVC implements ViewMVC {
         mContext = context;
 
         mRootView = LayoutInflater.from(mContext)
-                .inflate(R.layout.fragment_request_details, container, false);
+                .inflate(R.layout.layout_request_details, container, false);
 
         initialize();
 

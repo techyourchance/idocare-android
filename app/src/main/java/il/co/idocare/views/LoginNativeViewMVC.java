@@ -30,7 +30,7 @@ public class LoginNativeViewMVC implements ViewMVC {
 
 
     public LoginNativeViewMVC(LayoutInflater inflater, ViewGroup container) {
-        mRootView = inflater.inflate(R.layout.fragment_login_native, container, false);
+        mRootView = inflater.inflate(R.layout.layout_login_native, container, false);
 
 
         mBtnLogin = (Button) mRootView.findViewById(R.id.btn_login);

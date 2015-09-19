@@ -20,7 +20,7 @@ public class LoginChooserViewMVC implements ViewMVC {
 
 
     public LoginChooserViewMVC(LayoutInflater inflater, ViewGroup container) {
-        mRootView = inflater.inflate(R.layout.fragment_login_chooser, container, false);
+        mRootView = inflater.inflate(R.layout.layout_login_chooser, container, false);
 
         Button btnSignUpNative = (Button) getRootView().findViewById(R.id.btn_choose_sign_up_native);
         btnSignUpNative.setOnClickListener(new View.OnClickListener() {

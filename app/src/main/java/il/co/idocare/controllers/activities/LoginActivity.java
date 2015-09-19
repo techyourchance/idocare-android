@@ -5,7 +5,6 @@ import android.accounts.AccountManager;
 import android.os.Bundle;
 
 import il.co.idocare.R;
-import il.co.idocare.authentication.AccountAuthenticator;
 import il.co.idocare.controllers.fragments.LoginChooserFragment;
 import il.co.idocare.controllers.fragments.LoginNativeFragment;
 
@@ -39,7 +38,7 @@ public class LoginActivity extends AbstractActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_single_frame_layout);
+        setContentView(R.layout.layout_single_frame);
 
         if (savedInstanceState == null) {
             if (getIntent().hasExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE)) {
