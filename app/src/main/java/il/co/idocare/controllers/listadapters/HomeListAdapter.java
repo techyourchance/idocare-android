@@ -85,12 +85,7 @@ public class HomeListAdapter extends CursorAdapter implements
         }
 
         // Set request's status
-        // TODO: remove this in favor of an external dependency (Asana #47055190657814)
-        Account account = getActiveAccount(context);
-        if (account != null) {
-            request.setStatus(mUserStateManager.getActiveAccountUserId());
-        }
-
+        request.setStatus(mUserStateManager.getActiveAccountUserId());
 
         ((RequestThumbnailViewMVC) view).bindRequestItem(request);
 

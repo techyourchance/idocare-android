@@ -1,5 +1,6 @@
 package il.co.idocare.controllers.listadapters;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -23,6 +24,11 @@ public class UserActionsOnRequestApplierImpl implements RequestUserActionApplier
 
     @Override
     public RequestItem applyUserAction(RequestItem request, UserActionItem userAction) {
+
+        if (!validUserAction(userAction)) {
+            return request;
+        }
+
         switch (userAction.mActionType) {
 
             case IDoCareContract.UserActions.ACTION_TYPE_CREATE_REQUEST:
@@ -85,4 +91,19 @@ public class UserActionsOnRequestApplierImpl implements RequestUserActionApplier
 
         return request;
     }
+
+
+    private boolean validUserAction(UserActionItem userAction) {
+
+        if (TextUtils.isEmpty(userAction.mActionParam)
+                || userAction.mActionParam.equals("null")
+                ||userAction.mTimestamp == 0) {
+            Log.e(LOG_TAG, "invalid UserActionItem object. Action's ID: " + userAction.mId);
+            return false;
+        }
+
+        return true;
+    }
+
+
 }

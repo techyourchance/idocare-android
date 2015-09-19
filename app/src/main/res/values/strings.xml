@@ -38,6 +38,20 @@
     <string name="btn_login">Log in</string>
     <string name="btn_login_capital">LOG IN</string>
 
+    <string name="btn_dialog_positive">Yes</string>
+    <string name="btn_dialog_negative">No</string>
+
+
+    <string name="msg_ask_to_log_in_before_new_request">In order to create new requests you need
+        to be logged in. Would you like to log in now?</string>
+
+    <string name="msg_ask_to_log_in_before_pickup">In order to assign requests to yourself you need
+        to be logged in. Would you like to log in now?</string>
+
+    <string name="msg_ask_to_log_in_before_vote">In order to vote for reputation you need
+        to be logged in. Would you like to log in now?</string>
+
+
 
 
     <string name="facebook_app_id">534844050003392</string>

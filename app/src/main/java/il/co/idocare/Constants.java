@@ -9,6 +9,9 @@ public class Constants {
     public static final java.lang.String PICTURES_LIST_SEPARATOR = ", ";
 
 
+    public static final int REQUEST_CODE_LOGIN = 0;
+
+
 
     // ---------------------------------------------------------------------------------------------
     //

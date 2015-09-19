@@ -38,5 +38,23 @@ public interface IDoCareFragmentCallback {
      * @return get a reference to UserStateManager object
      */
     public UserStateManager getUserStateManager();
+
+
+
+    /**
+     * This method will pop up a yes/no dialog asking the user to log in. If the user agrees
+     * LoginActivity will be started.
+     * @param message the message to show in a dialog
+     * @param runnable this runnable will be executed if there will be a logged in user when
+     *                 LoginActivity finishes
+     */
+    public void askUserToLogIn(String message, final Runnable runnable);
+
+
+    /**
+     * Call to this method will initiate an immediate data sync by the underlying SyncAdapter.
+     */
+    public void requestImmediateSync();
+
 }
 

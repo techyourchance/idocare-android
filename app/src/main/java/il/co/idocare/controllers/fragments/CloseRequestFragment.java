@@ -87,6 +87,17 @@ public class CloseRequestFragment extends AbstractFragment {
 
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (getActiveAccount() == null) {
+            // The user logged out while this fragment was paused
+            userLoggedOut();
+        }
+    }
+
+
+
+    @Override
     public boolean isTopLevelFragment() {
         return false;
     }
@@ -114,6 +125,12 @@ public class CloseRequestFragment extends AbstractFragment {
     public void onEvent(CloseRequestViewMVC.CloseRequestButtonClickEvent event) {
         closeRequest();
     }
+
+
+    public void onEventMainThread(UserStateManager.UserLoggedOutEvent event) {
+        userLoggedOut();
+    }
+
 
     // End of EventBus events handling
     //
@@ -192,12 +209,10 @@ public class CloseRequestFragment extends AbstractFragment {
      */
     private void closeRequest() {
 
-        UserStateManager userStateManager = new UserStateManager(getActivity());
-        String closedBy = userStateManager.getActiveAccountUserId();
+        String closedBy = getActiveAccountUserId();
 
         if (TextUtils.isEmpty(closedBy)) {
-            // TODO: we should advice the user to signup/login at this point
-            Toast.makeText(getActivity(), "No active account found", Toast.LENGTH_LONG).show();
+            userLoggedOut();
             return;
         }
 
@@ -222,7 +237,6 @@ public class CloseRequestFragment extends AbstractFragment {
             userActionParamJson.put(Constants.FIELD_NAME_CLOSED_COMMENT, closedComment);
             userActionParamJson.put(Constants.FIELD_NAME_CLOSED_PICTURES, closedPictures);
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             dismissProgressDialog();
             return;
@@ -246,12 +260,12 @@ public class CloseRequestFragment extends AbstractFragment {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                getContentResolver().update(
+                getActivity().getContentResolver().update(
                         ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI, mRequestId),
                         requestCV,
                         null,
                         null);
-                getContentResolver().insert(IDoCareContract.UserActions.CONTENT_URI, userActionCV);
+                getActivity().getContentResolver().insert(IDoCareContract.UserActions.CONTENT_URI, userActionCV);
                 return null;
             }
 
@@ -267,7 +281,18 @@ public class CloseRequestFragment extends AbstractFragment {
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[] {null});
 
-
     }
+
+
+    private void userLoggedOut() {
+        // This is a very simplified handling of user's logout
+        // TODO: think of a better handling and possible corner cases
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+        } else {
+            replaceFragment(getNavHierParentFragment(), false, false, null);
+        }
+    }
+
 
 }

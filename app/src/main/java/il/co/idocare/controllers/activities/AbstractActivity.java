@@ -1,25 +1,25 @@
 package il.co.idocare.controllers.activities;
 
 import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.facebook.FacebookSdk;
 
-import java.io.IOException;
-
+import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.authentication.AccountAuthenticator;
 import il.co.idocare.authentication.UserStateManager;
+import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.fragments.IDoCareFragmentCallback;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
 
@@ -42,11 +42,15 @@ public abstract class AbstractActivity extends Activity implements
 
     private UserStateManager mUserStateManager;
 
+    private Runnable mPostLoginResultRunnable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mUserStateManager = new UserStateManager(this);
+
+        mPostLoginResultRunnable = null;
 
         FacebookSdk.sdkInitialize(getApplicationContext());
 
@@ -150,6 +154,23 @@ public abstract class AbstractActivity extends Activity implements
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+
+        switch (requestCode) {
+            case Constants.REQUEST_CODE_LOGIN:
+                // If there is a logged in user after login activity finished and the
+                // runnable was set - execute it on main thread
+                if (getUserStateManager().getActiveAccount() != null
+                        && mPostLoginResultRunnable != null) {
+                    runOnUiThread(mPostLoginResultRunnable);
+                }
+                mPostLoginResultRunnable = null; // In any case - clear the runnable
+                return;
+
+            default:
+                break;
+        }
+
         /*
         This code is required in order to support Facebook's LoginButton functionality -
         since we do not use support Fragments, we can't use LoginButton.setFragment() call,
@@ -242,9 +263,101 @@ public abstract class AbstractActivity extends Activity implements
     // ---------------------------------------------------------------------------------------------
 
 
+    // ---------------------------------------------------------------------------------------------
+    //
+    // User state management
+
     @Override
     public UserStateManager getUserStateManager() {
         return mUserStateManager;
     }
+
+
+    private Account getActiveOrDummyAccount() {
+        Account account = getUserStateManager().getActiveAccount();
+
+        if (account != null)
+            return account;
+        else
+            return new Account("dummy_account", AccountAuthenticator.ACCOUNT_TYPE_DEFAULT);
+    }
+
+
+    @Override
+    public void askUserToLogIn(String message, final Runnable runnable) {
+        // This listener will handle dialog button clicks
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        if (runnable != null) {
+                            // Ensure that we do not overwrite runnables
+                            if (mPostLoginResultRunnable != null)
+                                Log.e(LOG_TAG, "tried to set a new Runnable " +
+                                        "for post login execution while the previous one " +
+                                        "hasn't been consumed yet!");
+
+                            mPostLoginResultRunnable = runnable;
+                        }
+                        Intent intent = new Intent(AbstractActivity.this, LoginActivity.class);
+                        startActivityForResult(intent, Constants.REQUEST_CODE_LOGIN);
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //Do nothing
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(AbstractActivity.this);
+        builder.setMessage(message)
+                .setPositiveButton(getResources().getString(R.string.btn_dialog_positive),
+                        dialogClickListener)
+                .setNegativeButton(getResources().getString(R.string.btn_dialog_negative),
+                        dialogClickListener)
+                .show();
+    }
+
+    // End of user state management
+    //
+    // ---------------------------------------------------------------------------------------------
+
+
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Sync settings management
+
+    public void enableAutomaticSync() {
+        Account acc = getActiveOrDummyAccount();
+        ContentResolver.setIsSyncable(acc, IDoCareContract.AUTHORITY, 1);
+        ContentResolver.setSyncAutomatically(acc, IDoCareContract.AUTHORITY, true);
+    }
+
+    public void disableAutomaticSync() {
+        Account acc = getActiveOrDummyAccount();
+        ContentResolver.setIsSyncable(acc, IDoCareContract.AUTHORITY, 0);
+    }
+
+    @Override
+    public void requestImmediateSync() {
+        Account acc = getActiveOrDummyAccount();
+
+        Bundle settingsBundle = new Bundle();
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+
+        ContentResolver.requestSync(acc, IDoCareContract.AUTHORITY, settingsBundle);
+    }
+
+    // End of sync settings management
+    //
+    // ---------------------------------------------------------------------------------------------
+
 
 }

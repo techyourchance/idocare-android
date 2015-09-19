@@ -31,6 +31,7 @@ import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.authentication.UserStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
+import il.co.idocare.controllers.activities.AbstractActivity;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.utils.UtilMethods;
 import il.co.idocare.views.NewRequestViewMVC;
@@ -79,6 +80,14 @@ public class NewRequestFragment extends AbstractFragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getActiveAccount() == null) {
+            // The user logged out while this fragment was paused
+            userLoggedOut();
+        }
+    }
 
     @Override
     public boolean isTopLevelFragment() {
@@ -95,23 +104,6 @@ public class NewRequestFragment extends AbstractFragment {
         return getResources().getString(R.string.new_request_fragment_title);
     }
 
-
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // EventBus events handling
-
-    public void onEvent(NewRequestViewMVC.TakePictureButtonClickEvent event) {
-        takePictureWithCamera();
-    }
-
-    public void onEvent(NewRequestViewMVC.CreateNewRequestButtonClickEvent event) {
-        createRequest();
-    }
-
-    // End of EventBus events handling
-    //
-    // ---------------------------------------------------------------------------------------------
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -141,6 +133,28 @@ public class NewRequestFragment extends AbstractFragment {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // EventBus events handling
+
+    public void onEvent(NewRequestViewMVC.TakePictureButtonClickEvent event) {
+        takePictureWithCamera();
+    }
+
+    public void onEvent(NewRequestViewMVC.CreateNewRequestButtonClickEvent event) {
+        createRequest();
+    }
+
+    public void onEventMainThread(UserStateManager.UserLoggedOutEvent event) {
+        userLoggedOut();
+    }
+
+    // End of EventBus events handling
+    //
+    // ---------------------------------------------------------------------------------------------
+
 
     private void showPicture(String cameraPicturePath) {
         showPicture(mCameraPicturesPaths.size(), cameraPicturePath);
@@ -190,8 +204,7 @@ public class NewRequestFragment extends AbstractFragment {
         String createdBy = userStateManager.getActiveAccountUserId();
 
         if (TextUtils.isEmpty(createdBy)) {
-            // TODO: advice the user to signup/login at this point
-            Toast.makeText(getActivity(), "No active account found", Toast.LENGTH_LONG).show();
+            userLoggedOut();
             return;
         }
         
@@ -246,8 +259,8 @@ public class NewRequestFragment extends AbstractFragment {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                getContentResolver().insert(IDoCareContract.Requests.CONTENT_URI, requestCV);
-                getContentResolver().insert(IDoCareContract.UserActions.CONTENT_URI, userActionCV);
+                getActivity().getContentResolver().insert(IDoCareContract.Requests.CONTENT_URI, requestCV);
+                getActivity().getContentResolver().insert(IDoCareContract.UserActions.CONTENT_URI, userActionCV);
                 return null;
             }
 
@@ -259,6 +272,16 @@ public class NewRequestFragment extends AbstractFragment {
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[] {null});
 
+    }
+
+    private void userLoggedOut() {
+        // This is a very simplified handling of user's logout
+        // TODO: think of a better handling and possible corner cases
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+        } else {
+            replaceFragment(getNavHierParentFragment(), false, false, null);
+        }
     }
 
 }

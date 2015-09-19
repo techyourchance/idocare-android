@@ -4,15 +4,23 @@ import android.accounts.Account;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import java.io.IOException;
 
 import de.greenrobot.event.EventBus;
+import il.co.idocare.Constants;
+import il.co.idocare.R;
 import il.co.idocare.authentication.UserStateManager;
+import il.co.idocare.contentproviders.IDoCareContract;
+import il.co.idocare.controllers.activities.AbstractActivity;
+import il.co.idocare.controllers.activities.LoginActivity;
 
 
 /**
@@ -26,7 +34,6 @@ public abstract class AbstractFragment extends Fragment implements
     IDoCareFragmentCallback mCallback;
 
     private ProgressDialog mProgressDialog;
-
 
     @Override
     public void onAttach(Activity activity) {
@@ -60,11 +67,12 @@ public abstract class AbstractFragment extends Fragment implements
 
 
     /**
-     * @return ContentResolver associated with parent activity
+     * See {@link IDoCareFragmentCallback#askUserToLogIn(String, Runnable)}
      */
-    public ContentResolver getContentResolver() {
-        return getActivity().getContentResolver();
+    public void askUserToLogIn(String message, final Runnable runnable) {
+        mCallback.askUserToLogIn(message, runnable);
     }
+
 
     /**
      * Show standard (for the app) progress dialog
@@ -85,6 +93,24 @@ public abstract class AbstractFragment extends Fragment implements
     }
 
 
+
+    /**
+     * See {@link UserStateManager#getActiveAccount()}
+     */
+    public Account getActiveAccount() {
+        return mCallback.getUserStateManager().getActiveAccount();
+    }
+
+
+
+    /**
+     * See {@link UserStateManager#getActiveAccount()}
+     */
+    public String getActiveAccountUserId() {
+        return mCallback.getUserStateManager().getActiveAccountUserId();
+    }
+
+
     /**
      * See {@link UserStateManager#getActiveAccountAuthToken()}
      */
@@ -94,13 +120,12 @@ public abstract class AbstractFragment extends Fragment implements
 
 
     /**
-     * See {@link UserStateManager#getActiveAccount()}
+     * See {@link IDoCareFragmentCallback#requestImmediateSync()}
      */
-    public Account getActiveAccount() {
-        return mCallback.getUserStateManager().getActiveAccount();
+    public void requestImmediateSync() {
+        mCallback.requestImmediateSync();
     }
 
-    
     // ---------------------------------------------------------------------------------------------
     //
     // EventBus configuration

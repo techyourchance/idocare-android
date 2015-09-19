@@ -44,8 +44,6 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
     private RequestDetailsViewMVC mRequestDetailsViewMVC;
 
-    private UserStateManager mUserStateManager;
-
     private long mRequestId;
     private RequestItem mRawRequestItem;
     private RequestItem mRequestItem;
@@ -60,19 +58,18 @@ public class RequestDetailsFragment extends AbstractFragment implements
         mRequestDetailsViewMVC =
                 new RequestDetailsViewMVC(getActivity(), container, savedInstanceState);
 
-        mUserStateManager = new UserStateManager(getActivity());
-
         setActionBarTitle(getTitle());
 
         Bundle args = getArguments();
         if (args == null) {
-            // TODO: handle this error somehow (maybe pop back stack?)
-            Log.e(LOG_TAG, "RequestDetailsFragment was started with no arguments");
+            Log.e(LOG_TAG, "RequestDetailsFragment was started with no arguments. Switching" +
+                    "to HomeFragment.");
+            replaceFragment(HomeFragment.class, false, true, null);
         } else {
             mRequestId = args.getLong(Constants.FIELD_NAME_REQUEST_ID);
         }
 
-        // Initialize the map inside the MVC view
+        // Initialize the MapView inside the MVC view
         ((MapView)mRequestDetailsViewMVC.getRootView().findViewById(R.id.map_preview))
                 .onCreate(savedInstanceState);
 
@@ -84,17 +81,17 @@ public class RequestDetailsFragment extends AbstractFragment implements
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-	if (outState != null) {
-	    outState.putLong(Constants.FIELD_NAME_REQUEST_ID, mRequestId);
-	}
+        if (outState != null) {
+            outState.putLong(Constants.FIELD_NAME_REQUEST_ID, mRequestId);
+        }
     }
 
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-	if (savedInstanceState != null) {
-	    mRequestId = savedInstanceState.getLong(Constants.FIELD_NAME_REQUEST_ID);
-	}
+        if (savedInstanceState != null) {
+            mRequestId = savedInstanceState.getLong(Constants.FIELD_NAME_REQUEST_ID);
+        }
     }
 
     @Override
@@ -142,6 +139,10 @@ public class RequestDetailsFragment extends AbstractFragment implements
         voteForRequest(-1, true);
     }
 
+    public void onEventMainThread(UserStateManager.UserLoggedOutEvent event) {
+        getLoaderManager().restartLoader(REQUEST_LOADER, null, this);
+    }
+
 
     // End of EventBus events handling
     //
@@ -156,16 +157,24 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
     private void pickupRequest() {
 
+        // TODO: request pickup should be allowed only when there is a network connection
+
         if (mRequestItem.getPickedUpBy() != 0) {
             Log.e(LOG_TAG, "tried to pickup an already picked up request");
             return;
         }
 
-        final String pickedUpBy = mUserStateManager.getActiveAccountUserId();
+        final String pickedUpBy = getActiveAccountUserId();
 
+        // If no logged in user - ask him to log in and rerun this method in case he does
         if (TextUtils.isEmpty(pickedUpBy)) {
-            // TODO: advice the user to signup/login at this point
-            Toast.makeText(getActivity(), "No active account found", Toast.LENGTH_LONG).show();
+            askUserToLogIn(getResources().getString(R.string.msg_ask_to_log_in_before_pickup),
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            pickupRequest();
+                        }
+                    });
             return;
         }
 
@@ -189,7 +198,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
                         IDoCareContract.UserActions.ACTION_TYPE_PICKUP_REQUEST);
                 userActionCV.put(IDoCareContract.UserActions.COL_ACTION_PARAM, pickedUpBy);
 
-                Uri newUri = getContentResolver().insert(
+                Uri newUri = getActivity().getContentResolver().insert(
                         IDoCareContract.UserActions.CONTENT_URI,
                         userActionCV
                 );
@@ -197,7 +206,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
                 if (newUri != null) {
                     ContentValues requestCV = new ContentValues(1);
                     requestCV.put(IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG, 1);
-                    int updated = getContentResolver().update(
+                    int updated = getActivity().getContentResolver().update(
                             ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI,
                                     mRequestId),
                             requestCV,
@@ -210,13 +219,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
                 }
 
                 // Request pickup is time critical action - need to be uploaded to the server ASAP
-                Bundle settingsBundle = new Bundle();
-                settingsBundle.putBoolean(
-                        ContentResolver.SYNC_EXTRAS_MANUAL, true);
-                settingsBundle.putBoolean(
-                        ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-                ContentResolver.requestSync(getActiveAccount(), IDoCareContract.AUTHORITY,
-                        settingsBundle);
+                requestImmediateSync();
 
                 return (Void) null;
             }
@@ -245,6 +248,14 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
     private void voteForRequest(final int amount, final boolean voteForClosed) {
 
+        String activeUserId = getActiveAccountUserId();
+
+        // If no logged in user - ask him to log in
+        if (TextUtils.isEmpty(activeUserId)) {
+            askUserToLogIn(getResources().getString(R.string.msg_ask_to_log_in_before_vote), null);
+            return;
+        }
+
         new AsyncTask<Void, Void, Void>() {
 
             @Override
@@ -268,7 +279,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
                         IDoCareContract.UserActions.ACTION_TYPE_VOTE);
                 userActionCV.put(IDoCareContract.UserActions.COL_ACTION_PARAM, String.valueOf(amount));
 
-                Uri newUri = getContentResolver().insert(
+                Uri newUri = getActivity().getContentResolver().insert(
                         IDoCareContract.UserActions.CONTENT_URI,
                         userActionCV
                 );
@@ -276,7 +287,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
                 if (newUri != null) {
                     ContentValues requestCV = new ContentValues(1);
                     requestCV.put(IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG, 1);
-                    int updated = getContentResolver().update(
+                    int updated = getActivity().getContentResolver().update(
                             ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI,
                                     mRequestId),
                             requestCV,
@@ -298,8 +309,6 @@ public class RequestDetailsFragment extends AbstractFragment implements
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
     }
-
-
 
     // End of user actions handling
     //
@@ -427,7 +436,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
                 // the loader
                 if (cursor != null) {
                     Cursor idMappingCursor = null;
-                    idMappingCursor = getContentResolver().query(
+                    idMappingCursor = getActivity().getContentResolver().query(
                             ContentUris.withAppendedId(IDoCareContract.TempIdMappings.CONTENT_URI,
                                     mRequestId),
                             IDoCareContract.TempIdMappings.PROJECTION_ALL,
@@ -501,7 +510,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
         mRequestItem = combinedRequestItem;
 
-        mRequestItem.setStatus(mUserStateManager.getActiveAccountUserId());
+        mRequestItem.setStatus(getActiveAccountUserId());
 
         mRequestDetailsViewMVC.bindRequestItem(mRequestItem);
 

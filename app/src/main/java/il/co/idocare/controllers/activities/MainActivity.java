@@ -161,21 +161,38 @@ public class MainActivity extends AbstractActivity {
 
                 String chosenEntry = adapter.getItem(position).getTitle();
 
+                onDrawerEntryChosen(chosenEntry);
 
-                if (chosenEntry.equals(getResources().getString(R.string.nav_drawer_entry_home))) {
-                    replaceFragment(HomeFragment.class, false, true, null);
-                }
-                else if (chosenEntry.equals(getResources().getString(R.string.nav_drawer_entry_new_request))) {
-                    replaceFragment(NewRequestFragment.class, false, true, null);
-                }
-                else if (chosenEntry.equals(getResources().getString(R.string.nav_drawer_entry_logout))) {
-                    MainActivity.this.logOutCurrentUser();
-                }
-                else {
-                    Log.e(LOG_TAG, "drawer entry \"" + chosenEntry + "\" has no functionality");
-                }
             }
         });
+    }
+
+    /**
+     * This method provides the required functionality to drawer's entries
+     */
+    private void onDrawerEntryChosen(String chosenEntry) {
+        if (chosenEntry.equals(getResources().getString(R.string.nav_drawer_entry_home))) {
+            replaceFragment(HomeFragment.class, false, true, null);
+        }
+        else if (chosenEntry.equals(getResources().getString(R.string.nav_drawer_entry_new_request))) {
+            if (getUserStateManager().getActiveAccount() != null) // user logged in - go to new request fragment
+                replaceFragment(NewRequestFragment.class, true, false, null);
+            else // user isn't logged in - ask him to log in and go to new request fragment if successful
+                askUserToLogIn(
+                        getResources().getString(R.string.msg_ask_to_log_in_before_new_request),
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                replaceFragment(NewRequestFragment.class, true, false, null);
+                            }
+                        });
+        }
+        else if (chosenEntry.equals(getResources().getString(R.string.nav_drawer_entry_logout))) {
+            MainActivity.this.logOutCurrentUser();
+        }
+        else {
+            Log.e(LOG_TAG, "drawer entry \"" + chosenEntry + "\" has no functionality");
+        }
     }
 
     private void setupDrawerAndActionBarDependencies() {
@@ -240,38 +257,7 @@ public class MainActivity extends AbstractActivity {
     }
 
 
-    private void enableAutomaticSync() {
-        Account acc = getActiveOrDummyAccount();
-        ContentResolver.setIsSyncable(acc, IDoCareContract.AUTHORITY, 1);
-        ContentResolver.setSyncAutomatically(acc, IDoCareContract.AUTHORITY, true);
-    }
 
-    private void disableAutomaticSync() {
-        Account acc = getActiveOrDummyAccount();
-        ContentResolver.setIsSyncable(acc, IDoCareContract.AUTHORITY, 0);
-    }
-
-    public void requestImmediateSync() {
-        Account acc = getActiveOrDummyAccount();
-
-        Bundle settingsBundle = new Bundle();
-        settingsBundle.putBoolean(
-                ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        settingsBundle.putBoolean(
-                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-
-        ContentResolver.requestSync(acc, IDoCareContract.AUTHORITY, settingsBundle);
-    }
-
-
-    private Account getActiveOrDummyAccount() {
-        Account account = getUserStateManager().getActiveAccount();
-
-        if (account != null)
-            return account;
-        else
-            return new Account("dummy_account", AccountAuthenticator.ACCOUNT_TYPE_DEFAULT);
-    }
     // End of user session management
     //
     // ---------------------------------------------------------------------------------------------
