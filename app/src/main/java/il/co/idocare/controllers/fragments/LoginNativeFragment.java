@@ -30,6 +30,8 @@ public class LoginNativeFragment extends AbstractFragment {
 
     private LoginNativeViewMVC mLoginNativeViewMVC;
 
+    private AlertDialog mAlertDialog;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -68,18 +70,23 @@ public class LoginNativeFragment extends AbstractFragment {
     @Override
     public void onResume() {
         super.onResume();
-        UserStateManager userStateManager = new UserStateManager(getActivity());
-        if (userStateManager.isLoggedIn()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage("IDoCare does not currently support multiple accounts")
-                    .setCancelable(false)
-                    .setPositiveButton("Close", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            ((LoginActivity) getActivity()).finish();
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.show();
+        if (isLoggedIn()) {
+            // Disallow multiple accounts by showing a dialog which finishes the activity
+            if (mAlertDialog == null) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage(getResources().getString(R.string.msg_no_support_for_multiple_accounts))
+                        .setCancelable(false)
+                        .setPositiveButton(getResources().getString(R.string.btn_dialog_close),
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        ((LoginActivity) getActivity()).finish();
+                                    }
+                                });
+                mAlertDialog = builder.create();
+                mAlertDialog.show();
+            } else {
+                mAlertDialog.show();
+            }
         }
     }
 

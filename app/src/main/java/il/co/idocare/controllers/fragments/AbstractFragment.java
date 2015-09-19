@@ -102,6 +102,12 @@ public abstract class AbstractFragment extends Fragment implements
     }
 
 
+    /**
+     * @return true if there is a logged in user (either native, or Facebook, etc.)
+     */
+    public boolean isLoggedIn() {
+        return mCallback.getUserStateManager().isLoggedIn();
+    }
 
     /**
      * See {@link UserStateManager#getActiveAccount()}
@@ -109,7 +115,6 @@ public abstract class AbstractFragment extends Fragment implements
     public String getActiveAccountUserId() {
         return mCallback.getUserStateManager().getActiveAccountUserId();
     }
-
 
     /**
      * See {@link UserStateManager#getActiveAccountAuthToken()}
