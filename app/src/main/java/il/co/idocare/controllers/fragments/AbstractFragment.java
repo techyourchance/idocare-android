@@ -93,34 +93,11 @@ public abstract class AbstractFragment extends Fragment implements
     }
 
 
-
     /**
-     * See {@link UserStateManager#getActiveAccount()}
+     * See {@link IDoCareFragmentCallback#getUserStateManager()}
      */
-    public Account getActiveAccount() {
-        return mCallback.getUserStateManager().getActiveAccount();
-    }
-
-
-    /**
-     * @return true if there is a logged in user (either native, or Facebook, etc.)
-     */
-    public boolean isLoggedIn() {
-        return mCallback.getUserStateManager().isLoggedIn();
-    }
-
-    /**
-     * See {@link UserStateManager#getActiveAccount()}
-     */
-    public String getActiveAccountUserId() {
-        return mCallback.getUserStateManager().getActiveAccountUserId();
-    }
-
-    /**
-     * See {@link UserStateManager#getActiveAccountAuthToken()}
-     */
-    public String getActiveAccountAuthToken() {
-        return mCallback.getUserStateManager().getActiveAccountAuthToken();
+    public UserStateManager getUserStateManager() {
+        return mCallback.getUserStateManager();
     }
 
 

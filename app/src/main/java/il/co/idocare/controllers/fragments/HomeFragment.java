@@ -89,7 +89,7 @@ public class HomeFragment extends AbstractFragment implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add_new_request:
-                if (getActiveAccount() != null) // user logged in - go to new request fragment
+                if (getUserStateManager().getActiveAccount() != null) // user logged in - go to new request fragment
                     replaceFragment(NewRequestFragment.class, true, false, null);
                 else // user isn't logged in - ask him to log in and go to new request fragment if successful
                     askUserToLogIn(

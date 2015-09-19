@@ -164,7 +164,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
             return;
         }
 
-        final String pickedUpBy = getActiveAccountUserId();
+        final String pickedUpBy = getUserStateManager().getActiveAccountUserId();
 
         // If no logged in user - ask him to log in and rerun this method in case he does
         if (TextUtils.isEmpty(pickedUpBy)) {
@@ -248,7 +248,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
     private void voteForRequest(final int amount, final boolean voteForClosed) {
 
-        String activeUserId = getActiveAccountUserId();
+        String activeUserId = getUserStateManager().getActiveAccountUserId();
 
         // If no logged in user - ask him to log in
         if (TextUtils.isEmpty(activeUserId)) {
@@ -510,7 +510,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
         mRequestItem = combinedRequestItem;
 
-        mRequestItem.setStatus(getActiveAccountUserId());
+        mRequestItem.setStatus(getUserStateManager().getActiveAccountUserId());
 
         mRequestDetailsViewMVC.bindRequestItem(mRequestItem);
 

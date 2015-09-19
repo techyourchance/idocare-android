@@ -89,7 +89,7 @@ public class CloseRequestFragment extends AbstractFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (getActiveAccount() == null) {
+        if (getUserStateManager().getActiveAccount() == null) {
             // The user logged out while this fragment was paused
             userLoggedOut();
         }
@@ -209,7 +209,7 @@ public class CloseRequestFragment extends AbstractFragment {
      */
     private void closeRequest() {
 
-        String closedBy = getActiveAccountUserId();
+        String closedBy = getUserStateManager().getActiveAccountUserId();
 
         if (TextUtils.isEmpty(closedBy)) {
             userLoggedOut();

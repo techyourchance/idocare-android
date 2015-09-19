@@ -35,7 +35,7 @@ import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.views.LoginChooserViewMVC;
 
 /**
- *
+ * This fragment allows the user to choose between multiple signup/login options, or skip login
  */
 public class LoginChooserFragment extends AbstractFragment {
 
@@ -45,15 +45,11 @@ public class LoginChooserFragment extends AbstractFragment {
 
     private CallbackManager mFacebookCallbackManager;
 
-    private UserStateManager mUserStateManager;
 
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mLoginChooserViewMVC = new LoginChooserViewMVC(inflater, container);
-
-        mUserStateManager = new UserStateManager(getActivity());
 
         initializeFacebookLogin();
 
@@ -131,7 +127,7 @@ public class LoginChooserFragment extends AbstractFragment {
 
     public void onEvent(LoginChooserViewMVC.SkipLoginClickEvent event) {
 
-        mUserStateManager.setLoginSkipped(true);
+        getUserStateManager().setLoginSkipped(true);
 
         finishActivity();
     }
@@ -176,7 +172,7 @@ public class LoginChooserFragment extends AbstractFragment {
                 @Override
                 public void run() {
 
-                    if (!mUserStateManager.addFacebookAccount(accessToken)) {
+                    if (!getUserStateManager().addFacebookAccount(accessToken)) {
 
                         LoginManager.getInstance().logOut();
 

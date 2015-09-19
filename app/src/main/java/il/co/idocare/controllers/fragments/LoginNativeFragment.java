@@ -70,7 +70,7 @@ public class LoginNativeFragment extends AbstractFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (isLoggedIn()) {
+        if (getUserStateManager().isLoggedIn()) {
             // Disallow multiple accounts by showing a dialog which finishes the activity
             if (mAlertDialog == null) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
