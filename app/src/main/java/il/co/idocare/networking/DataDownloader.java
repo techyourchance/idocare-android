@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.content.ContentProviderClient;
 import android.database.Cursor;
 import android.os.RemoteException;
+import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,7 +105,8 @@ public class DataDownloader implements LegacyServerHttpRequest.OnServerResponseC
         LegacyServerHttpRequest serverRequest = new LegacyServerHttpRequest(Constants.GET_ALL_REQUESTS_URL,
                 mUserId, mAuthToken, this, Constants.GET_ALL_REQUESTS_URL);
 
-        if (mUserId != null) serverRequest.addStandardHeaders();
+        if (!TextUtils.isEmpty(mUserId) && !TextUtils.isEmpty(mAuthToken))
+            serverRequest.addStandardHeaders();
 
         Thread workerThread = new Thread(serverRequest);
         workerThread.start();

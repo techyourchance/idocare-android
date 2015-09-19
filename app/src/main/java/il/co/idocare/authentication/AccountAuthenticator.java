@@ -19,6 +19,10 @@ import il.co.idocare.controllers.activities.LoginActivity;
 public class AccountAuthenticator extends AbstractAccountAuthenticator {
 
 
+    public static final String DUMMY_ACCOUNT_NAME = "Default account";
+    public static final String DUMMY_ACCOUNT_AUTH_TOKEN = "dummy_auth_token";
+
+
     /**
      * Account type for AccountManager
      */

@@ -9,6 +9,7 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.IOException;
@@ -54,22 +55,23 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         Log.d(LOG_TAG, "onPerformSync() called");
 
-
         String authToken = getAuthToken(account);
-        if (authToken == null) {
-            Log.e(LOG_TAG, "Couldn't obtain auth token for the account");
-            // TODO: what do we do in that case? Need to use "open" APIs
-            return;
+
+        String userId = AccountManager.get(getContext())
+                .getUserData(account, Constants.FIELD_NAME_USER_ID);
+
+        if (!TextUtils.isEmpty(userId) && !TextUtils.isEmpty(authToken)) {
+            DataUploader dataUploader =
+                    new DataUploader(userId, authToken, provider);
+
+            // This call will block until all local actions will be synchronized to the server
+            // and the respective ContentProvider will be updated
+            dataUploader.uploadAll();
+        } else {
+            Log.d(LOG_TAG, "no user ID or auth token - skipping data upload and using an open API."
+                    + "\nUser ID: " + userId + "\nAuth token: " + authToken);
         }
 
-        String userId = AccountManager.get(getContext()).getUserData(account, Constants.FIELD_NAME_USER_ID);
-
-        DataUploader dataUploader =
-                new DataUploader(userId, authToken, provider);
-
-        // This call will block until all local actions will be synchronized to the server
-        // and the respective ContentProvider will be updated
-        dataUploader.uploadAll();
 
         ReverseGeocoderFactory reverseGeocoderFactory =
                 new OpenStreetMapsReverseGeocoderFactory();

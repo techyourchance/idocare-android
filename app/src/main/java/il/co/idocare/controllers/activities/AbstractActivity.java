@@ -1,6 +1,7 @@
 package il.co.idocare.controllers.activities;
 
 import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -276,10 +277,19 @@ public abstract class AbstractActivity extends Activity implements
     private Account getActiveOrDummyAccount() {
         Account account = getUserStateManager().getActiveAccount();
 
-        if (account != null)
+        if (account != null) {
             return account;
-        else
-            return new Account("dummy_account", AccountAuthenticator.ACCOUNT_TYPE_DEFAULT);
+        } else {
+            account = new Account(AccountAuthenticator.DUMMY_ACCOUNT_NAME,
+                    AccountAuthenticator.ACCOUNT_TYPE_DEFAULT);
+            // TODO: this call returns false in case the account exists or error ocurred - handle both separately
+            AccountManager.get(this).addAccountExplicitly(account, null, null);
+            AccountManager.get(this).setAuthToken(
+                    account,
+                    AccountAuthenticator.AUTH_TOKEN_TYPE_DEFAULT,
+                    AccountAuthenticator.DUMMY_ACCOUNT_AUTH_TOKEN);
+            return account;
+        }
     }
 
 

@@ -42,8 +42,9 @@ public class UserStateManager {
     public static final String KEY_ERROR_MSG = "il.co.idocare.authentication." +
             UserStateManager.class.getSimpleName() + ".KEY_ERROR_MSG";
 
-    private static final String LOG_TAG = UserStateManager.class.getSimpleName();
 
+
+    private static final String LOG_TAG = UserStateManager.class.getSimpleName();
 
 
     private Context mContext;
@@ -104,15 +105,11 @@ public class UserStateManager {
         Bundle loginResult = new Bundle();
 
         // Encode username and password
-        byte[] usernameBytes;
-        byte[] passwordBytes;
-        try {
-            usernameBytes = ("fuckyouhackers" + username).getBytes("UTF-8");
-            passwordBytes = ("fuckyouhackers" + password).getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e ) {
-            // Really? Not supporting UTF-8???
-            e.printStackTrace();
-            loginResult.putString(KEY_ERROR_MSG, e.getMessage());
+        byte[] usernameBytes = toBytes(username);
+        byte[] passwordBytes = toBytes(password);
+
+        if (usernameBytes == null || passwordBytes == null) {
+            loginResult.putString(KEY_ERROR_MSG, "encoding error");
             return loginResult;
         }
 
@@ -172,7 +169,7 @@ public class UserStateManager {
 
         String accountType = AccountAuthenticator.ACCOUNT_TYPE_DEFAULT;
 
-        Account account = new Account(username, accountType);
+        final Account account = new Account(username, accountType);
         Bundle userdata = new Bundle(1);
         userdata.putString(Constants.FIELD_NAME_USER_ID, userId);
         mAccountManager.addAccountExplicitly(account, null, userdata);
@@ -198,7 +195,13 @@ public class UserStateManager {
             if (acc.equals(account)) {
                 setNativeAccountAuthToken(username, accountType, authToken);
             } else {
-                mAccountManager.removeAccountExplicitly(acc);
+                final Account finalAccount = acc;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAccountManager.removeAccount(finalAccount, null, null);
+                    }
+                }).start();
             }
         }
 
@@ -297,10 +300,19 @@ public class UserStateManager {
     public Bundle signUpNative(String email, String password, String nickname, String firstName,
                                 String lastName, @Nullable String facebookId) {
 
+        Bundle signupResult = new Bundle();
+
         ServerHttpRequest request = new ServerHttpRequest(Constants.SIGN_UP_NATIVE_URL);
 
-        request.addTextField(Constants.FIELD_NAME_USER_EMAIL, email);
-        request.addTextField(Constants.FIELD_NAME_USER_PASSWORD_SIGNUP, password);
+        byte[] emailBytes = toBytes(email);
+        byte[] passwordBytes = toBytes(password);
+        if (emailBytes == null || passwordBytes == null) {
+            signupResult.putString(KEY_ERROR_MSG, "encoding error");
+            return signupResult;
+        }
+
+        request.addTextField(Constants.FIELD_NAME_USER_EMAIL, Base64.encodeToString(emailBytes, Base64.NO_WRAP));
+        request.addTextField(Constants.FIELD_NAME_USER_PASSWORD_SIGNUP, Base64.encodeToString(passwordBytes, Base64.NO_WRAP));
         request.addTextField(Constants.FIELD_NAME_USER_NICKNAME, nickname);
         request.addTextField(Constants.FIELD_NAME_USER_FIRST_NAME, firstName);
         request.addTextField(Constants.FIELD_NAME_USER_LAST_NAME, lastName);
@@ -310,7 +322,6 @@ public class UserStateManager {
 
         CloseableHttpResponse response = request.execute();
 
-        Bundle signupResult = new Bundle();
 
         if (response == null) {
             signupResult.putString(KEY_ERROR_MSG, "could not obtain response to signup request");
@@ -468,13 +479,19 @@ public class UserStateManager {
 
         if (accounts.length == 0) return null;
 
+
         if (accounts.length > 1) {
             Log.e(LOG_TAG, "There is more than one native account on the device. " +
                     "Using the first one returned." +
                     "\nTotal native accounts: " + String.valueOf(accounts.length));
         }
 
-        return accounts[0];
+        // Checking for dummy account
+        if (accounts[0].name.equals(AccountAuthenticator.DUMMY_ACCOUNT_NAME) &&
+                mAccountManager.getUserData(accounts[0], Constants.FIELD_NAME_USER_ID) == null)
+            return null;
+        else
+            return accounts[0];
     }
 
     /**
@@ -521,4 +538,15 @@ public class UserStateManager {
     // ---------------------------------------------------------------------------------------------
 
 
+    private byte[] toBytes(String plainText) {
+        byte[] encodedText;
+        try {
+            encodedText = ("fuckyouhackers" + plainText).getBytes("UTF-8");
+            return encodedText;
+        } catch (UnsupportedEncodingException e ) {
+            // Really? Not supporting UTF-8???
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
