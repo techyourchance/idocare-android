@@ -15,3 +15,40 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+
+## --------------------------------------------------------------------------------
+#
+# Ease future debugging
+#
+## --------------------------------------------------------------------------------
+
+-keepattributes SourceFile,LineNumberTable
+
+
+
+## --------------------------------------------------------------------------------
+#
+# Preventing stripping of EventBus onEvent* methods
+#
+## --------------------------------------------------------------------------------
+
+-keepclassmembers class ** {
+    public void onEvent(**);
+}
+
+
+-keepclassmembers class ** {
+    public void onEventMainThread(**);
+}
+
+
+## --------------------------------------------------------------------------------
+#
+# org.apache.commons.validator package references many other org.apache.commons
+# packages, which are not included in the app. This makes ProGuard go crazy.
+# Disable warnings for org.apache.commons altogether.
+#
+## --------------------------------------------------------------------------------
+
+-dontwarn org.apache.commons.**
