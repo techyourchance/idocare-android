@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:lines="1"
             android:inputType="textPersonName"
-            android:hint="@string/login_username_hint"/>
+            android:hint="@string/hint_email"/>
 
         <EditText
             android:id="@+id/edt_login_password"
@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:lines="1"
             android:inputType="textPassword"
-            android:hint="@string/login_password_hint"/>
+            android:hint="@string/hint_password"/>
 
         <Button
             android:id="@+id/btn_login"

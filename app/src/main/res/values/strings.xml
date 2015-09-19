@@ -2,17 +2,8 @@
 <resources>
 
     <string name="app_name">IDoCare</string>
-    <string name="btn_create_new_request">CREATE</string>
-    <string name="btn_switch_to_new_request_fragment">Create new request</string>
-    <string name="btn_pickup_request">ASSIGN TO ME</string>
-    <string name="btn_switch_to_close_request_fragment">CLOSE</string>
-    <string name="btn_close_request">I DID IT!</string>
-    <string name="btn_take_picture">Add photo</string>
-    <string name="edt_comment_hint">Comment</string>
     <string name="menu_add_new_request_title">Add new request</string>
     <string name="image_request_thumbnail_content_description">Cleanup request thumbnail</string>
-    <string name="login_username_hint">Username:</string>
-    <string name="login_password_hint">Password:</string>
     <string name="img_logo_accessibility">IDoCare logo</string>
     <string name="img_grass_accessibility">Grass picture</string>
     <string name="img_request_thumbnail_accessibility">Request thumbnail picture</string>
@@ -26,21 +17,50 @@
     <string name="txt_location_title">Location:</string>
     <string name="txt_created_title">Created by:</string>
     <string name="txt_closed_by_title">Closed by:</string>
-    <string name="edt_closed_comment_hint">Leave a comment</string>
-    <string name="btn_add_picture_text">Add a picture</string>
     <string name="home_fragment_title">Home</string>
     <string name="new_request_fragment_title">New request</string>
     <string name="close_request_fragment_title">Close request</string>
     <string name="request_details_fragment_title">Request details</string>
     <string name="txt_by">by</string>
     <string name="txt_by_me">by me</string>
-    <string name="btn_sign_up">Sign up</string>
-    <string name="btn_login">Log in</string>
-    <string name="btn_login_capital">LOG IN</string>
+
+    <!--
+    Buttons' captions
+    -->
 
     <string name="btn_dialog_positive">Yes</string>
     <string name="btn_dialog_negative">No</string>
     <string name="btn_dialog_close">Close</string>
+
+    <string name="btn_skip_login">Skip</string>
+    <string name="btn_signup">Sign up</string>
+    <string name="btn_sign_up">Sign up</string>
+    <string name="btn_login">Log in</string>
+    <string name="btn_login_capital">LOG IN</string>
+    <string name="btn_create_new_request">CREATE</string>
+    <string name="btn_switch_to_new_request_fragment">Create new request</string>
+    <string name="btn_pickup_request">ASSIGN TO ME</string>
+    <string name="btn_switch_to_close_request_fragment">CLOSE</string>
+    <string name="btn_close_request">I DID IT!</string>
+    <string name="btn_take_picture">Add photo</string>
+    <string name="btn_add_picture">Add a picture</string>
+
+    <!--
+    Hints for EditText's
+    -->
+    <string name="hint_comment">Comment</string>
+    <string name="hint_leave_comment">Leave a comment</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_repeat_password">Repeat password</string>
+    <string name="hint_nickname">Nickname</string>
+    <string name="hint_first_name">First name</string>
+    <string name="hint_last_name">Last name</string>
+
+
+    <!--
+    Messages shown to the user
+    -->
 
     <string name="msg_no_support_for_multiple_accounts">IDoCare does not currently support multiple
         accounts</string>
@@ -54,13 +74,22 @@
     <string name="msg_ask_to_log_in_before_vote">In order to vote for reputation you need
         to be logged in. Would you like to log in now?</string>
 
+    <string name="msg_login_failed">Login failed</string>
+    <string name="msg_signup_failed">Signup failed</string>
 
+    <string name="msg_illegal_email">provide valid email address</string>
+    <string name="msg_password_must_contain_digit">password must contain at least one digit</string>
+    <string name="msg_password_must_not_contain_spaces">password must not contain spaces</string>
+    <string name="msg_password_must_not_be_short">password must be at least 8 chars long</string>
+    <string name="msg_repeat_password_must_match">repeated password does not match the original</string>
+    <string name="msg_first_name_is_required">first name is required</string>
+    <string name="msg_last_name_is_required">last name is required</string>
+    <string name="msg_resolve_errors">Please resolve these errors:</string>
 
-
+    <!--
+    Facebook app ID - must be defined in strings under this particular name!
+    -->
     <string name="facebook_app_id">534844050003392</string>
-    <string name="btn_skip_login">Skip</string>
-
-    <string name="msg_login_failed">incorrect username or password</string>
 
 
 </resources>

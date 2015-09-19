@@ -350,6 +350,7 @@ public class UserStateManager {
 
         final boolean isFacebookAccount =
                 mAccountManager.getUserData(account, Constants.FIELD_NAME_USER_FACEBOOK_ID) != null;
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -374,19 +375,15 @@ public class UserStateManager {
                     LoginManager.getInstance().logOut();
                 }
 
+                // Show login screen the next time the app starts
+                setLoginSkipped(false);
+
                 EventBus.getDefault().post(new UserLoggedOutEvent());
 
             }
         }).start();
     }
 
-    private void logOutNative() {
-        // TODO: write code that removes native account
-    }
-
-    private void logOutFacebook() {
-        LoginManager.getInstance().logOut();
-    }
 
 
     /**

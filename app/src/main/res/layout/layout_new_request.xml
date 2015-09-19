@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:inputType="text"
-        android:hint="@string/edt_closed_comment_hint"/>
+        android:hint="@string/hint_leave_comment"/>
 
 
     <RatingBar

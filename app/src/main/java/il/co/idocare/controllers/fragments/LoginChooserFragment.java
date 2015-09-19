@@ -45,6 +45,7 @@ public class LoginChooserFragment extends AbstractFragment {
 
     private CallbackManager mFacebookCallbackManager;
 
+    private AlertDialog mAlertDialog;
 
 
     @Override
@@ -106,6 +107,30 @@ public class LoginChooserFragment extends AbstractFragment {
         mFacebookCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getUserStateManager().isLoggedIn()) {
+            // Disallow multiple accounts by showing a dialog which finishes the activity
+            if (mAlertDialog == null) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage(getResources().getString(R.string.msg_no_support_for_multiple_accounts))
+                        .setCancelable(false)
+                        .setPositiveButton(getResources().getString(R.string.btn_dialog_close),
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        ((LoginActivity) getActivity()).finish();
+                                    }
+                                });
+                mAlertDialog = builder.create();
+                mAlertDialog.show();
+            } else {
+                mAlertDialog.show();
+            }
+        }
+    }
+
     private void finishActivity() {
         if (getActivity().getIntent().hasExtra(LoginActivity.ARG_LAUNCHED_FROM_STARTUP_ACTIVITY)) {
             // If the enclosing activity has this flag then it was launched from StartupActivity.
@@ -138,7 +163,7 @@ public class LoginChooserFragment extends AbstractFragment {
     }
 
     public void onEvent(LoginChooserViewMVC.SignUpNativeClickEvent event) {
-        // TODO: add logic to pop up SignupNativeFragment
+        replaceFragment(SignupNativeFragment.class, true, false, getArguments());
     }
 
     // End of EventBus events handling

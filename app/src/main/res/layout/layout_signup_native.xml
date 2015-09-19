@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- TODO: fix this layout and remove nested LinearLayouts if not used -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/login_fragment_padding"
+    android:gravity="center_horizontal"
+    android:background="@drawable/default_fragment_background">
+
+    <!--<LinearLayout-->
+        <!--android:orientation="vertical"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_weight="1"-->
+        <!--android:gravity="center_horizontal|bottom">-->
+
+        <!--<ImageView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/ic_logo"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:contentDescription="@string/img_logo_accessibility"/>-->
+
+    <!--</LinearLayout>-->
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal|bottom">
+
+        <EditText
+            android:id="@+id/edt_email"
+            android:layout_width="@dimen/wide_button_width"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:inputType="textEmailAddress"
+            android:hint="@string/hint_email"/>
+
+        <EditText
+            android:id="@+id/edt_password"
+            android:layout_width="@dimen/wide_button_width"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:inputType="textPassword"
+            android:hint="@string/hint_password"/>
+
+        <EditText
+            android:id="@+id/edt_repeat_password"
+            android:layout_width="@dimen/wide_button_width"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:inputType="textPassword"
+            android:hint="@string/hint_repeat_password"/>
+
+        <EditText
+            android:id="@+id/edt_nickname"
+            android:layout_width="@dimen/wide_button_width"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:inputType="text"
+            android:hint="@string/hint_nickname"/>
+
+        <EditText
+            android:id="@+id/edt_first_name"
+            android:layout_width="@dimen/wide_button_width"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:inputType="text"
+            android:hint="@string/hint_first_name"/>
+
+        <EditText
+            android:id="@+id/edt_last_name"
+            android:layout_width="@dimen/wide_button_width"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:inputType="text"
+            android:hint="@string/hint_last_name"/>
+
+
+
+        <Button
+            android:id="@+id/btn_signup"
+            android:layout_width="@dimen/wide_button_width"
+            android:layout_height="@dimen/wide_button_height"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/horizontal_gradient_green_button_background"
+            android:text="@string/btn_signup"
+            android:textColor="@android:color/white"/>
+
+    </LinearLayout>
+
+</LinearLayout>
