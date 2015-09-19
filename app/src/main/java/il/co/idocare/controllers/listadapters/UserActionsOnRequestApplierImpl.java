@@ -8,8 +8,8 @@ import org.json.JSONObject;
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.interfaces.RequestUserActionApplier;
-import il.co.idocare.pojos.RequestItem;
-import il.co.idocare.pojos.UserActionItem;
+import il.co.idocare.datamodels.functional.RequestItem;
+import il.co.idocare.datamodels.functional.UserActionItem;
 import il.co.idocare.utils.UtilMethods;
 
 /**

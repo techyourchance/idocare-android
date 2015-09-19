@@ -1,4 +1,4 @@
-package il.co.idocare.pojos;
+package il.co.idocare.datamodels.functional;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -74,7 +74,7 @@ public class UserItem {
             user.setReputation(reputation);
             user.setPictureUrl(pictureUrl);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Couldn't create a new RequestItem: one or more " +
+            throw new IllegalArgumentException("Couldn't create a new RequestItemPojo: one or more " +
                     "of the mandatory fields missing from the cursor", e);
         }
 

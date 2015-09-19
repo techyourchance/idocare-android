@@ -10,7 +10,7 @@ import org.json.JSONObject;
 
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.pojos.UserItem;
+import il.co.idocare.datamodels.functional.UserItem;
 
 /**
  * This class processes a response from the server containing information about a particular user

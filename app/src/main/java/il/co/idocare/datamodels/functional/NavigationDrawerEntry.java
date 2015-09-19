@@ -1,6 +1,4 @@
-package il.co.idocare.pojos;
-
-import android.graphics.drawable.Drawable;
+package il.co.idocare.datamodels.functional;
 
 /**
  * Created by Vasiliy on 3/23/2015.

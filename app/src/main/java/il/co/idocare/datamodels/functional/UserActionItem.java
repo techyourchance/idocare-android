@@ -1,4 +1,4 @@
-package il.co.idocare.pojos;
+package il.co.idocare.datamodels.functional;
 
 import android.database.Cursor;
 

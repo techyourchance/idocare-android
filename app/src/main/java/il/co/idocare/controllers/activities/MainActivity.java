@@ -4,8 +4,6 @@ import android.accounts.Account;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.ContentResolver;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -22,14 +20,14 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import il.co.idocare.Constants;
-import il.co.idocare.authentication.UserStateManager;
+import il.co.idocare.authentication.AccountAuthenticator;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
 import il.co.idocare.controllers.listadapters.NavigationDrawerListAdapter;
 import il.co.idocare.controllers.fragments.HomeFragment;
 import il.co.idocare.R;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
-import il.co.idocare.pojos.NavigationDrawerEntry;
+import il.co.idocare.datamodels.functional.NavigationDrawerEntry;
 
 
 public class MainActivity extends AbstractActivity {
@@ -238,41 +236,42 @@ public class MainActivity extends AbstractActivity {
     // User session management
 
     private void logOutCurrentUser() {
-        UserStateManager userStateManager = new UserStateManager(this);
-
-        if (userStateManager.isLoggedIn()) {
-            userStateManager.logOut();
-        }
-
+        getUserStateManager().logOut();
     }
 
 
     private void enableAutomaticSync() {
-        Account acc = getUserStateManager().getActiveAccount();
+        Account acc = getActiveOrDummyAccount();
         ContentResolver.setIsSyncable(acc, IDoCareContract.AUTHORITY, 1);
         ContentResolver.setSyncAutomatically(acc, IDoCareContract.AUTHORITY, true);
     }
 
     private void disableAutomaticSync() {
-        Account acc = getUserStateManager().getActiveAccount();
+        Account acc = getActiveOrDummyAccount();
         ContentResolver.setIsSyncable(acc, IDoCareContract.AUTHORITY, 0);
     }
 
     public void requestImmediateSync() {
-        Account acc = getUserStateManager().getActiveAccount();
-        // Pass the settings flags by inserting them in a bundle
+        Account acc = getActiveOrDummyAccount();
+
         Bundle settingsBundle = new Bundle();
         settingsBundle.putBoolean(
                 ContentResolver.SYNC_EXTRAS_MANUAL, true);
         settingsBundle.putBoolean(
                 ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        /*
-         * Request the sync for the default account, authority, and
-         * manual sync settings
-         */
+
         ContentResolver.requestSync(acc, IDoCareContract.AUTHORITY, settingsBundle);
     }
 
+
+    private Account getActiveOrDummyAccount() {
+        Account account = getUserStateManager().getActiveAccount();
+
+        if (account != null)
+            return account;
+        else
+            return new Account("dummy_account", AccountAuthenticator.ACCOUNT_TYPE_DEFAULT);
+    }
     // End of user session management
     //
     // ---------------------------------------------------------------------------------------------

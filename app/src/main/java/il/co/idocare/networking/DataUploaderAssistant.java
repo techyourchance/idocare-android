@@ -1,6 +1,5 @@
 package il.co.idocare.networking;
 
-import android.accounts.Account;
 import android.content.ContentProviderClient;
 import android.content.ContentUris;
 import android.database.Cursor;
@@ -13,8 +12,9 @@ import org.json.JSONObject;
 
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.pojos.RequestItem;
-import il.co.idocare.pojos.UserActionItem;
+import il.co.idocare.datamodels.functional.RequestItem;
+import il.co.idocare.datamodels.functional.UserActionItem;
+import il.co.idocare.datamodels.pojos.RequestItemPojo;
 
 /**
  * This class provides functionality used by DataUploader
@@ -117,7 +117,7 @@ public class DataUploaderAssistant {
 
     private void addCreateRequestSpecificInfo(LegacyServerHttpRequest serverHttpRequest,
                                               UserActionItem userAction) {
-        RequestItem requestItem = null;
+        RequestItemPojo requestItem = null;
         try {
             Cursor cursor = mProvider.query(
                     ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI,

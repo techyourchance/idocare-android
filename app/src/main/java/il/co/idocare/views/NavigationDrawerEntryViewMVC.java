@@ -2,17 +2,14 @@ package il.co.idocare.views;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import il.co.idocare.R;
-import il.co.idocare.pojos.NavigationDrawerEntry;
-import il.co.idocare.utils.UtilMethods;
+import il.co.idocare.datamodels.functional.NavigationDrawerEntry;
 
 /**
  * Created by Vasiliy on 3/23/2015.

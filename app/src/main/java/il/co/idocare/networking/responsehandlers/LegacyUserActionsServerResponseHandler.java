@@ -11,8 +11,8 @@ import org.json.JSONObject;
 
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.pojos.RequestItem;
-import il.co.idocare.pojos.UserActionItem;
+import il.co.idocare.datamodels.functional.UserActionItem;
+import il.co.idocare.datamodels.pojos.RequestItemPojo;
 
 /**
  * Instances of this class handle server's responses to user's actions uploading
@@ -38,7 +38,7 @@ public class LegacyUserActionsServerResponseHandler extends LegacyAbstractServer
         String entityType = mUserAction.mEntityType;
         String actionType = mUserAction.mActionType;
 
-        RequestItem requestItem;
+        RequestItemPojo requestItem;
         int updated;
 
         switch (entityType) {
@@ -136,7 +136,7 @@ public class LegacyUserActionsServerResponseHandler extends LegacyAbstractServer
         }
     }
 
-    private int updateRequestData(ContentProviderClient provider, RequestItem request) throws
+    private int updateRequestData(ContentProviderClient provider, RequestItemPojo request) throws
             ServerResponseHandlerException{
 
         // Update the locally cached request with the actual data from the server
@@ -156,11 +156,11 @@ public class LegacyUserActionsServerResponseHandler extends LegacyAbstractServer
         return updated;
     }
 
-    private RequestItem extractRequestFromEntityString(String entityString) throws
+    private RequestItemPojo extractRequestFromEntityString(String entityString) throws
     ServerResponseHandlerException {
-        RequestItem requestItem = null;
+        RequestItemPojo requestItem = null;
         try {
-            requestItem = RequestItem.create(new JSONObject(entityString)
+            requestItem = RequestItemPojo.create(new JSONObject(entityString)
                     .getJSONObject(Constants.FIELD_NAME_RESPONSE_DATA).toString());
         } catch (JSONException e) {
             e.printStackTrace();

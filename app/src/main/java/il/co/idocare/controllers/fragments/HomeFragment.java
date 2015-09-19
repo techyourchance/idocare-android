@@ -21,7 +21,8 @@ import il.co.idocare.controllers.interfaces.RequestsCombinedCursorAdapter;
 import il.co.idocare.controllers.listadapters.HomeListAdapter;
 import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
 import il.co.idocare.controllers.listadapters.UserActionsOnUserApplierImpl;
-import il.co.idocare.pojos.RequestItem;
+import il.co.idocare.datamodels.functional.RequestItem;
+import il.co.idocare.datamodels.pojos.RequestItemPojo;
 import il.co.idocare.views.HomeViewMVC;
 
 

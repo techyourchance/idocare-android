@@ -18,7 +18,7 @@ import java.util.Locale;
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.location.ReverseGeocoder;
-import il.co.idocare.pojos.RequestItem;
+import il.co.idocare.datamodels.pojos.RequestItemPojo;
 
 /**
  * This class processes a response from the server containing array of requests
@@ -52,7 +52,7 @@ public class LegacyRequestsDownloadServerResponseHandler extends LegacyAbstractS
 
         List<Long> requestsIdsList = new ArrayList<>(requestsJsonArray.length());
 
-        RequestItem request;
+        RequestItemPojo request;
         String location;
         for (int i = 0; i < requestsJsonArray.length(); i++) {
 
@@ -60,7 +60,7 @@ public class LegacyRequestsDownloadServerResponseHandler extends LegacyAbstractS
 
             // Parse the contents of individual JSON objects in the array
             try {
-                request = RequestItem.create(requestsJsonArray.getJSONObject(i).toString());
+                request = RequestItemPojo.create(requestsJsonArray.getJSONObject(i).toString());
             } catch (JSONException e) {
                 e.printStackTrace();
                 continue;
@@ -105,7 +105,7 @@ public class LegacyRequestsDownloadServerResponseHandler extends LegacyAbstractS
         return idsForQuery.toString();
     }
 
-    private void updateOrInsertEntry(RequestItem request, ContentProviderClient provider) {
+    private void updateOrInsertEntry(RequestItemPojo request, ContentProviderClient provider) {
 
         Cursor cursor = null;
         try {
@@ -150,7 +150,7 @@ public class LegacyRequestsDownloadServerResponseHandler extends LegacyAbstractS
         }
     }
 
-    private void fetchLocationInfoFromReverseGeocoder(RequestItem request) {
+    private void fetchLocationInfoFromReverseGeocoder(RequestItemPojo request) {
         String location = mReverseGeocoder.getFromLocation(request.getLatitude(),
                 request.getLongitude(), Locale.getDefault());
         if (!TextUtils.isEmpty(location))

@@ -16,8 +16,9 @@ import java.net.URL;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.pojos.RequestItem;
-import il.co.idocare.pojos.UserItem;
+import il.co.idocare.datamodels.functional.RequestItem;
+import il.co.idocare.datamodels.functional.UserItem;
+
 
 /**
  * This is the top level View which should be used as a "thumbnail" for requests

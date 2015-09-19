@@ -3,9 +3,7 @@ package il.co.idocare.views;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +11,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -30,10 +25,8 @@ import java.net.URL;
 import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.pojos.RequestItem;
-import il.co.idocare.pojos.RequestItem.RequestStatus;
-import il.co.idocare.pojos.UserItem;
-import il.co.idocare.utils.UtilMethods;
+import il.co.idocare.datamodels.functional.RequestItem;
+import il.co.idocare.datamodels.functional.UserItem;
 
 /**
  * MVC View for New Request screen.
@@ -342,8 +335,8 @@ public class RequestDetailsViewMVC implements ViewMVC {
      * Handle the views describing the info about request's closure
      */
     private void configureClosedViews() {
-        if (mRequestItem.getStatus() != RequestStatus.CLOSED_BY_OTHER &&
-                mRequestItem.getStatus() != RequestStatus.CLOSED_BY_ME) {
+        if (mRequestItem.getStatus() != RequestItem.RequestStatus.CLOSED_BY_OTHER &&
+                mRequestItem.getStatus() != RequestItem.RequestStatus.CLOSED_BY_ME) {
             // Hide all "closed" views if the request is not closed
             mRootView.findViewById(R.id.element_closed_by).setVisibility(View.GONE);
             mRootView.findViewById(R.id.element_closed_pictures).setVisibility(View.GONE);
@@ -431,8 +424,8 @@ public class RequestDetailsViewMVC implements ViewMVC {
      */
     private void configurePickupButton() {
 
-        if (mRequestItem.getStatus() == RequestStatus.NEW_BY_ME ||
-                mRequestItem.getStatus() == RequestStatus.NEW_BY_OTHER) {
+        if (mRequestItem.getStatus() == RequestItem.RequestStatus.NEW_BY_ME ||
+                mRequestItem.getStatus() == RequestItem.RequestStatus.NEW_BY_OTHER) {
             mBtnPickUpRequest.setVisibility(View.VISIBLE);
             mBtnPickUpRequest.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -454,7 +447,7 @@ public class RequestDetailsViewMVC implements ViewMVC {
      */
     private void configureClosedButton() {
 
-        if (mRequestItem.getStatus() == RequestStatus.PICKED_UP_BY_ME) {
+        if (mRequestItem.getStatus() == RequestItem.RequestStatus.PICKED_UP_BY_ME) {
             mBtnCloseRequest.setVisibility(View.VISIBLE);
             mBtnCloseRequest.setOnClickListener(new View.OnClickListener() {
                 @Override

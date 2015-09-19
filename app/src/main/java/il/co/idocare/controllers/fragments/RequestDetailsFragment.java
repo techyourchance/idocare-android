@@ -10,7 +10,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,9 +27,9 @@ import il.co.idocare.authentication.UserStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.interfaces.RequestUserActionApplier;
 import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
-import il.co.idocare.pojos.RequestItem;
-import il.co.idocare.pojos.UserActionItem;
-import il.co.idocare.pojos.UserItem;
+import il.co.idocare.datamodels.functional.RequestItem;
+import il.co.idocare.datamodels.functional.UserItem;
+import il.co.idocare.datamodels.functional.UserActionItem;
 import il.co.idocare.views.RequestDetailsViewMVC;
 
 

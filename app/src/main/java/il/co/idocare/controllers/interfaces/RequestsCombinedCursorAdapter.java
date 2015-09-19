@@ -3,7 +3,7 @@ package il.co.idocare.controllers.interfaces;
 import android.database.Cursor;
 import android.widget.ListAdapter;
 
-import il.co.idocare.pojos.RequestItem;
+import il.co.idocare.datamodels.pojos.RequestItemPojo;
 
 /**
  * An interface for an adapter which can take in two cursors (one containing data about requests and
@@ -20,5 +20,5 @@ public interface RequestsCombinedCursorAdapter extends ListAdapter {
 
     public Cursor swapUserActionsCursor(Cursor userActionsCursor);
 
-    public RequestItem getRequestAtPosition(int position);
+    public RequestItemPojo getRequestAtPosition(int position);
 }
