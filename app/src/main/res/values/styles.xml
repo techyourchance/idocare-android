@@ -1,19 +1,20 @@
 <resources>
 
-    <!-- Theme for activities that don't need action bar -->
-    <style name="NoActionBarTheme" parent="android:Theme.Holo.Light.NoActionBar.Fullscreen">
-
-        <item name="android:buttonStyle">@style/IDoCareButtonStyle</item>
-
-    </style>
 
 
-    <!-- Theme for activities with action bar -->
     <style name="DefaultTheme" parent="android:Theme.Holo.Light.DarkActionBar">
 
         <item name="android:buttonStyle">@style/IDoCareButtonStyle</item>
 
         <item name="android:actionBarStyle">@style/IDoCareActionBarStyle</item>
+
+    </style>
+
+
+
+    <style name="NoActionBarTheme" parent="android:Theme.Holo.Light.NoActionBar.Fullscreen">
+
+        <item name="android:buttonStyle">@style/IDoCareButtonStyle</item>
 
     </style>
 

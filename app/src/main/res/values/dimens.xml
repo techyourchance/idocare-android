@@ -49,4 +49,5 @@
     <dimen name="fb_margin_override_textpadding">17dp</dimen>
     <dimen name="user_small_picture_size">30dp</dimen>
 
+    <item name="initial_buttons_layout_offset" format="float" type="dimen">300.0</item>
 </resources>

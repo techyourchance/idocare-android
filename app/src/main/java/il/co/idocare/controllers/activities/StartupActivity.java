@@ -87,9 +87,20 @@ public class StartupActivity extends AbstractActivity {
                         // that is has been started from StartupActivity
                         intent = new Intent(StartupActivity.this, LoginActivity.class);
                         intent.putExtra(LoginActivity.ARG_LAUNCHED_FROM_STARTUP_ACTIVITY, 1);
+                        // Disable entry animation
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+
+                        // This need to be placed here in order to override exit animation
+                        startActivity(intent);
+                        finish();
+
+                        // Disable exit animation
+                        overridePendingTransition(0, 0);
+
+                        return;
                     }
 
-                    // TODO: remove once proper login flow established
+                    // TODO: just in case FB logout wasn't completed - remove once proper login flow established
                     if (userStateManager.isLoggedInWithFacebook())
                         userStateManager.logOut();
                 }

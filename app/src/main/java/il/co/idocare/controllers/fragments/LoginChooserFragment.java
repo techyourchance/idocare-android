@@ -1,15 +1,13 @@
 package il.co.idocare.controllers.fragments;
 
+import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,17 +17,11 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
-import org.json.JSONObject;
-
-import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.authentication.UserStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.views.LoginChooserViewMVC;
@@ -47,12 +39,16 @@ public class LoginChooserFragment extends AbstractFragment {
 
     private AlertDialog mAlertDialog;
 
+    private boolean mAlreadyAnimated;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mLoginChooserViewMVC = new LoginChooserViewMVC(inflater, container);
 
         initializeFacebookLogin();
+
+        mAlreadyAnimated = false;
 
         return mLoginChooserViewMVC.getRootView();
     }
@@ -111,23 +107,51 @@ public class LoginChooserFragment extends AbstractFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (getUserStateManager().isLoggedIn()) {
-            // Disallow multiple accounts by showing a dialog which finishes the activity
-            if (mAlertDialog == null) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage(getResources().getString(R.string.msg_no_support_for_multiple_accounts))
-                        .setCancelable(false)
-                        .setPositiveButton(getResources().getString(R.string.btn_dialog_close),
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        ((LoginActivity) getActivity()).finish();
-                                    }
-                                });
-                mAlertDialog = builder.create();
-                mAlertDialog.show();
-            } else {
-                mAlertDialog.show();
+        if (!mAlreadyAnimated)
+            animateButtonsSlideIn();
+
+        if (getUserStateManager().isLoggedIn())
+            forbidMultiuserLogin();
+    }
+
+    private void animateButtonsSlideIn() {
+        final View buttonsLayout =
+                mLoginChooserViewMVC.getRootView().findViewById(R.id.login_buttons_layout);
+
+        TypedValue typedValue = new TypedValue();
+        getResources().getValue(
+                R.dimen.initial_buttons_layout_offset, typedValue, true);
+        float initialLoginButtonsLayoutOffset = typedValue.getFloat();
+
+        ValueAnimator valueAnimator = ValueAnimator.ofFloat(initialLoginButtonsLayoutOffset, 0);
+        valueAnimator.setDuration(1000);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (float) animation.getAnimatedValue();
+                buttonsLayout.setTranslationY(value);
+                buttonsLayout.requestLayout();
             }
+        });
+        valueAnimator.start();
+        mAlreadyAnimated = true;
+    }
+
+    private void forbidMultiuserLogin() {
+        // Disallow multiple accounts by showing a dialog which finishes the activity
+        if (mAlertDialog == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(getResources().getString(R.string.msg_no_support_for_multiple_accounts))
+                    .setCancelable(false)
+                    .setPositiveButton(getResources().getString(R.string.btn_dialog_close),
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    ((LoginActivity) getActivity()).finish();
+                                }
+                            });
+            mAlertDialog = builder.create();
+            mAlertDialog.show();
+        } else {
+            mAlertDialog.show();
         }
     }
 

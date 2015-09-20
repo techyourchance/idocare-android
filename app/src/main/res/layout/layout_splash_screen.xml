@@ -5,13 +5,15 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="bottom|center_horizontal">
+    android:gravity="bottom|center_horizontal"
+    android:background="@drawable/default_fragment_background">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
         android:gravity="center">
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -24,12 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_background_grass"
-            android:contentDescription="@string/img_grass_accessibility" />
-
+        <!-- The reason why I keep an empty layout here is in order to match the layout of
+              login_chooser screen (position the logo at the same place) -->
     </LinearLayout>
 </LinearLayout>
