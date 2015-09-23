@@ -45,7 +45,7 @@
             android:layout_marginTop="@dimen/fragment_default_padding">
 
 
-            <Button
+            <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_choose_log_in_native"
                 android:layout_width="@dimen/narrow_button_width"
                 android:layout_height="@dimen/narrow_button_height"
@@ -59,7 +59,7 @@
                 android:layout_height="match_parent" />
 
 
-            <Button
+            <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_choose_sign_up_native"
                 android:layout_width="@dimen/narrow_button_width"
                 android:layout_height="@dimen/narrow_button_height"

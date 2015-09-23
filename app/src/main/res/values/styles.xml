@@ -1,7 +1,9 @@
 <resources>
 
     <style name="NoActionBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:buttonStyle">@style/IDoCareButtonStyle</item>
+        <item name="buttonStyle">@style/IDoCareButtonStyle</item>
+        <item name="buttonBarStyle">@style/IDoCareButtonStyle</item>
+        <item name="buttonBarButtonStyle">@style/IDoCareButtonStyle</item>
     </style>
 
 
@@ -11,8 +13,9 @@
     </style>
 
     <!-- Default button style-->
-    <style name="IDoCareButtonStyle" parent="@android:style/Widget.Button">
+    <style name="IDoCareButtonStyle" parent="Widget.AppCompat.Button">
         <item name="android:background">@drawable/dark_green_button_background</item>
+
     </style>
 
 

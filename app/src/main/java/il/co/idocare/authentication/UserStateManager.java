@@ -79,8 +79,14 @@ public class UserStateManager {
 
         TODO: RESOLVE THIS BUG!!!!!!!!
          */
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        return accessToken != null;
+//        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+//        return accessToken != null;
+
+        // TODO: This is a temporary workaround which should be removed also
+        if (!isLoggedInNative() && AccessToken.getCurrentAccessToken() != null) {
+            LoginManager.getInstance().logOut();
+        }
+        return false;
 
     }
 
@@ -477,7 +483,17 @@ public class UserStateManager {
         Account[] accounts =
                 mAccountManager.getAccountsByType(AccountAuthenticator.ACCOUNT_TYPE_DEFAULT);
 
-        if (accounts.length == 0) return null;
+        if (accounts.length == 0) {
+            // There is a shitty scenario when there is no native account, but the user is
+            // logged in with facebook account - we need to account for this by logging out of FB.
+            // The optimal solution would be async request to addFacebookAccount(), but this will
+            // require too major code refactoring
+            // TODO: remove this shitty code once proper FB login flow established
+            if (AccessToken.getCurrentAccessToken() != null) {
+                LoginManager.getInstance().logOut();
+            }
+            return null;
+        }
 
 
         if (accounts.length > 1) {

@@ -1,6 +1,7 @@
 package il.co.idocare.views;
 
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,7 @@ public class LoginChooserViewMVC implements ViewMVC {
     public LoginChooserViewMVC(LayoutInflater inflater, ViewGroup container) {
         mRootView = inflater.inflate(R.layout.layout_login_chooser, container, false);
 
-        Button btnSignUpNative = (Button) getRootView().findViewById(R.id.btn_choose_sign_up_native);
+        AppCompatButton btnSignUpNative = (AppCompatButton) getRootView().findViewById(R.id.btn_choose_sign_up_native);
         btnSignUpNative.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -30,7 +31,7 @@ public class LoginChooserViewMVC implements ViewMVC {
             }
         });
 
-        Button btnLogInNative = (Button) getRootView().findViewById(R.id.btn_choose_log_in_native);
+        AppCompatButton btnLogInNative = (AppCompatButton) getRootView().findViewById(R.id.btn_choose_log_in_native);
         btnLogInNative.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
