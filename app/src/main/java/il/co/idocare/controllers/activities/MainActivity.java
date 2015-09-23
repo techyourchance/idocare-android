@@ -11,7 +11,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -21,7 +20,13 @@ import com.google.android.gms.location.LocationServices;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
+import il.co.idocare.authentication.UserStateManager;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
 import il.co.idocare.controllers.listadapters.NavigationDrawerListAdapter;
 import il.co.idocare.controllers.fragments.HomeFragment;
@@ -49,6 +54,8 @@ public class MainActivity extends AbstractActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mActionBarDrawerToggle;
     private Toolbar mToolbar;
+
+    private NavigationDrawerListAdapter mNavDrawerAdapter;
 
 
 
@@ -104,15 +111,17 @@ public class MainActivity extends AbstractActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        getFragmentManager().addOnBackStackChangedListener(onBackStackChangedListener);
-
+        refreshDrawer();
         syncHomeButtonViewAndFunctionality();
+        getFragmentManager().addOnBackStackChangedListener(onBackStackChangedListener);
+        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         getFragmentManager().removeOnBackStackChangedListener(onBackStackChangedListener);
+        EventBus.getDefault().unregister(this);
     }
 
 
@@ -140,9 +149,24 @@ public class MainActivity extends AbstractActivity {
     // ---------------------------------------------------------------------------------------------
 
 
-    public void setTitle(String title) {
-        mToolbar.setTitle(title);
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // EventBus events handling
+
+    public void onEventMainThread(UserStateManager.UserLoggedInEvent event) {
+        refreshDrawer();
     }
+
+    public void onEventMainThread(UserStateManager.UserLoggedOutEvent event) {
+        refreshDrawer();
+    }
+
+    // End of EventBus events handling
+    //
+    // ---------------------------------------------------------------------------------------------
+
+
 
     // ---------------------------------------------------------------------------------------------
     //
@@ -222,18 +246,8 @@ public class MainActivity extends AbstractActivity {
         final ListView drawerList = (ListView) findViewById(R.id.drawer_contents);
 
         // Set the adapter for the list view
-        final NavigationDrawerListAdapter adapter = new NavigationDrawerListAdapter(this, 0);
-        drawerList.setAdapter(adapter);
-
-        // Populate the adapter with entries
-        String[] entries = getResources().getStringArray(R.array.nav_drawer_entries);
-        TypedArray icons = getResources().obtainTypedArray(R.array.nav_drawer_icons);
-
-        for (int i=0; i<entries.length; i++) {
-            adapter.add(new NavigationDrawerEntry(entries[i], icons.getResourceId(i, 0)));
-        }
-
-        icons.recycle();
+        mNavDrawerAdapter = new NavigationDrawerListAdapter(this, 0);
+        drawerList.setAdapter(mNavDrawerAdapter);
 
         drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -243,12 +257,42 @@ public class MainActivity extends AbstractActivity {
                 drawerList.setItemChecked(position, true);
                 mDrawerLayout.closeDrawer(drawerList);
 
-                String chosenEntry = adapter.getItem(position).getTitle();
+                String chosenEntry = mNavDrawerAdapter.getItem(position).getTitle();
 
                 onDrawerEntryChosen(chosenEntry);
 
             }
         });
+
+        refreshDrawer();
+    }
+
+    /**
+     * Refresh drawer's entries
+     */
+    private void refreshDrawer() {
+
+        mNavDrawerAdapter.clear();
+
+        // Get the entries
+        List<String> entries = new ArrayList<>(
+                Arrays.asList(getResources().getStringArray(R.array.nav_drawer_entries)));
+        TypedArray icons = getResources().obtainTypedArray(R.array.nav_drawer_icons);
+
+        // Remove one of login/logout options (based on connectivity state)
+        if (getUserStateManager().isLoggedIn())
+            entries.remove(getString(R.string.nav_drawer_entry_login));
+        else
+            entries.remove(getString(R.string.nav_drawer_entry_logout));
+
+        // Populate the adapter
+        for (int i=0; i<entries.size(); i++) {
+            mNavDrawerAdapter.add(new NavigationDrawerEntry(entries.get(i), icons.getResourceId(i, 0)));
+        }
+
+        mNavDrawerAdapter.notifyDataSetChanged();
+
+        icons.recycle();
     }
 
     /**
@@ -270,13 +314,20 @@ public class MainActivity extends AbstractActivity {
                                 replaceFragment(NewRequestFragment.class, true, false, null);
                             }
                         });
+        } else if (chosenEntry.equals(getResources().getString(R.string.nav_drawer_entry_login))) {
+            initiateLoginFlow(null);
         }
         else if (chosenEntry.equals(getResources().getString(R.string.nav_drawer_entry_logout))) {
-            MainActivity.this.logOutCurrentUser();
+            initiateLogoutFlow(null);
         }
         else {
             Log.e(LOG_TAG, "drawer entry \"" + chosenEntry + "\" has no functionality");
         }
+    }
+
+
+    public void setTitle(String title) {
+        mToolbar.setTitle(title);
     }
 
     // End of navigation drawer management
@@ -319,23 +370,6 @@ public class MainActivity extends AbstractActivity {
     // End of up navigation button management
     //
     // ---------------------------------------------------------------------------------------------
-
-
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // User session management
-
-    private void logOutCurrentUser() {
-        getUserStateManager().logOut();
-    }
-
-
-
-    // End of user session management
-    //
-    // ---------------------------------------------------------------------------------------------
-
 
 
     /**

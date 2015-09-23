@@ -10,6 +10,7 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -34,7 +35,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements
 
     private UserStateManager mUserStateManager;
 
-    private Runnable mPostLoginResultRunnable;
+    private Runnable mPostLoginRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +43,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements
 
         mUserStateManager = new UserStateManager(this);
 
-        mPostLoginResultRunnable = null;
+        mPostLoginRunnable = null;
 
         FacebookSdk.sdkInitialize(getApplicationContext());
 
@@ -198,19 +199,8 @@ public abstract class AbstractActivity extends AppCompatActivity implements
             public void onClick(DialogInterface dialog, int which) {
                 switch (which){
                     case DialogInterface.BUTTON_POSITIVE:
-                        if (runnable != null) {
-                            // Ensure that we do not overwrite runnables
-                            if (mPostLoginResultRunnable != null)
-                                Log.e(LOG_TAG, "tried to set a new Runnable " +
-                                        "for post login execution while the previous one " +
-                                        "hasn't been consumed yet!");
-
-                            mPostLoginResultRunnable = runnable;
-                        }
-                        Intent intent = new Intent(AbstractActivity.this, LoginActivity.class);
-                        startActivityForResult(intent, Constants.REQUEST_CODE_LOGIN);
+                        initiateLoginFlow(runnable);
                         break;
-
                     case DialogInterface.BUTTON_NEGATIVE:
                         //Do nothing
                         break;
@@ -227,6 +217,32 @@ public abstract class AbstractActivity extends AppCompatActivity implements
                 .show();
     }
 
+    /**
+     * Initiate a flow that will take the user through login process
+     */
+    public void initiateLoginFlow(@Nullable final Runnable runnable) {
+        if (runnable != null) {
+            // Ensure that we do not overwrite runnables
+            if (mPostLoginRunnable != null)
+                Log.e(LOG_TAG, "tried to set a new Runnable " +
+                        "for post login execution while the previous one " +
+                        "hasn't been consumed yet!");
+
+            mPostLoginRunnable = runnable;
+        }
+        Intent intent = new Intent(AbstractActivity.this, LoginActivity.class);
+        startActivityForResult(intent, Constants.REQUEST_CODE_LOGIN);
+    }
+
+    /**
+     * Initiate a flow that will take the user through logout process
+     */
+    public void initiateLogoutFlow(@Nullable Runnable runnable) {
+        getUserStateManager().logOut();
+        if (runnable != null)
+            runOnUiThread(runnable);
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -237,10 +253,10 @@ public abstract class AbstractActivity extends AppCompatActivity implements
                 // If there is a logged in user after login activity finished and the
                 // runnable was set - execute it on main thread
                 if (getUserStateManager().getActiveAccount() != null
-                        && mPostLoginResultRunnable != null) {
-                    runOnUiThread(mPostLoginResultRunnable);
+                        && mPostLoginRunnable != null) {
+                    runOnUiThread(mPostLoginRunnable);
                 }
-                mPostLoginResultRunnable = null; // In any case - clear the runnable
+                mPostLoginRunnable = null; // In any case - clear the runnable
                 return;
 
             default:
