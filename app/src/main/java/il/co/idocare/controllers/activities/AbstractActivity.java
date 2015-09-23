@@ -2,7 +2,6 @@ package il.co.idocare.controllers.activities;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -11,7 +10,7 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.facebook.FacebookSdk;
@@ -27,19 +26,11 @@ import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
 /**
  * This is a wrapper around a standard Activity class which provides few convenience methods
  */
-public abstract class AbstractActivity extends Activity implements
+public abstract class AbstractActivity extends AppCompatActivity implements
         IDoCareFragmentCallback {
 
     private static final String LOG_TAG = AbstractActivity.class.getSimpleName();
 
-
-    private FragmentManager.OnBackStackChangedListener onBackStackChangedListener =
-            new FragmentManager.OnBackStackChangedListener() {
-                @Override
-                public void onBackStackChanged() {
-                    manageNavigateUpButton();
-                }
-            };
 
     private UserStateManager mUserStateManager;
 
@@ -55,20 +46,6 @@ public abstract class AbstractActivity extends Activity implements
 
         FacebookSdk.sdkInitialize(getApplicationContext());
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getFragmentManager().addOnBackStackChangedListener(onBackStackChangedListener);
-
-        manageNavigateUpButton();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        getFragmentManager().removeOnBackStackChangedListener(onBackStackChangedListener);
     }
 
     @Override
@@ -133,7 +110,6 @@ public abstract class AbstractActivity extends Activity implements
             @Override
             public void run() {
                 getFragmentManager().executePendingTransactions();
-                manageNavigateUpButton();
             }
         });
 
@@ -152,87 +128,6 @@ public abstract class AbstractActivity extends Activity implements
                 currFragment != null && claz.isInstance(currFragment));
     }
 
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-
-        switch (requestCode) {
-            case Constants.REQUEST_CODE_LOGIN:
-                // If there is a logged in user after login activity finished and the
-                // runnable was set - execute it on main thread
-                if (getUserStateManager().getActiveAccount() != null
-                        && mPostLoginResultRunnable != null) {
-                    runOnUiThread(mPostLoginResultRunnable);
-                }
-                mPostLoginResultRunnable = null; // In any case - clear the runnable
-                return;
-
-            default:
-                break;
-        }
-
-        /*
-        This code is required in order to support Facebook's LoginButton functionality -
-        since we do not use support Fragments, we can't use LoginButton.setFragment() call,
-        thus not allowing the Fragments to receive onActivityResult() notifications after FB
-        login events. This code redirects the call to the visible fragment.
-        NOTE: this code is based on the assumption that all subclasses will have FrameLayout
-              named "frame_contents"
-         */
-        Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
-        if (currFragment != null)
-            currFragment.onActivityResult(requestCode, resultCode, data);
-
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    // End of fragments management
-    //
-    // ---------------------------------------------------------------------------------------------
-
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // Action bar management
-
-    public void setActionBarTitle(String title) {
-
-        if (getActionBar() != null ) {
-            getActionBar().show();
-            if (!TextUtils.isEmpty(title)) {
-                getActionBar().setTitle(title);
-            } else {
-                getActionBar().setTitle("");
-            }
-        }
-    }
-
-    // End of action bar management
-    //
-    // ---------------------------------------------------------------------------------------------
-
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // Up navigation button management
-
-    private void manageNavigateUpButton() {
-        if (getActionBar() != null) {
-            // The "navigate up" button should be enabled if either there are entries in the
-            // back stack, or the currently shown fragment has a hierarchical parent
-
-            boolean hasBackstackEntries = getFragmentManager().getBackStackEntryCount() > 0;
-
-            Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
-
-            boolean hasHierParent = currFragment != null &&
-                    IDoCareFragmentInterface.class.isAssignableFrom(currFragment.getClass()) &&
-                    ((IDoCareFragmentInterface)currFragment).getNavHierParentFragment() != null;
-
-            getActionBar().setDisplayHomeAsUpEnabled(hasBackstackEntries || hasHierParent);
-        }
-    }
 
     @Override
     public boolean onNavigateUp() {
@@ -259,9 +154,11 @@ public abstract class AbstractActivity extends Activity implements
         return false;
     }
 
-    // End of up navigation button management
+
+    // End of fragments management
     //
     // ---------------------------------------------------------------------------------------------
+
 
 
     // ---------------------------------------------------------------------------------------------
@@ -328,6 +225,41 @@ public abstract class AbstractActivity extends Activity implements
                 .setNegativeButton(getResources().getString(R.string.btn_dialog_negative),
                         dialogClickListener)
                 .show();
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+
+        switch (requestCode) {
+            case Constants.REQUEST_CODE_LOGIN:
+                // If there is a logged in user after login activity finished and the
+                // runnable was set - execute it on main thread
+                if (getUserStateManager().getActiveAccount() != null
+                        && mPostLoginResultRunnable != null) {
+                    runOnUiThread(mPostLoginResultRunnable);
+                }
+                mPostLoginResultRunnable = null; // In any case - clear the runnable
+                return;
+
+            default:
+                break;
+        }
+
+        /*
+        This code is required in order to support Facebook's LoginButton functionality -
+        since we do not use support Fragments, we can't use LoginButton.setFragment() call,
+        thus not allowing the Fragments to receive onActivityResult() notifications after FB
+        login events. This code redirects the call to the visible fragment.
+        NOTE: this code is based on the assumption that all subclasses will have FrameLayout
+              named "frame_contents"
+         */
+        Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
+        if (currFragment != null)
+            currFragment.onActivityResult(requestCode, resultCode, data);
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     // End of user state management

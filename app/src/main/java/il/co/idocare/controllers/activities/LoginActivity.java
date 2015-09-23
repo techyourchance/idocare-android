@@ -94,4 +94,8 @@ public class LoginActivity extends AbstractActivity {
         super.finish();
     }
 
+    @Override
+    public void setTitle(String title) {
+        // This method is irrelevant here
+    }
 }

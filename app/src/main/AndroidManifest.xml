@@ -21,8 +21,7 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:logo="@drawable/ic_logo_grayscale"
-        android:theme="@style/DefaultTheme">
+        android:logo="@drawable/ic_logo_grayscale">
 
         <activity
             android:name=".controllers.activities.StartupActivity"
@@ -41,7 +40,8 @@
         <activity
             android:name=".controllers.activities.MainActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBarTheme"/>
 
         <activity
             android:name=".controllers.activities.LoginActivity"

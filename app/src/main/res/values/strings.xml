@@ -90,6 +90,8 @@
     Facebook app ID - must be defined in strings under this particular name!
     -->
     <string name="facebook_app_id">534844050003392</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
 
 
 </resources>

@@ -112,4 +112,10 @@ public class StartupActivity extends AbstractActivity {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+
+    @Override
+    public void setTitle(String title) {
+        // This method is irrelevant here
+    }
+
 }

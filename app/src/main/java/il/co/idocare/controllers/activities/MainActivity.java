@@ -1,15 +1,17 @@
 package il.co.idocare.controllers.activities;
 
-import android.accounts.Account;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
-import android.content.ContentResolver;
+import android.app.FragmentManager;
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -20,8 +22,6 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import il.co.idocare.Constants;
-import il.co.idocare.authentication.AccountAuthenticator;
-import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
 import il.co.idocare.controllers.listadapters.NavigationDrawerListAdapter;
 import il.co.idocare.controllers.fragments.HomeFragment;
@@ -35,7 +35,20 @@ public class MainActivity extends AbstractActivity {
     private static final String LOG_TAG = "MainActivity";
 
 
+
+    private FragmentManager.OnBackStackChangedListener onBackStackChangedListener =
+            new FragmentManager.OnBackStackChangedListener() {
+                @Override
+                public void onBackStackChanged() {
+                    syncHomeButtonViewAndFunctionality();
+                }
+            };
+
     public GoogleApiClient mGoogleApiClient;
+
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mActionBarDrawerToggle;
+    private Toolbar mToolbar;
 
 
 
@@ -49,19 +62,21 @@ public class MainActivity extends AbstractActivity {
 
         setContentView(R.layout.activity_main);
 
-        // Show the action bar (just in case it was hidden)
-        if (getActionBar() != null) getActionBar().show();
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setBackgroundResource(R.drawable.actionbar_background);
 
-        // Show Home fragment if the app is not restored
-        if (savedInstanceState == null) {
-            replaceFragment(HomeFragment.class, false, true, null);
-        }
+        setSupportActionBar(mToolbar);
 
         initUniversalImageLoader();
 
         buildGoogleApiClient();
 
         setupDrawer();
+
+        // Show Home fragment if the app is not restored
+        if (savedInstanceState == null) {
+            replaceFragment(HomeFragment.class, false, true, null);
+        }
 
     }
 
@@ -86,12 +101,32 @@ public class MainActivity extends AbstractActivity {
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getFragmentManager().addOnBackStackChangedListener(onBackStackChangedListener);
+
+        syncHomeButtonViewAndFunctionality();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        getFragmentManager().removeOnBackStackChangedListener(onBackStackChangedListener);
+    }
+
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mActionBarDrawerToggle.syncState();
+    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
 
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        boolean actionsVisibility = !drawerLayout.isDrawerVisible(Gravity.START);
+        boolean actionsVisibility = !drawerLayout.isDrawerVisible(GravityCompat.START);
 
         for(int i=0;i<menu.size();i++){
             menu.getItem(i).setVisible(actionsVisibility);
@@ -104,16 +139,22 @@ public class MainActivity extends AbstractActivity {
     //
     // ---------------------------------------------------------------------------------------------
 
+
+    public void setTitle(String title) {
+        mToolbar.setTitle(title);
+    }
+
     // ---------------------------------------------------------------------------------------------
     //
     // Navigation drawer management
+
 
     @Override
     public void onBackPressed() {
 
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawerLayout.isDrawerVisible(Gravity.START)) {
-            drawerLayout.closeDrawer(Gravity.START);
+        if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
             return;
         }
 
@@ -125,16 +166,59 @@ public class MainActivity extends AbstractActivity {
      */
     private void setupDrawer() {
 
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        mActionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar,
+                R.string.drawer_open, R.string.drawer_close) {
+
+            private boolean mIsDrawerVisibleLast = false;
+
+            @Override
+            public void onDrawerSlide(View view, float v) {
+                boolean isDrawerVisible = mDrawerLayout.isDrawerVisible(GravityCompat.START);
+
+                // For performance update the action bar only when the state of drawer changes
+                // (otherwise this code will be executed repeatedly while the drawer is being slided)
+                if (isDrawerVisible != mIsDrawerVisibleLast) {
+
+                    if (isDrawerVisible) {
+                        mToolbar.setTitle("");
+                    } else {
+                        Fragment currFragment =
+                                MainActivity.this.getFragmentManager().findFragmentById(R.id.frame_contents);
+                        if (currFragment != null &&
+                                IDoCareFragmentInterface.class.isAssignableFrom(currFragment.getClass())) {
+                            mToolbar.setTitle(((IDoCareFragmentInterface) currFragment).getTitle());
+                        }
+                    }
+
+                    MainActivity.this.invalidateOptionsMenu();
+
+                    mIsDrawerVisibleLast = isDrawerVisible;
+                }
+            }
+        };
+
+        mActionBarDrawerToggle.setDrawerIndicatorEnabled(true);
+        mActionBarDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onNavigateUp();
+            }
+        });
+
+        // This line is required because of a bug. More info:
+        //http://stackoverflow.com/questions/26549008/missing-up-navigation-icon-after-switching-from-ics-actionbar-to-lollipop-toolba
+        mActionBarDrawerToggle.setHomeAsUpIndicator(getDrawerToggleDelegate().getThemeUpIndicator());
+
+        mDrawerLayout.setDrawerListener(mActionBarDrawerToggle);
+
         setupDrawerListView();
-
-        setupDrawerAndActionBarDependencies();
-
     }
 
     @SuppressLint("NewApi")
     private void setupDrawerListView() {
 
-        final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         final ListView drawerList = (ListView) findViewById(R.id.drawer_contents);
 
         // Set the adapter for the list view
@@ -157,7 +241,7 @@ public class MainActivity extends AbstractActivity {
 
                 // Highlight the selected item and close the drawer
                 drawerList.setItemChecked(position, true);
-                drawerLayout.closeDrawer(drawerList);
+                mDrawerLayout.closeDrawer(drawerList);
 
                 String chosenEntry = adapter.getItem(position).getTitle();
 
@@ -195,56 +279,46 @@ public class MainActivity extends AbstractActivity {
         }
     }
 
-    private void setupDrawerAndActionBarDependencies() {
-
-        final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-        drawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
-
-            private boolean isDrawerVisibleLast = false;
-
-            @Override
-            public void onDrawerSlide(View view, float v) {
-                boolean isDrawerVisible = drawerLayout.isDrawerVisible(Gravity.START);
-
-                // For performance update the action bar only when the state of drawer changes
-                if (isDrawerVisible != isDrawerVisibleLast) {
-
-                    if (isDrawerVisible) {
-                        setActionBarTitle("");
-                    } else {
-                        Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
-                        if (currFragment != null &&
-                                IDoCareFragmentInterface.class.isAssignableFrom(currFragment.getClass())) {
-                            setActionBarTitle(((IDoCareFragmentInterface)currFragment).getTitle());
-                        }
-                    }
-
-                    invalidateOptionsMenu();
-
-                    isDrawerVisibleLast = isDrawerVisible;
-                }
-            }
-
-            @Override
-            public void onDrawerOpened(View view) {
-
-            }
-
-            @Override
-            public void onDrawerClosed(View view) {
-            }
-
-            @Override
-            public void onDrawerStateChanged(int state) {
-            }
-        });
-    }
-
     // End of navigation drawer management
     //
     // ---------------------------------------------------------------------------------------------
 
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Up navigation button management
+
+    private void syncHomeButtonViewAndFunctionality() {
+
+        /*
+         The "navigate up" button should be enabled if either there are entries in the
+         back stack, or the currently shown fragment has a hierarchical parent.
+         Only top level fragments will have the UP button switched for nav drawer's "hamburger"
+          */
+
+        if (getSupportActionBar() != null) {
+
+            boolean hasBackstackEntries = getFragmentManager().getBackStackEntryCount() > 0;
+
+            Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
+
+            boolean hasHierParent = currFragment != null
+                    && IDoCareFragmentInterface.class.isAssignableFrom(currFragment.getClass())
+                    && ((IDoCareFragmentInterface)currFragment).getNavHierParentFragment() != null;
+
+            boolean showHomeAsUp = hasBackstackEntries || hasHierParent;
+
+
+            mActionBarDrawerToggle.setDrawerIndicatorEnabled(!showHomeAsUp);
+//            if (showHomeAsUp)
+//                getSupportActionBar().setDisplayHomeAsUpEnabled(showHomeAsUp);
+
+        }
+    }
+
+    // End of up navigation button management
+    //
+    // ---------------------------------------------------------------------------------------------
 
 
 

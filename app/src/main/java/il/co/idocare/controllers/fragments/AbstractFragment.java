@@ -1,26 +1,12 @@
 package il.co.idocare.controllers.fragments;
 
-import android.accounts.Account;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 
-import java.io.IOException;
-
 import de.greenrobot.event.EventBus;
-import il.co.idocare.Constants;
-import il.co.idocare.R;
 import il.co.idocare.authentication.UserStateManager;
-import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.controllers.activities.AbstractActivity;
-import il.co.idocare.controllers.activities.LoginActivity;
 
 
 /**
@@ -59,10 +45,10 @@ public abstract class AbstractFragment extends Fragment implements
 
 
     /**
-     * See {@link IDoCareFragmentCallback#setActionBarTitle(String)}
+     * See {@link IDoCareFragmentCallback#setTitle(String)}
      */
     public void setActionBarTitle(String title) {
-        mCallback.setActionBarTitle(title);
+        mCallback.setTitle(title);
     }
 
 

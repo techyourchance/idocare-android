@@ -1,28 +1,13 @@
 <resources>
 
-
-
-    <style name="DefaultTheme" parent="android:Theme.Holo.Light.DarkActionBar">
-
+    <style name="NoActionBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:buttonStyle">@style/IDoCareButtonStyle</item>
-
-        <item name="android:actionBarStyle">@style/IDoCareActionBarStyle</item>
-
-    </style>
-
-
-
-    <style name="NoActionBarTheme" parent="android:Theme.Holo.Light.NoActionBar.Fullscreen">
-
-        <item name="android:buttonStyle">@style/IDoCareButtonStyle</item>
-
     </style>
 
 
     <!-- ActionBar style -->
-    <style name="IDoCareActionBarStyle"
-        parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@drawable/actionbar_background</item>
+    <style name="IDoCareActionBarStyle" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:textColorPrimary">@android:color/white</item>
     </style>
 
     <!-- Default button style-->

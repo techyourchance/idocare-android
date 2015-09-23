@@ -30,7 +30,7 @@ public interface IDoCareFragmentCallback {
     /**
      * Change ActionBar title
      */
-    public void setActionBarTitle(String title);
+    public void setTitle(String title);
 
 
     /**

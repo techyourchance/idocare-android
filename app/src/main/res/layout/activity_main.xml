@@ -11,14 +11,28 @@
     Setting clickable to true in order to resolve bug with Navigation Drawer:
     http://stackoverflow.com/questions/18044277/android-navigation-drawer-bug-using-the-sample
     -->
-    <FrameLayout
-        android:id="@+id/frame_contents"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="true"
-        android:padding="@dimen/frame_contents_padding"
-        android:background="@drawable/default_fragment_background"/>
+        android:layout_height="match_parent">
 
+        <android.support.v7.widget.Toolbar
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/toolbar"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:minHeight="?attr/actionBarSize"
+            app:theme="@style/IDoCareActionBarStyle"/>
+
+        <FrameLayout
+            android:id="@+id/frame_contents"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:padding="@dimen/frame_contents_padding"
+            android:background="@drawable/default_fragment_background"/>
+
+    </LinearLayout>
 
     <!-- The navigation drawer -->
     <ListView
