@@ -4,7 +4,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_gravity="start">
 
     <!-- The main content view -->
     <!--
@@ -35,15 +36,31 @@
     </LinearLayout>
 
     <!-- The navigation drawer -->
-    <ListView
+    <LinearLayout
         android:id="@+id/drawer_contents"
+        android:orientation="vertical"
         android:layout_width="@dimen/drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:paddingTop="@dimen/fragment_default_padding"
-        android:choiceMode="singleChoice"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="0dp"
-        android:background="@color/fragment_bg_dark"/>
+        android:gravity="start"
+        android:background="@color/fragment_bg_dark">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/fragment_default_padding"
+            android:layout_marginStart="@dimen/fragment_default_padding"
+            android:layout_marginLeft="@dimen/fragment_default_padding"
+            android:src="@drawable/default_user_picture"/>
+
+        <ListView
+            android:id="@+id/drawer_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="@dimen/fragment_default_padding"
+            android:choiceMode="singleChoice"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="0dp"
+            android:background="@color/fragment_bg_dark"/>
+    </LinearLayout>
 </android.support.v4.widget.DrawerLayout>

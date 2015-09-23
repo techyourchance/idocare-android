@@ -243,7 +243,9 @@ public class MainActivity extends AbstractActivity {
     @SuppressLint("NewApi")
     private void setupDrawerListView() {
 
-        final ListView drawerList = (ListView) findViewById(R.id.drawer_contents);
+        final View drawerLayout = findViewById(R.id.drawer_contents);
+
+        final ListView drawerList = (ListView) drawerLayout.findViewById(R.id.drawer_list);
 
         // Set the adapter for the list view
         mNavDrawerAdapter = new NavigationDrawerListAdapter(this, 0);
@@ -255,7 +257,7 @@ public class MainActivity extends AbstractActivity {
 
                 // Highlight the selected item and close the drawer
                 drawerList.setItemChecked(position, true);
-                mDrawerLayout.closeDrawer(drawerList);
+                mDrawerLayout.closeDrawer(drawerLayout);
 
                 String chosenEntry = mNavDrawerAdapter.getItem(position).getTitle();
 
