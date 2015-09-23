@@ -31,6 +31,12 @@ import il.co.idocare.views.LoginChooserViewMVC;
  */
 public class LoginChooserFragment extends AbstractFragment {
 
+    /**
+     * When LoginChooserFragment is started with this key in arguments, a slide in animation
+     * will be played
+     */
+    public static final String ARG_PLAY_ANIMATION = "arg_play_animation";
+
     private static final String LOG_TAG = LoginChooserFragment.class.getSimpleName();
 
     private LoginChooserViewMVC mLoginChooserViewMVC;
@@ -39,16 +45,12 @@ public class LoginChooserFragment extends AbstractFragment {
 
     private AlertDialog mAlertDialog;
 
-    private boolean mAlreadyAnimated;
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mLoginChooserViewMVC = new LoginChooserViewMVC(inflater, container);
 
         initializeFacebookLogin();
 
-        mAlreadyAnimated = false;
 
         return mLoginChooserViewMVC.getRootView();
     }
@@ -107,8 +109,10 @@ public class LoginChooserFragment extends AbstractFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (!mAlreadyAnimated)
+        if (getArguments().containsKey(ARG_PLAY_ANIMATION)) {
             animateButtonsSlideIn();
+            getArguments().remove(ARG_PLAY_ANIMATION);
+        }
 
         if (getUserStateManager().isLoggedIn())
             forbidMultiuserLogin();
@@ -133,7 +137,6 @@ public class LoginChooserFragment extends AbstractFragment {
             }
         });
         valueAnimator.start();
-        mAlreadyAnimated = true;
     }
 
     private void forbidMultiuserLogin() {

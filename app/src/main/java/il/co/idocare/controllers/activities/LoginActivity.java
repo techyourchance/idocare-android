@@ -46,7 +46,13 @@ public class LoginActivity extends AbstractActivity {
                 // AccountAuthenticator. Therefore - show native login right away!
                 replaceFragment(LoginNativeFragment.class, false, true, getIntent().getExtras());
             } else {
-                replaceFragment(LoginChooserFragment.class, false, true, getIntent().getExtras());
+                Bundle args;
+                if (getIntent() != null && getIntent().getExtras() != null)
+                    args = getIntent().getExtras();
+                else
+                    args = new Bundle();
+                args.putInt(LoginChooserFragment.ARG_PLAY_ANIMATION, 1);
+                replaceFragment(LoginChooserFragment.class, false, true, args);
             }
 
         }
