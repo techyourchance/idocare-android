@@ -33,8 +33,8 @@
             android:layout_marginStart="@dimen/fragment_default_padding"
             android:layout_marginRight="@dimen/fragment_default_padding"
             android:layout_marginEnd="@dimen/fragment_default_padding"
-            android:layout_marginTop="@dimen/line_separator_vertical_margins"
-            android:layout_marginBottom="@dimen/line_separator_vertical_margins"
+            android:layout_marginTop="@dimen/line_separator_vertical_margin"
+            android:layout_marginBottom="@dimen/line_separator_vertical_margin"
             android:background="@color/line_separator"/>
 
         <!-- Include "closed by" details-->

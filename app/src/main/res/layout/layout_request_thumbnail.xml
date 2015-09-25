@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+    <!-- This layout will be inflated in a subclass of RelativeLayout, therefore the top level
+         tag here is merge -->
+
 <!--<RelativeLayout-->
     <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
     <!--android:layout_height="match_parent"-->
@@ -14,8 +17,8 @@
 
     <ImageView
         android:id="@+id/img_request_thumbnail"
-        android:layout_width="@dimen/image_request_thumbnail_width"
-        android:layout_height="@dimen/image_request_thumbnail_height"
+        android:layout_width="@dimen/thumbnail_picture_width"
+        android:layout_height="@dimen/thumbnail_picture_height"
         android:padding="@dimen/fragment_small_margin"
         android:layout_below="@id/txt_request_status"
         android:layout_alignParentLeft="true"
@@ -31,38 +34,39 @@
         android:layout_below="@id/txt_request_status"
         android:layout_toRightOf="@id/img_request_thumbnail"
         android:layout_toEndOf="@id/img_request_thumbnail"
+        android:layout_marginEnd="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="@dimen/fragment_small_margin"
         android:maxLines="2"
-        android:ellipsize="end"
-        android:textStyle="bold"
-        android:textSize="@dimen/title_text_size"
-        android:text="comment"/>
+        android:ellipsize="end"/>
 
 
-
-    <TextView
-        android:id="@+id/txt_created_by"
-        android:layout_width="wrap_content"
+    <!-- This linear layout is a waste of performance and will make the drawing on the screen
+         slower, but it seems that relative layout has some bug and I can't position two
+         text views at the bottom without additional nesting. TODO: resolve -->
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
         android:layout_toEndOf="@id/img_request_thumbnail"
         android:layout_toRightOf="@id/img_request_thumbnail"
-        android:layout_below="@id/txt_created_comment"
-        android:textSize="@dimen/title_text_size"
-        android:text="nickname"/>
+        android:layout_alignParentBottom="true">
+
+        <TextView
+            android:id="@+id/txt_created_by"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/NicknameTextViewStyle"/>
 
 
-    <TextView
-        android:id="@+id/txt_created_at"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@id/img_request_thumbnail"
-        android:layout_toEndOf="@id/img_request_thumbnail"
-        android:text="date"/>
+        <TextView
+            android:id="@+id/txt_created_at"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/fragment_small_margin"
+            style="@style/DateTextViewStyle"/>
 
-
-
-
-
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/frame_reputation"
@@ -75,8 +79,8 @@
         android:layout_marginEnd="@dimen/fragment_small_margin">
 
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="@dimen/reputation_star_picture_size"
+            android:layout_height="@dimen/reputation_star_picture_size"
             android:src="@drawable/ic_star_large"
             android:layout_gravity="center"/>
 
@@ -87,7 +91,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="19dp"
             android:layout_gravity="center_horizontal"
-            android:text="666"/>
+            style="@style/ReputationTextViewStyle"/>
 
     </FrameLayout>
 

@@ -4,6 +4,8 @@
         <item name="buttonStyle">@style/IDoCareButtonStyle</item>
         <item name="buttonBarStyle">@style/IDoCareButtonStyle</item>
         <item name="buttonBarButtonStyle">@style/IDoCareButtonStyle</item>
+        <item name="android:textViewStyle">@style/DefaultTextViewStyle</item>
+
     </style>
 
 
@@ -15,8 +17,37 @@
     <!-- Default button style-->
     <style name="IDoCareButtonStyle" parent="Widget.AppCompat.Button">
         <item name="android:background">@drawable/dark_green_button_background</item>
+    </style>
+
+
+    <style name="DefaultTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:textColor">@color/default_text</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
 
     </style>
 
+    <style name="NicknameTextViewStyle" parent="DefaultTextViewStyle">
+        <item name="android:textColor">@color/nickname_text</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="DateTextViewStyle" parent="DefaultTextViewStyle">
+        <item name="android:textColor">@color/date_text</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/smallest_text_size</item>
+    </style>
+
+    <style name="ReputationTextViewStyle" parent="DefaultTextViewStyle">
+        <item name="android:textColor">@color/reputation_text</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
+    </style>
+
+    <style name="StatusTextViewStyle" parent="DefaultTextViewStyle">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
+    </style>
 
 </resources>

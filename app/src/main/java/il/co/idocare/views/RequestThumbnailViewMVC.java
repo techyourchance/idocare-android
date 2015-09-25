@@ -47,9 +47,10 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements ViewMVC{
 
         mCurrentPictureUrl = "";
 
-
         // Inflate the underlying layout
         LayoutInflater.from(context).inflate(R.layout.layout_request_thumbnail, this, true);
+
+        setBackgroundResource(R.drawable.border_background);
 
         initialize();
     }

@@ -94,8 +94,8 @@
         android:layout_marginTop="1dp">
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/reputation_star_picture_size"
+            android:layout_height="@dimen/reputation_star_picture_size"
             android:src="@drawable/ic_star_large"
             android:layout_gravity="center"/>
 
