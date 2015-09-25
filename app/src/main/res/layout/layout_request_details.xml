@@ -21,6 +21,16 @@
         <include android:id="@+id/element_created_by"
             layout="@layout/element_user_details_and_comment"/>
 
+        <TextView
+            android:id="@+id/txt_before"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fragment_default_padding"
+            android:layout_marginLeft="@dimen/fragment_default_padding"
+            android:text="@string/txt_before"
+            style="@style/GreenTextViewStyle"
+            android:visibility="gone"/>
+
         <!-- Include "created" pictures -->
         <include  android:id="@+id/element_created_pictures"
             layout="@layout/element_pictures_row_linear"/>
@@ -40,6 +50,17 @@
         <!-- Include "closed by" details-->
         <include android:id="@+id/element_closed_by"
             layout="@layout/element_user_details_and_comment"/>
+
+
+        <TextView
+            android:id="@+id/txt_after"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fragment_default_padding"
+            android:layout_marginLeft="@dimen/fragment_default_padding"
+            android:text="@string/txt_after"
+            style="@style/GreenTextViewStyle"
+            android:visibility="gone"/>
 
         <!-- Include "closed" pictures -->
         <include  android:id="@+id/element_closed_pictures"
@@ -77,7 +98,7 @@
             android:layout_marginStart="@dimen/fragment_default_padding"
             android:layout_marginRight="@dimen/fragment_default_padding"
             android:layout_marginEnd="@dimen/fragment_default_padding"
-            android:layout_marginBottom="@dimen/fragment_default_margin"
+            android:layout_marginBottom="@dimen/fragment_large_padding"
             map:liteMode="true"
             map:cameraZoom="@integer/map_preview_lite_default_zoom"/>
 
@@ -86,8 +107,8 @@
             android:layout_width="@dimen/wide_button_width"
             android:layout_height="@dimen/wide_button_height"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/fragment_default_margin"
-            android:layout_marginBottom="@dimen/fragment_default_margin"
+            android:layout_marginTop="@dimen/fragment_large_padding"
+            android:layout_marginBottom="@dimen/fragment_large_padding"
             android:background="@color/picked_up_request_color"
             android:text="@string/btn_pickup_request"
             android:textColor="@android:color/white"/>
@@ -98,8 +119,8 @@
             android:layout_width="@dimen/wide_button_width"
             android:layout_height="@dimen/wide_button_height"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/fragment_default_margin"
-            android:layout_marginBottom="@dimen/fragment_default_margin"
+            android:layout_marginTop="@dimen/fragment_large_padding"
+            android:layout_marginBottom="@dimen/fragment_large_padding"
             android:background="@color/closed_request_color"
             android:text="@string/btn_switch_to_close_request_fragment"
             android:textColor="@android:color/white"/>

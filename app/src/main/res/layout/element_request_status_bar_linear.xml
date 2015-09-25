@@ -15,9 +15,7 @@
             android:paddingRight="@dimen/fragment_default_padding"
             android:paddingEnd="@dimen/fragment_default_padding"
             android:gravity="start|center_vertical"
-            android:textSize="@dimen/status_text_size"
-            android:textColor="@android:color/white"
-            android:text="Status"/>
+            style="@style/StatusTextViewStyle"/>
 
         <TextView
             android:id="@+id/txt_request_coarse_location"
@@ -29,7 +27,6 @@
             android:paddingEnd="@dimen/fragment_default_padding"
             android:gravity="end|center_vertical"
             android:textSize="@dimen/coarse_location_text_size"
-            android:textColor="@android:color/black"
-            android:text="Coarse location"/>
+            android:textColor="@android:color/black"/>
 
 </LinearLayout>

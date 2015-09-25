@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/frame_reputation"
+    android:layout_width="@dimen/reputation_star_picture_size"
+    android:layout_height="@dimen/reputation_star_picture_size">
+
+    <ImageView
+        android:layout_width="@dimen/reputation_star_picture_size"
+        android:layout_height="@dimen/reputation_star_picture_size"
+        android:src="@drawable/ic_star_large"
+        android:layout_gravity="center"/>
+
+
+    <TextView
+        android:id="@+id/txt_votes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fragment_default_padding"
+        android:layout_gravity="center_horizontal"
+        style="@style/ReputationTextViewStyle"/>
+
+</FrameLayout>

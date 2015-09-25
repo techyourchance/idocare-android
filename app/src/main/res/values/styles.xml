@@ -44,10 +44,19 @@
         <item name="android:textSize">@dimen/default_text_size</item>
     </style>
 
+    <style name="ReputationTextViewStyleSmall" parent="ReputationTextViewStyle">
+        <item name="android:textSize">@dimen/tiny_text_size</item>
+    </style>
+
     <style name="StatusTextViewStyle" parent="DefaultTextViewStyle">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">@dimen/small_text_size</item>
+    </style>
+
+    <style name="GreenTextViewStyle" parent="DefaultTextViewStyle">
+        <item name="android:textColor">@color/light_green</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
     </style>
 
 </resources>

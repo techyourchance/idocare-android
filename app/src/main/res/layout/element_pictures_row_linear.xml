@@ -5,7 +5,7 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="@dimen/fragment_small_margin"
+    android:paddingTop="@dimen/fragment_tiny_padding"
     android:paddingLeft="@dimen/fragment_default_padding"
     android:paddingStart="@dimen/fragment_default_padding"
     android:paddingRight="@dimen/fragment_default_padding"
@@ -16,8 +16,8 @@
         android:layout_width="@dimen/request_picture_width"
         android:layout_height="@dimen/request_picture_height"
         android:contentDescription="@string/img_picture_accessibility"
-        android:layout_marginRight="@dimen/fragment_smallest_margin"
-        android:layout_marginEnd="@dimen/fragment_smallest_margin"
+        android:layout_marginRight="@dimen/fragment_tiniest_padding"
+        android:layout_marginEnd="@dimen/fragment_tiniest_padding"
         android:scaleType="centerCrop"
         android:cropToPadding="true"/>
 
@@ -26,10 +26,10 @@
         android:layout_width="@dimen/request_picture_width"
         android:layout_height="@dimen/request_picture_height"
         android:contentDescription="@string/img_picture_accessibility"
-        android:layout_marginLeft="@dimen/fragment_smallest_margin"
-        android:layout_marginStart="@dimen/fragment_smallest_margin"
-        android:layout_marginRight="@dimen/fragment_smallest_margin"
-        android:layout_marginEnd="@dimen/fragment_smallest_margin"
+        android:layout_marginLeft="@dimen/fragment_tiniest_padding"
+        android:layout_marginStart="@dimen/fragment_tiniest_padding"
+        android:layout_marginRight="@dimen/fragment_tiniest_padding"
+        android:layout_marginEnd="@dimen/fragment_tiniest_padding"
         android:scaleType="centerCrop"
         android:cropToPadding="true"/>
 
@@ -38,8 +38,8 @@
         android:layout_width="@dimen/request_picture_width"
         android:layout_height="@dimen/request_picture_height"
         android:contentDescription="@string/img_picture_accessibility"
-        android:layout_marginLeft="@dimen/fragment_smallest_margin"
-        android:layout_marginStart="@dimen/fragment_smallest_margin"
+        android:layout_marginLeft="@dimen/fragment_tiniest_padding"
+        android:layout_marginStart="@dimen/fragment_tiniest_padding"
         android:scaleType="centerCrop"
         android:cropToPadding="true"/>
 

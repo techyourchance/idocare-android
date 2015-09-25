@@ -12,9 +12,7 @@
     <TextView
         android:id="@+id/txt_title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="title"
-        android:textSize="@dimen/title_text_size"/>
+        android:layout_height="wrap_content"/>
 
 
     <ImageView
@@ -31,10 +29,9 @@
         android:layout_below="@id/txt_title"
         android:layout_toRightOf="@id/img_user_picture"
         android:layout_toEndOf="@id/img_user_picture"
-        android:layout_marginLeft="@dimen/fragment_small_margin"
-        android:layout_marginStart="@dimen/fragment_small_margin"
-        android:text="username"
-        android:textStyle="bold" />
+        android:layout_marginLeft="@dimen/fragment_tiny_padding"
+        android:layout_marginStart="@dimen/fragment_tiny_padding"
+        style="@style/NicknameTextViewStyle"/>
 
     <TextView
         android:id="@+id/txt_created_at"
@@ -43,21 +40,20 @@
         android:layout_below="@id/txt_user_nickname"
         android:layout_toRightOf="@id/img_user_picture"
         android:layout_toEndOf="@id/img_user_picture"
-        android:layout_marginLeft="@dimen/fragment_small_margin"
-        android:layout_marginStart="@dimen/fragment_small_margin"
-        android:text="date"
-        android:textSize="12sp"
-        android:textColor="@color/faded_text"/>
+        android:layout_marginLeft="@dimen/fragment_tiny_padding"
+        android:layout_marginStart="@dimen/fragment_tiny_padding"
+        style="@style/DateTextViewStyle"/>
 
 
     <ImageView
         android:id="@+id/img_user_reputation_star"
-        android:layout_width="12dp"
-        android:layout_height="12dp"
+        android:layout_width="@dimen/small_reputation_star_picture_size"
+        android:layout_height="@dimen/small_reputation_star_picture_size"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
+        android:layout_marginLeft="@dimen/fragment_default_padding"
+        android:layout_marginStart="@dimen/fragment_default_padding"
+        android:layout_marginTop="@dimen/fragment_tiniest_padding"
         android:layout_below="@id/img_user_picture"
         android:src="@drawable/ic_star_large"/>
 
@@ -66,60 +62,41 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/img_user_reputation_star"
+        android:layout_toEndOf="@id/img_user_reputation_star"
         android:layout_below="@id/img_user_picture"
-        android:layout_marginTop="2sp"
-        android:text="TODO reputation"
-        android:textSize="8sp"/>
+        android:layout_marginTop="@dimen/fragment_tiniest_padding"
+        style="@style/ReputationTextViewStyleSmall"/>
 
     <ImageView
         android:id="@+id/img_vote_up"
         android:clickable="true"
-        android:layout_width="25dp"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/vote_image_button_size"
+        android:layout_height="@dimen/vote_image_button_size"
         android:layout_below="@id/txt_title"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="9dp"
+        android:layout_marginTop="@dimen/fragment_small_padding"
         android:src="@drawable/ic_plus"
         android:contentDescription="@string/btn_vote_up_accessibility" />
 
 
-    <FrameLayout
-        android:id="@+id/frame_reputation"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+    <include layout="@layout/element_reputation_star"
+        android:layout_width="@dimen/reputation_star_picture_size"
+        android:layout_height="@dimen/reputation_star_picture_size"
         android:layout_below="@id/txt_title"
         android:layout_toLeftOf="@id/img_vote_up"
-        android:layout_toStartOf="@id/img_vote_up"
-        android:layout_marginTop="1dp">
-
-        <ImageView
-            android:layout_width="@dimen/reputation_star_picture_size"
-            android:layout_height="@dimen/reputation_star_picture_size"
-            android:src="@drawable/ic_star_large"
-            android:layout_gravity="center"/>
-
-
-        <TextView
-            android:id="@+id/txt_votes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:layout_gravity="center_horizontal"
-            android:text="666"/>
-
-    </FrameLayout>
+        android:layout_toStartOf="@id/img_vote_up"/>
 
 
     <ImageView
         android:id="@+id/img_vote_down"
         android:clickable="true"
-        android:layout_width="25dp"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/vote_image_button_size"
+        android:layout_height="@dimen/vote_image_button_size"
         android:layout_below="@id/txt_title"
         android:layout_toLeftOf="@id/frame_reputation"
         android:layout_toStartOf="@id/frame_reputation"
-        android:layout_marginTop="9dp"
+        android:layout_marginTop="@dimen/fragment_small_padding"
         android:src="@drawable/ic_minus"
         android:contentDescription="@string/btn_vote_down_accessibility" />
 
@@ -128,9 +105,11 @@
         android:id="@+id/txt_comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/fragment_default_padding"
+        android:layout_marginEnd="@dimen/fragment_default_padding"
         android:layout_below="@id/txt_user_reputation"
-        android:layout_marginTop="@dimen/fragment_smallest_margin"
-        android:textSize="@dimen/comments_text_size"
-        android:text="TODO comment"/>
+        android:layout_marginTop="@dimen/fragment_tiniest_padding"
+        android:maxLines="1"
+        android:ellipsize="end"/>
 
 </RelativeLayout>

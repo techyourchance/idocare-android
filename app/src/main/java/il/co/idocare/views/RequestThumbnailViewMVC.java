@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -50,7 +51,15 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements ViewMVC{
         // Inflate the underlying layout
         LayoutInflater.from(context).inflate(R.layout.layout_request_thumbnail, this, true);
 
+        // Set a border around this layout
         setBackgroundResource(R.drawable.border_background);
+        // This is required in order for "layout_marginBottom" to work with
+        // "layout_alignParentBottom" in XML (doesn't work for "match_parent" height)
+        RelativeLayout.LayoutParams rel_btn = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                context.getResources().getDimensionPixelSize(R.dimen.request_thumbnail_layout_height));
+        setLayoutParams(rel_btn);
+
 
         initialize();
     }

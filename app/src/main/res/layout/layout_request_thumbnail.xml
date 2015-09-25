@@ -19,10 +19,13 @@
         android:id="@+id/img_request_thumbnail"
         android:layout_width="@dimen/thumbnail_picture_width"
         android:layout_height="@dimen/thumbnail_picture_height"
-        android:padding="@dimen/fragment_small_margin"
+        android:paddingLeft="@dimen/fragment_tiny_padding"
+        android:paddingRight="@dimen/fragment_tiny_padding"
+        android:paddingTop="@dimen/fragment_tiny_padding"
         android:layout_below="@id/txt_request_status"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_marginBottom="@dimen/fragment_tiny_padding"
         android:scaleType="centerCrop"
         android:cropToPadding="true"
         android:contentDescription="@string/img_request_thumbnail_accessibility"/>
@@ -36,7 +39,7 @@
         android:layout_toEndOf="@id/img_request_thumbnail"
         android:layout_marginEnd="50dp"
         android:layout_marginRight="50dp"
-        android:layout_marginTop="@dimen/fragment_small_margin"
+        android:layout_marginTop="@dimen/fragment_tiny_padding"
         android:maxLines="2"
         android:ellipsize="end"/>
 
@@ -50,7 +53,8 @@
         android:layout_width="wrap_content"
         android:layout_toEndOf="@id/img_request_thumbnail"
         android:layout_toRightOf="@id/img_request_thumbnail"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/fragment_tiny_padding">
 
         <TextView
             android:id="@+id/txt_created_by"
@@ -63,37 +67,29 @@
             android:id="@+id/txt_created_at"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/fragment_small_margin"
             style="@style/DateTextViewStyle"/>
 
     </LinearLayout>
 
-    <FrameLayout
-        android:id="@+id/frame_reputation"
-        android:layout_width="50dp"
-        android:layout_height="55dp"
+
+
+    <include layout="@layout/element_reputation_star"
+        android:layout_width="@dimen/reputation_star_picture_size"
+        android:layout_height="@dimen/reputation_star_picture_size"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@+id/space_bottom_end"
+        android:layout_toLeftOf="@+id/space_bottom_end"
+        android:layout_marginBottom="@dimen/fragment_tiny_padding"/>
+
+    <Space
+        android:id="@+id/space_bottom_end"
+        android:layout_height="@dimen/reputation_star_picture_size"
+        android:layout_width="@dimen/fragment_tiny_padding"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="@dimen/fragment_small_margin"
-        android:layout_marginEnd="@dimen/fragment_small_margin">
-
-        <ImageView
-            android:layout_width="@dimen/reputation_star_picture_size"
-            android:layout_height="@dimen/reputation_star_picture_size"
-            android:src="@drawable/ic_star_large"
-            android:layout_gravity="center"/>
+        android:layout_alignParentEnd="true"/>
 
 
-        <TextView
-            android:id="@+id/txt_votes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="19dp"
-            android:layout_gravity="center_horizontal"
-            style="@style/ReputationTextViewStyle"/>
-
-    </FrameLayout>
 
 
 </merge>

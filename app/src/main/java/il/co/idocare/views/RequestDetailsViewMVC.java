@@ -51,6 +51,7 @@ public class RequestDetailsViewMVC implements ViewMVC {
     private TextView mTxtCreatedByReputation;
     private TextView mTxtCreatedReputation;
     private TextView mTxtCreatedComment;
+    private TextView mTxtBefore;
     private ImageView[] mImgCreatedPictures;
     private ImageView mImgCreatedVoteUp;
     private ImageView mImgCreatedVoteDown;
@@ -61,6 +62,7 @@ public class RequestDetailsViewMVC implements ViewMVC {
     private TextView mTxtClosedByReputation;
     private TextView mTxtClosedReputation;
     private TextView mTxtClosedComment;
+    private TextView mTxtAfter;
     private ImageView[] mImgClosedPictures;
     private ImageView mImgClosedVoteUp;
     private ImageView mImgClosedVoteDown;
@@ -110,6 +112,7 @@ public class RequestDetailsViewMVC implements ViewMVC {
         mTxtCreatedComment = (TextView) includedView.findViewById(R.id.txt_comment);
         mImgCreatedVoteUp = (ImageView) includedView.findViewById(R.id.img_vote_up);
         mImgCreatedVoteDown = (ImageView) includedView.findViewById(R.id.img_vote_down);
+        mTxtBefore = (TextView) mRootView.findViewById(R.id.txt_before);
 
         // "Created pictures" views
         includedView = mRootView.findViewById(R.id.element_created_pictures);
@@ -132,6 +135,7 @@ public class RequestDetailsViewMVC implements ViewMVC {
         mTxtClosedComment = (TextView) includedView.findViewById(R.id.txt_comment);
         mImgClosedVoteUp = (ImageView) includedView.findViewById(R.id.img_vote_up);
         mImgClosedVoteDown = (ImageView) includedView.findViewById(R.id.img_vote_down);
+        mTxtAfter = (TextView) mRootView.findViewById(R.id.txt_after);
 
         // "Closed pictures" views
         includedView = mRootView.findViewById(R.id.element_closed_pictures);
@@ -277,7 +281,7 @@ public class RequestDetailsViewMVC implements ViewMVC {
      */
     private void configureCreatedViews() {
 
-        mTxtCreatedTitle.setText(R.string.txt_created_title); // This should be complemented by "created by" user's nickname
+        mTxtCreatedTitle.setText(R.string.txt_created_by_title);
 
         mTxtCreatedAt.setText(mRequestItem.getCreatedAt());
         mTxtCreatedReputation.setText(String.valueOf(mRequestItem.getCreatedReputation()));
@@ -292,6 +296,8 @@ public class RequestDetailsViewMVC implements ViewMVC {
         String[] createdPictures = mRequestItem.getCreatedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
         for (int i = 0; i < 3; i++) {
             if (createdPictures.length > i && !TextUtils.isEmpty(createdPictures[i])) {
+                // Make this text visible for closed request if pictures present
+                if (mRequestItem.isClosed()) mTxtBefore.setVisibility(View.VISIBLE);
 
                 String universalImageLoaderUri = createdPictures[i];
                 try {
@@ -312,7 +318,8 @@ public class RequestDetailsViewMVC implements ViewMVC {
             }
         }
 
-        mTxtFineLocation.setText("TODO fine loc");
+
+        mTxtFineLocation.setText("");
 
         mImgCreatedVoteUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -363,7 +370,10 @@ public class RequestDetailsViewMVC implements ViewMVC {
         
         String[] closedPictures = mRequestItem.getClosedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
         for (int i=0; i<3; i++) {
-            if (closedPictures.length > i&& !TextUtils.isEmpty(closedPictures[i])) {
+            if (closedPictures.length > i && !TextUtils.isEmpty(closedPictures[i])) {
+
+                // Make this text visible for closed request if pictures present
+                if (mRequestItem.isClosed()) mTxtAfter.setVisibility(View.VISIBLE);
 
                 String universalImageLoaderUri = closedPictures[i];
                 try {
@@ -405,6 +415,12 @@ public class RequestDetailsViewMVC implements ViewMVC {
 
         mTxtFineLocation.setText(mRequestItem.getLocation());
 
+        if (mRequestItem.isClosed()) {
+            // Don't show the map for closed requests
+            mMapPreview.setVisibility(View.GONE);
+            return;
+        }
+
         GoogleMap map = mMapPreview.getMap();
 
         MapsInitializer.initialize(getRootView().getContext());
@@ -417,6 +433,7 @@ public class RequestDetailsViewMVC implements ViewMVC {
         map.moveCamera(CameraUpdateFactory.newLatLng(location));
         // Put a marker
         map.addMarker(new MarkerOptions().position(location));
+
     }
 
     /**
