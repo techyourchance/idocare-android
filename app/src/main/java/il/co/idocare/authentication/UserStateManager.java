@@ -26,6 +26,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import ch.boye.httpclientandroidlib.client.methods.CloseableHttpResponse;
+import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
 import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.networking.ServerHttpRequest;
@@ -129,7 +130,7 @@ public class UserStateManager {
         request.addTextField(Constants.FIELD_NAME_USER_PASSWORD_LOGIN,
                 Base64.encodeToString(passwordBytes, Base64.NO_WRAP));
 
-        CloseableHttpResponse response = request.execute();
+        CloseableHttpResponse response = request.execute(HttpClientBuilder.create().build());
 
         if (response == null) {
             loginResult.putString(KEY_ERROR_MSG, "could not obtain response to login request");
@@ -326,7 +327,7 @@ public class UserStateManager {
             request.addTextField(Constants.FIELD_NAME_USER_FACEBOOK_ID, facebookId);
 
 
-        CloseableHttpResponse response = request.execute();
+        CloseableHttpResponse response = request.execute(HttpClientBuilder.create().build());
 
 
         if (response == null) {

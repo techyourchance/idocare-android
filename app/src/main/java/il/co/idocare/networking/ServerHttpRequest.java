@@ -2,6 +2,7 @@ package il.co.idocare.networking;
 
 
 import android.accounts.Account;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -36,7 +37,7 @@ import il.co.idocare.Constants;
 public class ServerHttpRequest {
 
 
-    private final static String LOG_TAG = ServerHttpRequest.class.getSimpleName();
+    private final static String LOG_TAG = "ServerHttpRequest";
 
 
     private String mUrl;
@@ -52,9 +53,15 @@ public class ServerHttpRequest {
         mUrl = url;
     }
 
+    public ServerHttpRequest() {
+        mUrl = null;
+    }
 
+    public void setUrl(@NonNull String url) {
+        mUrl = url;
+    }
 
-    public CloseableHttpResponse execute() {
+    public CloseableHttpResponse execute(@NonNull CloseableHttpClient httpClient) {
 
         // Currently we have only posts
         HttpPost request = new HttpPost(mUrl);
@@ -72,8 +79,6 @@ public class ServerHttpRequest {
             request.setEntity(httpEntity);
         }
 
-
-        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         CloseableHttpResponse httpResponse = null;
 
         try {
