@@ -3,6 +3,7 @@
 
     <!-- These are the colors used in the app. All other colors just reference one of these -->
     <color name="dark_green">#298225</color>
+    <color name="green">#48983C</color>
     <color name="light_green">#8BC53F</color>
     <color name="light_orange">#F98F03</color>
     <color name="gray_dark_2">#333333</color>

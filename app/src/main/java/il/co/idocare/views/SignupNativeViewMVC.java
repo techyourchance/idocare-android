@@ -7,8 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import de.greenrobot.event.EventBus;
+import il.co.idocare.Constants;
 import il.co.idocare.R;
 
 /**
@@ -34,6 +39,8 @@ public class SignupNativeViewMVC implements ViewMVC {
     EditText mEdtNickname;
     EditText mEdtFirstName;
     EditText mEdtLastName;
+    ImageView mImgUserPicture;
+    TextView mTxtAddUserPicture;
 
 
     public SignupNativeViewMVC(LayoutInflater inflater, ViewGroup container) {
@@ -54,6 +61,17 @@ public class SignupNativeViewMVC implements ViewMVC {
         mEdtNickname = (EditText) mRootView.findViewById(R.id.edt_nickname);
         mEdtFirstName = (EditText) mRootView.findViewById(R.id.edt_first_name);
         mEdtLastName= (EditText) mRootView.findViewById(R.id.edt_last_name);
+
+        mImgUserPicture = (ImageView) mRootView.findViewById(R.id.img_user_picture);
+        mImgUserPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EventBus.getDefault().post(new AddUserPictureClickEvent());
+            }
+        });
+
+        mTxtAddUserPicture = (TextView) mRootView.findViewById(R.id.txt_add_user_picture);
+
     }
 
     @Override
@@ -144,6 +162,17 @@ public class SignupNativeViewMVC implements ViewMVC {
         mBtnSignup.setEnabled(true);
     }
 
+    public void showUserPicture(String picturePath) {
+
+        ImageLoader.getInstance().displayImage(
+                Constants.UIL_LOCAL_FILE_PREFIX + picturePath,
+                mImgUserPicture,
+                Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
+
+        mTxtAddUserPicture.setText(mRootView.getContext().getString(R.string.txt_change_user_photo));
+
+    }
+
     // ---------------------------------------------------------------------------------------------
     //
     // EventBus events
@@ -155,6 +184,8 @@ public class SignupNativeViewMVC implements ViewMVC {
     public static class SignupFailedEvent {}
 
     public static class SignupButtonClickEvent {}
+
+    public static class AddUserPictureClickEvent {}
 
     // End of EventBus events
     //

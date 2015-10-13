@@ -74,8 +74,6 @@ public class MainActivity extends AbstractActivity {
 
         setSupportActionBar(mToolbar);
 
-        initUniversalImageLoader();
-
         buildGoogleApiClient();
 
         setupDrawer();
@@ -373,17 +371,6 @@ public class MainActivity extends AbstractActivity {
     //
     // ---------------------------------------------------------------------------------------------
 
-
-    /**
-     * Handle the initiation of UIL (third party package under Apache 2.0 license)
-     */
-    private void initUniversalImageLoader() {
-        // TODO: alter the configuration of UIL according to our needs
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
-                .defaultDisplayImageOptions(Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS)
-                .build();
-        ImageLoader.getInstance().init(config);
-    }
 
     /**
      * Initialize the client which will be used to connect to Google Play Services

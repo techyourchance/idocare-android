@@ -29,6 +29,8 @@
     <string name="txt_before">BEFORE:</string>
     <string name="txt_after">AFTER:</string>
     <string name="txt_location_title">Location:</string>
+    <string name="txt_add_user_photo">Upload Photo</string>
+    <string name="txt_change_user_photo">Change photo</string>
 
 
     <!--
@@ -51,6 +53,9 @@
     <string name="btn_close_request">I DID IT!</string>
     <string name="btn_take_picture">Add photo</string>
     <string name="btn_add_picture">Add a picture</string>
+
+    <string name="btn_upload_existing">Upload existing</string>
+    <string name="btn_take_new_with_camera">Take new</string>
 
     <!--
     Hints for EditText's
@@ -92,6 +97,9 @@
     <string name="msg_first_name_is_required">first name is required</string>
     <string name="msg_last_name_is_required">last name is required</string>
     <string name="msg_resolve_errors">Please resolve these errors:</string>
+
+    <string name="msg_choose_add_user_picture_method">Would you like to upload an  existing picture,
+        or take a new one with device\'s camera?</string>
 
     <!--
     Facebook app ID - must be defined in strings under this particular name!

@@ -38,7 +38,8 @@
             android:layout_width="@dimen/wide_button_width"
             android:layout_height="wrap_content"
             android:lines="1"
-            android:inputType="textPersonName"
+            android:inputType="textEmailAddress"
+            style="@style/LoginEditTextStyle"
             android:hint="@string/hint_email"/>
 
         <EditText
@@ -47,14 +48,14 @@
             android:layout_height="wrap_content"
             android:lines="1"
             android:inputType="textPassword"
+            style="@style/LoginEditTextStyle"
             android:hint="@string/hint_password"/>
 
-        <Button
+        <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_login"
             android:layout_width="@dimen/wide_button_width"
             android:layout_height="@dimen/wide_button_height"
             android:layout_marginTop="20dp"
-            android:background="@drawable/horizontal_gradient_green_button_background"
             android:text="@string/btn_login"
             android:textColor="@android:color/white"/>
 

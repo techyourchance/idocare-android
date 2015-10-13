@@ -15,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.facebook.FacebookSdk;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
@@ -46,6 +48,12 @@ public abstract class AbstractActivity extends AppCompatActivity implements
         mPostLoginRunnable = null;
 
         FacebookSdk.sdkInitialize(getApplicationContext());
+
+        // TODO: alter the configuration of UIL according to our needs
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
+                .defaultDisplayImageOptions(Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS)
+                .build();
+        ImageLoader.getInstance().init(config);
 
     }
 

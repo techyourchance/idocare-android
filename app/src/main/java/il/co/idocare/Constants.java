@@ -10,6 +10,8 @@ public class Constants {
 
 
     public static final int REQUEST_CODE_LOGIN = 0;
+    public static final int REQUEST_CODE_TAKE_PICTURE = 1;
+    public static final int REQUEST_CODE_SELECT_PICTURE = 2;
 
 
 
@@ -90,14 +92,6 @@ public class Constants {
     //
     // ---------------------------------------------------------------------------------------------
 
-
-    /**
-     * This enum (its ordinal() values) is used with startActivityForResult() and
-     * onActivityResult() calls across the app
-     */
-    public enum StartActivityTag {
-        CAPTURE_PICTURE
-    }
 
     /**
      * Global app preferences file
