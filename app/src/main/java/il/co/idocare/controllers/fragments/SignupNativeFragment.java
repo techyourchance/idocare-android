@@ -5,7 +5,10 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
@@ -47,8 +50,8 @@ public class SignupNativeFragment extends AbstractFragment {
 
     private AlertDialog mAlertDialog;
 
-    private String mNewCameraPicturePath;
     private String mCameraPicturePath;
+    private String mUserPicturePath;
 
     @Nullable
     @Override
@@ -63,6 +66,8 @@ public class SignupNativeFragment extends AbstractFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        if (!TextUtils.isEmpty(mUserPicturePath))
+            outState.putString("user_picture_path", mUserPicturePath);
         if (!TextUtils.isEmpty(mCameraPicturePath))
             outState.putString("camera_picture_path", mCameraPicturePath);
     }
@@ -70,9 +75,12 @@ public class SignupNativeFragment extends AbstractFragment {
     private void restoreSavedStateIfNeeded(Bundle savedInstanceState) {
         if (savedInstanceState == null) return; // not restoring
 
-        if (savedInstanceState.containsKey("camera_picture_path")) {
+        if (savedInstanceState.containsKey("camera_picture_path"))
             mCameraPicturePath = savedInstanceState.getString("camera_picture_path");
-            mSignupNativeViewMVC.showUserPicture(mCameraPicturePath);
+
+        if (savedInstanceState.containsKey("user_picture_path")) {
+            mUserPicturePath = savedInstanceState.getString("user_picture_path");
+            mSignupNativeViewMVC.showUserPicture(mUserPicturePath);
         }
     }
 
@@ -137,14 +145,24 @@ public class SignupNativeFragment extends AbstractFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.REQUEST_CODE_TAKE_PICTURE) {
             if (resultCode == Activity.RESULT_OK) {
-                mCameraPicturePath = mNewCameraPicturePath;
-                UtilMethods.adjustCameraPicture(mCameraPicturePath);
-                mSignupNativeViewMVC.showUserPicture(mCameraPicturePath);
+                mUserPicturePath = mCameraPicturePath;
+                UtilMethods.adjustCameraPicture(mUserPicturePath);
+                mSignupNativeViewMVC.showUserPicture(mUserPicturePath);
             } else {
                 // TODO: do we need anything here?
             }
         } else if (requestCode == Constants.REQUEST_CODE_SELECT_PICTURE) {
-            // TODO: complete
+            if (resultCode == Activity.RESULT_OK) {
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                Cursor cursor = getActivity().getContentResolver()
+                        .query(selectedImage, filePathColumn, null, null, null);
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                mUserPicturePath = cursor.getString(columnIndex);
+                cursor.close();
+                mSignupNativeViewMVC.showUserPicture(mUserPicturePath);
+            }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -178,7 +196,7 @@ public class SignupNativeFragment extends AbstractFragment {
             @Override
             public void run() {
                 Bundle signupResult = userStateManager.signUpNative(email, password, nickname,
-                        firstName, lastName, null);
+                        firstName, lastName, null, mUserPicturePath);
 
                 if (signupResult.containsKey(UserStateManager.KEY_ERROR_MSG)) {
                     Log.e(LOG_TAG, "Signup failed. Error message: " +
@@ -306,7 +324,7 @@ public class SignupNativeFragment extends AbstractFragment {
 
     private void takePictureWithCamera() {
         CameraAdapter cameraAdapter = new CameraAdapter(getActivity());
-        mNewCameraPicturePath = cameraAdapter.takePicture(
+        mCameraPicturePath = cameraAdapter.takePicture(
                 Constants.REQUEST_CODE_TAKE_PICTURE, "new_request");
 
     }
