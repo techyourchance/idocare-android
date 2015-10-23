@@ -214,7 +214,7 @@ public class IDoCareContract {
         public static final String ACTION_TYPE_CREATE_REQUEST= "action_type_create_request";
         public static final String ACTION_TYPE_PICKUP_REQUEST = "action_type_pickup_request";
         public static final String ACTION_TYPE_CLOSE_REQUEST = "action_type_close_request";
-        public static final String ACTION_TYPE_VOTE = "action_type_vote";
+        public static final String ACTION_TYPE_VOTE_FOR_REQUEST = "action_type_vote";
 
         /**
          * The content URI for this table.

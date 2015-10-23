@@ -752,7 +752,7 @@ public class DataUploader implements LegacyServerHttpRequest.OnServerResponseCal
                                 rhs.mActionType.equals(IDoCareContract.UserActions.ACTION_TYPE_PICKUP_REQUEST) ?
                                 1 : -1;
                     }
-                    else if (lhs.mActionType.equals(IDoCareContract.UserActions.ACTION_TYPE_VOTE)) {
+                    else if (lhs.mActionType.equals(IDoCareContract.UserActions.ACTION_TYPE_VOTE_FOR_REQUEST)) {
                         // Voting has lowest priority
                         return 1;
                     }

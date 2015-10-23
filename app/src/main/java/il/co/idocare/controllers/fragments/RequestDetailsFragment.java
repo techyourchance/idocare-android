@@ -1,7 +1,6 @@
 package il.co.idocare.controllers.fragments;
 
 import android.app.LoaderManager;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.CursorLoader;
@@ -15,7 +14,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.MapView;
 
@@ -276,7 +274,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
                         IDoCareContract.UserActions.ENTITY_PARAM_REQUEST_CLOSED :
                         IDoCareContract.UserActions.ENTITY_PARAM_REQUEST_CREATED);
                 userActionCV.put(IDoCareContract.UserActions.COL_ACTION_TYPE,
-                        IDoCareContract.UserActions.ACTION_TYPE_VOTE);
+                        IDoCareContract.UserActions.ACTION_TYPE_VOTE_FOR_REQUEST);
                 userActionCV.put(IDoCareContract.UserActions.COL_ACTION_PARAM, String.valueOf(amount));
 
                 Uri newUri = getActivity().getContentResolver().insert(

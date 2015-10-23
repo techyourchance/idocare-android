@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import il.co.idocare.Constants;
+import il.co.idocare.URLs;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.datamodels.functional.UserActionItem;
@@ -22,14 +23,6 @@ import il.co.idocare.datamodels.pojos.RequestItemPojo;
 public class DataUploaderAssistant {
 
     private static final String LOG_TAG = DataUploaderAssistant.class.getSimpleName();
-
-
-    public final static String CREATE_REQUEST_URL = Constants.ROOT_URL + "/api-04/request/add";
-    public final static String PICKUP_REQUEST_URL = Constants.ROOT_URL + "/api-04/request/pickup";
-    public final static String CLOSE_REQUEST_URL = Constants.ROOT_URL + "/api-04/request/close";
-    public final static String VOTE_REQUEST_URL = Constants.ROOT_URL + "/api-04/request/vote";
-    public final static String VOTE_ARTICLE_URL = Constants.ROOT_URL + "/api-04/article/vote";
-
 
     private String mUserId;
     private String mAuthToken;
@@ -85,7 +78,7 @@ public class DataUploaderAssistant {
                         addCloseRequestSpecificInfo(serverHttpRequest, userAction);
                         break;
 
-                    case IDoCareContract.UserActions.ACTION_TYPE_VOTE:
+                    case IDoCareContract.UserActions.ACTION_TYPE_VOTE_FOR_REQUEST:
                         addVoteSpecificInfo(serverHttpRequest, userAction);
                         break;
 
@@ -100,7 +93,7 @@ public class DataUploaderAssistant {
                     case "DUMMY":
                         // TODO: remove this statement - I added it in order to be able to add "break" below
                         break;
-                    case IDoCareContract.UserActions.ACTION_TYPE_VOTE:
+                    case IDoCareContract.UserActions.ACTION_TYPE_VOTE_FOR_REQUEST:
                         throw new UnsupportedOperationException("'" + actionType + "' action type" +
                                 "is not supported yet!");
                     default:
@@ -239,13 +232,13 @@ public class DataUploaderAssistant {
             case IDoCareContract.UserActions.ENTITY_TYPE_REQUEST:
                 switch (actionType) {
                     case IDoCareContract.UserActions.ACTION_TYPE_CREATE_REQUEST:
-                        return CREATE_REQUEST_URL;
+                        return URLs.getUrl(URLs.RESOURCE_CREATE_REQUEST);
                     case IDoCareContract.UserActions.ACTION_TYPE_PICKUP_REQUEST:
-                        return PICKUP_REQUEST_URL;
+                        return URLs.getUrl(URLs.RESOURCE_PICKUP_REQUEST);
                     case IDoCareContract.UserActions.ACTION_TYPE_CLOSE_REQUEST:
-                        return CLOSE_REQUEST_URL;
-                    case IDoCareContract.UserActions.ACTION_TYPE_VOTE:
-                        return VOTE_REQUEST_URL;
+                        return URLs.getUrl(URLs.RESOURCE_CLOSE_REQUEST);
+                    case IDoCareContract.UserActions.ACTION_TYPE_VOTE_FOR_REQUEST:
+                        return URLs.getUrl(URLs.RESOURCE_VOTE_FOR_REQUEST);
                     default:
                         throw new IllegalArgumentException("unknown action type '" + actionType
                                 + "' for entity '" + entityType + "'");
@@ -253,8 +246,8 @@ public class DataUploaderAssistant {
 
             case IDoCareContract.UserActions.ENTITY_TYPE_ARTICLE:
                 switch (actionType) {
-                    case IDoCareContract.UserActions.ACTION_TYPE_VOTE:
-                        return VOTE_ARTICLE_URL;
+                    case IDoCareContract.UserActions.ACTION_TYPE_VOTE_FOR_REQUEST:
+                        return URLs.getUrl(URLs.RESOURCE_VOTE_FOR_ARTICLE);
                     default:
                         throw new IllegalArgumentException("unknown action type '" + actionType
                                 + "' for entity '" + entityType + "'");

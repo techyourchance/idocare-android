@@ -29,12 +29,12 @@ import ch.boye.httpclientandroidlib.client.methods.CloseableHttpResponse;
 import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
 import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
+import il.co.idocare.URLs;
 import il.co.idocare.networking.NetworkingUtils;
 import il.co.idocare.networking.ServerHttpRequest;
 import il.co.idocare.networking.responseparsers.HttpResponseParseException;
-import il.co.idocare.networking.responseparsers.NativeLoginResponseParser;
-import il.co.idocare.networking.responseparsers.NativeSignupResponseParser;
 import il.co.idocare.networking.responseparsers.ServerHttpResponseParser;
+import il.co.idocare.networking.responseparsers.ServerResponseParsersFactory;
 
 /**
  * This class manages the login state of the user - it aggregates information from all login
@@ -122,7 +122,7 @@ public class UserStateManager {
             return loginResult;
         }
 
-        ServerHttpRequest request = new ServerHttpRequest(Constants.LOG_IN_NATIVE_URL);
+        ServerHttpRequest request = new ServerHttpRequest(URLs.getUrl(URLs.RESOURCE_LOGIN));
 
         // Add encoded header
         request.addHeader(Constants.HttpHeader.USER_USERNAME.getValue(),
@@ -140,7 +140,8 @@ public class UserStateManager {
         }
 
         // Parse the response
-        loginResult = UserStateManager.handleResponse(response, new NativeLoginResponseParser());
+        loginResult = UserStateManager.handleResponse(response,
+                ServerResponseParsersFactory.newInstance(URLs.RESOURCE_LOGIN));
 
         // Check for common errors
         UserStateManager.checkForCommonErrors(loginResult);
@@ -314,7 +315,7 @@ public class UserStateManager {
 
         Bundle signupResult = new Bundle();
 
-        ServerHttpRequest request = new ServerHttpRequest(Constants.SIGN_UP_NATIVE_URL);
+        ServerHttpRequest request = new ServerHttpRequest(URLs.getUrl(URLs.RESOURCE_SIGNUP));
 
         byte[] emailBytes = toBytes(email);
         byte[] passwordBytes = toBytes(password);
@@ -345,7 +346,8 @@ public class UserStateManager {
         }
 
         // Parse the response
-        signupResult = UserStateManager.handleResponse(response, new NativeSignupResponseParser());
+        signupResult = UserStateManager.handleResponse(response,
+                ServerResponseParsersFactory.newInstance(URLs.RESOURCE_SIGNUP));
 
         // Check for common errors
         UserStateManager.checkForCommonErrors(signupResult);

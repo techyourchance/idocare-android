@@ -3,6 +3,7 @@ package il.co.idocare.networking;
 import android.util.Log;
 
 import il.co.idocare.Constants;
+import il.co.idocare.URLs;
 import il.co.idocare.location.ReverseGeocoderFactory;
 import il.co.idocare.networking.interfaces.LegacyServerResponseHandler;
 import il.co.idocare.networking.interfaces.LegacyServerResponseHandlerFactory;
@@ -30,10 +31,10 @@ public class LegacySimpleServerResponseHandlerFactory implements LegacyServerRes
     public LegacyServerResponseHandler newInstance(String url) {
         LegacyServerResponseHandler responseHandler = null;
 
-        if (url.equals(Constants.GET_ALL_REQUESTS_URL)) {
+        if (url.equals(URLs.getUrl(URLs.RESOURCE_ALL_REQUESTS_DATA))) {
             responseHandler =
                     new LegacyRequestsDownloadServerResponseHandler(mReverseGeocoderFactory.newInstance());
-        } else if (url.equals(Constants.GET_NATIVE_USER_DATA_URL)) {
+        } else if (url.equals(URLs.getUrl(URLs.RESOURCE_USER_DATA))) {
             responseHandler = new LegacyUsersDownloadServerResponseHandler();
         } else {
             Log.e(LOG_TAG, "unsupported URL: " + url);

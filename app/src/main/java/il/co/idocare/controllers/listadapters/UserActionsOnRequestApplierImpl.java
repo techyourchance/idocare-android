@@ -35,7 +35,7 @@ public class UserActionsOnRequestApplierImpl implements RequestUserActionApplier
                 // Nothing to do for created request - this data is stored in DB
                 break;
 
-            case IDoCareContract.UserActions.ACTION_TYPE_VOTE:
+            case IDoCareContract.UserActions.ACTION_TYPE_VOTE_FOR_REQUEST:
                 int voteValue = Integer.valueOf(userAction.mActionParam);
                 if (userAction.mEntityParam
                         .equals(IDoCareContract.UserActions.ENTITY_PARAM_REQUEST_CREATED))

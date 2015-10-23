@@ -98,7 +98,7 @@ public class LegacyUserActionsServerResponseHandler extends LegacyAbstractServer
 
                         break;
 
-                    case IDoCareContract.UserActions.ACTION_TYPE_VOTE:
+                    case IDoCareContract.UserActions.ACTION_TYPE_VOTE_FOR_REQUEST:
 
                         requestItem = extractRequestFromEntityString(entityString);
 
@@ -122,7 +122,7 @@ public class LegacyUserActionsServerResponseHandler extends LegacyAbstractServer
                     case "DUMMY":
                         // TODO: remove this case - it was added in order to add "break" statement
                         break;
-                    case IDoCareContract.UserActions.ACTION_TYPE_VOTE:
+                    case IDoCareContract.UserActions.ACTION_TYPE_VOTE_FOR_REQUEST:
                         throw new UnsupportedOperationException("'" + actionType + "' action type" +
                                 "is not supported yet!");
                     default:

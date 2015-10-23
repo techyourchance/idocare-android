@@ -34,16 +34,6 @@ import il.co.idocare.Constants;
 
 public class LegacyServerHttpRequest implements Runnable {
 
-
-
-    // URLs used to issue requests to the server
-    public final static String LOGIN_URL = Constants.ROOT_URL + "/api-04/user/login";
-    public final static String GET_USER_DATA_URL = Constants.ROOT_URL + "/api-04/user/get";
-    public final static String ADD_USER_URL = Constants.ROOT_URL + "/api-04/user/add";
-    public final static String GET_ALL_ARTICLES_URL = Constants.ROOT_URL + "/api-04/article";
-    public final static String GET_REQUEST_URL = Constants.ROOT_URL + "/api-04/request/get";
-
-
     /**
      * Classes implementing this interface are eligible to be used as callback targets once
      * server response for a particular request is received

@@ -13,6 +13,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import il.co.idocare.Constants;
+import il.co.idocare.URLs;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.networking.interfaces.LegacyServerResponseHandler;
 import il.co.idocare.networking.interfaces.LegacyServerResponseHandlerFactory;
@@ -102,8 +103,9 @@ public class DataDownloader implements LegacyServerHttpRequest.OnServerResponseC
 
     private void downloadRequestsData() {
 
-        LegacyServerHttpRequest serverRequest = new LegacyServerHttpRequest(Constants.GET_ALL_REQUESTS_URL,
-                mUserId, mAuthToken, this, Constants.GET_ALL_REQUESTS_URL);
+        LegacyServerHttpRequest serverRequest = new LegacyServerHttpRequest(
+                URLs.getUrl(URLs.RESOURCE_ALL_REQUESTS_DATA),
+                mUserId, mAuthToken, this, URLs.getUrl(URLs.RESOURCE_ALL_REQUESTS_DATA));
 
         if (!TextUtils.isEmpty(mUserId) && !TextUtils.isEmpty(mAuthToken))
             serverRequest.addStandardHeaders();
@@ -198,8 +200,9 @@ public class DataDownloader implements LegacyServerHttpRequest.OnServerResponseC
     }
 
     private LegacyServerHttpRequest createUserServerRequest(long userId) {
-        LegacyServerHttpRequest serverRequest = new LegacyServerHttpRequest(Constants.GET_NATIVE_USER_DATA_URL,
-                mUserId, mAuthToken, this, Constants.GET_NATIVE_USER_DATA_URL);
+        LegacyServerHttpRequest serverRequest = new LegacyServerHttpRequest(
+                URLs.getUrl(URLs.RESOURCE_USER_DATA),
+                mUserId, mAuthToken, this, URLs.getUrl(URLs.RESOURCE_USER_DATA));
         serverRequest.addTextField(Constants.FIELD_NAME_USER_ID, String.valueOf(userId));
 
         return serverRequest;
