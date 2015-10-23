@@ -51,8 +51,8 @@ public interface ServerHttpResponseParser {
      * </pre>
      * This key corresponds to the message string.
      */
-    public final static String KEY_MESSAGE =
-            "il.co.idocare.networking.responseparsers.KEY_MESSAGE";
+    public final static String KEY_INTERNAL_MESSAGE =
+            "il.co.idocare.networking.responseparsers.KEY_INTERNAL_MESSAGE";
 
     /**
      * JSON objects returned by the server have the following structure:<br>
@@ -81,8 +81,8 @@ public interface ServerHttpResponseParser {
      * </pre>
      * This key corresponds to the data string.
      */
-    public final static String KEY_JSON_DATA =
-            "il.co.idocare.networking.responseparsers.KEY_JSON_DATA";
+    public final static String KEY_INTERNAL_DATA_JSON =
+            "il.co.idocare.networking.responseparsers.KEY_INTERNAL_DATA_JSON";
 
 
     /**

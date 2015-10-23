@@ -6,10 +6,7 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-
 import ch.boye.httpclientandroidlib.HttpResponse;
-import ch.boye.httpclientandroidlib.client.ClientProtocolException;
 import il.co.idocare.Constants;
 import il.co.idocare.networking.NetworkingUtils;
 
@@ -32,12 +29,12 @@ public class NativeLoginResponseParser implements ServerHttpResponseParser {
         Bundle result = mDecoratedResponseHandler.parseResponse(httpResponse);
 
         // Fail fast if no data in the response
-        if (!NetworkingUtils.isKeySet(result, KEY_JSON_DATA, VALUE_JSON_NO_INTERNAL_DATA)) {
+        if (!NetworkingUtils.isKeySet(result, KEY_INTERNAL_DATA_JSON, VALUE_JSON_NO_INTERNAL_DATA)) {
             Log.e(LOG_TAG, "no data in the result returned by decorated handler");
             return result;
         }
 
-        String jsonDataString = result.getString(KEY_JSON_DATA);
+        String jsonDataString = result.getString(KEY_INTERNAL_DATA_JSON);
 
         try {
             JSONObject jsonData = new JSONObject(jsonDataString);

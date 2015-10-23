@@ -6,10 +6,7 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-
 import ch.boye.httpclientandroidlib.HttpResponse;
-import ch.boye.httpclientandroidlib.client.ClientProtocolException;
 import il.co.idocare.Constants;
 import il.co.idocare.networking.NetworkingUtils;
 
@@ -57,14 +54,14 @@ public class JsonResponseParser implements ServerHttpResponseParser {
                 result.putInt(KEY_INTERNAL_STATUS_SUCCESS, 1);
 
             // Get message string
-            result.putString(KEY_MESSAGE, entityObj.getString(Constants.FIELD_NAME_INTERNAL_MESSAGE));
+            result.putString(KEY_INTERNAL_MESSAGE, entityObj.getString(Constants.FIELD_NAME_INTERNAL_MESSAGE));
 
             // "data" is the optional field
             if (entityObj.has("data")) {
                 // Parse data
                 JSONObject dataObj = entityObj.getJSONObject("data");
                 // Store data
-                result.putString(ServerHttpResponseParser.KEY_JSON_DATA, dataObj.toString());
+                result.putString(ServerHttpResponseParser.KEY_INTERNAL_DATA_JSON, dataObj.toString());
             }
 
         } catch (JSONException e) {
