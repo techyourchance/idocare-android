@@ -160,7 +160,7 @@ public class LegacyRequestsDownloadServerResponseHandler extends LegacyAbstractS
     private JSONArray extractJsonArrayFromData(String entityString) {
         // TODO: decide how to handle JSON parsing exceptions. Maybe rerun server request?
         try {
-            return new JSONObject(entityString).getJSONArray(Constants.FIELD_NAME_RESPONSE_DATA);
+            return new JSONObject(entityString).getJSONArray(Constants.FIELD_NAME_INTERNAL_DATA);
         } catch (JSONException e) {
             e.printStackTrace();
             return null;

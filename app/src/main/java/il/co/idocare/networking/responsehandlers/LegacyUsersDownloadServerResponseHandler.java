@@ -29,7 +29,7 @@ public class LegacyUsersDownloadServerResponseHandler extends LegacyAbstractServ
         String userJsonObjectString = null;
         try {
             JSONObject jsonObject = new JSONObject(entityString);
-            userJsonObjectString = jsonObject.getJSONObject(Constants.FIELD_NAME_RESPONSE_DATA).toString();
+            userJsonObjectString = jsonObject.getJSONObject(Constants.FIELD_NAME_INTERNAL_DATA).toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }

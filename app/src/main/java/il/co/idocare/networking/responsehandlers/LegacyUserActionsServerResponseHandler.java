@@ -161,7 +161,7 @@ public class LegacyUserActionsServerResponseHandler extends LegacyAbstractServer
         RequestItemPojo requestItem = null;
         try {
             requestItem = RequestItemPojo.create(new JSONObject(entityString)
-                    .getJSONObject(Constants.FIELD_NAME_RESPONSE_DATA).toString());
+                    .getJSONObject(Constants.FIELD_NAME_INTERNAL_DATA).toString());
         } catch (JSONException e) {
             e.printStackTrace();
             throw new ServerResponseHandlerException();

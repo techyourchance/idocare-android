@@ -25,7 +25,7 @@ public class IDoCareJSONUtils {
             JSONObject jsonObj = new JSONObject(jsonString);
 
             String status = jsonObj.getString(Constants.FIELD_NAME_INTERNAL_STATUS);
-            String message = jsonObj.getString(Constants.FIELD_NAME_RESPONSE_MESSAGE);
+            String message = jsonObj.getString(Constants.FIELD_NAME_INTERNAL_MESSAGE);
 
             if (status.equals("success")) {
                 return true;
@@ -52,7 +52,7 @@ public class IDoCareJSONUtils {
 
         JSONObject jsonObj = new JSONObject(jsonString);
 
-        return jsonObj.getJSONObject(Constants.FIELD_NAME_RESPONSE_DATA);
+        return jsonObj.getJSONObject(Constants.FIELD_NAME_INTERNAL_DATA);
     }
 
 

@@ -29,6 +29,7 @@ import ch.boye.httpclientandroidlib.client.methods.CloseableHttpResponse;
 import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
 import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
+import il.co.idocare.networking.NetworkingUtils;
 import il.co.idocare.networking.ServerHttpRequest;
 import il.co.idocare.networking.responsehandlers.NativeLoginResponseHandler;
 import il.co.idocare.networking.responsehandlers.NativeSignupResponseHandler;
@@ -146,6 +147,7 @@ public class UserStateManager {
             return loginResult;
 
         // Account name should be added manually because the response does not contain this data
+        // TODO: seems awkward that we need to store the account name and add it manually - try to resolve
         loginResult.putString(ServerHttpResponseHandler.KEY_USERNAME, username);
 
         addNativeAccount(loginResult);
@@ -469,9 +471,9 @@ public class UserStateManager {
         else if (!result.containsKey(ServerHttpResponseHandler.KEY_INTERNAL_STATUS_SUCCESS)) {
             result.putString(KEY_ERROR_MSG, "unsuccessful internal status");
         }
-        else if (result.containsKey(ServerHttpResponseHandler.KEY_ERROR_TYPE)) {
+        else if (result.containsKey(ServerHttpResponseHandler.KEY_ERRORS)) {
             result.putString(KEY_ERROR_MSG,
-                    result.getString(ServerHttpResponseHandler.KEY_ERROR_TYPE));
+                    NetworkingUtils.extractErrorsToString(result));
         }
     }
 
