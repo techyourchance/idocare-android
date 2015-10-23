@@ -26,12 +26,15 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import ch.boye.httpclientandroidlib.client.methods.CloseableHttpResponse;
+import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
 import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
+import il.co.idocare.networking.NetworkingUtils;
 import il.co.idocare.networking.ServerHttpRequest;
-import il.co.idocare.networking.responsehandlers.NativeLoginResponseHandler;
-import il.co.idocare.networking.responsehandlers.NativeSignupResponseHandler;
-import il.co.idocare.networking.responsehandlers.ServerHttpResponseHandler;
+import il.co.idocare.networking.responseparsers.HttpResponseParseException;
+import il.co.idocare.networking.responseparsers.NativeLoginResponseParser;
+import il.co.idocare.networking.responseparsers.NativeSignupResponseParser;
+import il.co.idocare.networking.responseparsers.ServerHttpResponseParser;
 
 /**
  * This class manages the login state of the user - it aggregates information from all login
@@ -129,7 +132,7 @@ public class UserStateManager {
         request.addTextField(Constants.FIELD_NAME_USER_PASSWORD_LOGIN,
                 Base64.encodeToString(passwordBytes, Base64.NO_WRAP));
 
-        CloseableHttpResponse response = request.execute();
+        CloseableHttpResponse response = request.execute(HttpClientBuilder.create().build());
 
         if (response == null) {
             loginResult.putString(KEY_ERROR_MSG, "could not obtain response to login request");
@@ -137,7 +140,7 @@ public class UserStateManager {
         }
 
         // Parse the response
-        loginResult = UserStateManager.handleResponse(response, new NativeLoginResponseHandler());
+        loginResult = UserStateManager.handleResponse(response, new NativeLoginResponseParser());
 
         // Check for common errors
         UserStateManager.checkForCommonErrors(loginResult);
@@ -145,7 +148,8 @@ public class UserStateManager {
             return loginResult;
 
         // Account name should be added manually because the response does not contain this data
-        loginResult.putString(ServerHttpResponseHandler.KEY_USERNAME, username);
+        // TODO: seems awkward that we need to store the account name and add it manually - try to resolve
+        loginResult.putString(ServerHttpResponseParser.KEY_USERNAME, username);
 
         addNativeAccount(loginResult);
         if (loginResult.containsKey(KEY_ERROR_MSG))
@@ -166,9 +170,9 @@ public class UserStateManager {
      */
     public void addNativeAccount(Bundle result) {
 
-        String username = result.getString(ServerHttpResponseHandler.KEY_USERNAME);
-        String userId = result.getString(ServerHttpResponseHandler.KEY_USER_ID);
-        String authToken = result.getString(ServerHttpResponseHandler.KEY_PUBLIC_KEY);
+        String username = result.getString(ServerHttpResponseParser.KEY_USERNAME);
+        String userId = result.getString(ServerHttpResponseParser.KEY_USER_ID);
+        String authToken = result.getString(ServerHttpResponseParser.KEY_PUBLIC_KEY);
 
         if (TextUtils.isEmpty(username) || TextUtils.isEmpty(userId) || TextUtils.isEmpty(authToken))
             throw new IllegalArgumentException("account name, user ID and auth token must be non-empty");
@@ -332,7 +336,7 @@ public class UserStateManager {
                 "userPicture", userPicturePath);
 
 
-        CloseableHttpResponse response = request.execute();
+        CloseableHttpResponse response = request.execute(HttpClientBuilder.create().build());
 
 
         if (response == null) {
@@ -341,7 +345,7 @@ public class UserStateManager {
         }
 
         // Parse the response
-        signupResult = UserStateManager.handleResponse(response, new NativeSignupResponseHandler());
+        signupResult = UserStateManager.handleResponse(response, new NativeSignupResponseParser());
 
         // Check for common errors
         UserStateManager.checkForCommonErrors(signupResult);
@@ -350,7 +354,7 @@ public class UserStateManager {
 
 
         // Account name should be added manually because the response does not contain this data
-        signupResult.putString(ServerHttpResponseHandler.KEY_USERNAME, email);
+        signupResult.putString(ServerHttpResponseParser.KEY_USERNAME, email);
 
         addNativeAccount(signupResult);
         if (signupResult.containsKey(KEY_ERROR_MSG))
@@ -435,18 +439,18 @@ public class UserStateManager {
      * Bundle contains all the relevant information - parsed details and error indicators (if
      * there were any errors)
      * @param response
-     * @param responseHandler
+     * @param responseParser
      * @return
      */
     private static Bundle handleResponse(CloseableHttpResponse response,
-                                         ServerHttpResponseHandler responseHandler) {
+                                         ServerHttpResponseParser responseParser) {
         Bundle result = new Bundle();
 
         try {
-            result = responseHandler.handleResponse(response);
-        } catch (IOException e) {
+            result = responseParser.parseResponse(response);
+        } catch (HttpResponseParseException e) {
             e.printStackTrace();
-            result.putString(KEY_ERROR_MSG, "could not handle response to login request");
+            result.putString(KEY_ERROR_MSG, "could not parse response to login request");
             return result;
         } finally {
             try {
@@ -467,16 +471,16 @@ public class UserStateManager {
         if (result.containsKey(KEY_ERROR_MSG)) {
             // the result already contains error message - nothing to do
         }
-        else if (!result.containsKey(ServerHttpResponseHandler.KEY_RESPONSE_STATUS_OK)) {
+        else if (!result.containsKey(ServerHttpResponseParser.KEY_RESPONSE_STATUS_OK)) {
             result.putString(KEY_ERROR_MSG, "unsuccessful HTTP response code: "
-                    + result.getInt(ServerHttpResponseHandler.KEY_RESPONSE_STATUS_CODE));
+                    + result.getInt(ServerHttpResponseParser.KEY_RESPONSE_STATUS_CODE));
         }
-        else if (!result.containsKey(ServerHttpResponseHandler.KEY_INTERNAL_STATUS_SUCCESS)) {
+        else if (!result.containsKey(ServerHttpResponseParser.KEY_INTERNAL_STATUS_SUCCESS)) {
             result.putString(KEY_ERROR_MSG, "unsuccessful internal status");
         }
-        else if (result.containsKey(ServerHttpResponseHandler.KEY_ERROR_TYPE)) {
+        else if (result.containsKey(ServerHttpResponseParser.KEY_ERRORS)) {
             result.putString(KEY_ERROR_MSG,
-                    result.getString(ServerHttpResponseHandler.KEY_ERROR_TYPE));
+                    NetworkingUtils.extractErrorsToString(result));
         }
     }
 

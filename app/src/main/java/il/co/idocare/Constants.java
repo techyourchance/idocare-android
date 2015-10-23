@@ -43,9 +43,10 @@ public class Constants {
     //
     // Names of fields used in communication with the server
 
+    // These fields are "internal" in a sense that they are specific to our app (as opposed to i.e. HTTP status)
     public static final String FIELD_NAME_INTERNAL_STATUS = "status";
-    public static final String FIELD_NAME_RESPONSE_MESSAGE = "message";
-    public static final String FIELD_NAME_RESPONSE_DATA = "data";
+    public static final String FIELD_NAME_INTERNAL_MESSAGE = "message";
+    public static final String FIELD_NAME_INTERNAL_DATA = "data";
 
 
     public static final String FIELD_NAME_USER_ID = "user_data_id";

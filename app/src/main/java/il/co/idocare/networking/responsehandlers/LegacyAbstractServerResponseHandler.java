@@ -36,7 +36,7 @@ public abstract class LegacyAbstractServerResponseHandler implements LegacyServe
             JSONObject jsonObj = new JSONObject(entityString);
 
             String status = jsonObj.getString(Constants.FIELD_NAME_INTERNAL_STATUS);
-            String message = jsonObj.getString(Constants.FIELD_NAME_RESPONSE_MESSAGE);
+            String message = jsonObj.getString(Constants.FIELD_NAME_INTERNAL_MESSAGE);
 
             if (!status.equals("success")) {
                 Log.e(LOG_TAG, "server reported unsuccessful operation:\n" + entityString);
