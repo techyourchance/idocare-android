@@ -1,4 +1,4 @@
-package il.co.idocare.networking.responsehandlers;
+package il.co.idocare.networking.responseparsers;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -17,20 +17,19 @@ import il.co.idocare.networking.NetworkingUtils;
  * This is a decorator which should be used to process server
  * responses to login requests.
  */
-public class NativeLoginResponseHandler implements ServerHttpResponseHandler {
+public class NativeLoginResponseParser implements ServerHttpResponseParser {
 
     private static final String LOG_TAG = "NativeLoginRH";
 
-    private ServerHttpResponseHandler mDecoratedResponseHandler;
+    private ServerHttpResponseParser mDecoratedResponseHandler;
 
-    public NativeLoginResponseHandler() {
-        mDecoratedResponseHandler = new JsonResponseHandler();
+    public NativeLoginResponseParser() {
+        mDecoratedResponseHandler = new JsonResponseParser();
     }
 
     @Override
-    public Bundle handleResponse(HttpResponse httpResponse)
-            throws ClientProtocolException, IOException {
-        Bundle result = mDecoratedResponseHandler.handleResponse(httpResponse);
+    public Bundle parseResponse(HttpResponse httpResponse) {
+        Bundle result = mDecoratedResponseHandler.parseResponse(httpResponse);
 
         // Fail fast if no data in the response
         if (!NetworkingUtils.isKeySet(result, KEY_JSON_DATA, VALUE_JSON_NO_INTERNAL_DATA)) {
@@ -50,9 +49,7 @@ public class NativeLoginResponseHandler implements ServerHttpResponseHandler {
             result.putString(KEY_PUBLIC_KEY, publicKey);
 
         } catch (JSONException e) {
-            NetworkingUtils.addErrorCode(result, ServerHttpResponseHandler.VALUE_JSON_PARSE_ERROR);
-            Log.e(LOG_TAG, "got JSON parsing exception");
-            e.printStackTrace();
+            throw new HttpResponseParseException("failed to parse JSON", e);
         }
 
         return result;

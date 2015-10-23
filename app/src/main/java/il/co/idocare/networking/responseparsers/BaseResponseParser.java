@@ -1,9 +1,8 @@
-package il.co.idocare.networking.responsehandlers;
+package il.co.idocare.networking.responseparsers;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.io.IOException;
 
@@ -15,13 +14,12 @@ import il.co.idocare.networking.NetworkingUtils;
 /**
  * This response handler handles the general HTTP attributes of the response (i.e. status code)
  */
-public class BaseResponseHandler implements ServerHttpResponseHandler {
+public class BaseResponseParser implements ServerHttpResponseParser {
 
-    private static final String LOG_TAG = "BaseResponseHandler";
+    private static final String LOG_TAG = "BaseResponseParser";
 
     @Override
-    public Bundle handleResponse(@NonNull HttpResponse httpResponse)
-            throws ClientProtocolException, IOException {
+    public Bundle parseResponse(@NonNull HttpResponse httpResponse) {
         Bundle result = new Bundle();
         int responseCode = httpResponse.getStatusLine().getStatusCode();
 
@@ -32,7 +30,12 @@ public class BaseResponseHandler implements ServerHttpResponseHandler {
 
         result.putString(KEY_RESPONSE_REASON_PHRASE, httpResponse.getStatusLine().getReasonPhrase());
 
-        String responseEntityString = EntityUtils.toString(httpResponse.getEntity());
+        String responseEntityString = null;
+        try {
+            responseEntityString = EntityUtils.toString(httpResponse.getEntity());
+        } catch (Exception e) {
+            throw new HttpResponseParseException("couldn't convert HTTP entity to string", e);
+        }
 
         if (!TextUtils.isEmpty(responseEntityString))
             result.putString(KEY_RESPONSE_ENTITY, responseEntityString);

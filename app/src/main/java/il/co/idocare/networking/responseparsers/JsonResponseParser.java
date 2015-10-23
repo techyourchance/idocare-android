@@ -1,4 +1,4 @@
-package il.co.idocare.networking.responsehandlers;
+package il.co.idocare.networking.responseparsers;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -20,19 +20,19 @@ import il.co.idocare.networking.NetworkingUtils;
  *     {"status":"some_status" , "message":"some_message", "data":&lt; element|array|object &gt;}
  * </pre>
  */
-public class JsonResponseHandler implements ServerHttpResponseHandler {
+public class JsonResponseParser implements ServerHttpResponseParser {
 
-    private static final String LOG_TAG = "JsonResponseHandler";
+    private static final String LOG_TAG = "JsonResponseParser";
 
-    private ServerHttpResponseHandler mDecoratedResponseHandler;
+    private ServerHttpResponseParser mDecoratedResponseHandler;
 
-    public JsonResponseHandler() {
-        mDecoratedResponseHandler = new BaseResponseHandler();
+    public JsonResponseParser() {
+        mDecoratedResponseHandler = new BaseResponseParser();
     }
 
     @Override
-    public Bundle handleResponse(HttpResponse httpResponse) throws ClientProtocolException, IOException {
-        Bundle result = mDecoratedResponseHandler.handleResponse(httpResponse);
+    public Bundle parseResponse(HttpResponse httpResponse) {
+        Bundle result = mDecoratedResponseHandler.parseResponse(httpResponse);
 
         // Fail fast if no entity in the response
         if (!NetworkingUtils
@@ -52,7 +52,7 @@ public class JsonResponseHandler implements ServerHttpResponseHandler {
 
             // Get internal status and set the relevant keys
             String internalStatus = entityObj.getString(Constants.FIELD_NAME_INTERNAL_STATUS);
-            result.putString(ServerHttpResponseHandler.KEY_INTERNAL_STATUS, internalStatus);
+            result.putString(ServerHttpResponseParser.KEY_INTERNAL_STATUS, internalStatus);
             if (internalStatus.equals("success"))
                 result.putInt(KEY_INTERNAL_STATUS_SUCCESS, 1);
 
@@ -64,13 +64,11 @@ public class JsonResponseHandler implements ServerHttpResponseHandler {
                 // Parse data
                 JSONObject dataObj = entityObj.getJSONObject("data");
                 // Store data
-                result.putString(ServerHttpResponseHandler.KEY_JSON_DATA, dataObj.toString());
+                result.putString(ServerHttpResponseParser.KEY_JSON_DATA, dataObj.toString());
             }
 
         } catch (JSONException e) {
-            NetworkingUtils.addErrorCode(result, ServerHttpResponseHandler.VALUE_JSON_PARSE_ERROR);
-            Log.e(LOG_TAG, "got JSON parsing exception");
-            e.printStackTrace();
+            throw new HttpResponseParseException("failed to parse JSON", e);
         }
 
         return result;
@@ -80,12 +78,12 @@ public class JsonResponseHandler implements ServerHttpResponseHandler {
 
         if (!json.has(Constants.FIELD_NAME_INTERNAL_STATUS)) {
             NetworkingUtils.addErrorCode(result,
-                    ServerHttpResponseHandler.VALUE_JSON_NO_INTERNAL_STATUS);
+                    ServerHttpResponseParser.VALUE_JSON_NO_INTERNAL_STATUS);
             return false;
         }
         if (!json.has(Constants.FIELD_NAME_INTERNAL_MESSAGE)) {
             NetworkingUtils.addErrorCode(result,
-                    ServerHttpResponseHandler.VALUE_JSON_NO_INTERNAL_MESSAGE);
+                    ServerHttpResponseParser.VALUE_JSON_NO_INTERNAL_MESSAGE);
             return false;
         }
 
