@@ -33,14 +33,14 @@ public class NetworkingUtils {
      * @return true if the Bundle has a mapping for the particular key
      */
     public static boolean isKeySet(@NonNull Bundle bundle, String key, int errorCode) {
-        String entityString = bundle.getString(ServerHttpResponseHandler.KEY_RESPONSE_ENTITY);
-        if (TextUtils.isEmpty(entityString)) {
+        if (bundle.containsKey(key)) {
+            return true;
+        } else {
             if (errorCode > 0) {
                 NetworkingUtils.addErrorCode(bundle, errorCode);
             }
             return false;
         }
-        return true;
     }
 
 
