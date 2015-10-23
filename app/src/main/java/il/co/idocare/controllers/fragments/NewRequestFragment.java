@@ -33,6 +33,7 @@ import il.co.idocare.authentication.UserStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.activities.AbstractActivity;
 import il.co.idocare.controllers.activities.MainActivity;
+import il.co.idocare.pictures.CameraAdapter;
 import il.co.idocare.utils.UtilMethods;
 import il.co.idocare.views.NewRequestViewMVC;
 
@@ -56,8 +57,6 @@ public class NewRequestFragment extends AbstractFragment {
 
         // Restore state from bundle (if required)
         restoreSavedStateIfNeeded(savedInstanceState);
-
-
 
         return mViewMVC.getRootView();
     }
@@ -122,7 +121,7 @@ public class NewRequestFragment extends AbstractFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.StartActivityTag.CAPTURE_PICTURE.ordinal()) {
+        if (requestCode == Constants.REQUEST_CODE_TAKE_PICTURE) {
             if (resultCode == Activity.RESULT_OK) {
                 UtilMethods.adjustCameraPicture(mLastCameraPicturePath);
                 showPicture(mLastCameraPicturePath);
@@ -174,23 +173,12 @@ public class NewRequestFragment extends AbstractFragment {
 
 
     /**
-     * Create ACTION_IMAGE_CAPTURE intent with EXTRA_OUTPUT path and call startActivityForResult()
-     * with this intent
+     * Take a new picture with camera
      */
     private void takePictureWithCamera() {
-        String currDateTime =
-                new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss", Locale.getDefault()).format(new Date());
-
-        File outputFile = new File(getActivity()
-                .getExternalFilesDir(Environment.DIRECTORY_PICTURES), currDateTime + ".jpg");
-
-        mLastCameraPicturePath = outputFile.getAbsolutePath();
-
-        Uri cameraPictureUri = Uri.fromFile(outputFile);
-
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraPictureUri);
-        startActivityForResult(intent, Constants.StartActivityTag.CAPTURE_PICTURE.ordinal());
+        CameraAdapter cameraAdapter = new CameraAdapter(getActivity());
+        mLastCameraPicturePath = cameraAdapter.takePicture(
+                Constants.REQUEST_CODE_TAKE_PICTURE, "new_request");
     }
 
 

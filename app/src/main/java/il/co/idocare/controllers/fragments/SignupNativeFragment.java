@@ -5,7 +5,10 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,11 +22,13 @@ import org.apache.commons.validator.routines.EmailValidator;
 import java.util.regex.Pattern;
 
 import de.greenrobot.event.EventBus;
+import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.authentication.UserStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
-import il.co.idocare.views.LoginNativeViewMVC;
+import il.co.idocare.pictures.CameraAdapter;
+import il.co.idocare.utils.UtilMethods;
 import il.co.idocare.views.SignupNativeViewMVC;
 
 /**
@@ -45,12 +50,38 @@ public class SignupNativeFragment extends AbstractFragment {
 
     private AlertDialog mAlertDialog;
 
+    private String mCameraPicturePath;
+    private String mUserPicturePath;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mSignupNativeViewMVC = new SignupNativeViewMVC(inflater, container);
 
+        restoreSavedStateIfNeeded(savedInstanceState);
+
         return mSignupNativeViewMVC.getRootView();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (!TextUtils.isEmpty(mUserPicturePath))
+            outState.putString("user_picture_path", mUserPicturePath);
+        if (!TextUtils.isEmpty(mCameraPicturePath))
+            outState.putString("camera_picture_path", mCameraPicturePath);
+    }
+
+    private void restoreSavedStateIfNeeded(Bundle savedInstanceState) {
+        if (savedInstanceState == null) return; // not restoring
+
+        if (savedInstanceState.containsKey("camera_picture_path"))
+            mCameraPicturePath = savedInstanceState.getString("camera_picture_path");
+
+        if (savedInstanceState.containsKey("user_picture_path")) {
+            mUserPicturePath = savedInstanceState.getString("user_picture_path");
+            mSignupNativeViewMVC.showUserPicture(mUserPicturePath);
+        }
     }
 
     @Override
@@ -85,21 +116,7 @@ public class SignupNativeFragment extends AbstractFragment {
         super.onResume();
         if (getUserStateManager().isLoggedIn()) {
             // Disallow multiple accounts by showing a dialog which finishes the activity
-            if (mAlertDialog == null) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage(getResources().getString(R.string.msg_no_support_for_multiple_accounts))
-                        .setCancelable(false)
-                        .setPositiveButton(getResources().getString(R.string.btn_dialog_close),
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        ((LoginActivity) getActivity()).finish();
-                                    }
-                                });
-                mAlertDialog = builder.create();
-                mAlertDialog.show();
-            } else {
-                mAlertDialog.show();
-            }
+            showMultipleAccountsNotAllowedDialog();
         }
     }
 
@@ -111,11 +128,45 @@ public class SignupNativeFragment extends AbstractFragment {
         signUpNative();
     }
 
+    public void onEvent(SignupNativeViewMVC.AddUserPictureClickEvent event) {
+        showAddPictureDialog();
+    }
+
+    public void onEventMainThread(UserStateManager.UserLoggedInEvent event) {
+        showMultipleAccountsNotAllowedDialog();
+    }
+
     // End of EventBus events handling
     //
     // ---------------------------------------------------------------------------------------------
 
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constants.REQUEST_CODE_TAKE_PICTURE) {
+            if (resultCode == Activity.RESULT_OK) {
+                mUserPicturePath = mCameraPicturePath;
+                UtilMethods.adjustCameraPicture(mUserPicturePath);
+                mSignupNativeViewMVC.showUserPicture(mUserPicturePath);
+            } else {
+                // TODO: do we need anything here?
+            }
+        } else if (requestCode == Constants.REQUEST_CODE_SELECT_PICTURE) {
+            if (resultCode == Activity.RESULT_OK) {
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                Cursor cursor = getActivity().getContentResolver()
+                        .query(selectedImage, filePathColumn, null, null, null);
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                mUserPicturePath = cursor.getString(columnIndex);
+                cursor.close();
+                mSignupNativeViewMVC.showUserPicture(mUserPicturePath);
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 
     /**
      * Initiate signup server request
@@ -145,7 +196,7 @@ public class SignupNativeFragment extends AbstractFragment {
             @Override
             public void run() {
                 Bundle signupResult = userStateManager.signUpNative(email, password, nickname,
-                        firstName, lastName, null);
+                        firstName, lastName, null, mUserPicturePath);
 
                 if (signupResult.containsKey(UserStateManager.KEY_ERROR_MSG)) {
                     Log.e(LOG_TAG, "Signup failed. Error message: " +
@@ -220,6 +271,61 @@ public class SignupNativeFragment extends AbstractFragment {
         } else {
             return true;
         }
+
+    }
+
+    private void showMultipleAccountsNotAllowedDialog() {
+        if (mAlertDialog != null && mAlertDialog.isShowing()) {
+            mAlertDialog.dismiss();
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(getResources().getString(R.string.msg_no_support_for_multiple_accounts))
+                .setCancelable(false)
+                .setPositiveButton(getResources().getString(R.string.btn_dialog_close),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                ((LoginActivity) getActivity()).finish();
+                            }
+                        });
+        mAlertDialog = builder.create();
+        mAlertDialog.show();
+    }
+
+    private void showAddPictureDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(getString(R.string.msg_choose_add_user_picture_method))
+                .setCancelable(true)
+                .setPositiveButton(getString(R.string.btn_upload_existing),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                mAlertDialog.dismiss();
+                                uploadExistingPicture();
+                            }
+                        })
+                .setNegativeButton(getString(R.string.btn_take_new_with_camera),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                mAlertDialog.dismiss();
+                                takePictureWithCamera();
+                            }
+                        });
+        mAlertDialog = builder.create();
+        mAlertDialog.show();
+    }
+
+    private void uploadExistingPicture() {
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(Intent.createChooser(intent, null),
+                Constants.REQUEST_CODE_SELECT_PICTURE);
+    }
+
+    private void takePictureWithCamera() {
+        CameraAdapter cameraAdapter = new CameraAdapter(getActivity());
+        mCameraPicturePath = cameraAdapter.takePicture(
+                Constants.REQUEST_CODE_TAKE_PICTURE, "new_request");
 
     }
 

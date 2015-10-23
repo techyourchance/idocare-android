@@ -285,8 +285,9 @@ public class UserStateManager {
             Log.v(LOG_TAG, "native login into FB shadowed account failed. Error message: " +
                     loginResult.getString(KEY_ERROR_MSG));
             // Login failed therefore we need to try to create a new native account for this FB user
+            // TODO: this account should have a picture
             Bundle signupResult =
-                    signUpNative(email, password, nickname, firstName, lastName, facebookId);
+                    signUpNative(email, password, nickname, firstName, lastName, facebookId, null);
             if (signupResult.containsKey(KEY_ERROR_MSG)) {
                 Log.v(LOG_TAG, "native signup for FB shadowed account failed. Error message: " +
                         signupResult.getString(KEY_ERROR_MSG));
@@ -307,7 +308,8 @@ public class UserStateManager {
      * Do not call this method from UI thread!
      */
     public Bundle signUpNative(String email, String password, String nickname, String firstName,
-                                String lastName, @Nullable String facebookId) {
+                                String lastName, @Nullable String facebookId,
+                                @Nullable String userPicturePath) {
 
         Bundle signupResult = new Bundle();
 
@@ -327,6 +329,10 @@ public class UserStateManager {
         request.addTextField(Constants.FIELD_NAME_USER_LAST_NAME, lastName);
         if (!TextUtils.isEmpty(facebookId))
             request.addTextField(Constants.FIELD_NAME_USER_FACEBOOK_ID, facebookId);
+
+        if (!TextUtils.isEmpty(userPicturePath))
+        request.addPictureField(Constants.FIELD_NAME_USER_PICTURE,
+                "userPicture", userPicturePath);
 
 
         CloseableHttpResponse response = request.execute(HttpClientBuilder.create().build());

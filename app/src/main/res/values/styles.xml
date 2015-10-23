@@ -1,24 +1,25 @@
 <resources>
 
     <style name="NoActionBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="buttonStyle">@style/IDoCareButtonStyle</item>
-        <item name="buttonBarStyle">@style/IDoCareButtonStyle</item>
-        <item name="buttonBarButtonStyle">@style/IDoCareButtonStyle</item>
+        <item name="buttonStyle">@style/DefaultButtonStyle</item>
+        <item name="buttonBarStyle">@style/DefaultButtonStyle</item>
+        <item name="buttonBarButtonStyle">@style/DefaultButtonStyle</item>
         <item name="android:textViewStyle">@style/DefaultTextViewStyle</item>
-
     </style>
 
 
-    <!-- ActionBar style -->
-    <style name="IDoCareActionBarStyle" parent="ThemeOverlay.AppCompat.ActionBar">
+    <style name="ActionBarStyle" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="android:textColorPrimary">@android:color/white</item>
     </style>
 
-    <!-- Default button style-->
-    <style name="IDoCareButtonStyle" parent="Widget.AppCompat.Button">
-        <item name="android:background">@drawable/dark_green_button_background</item>
+    <style name="DefaultButtonStyle" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/green_button_background</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
+    <style name="LoginEditTextStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:textSize">@dimen/default_text_size</item>
+    </style>
 
     <style name="DefaultTextViewStyle" parent="android:Widget.TextView">
         <item name="android:textColor">@color/default_text</item>
