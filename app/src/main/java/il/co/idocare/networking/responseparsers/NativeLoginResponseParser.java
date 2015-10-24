@@ -8,7 +8,6 @@ import org.json.JSONObject;
 
 import ch.boye.httpclientandroidlib.HttpResponse;
 import il.co.idocare.Constants;
-import il.co.idocare.networking.NetworkingUtils;
 
 /**
  * This is a decorator which should be used to process server
@@ -29,7 +28,7 @@ public class NativeLoginResponseParser implements ServerHttpResponseParser {
         Bundle result = mDecoratedResponseHandler.parseResponse(httpResponse);
 
         // Fail fast if no data in the response
-        if (!NetworkingUtils.isKeySet(result, KEY_INTERNAL_DATA_JSON, VALUE_JSON_NO_INTERNAL_DATA)) {
+        if (!ResponseParserUtils.isKeySet(result, KEY_INTERNAL_DATA_JSON, VALUE_JSON_NO_INTERNAL_DATA)) {
             Log.e(LOG_TAG, "no data in the result returned by decorated handler");
             return result;
         }

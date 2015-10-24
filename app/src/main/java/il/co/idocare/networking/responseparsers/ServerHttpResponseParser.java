@@ -11,6 +11,16 @@ import il.co.idocare.Constants;
  */
 public interface ServerHttpResponseParser {
 
+    /*
+    Explanation of implementation of Decorator design pattern in ServerResponseParsers:
+
+    ServerResponseParsers are not independent - it doesn't make sense to try and
+    parse the data returned in the response independently of the HTTP status of that particular
+    response. Due to this dependency, there is really no need for JsonParser to be able
+    to function as a standalone parser - this parser only makes sense as a decorator to the more
+    general parser which parses the more "high level" HTTP attributes.
+     */
+
 
     public Bundle parseResponse(HttpResponse httpResponse) throws HttpResponseParseException;
 

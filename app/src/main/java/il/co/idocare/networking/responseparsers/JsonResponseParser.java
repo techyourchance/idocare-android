@@ -8,7 +8,6 @@ import org.json.JSONObject;
 
 import ch.boye.httpclientandroidlib.HttpResponse;
 import il.co.idocare.Constants;
-import il.co.idocare.networking.NetworkingUtils;
 
 /**
  * This response handler handles the general attributes of response's entity formatted as JSON.<br>
@@ -32,7 +31,7 @@ public class JsonResponseParser implements ServerHttpResponseParser {
         Bundle result = mDecoratedResponseHandler.parseResponse(httpResponse);
 
         // Fail fast if no entity in the response
-        if (!NetworkingUtils
+        if (!ResponseParserUtils
                 .isKeySet(result, KEY_RESPONSE_ENTITY, VALUE_NO_ENTITY_IN_RESPONSE_ERROR)) {
             Log.e(LOG_TAG, "no entity in the result returned by decorated handler");
             return result;
@@ -74,12 +73,12 @@ public class JsonResponseParser implements ServerHttpResponseParser {
     private boolean areAllRequiredFieldsPresent(JSONObject json, Bundle result) {
 
         if (!json.has(Constants.FIELD_NAME_INTERNAL_STATUS)) {
-            NetworkingUtils.addErrorCode(result,
+            ResponseParserUtils.addErrorCode(result,
                     ServerHttpResponseParser.VALUE_JSON_NO_INTERNAL_STATUS);
             return false;
         }
         if (!json.has(Constants.FIELD_NAME_INTERNAL_MESSAGE)) {
-            NetworkingUtils.addErrorCode(result,
+            ResponseParserUtils.addErrorCode(result,
                     ServerHttpResponseParser.VALUE_JSON_NO_INTERNAL_MESSAGE);
             return false;
         }

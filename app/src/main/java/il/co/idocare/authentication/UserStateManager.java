@@ -30,7 +30,7 @@ import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
 import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.URLs;
-import il.co.idocare.networking.NetworkingUtils;
+import il.co.idocare.networking.responseparsers.ResponseParserUtils;
 import il.co.idocare.networking.ServerHttpRequest;
 import il.co.idocare.networking.responseparsers.HttpResponseParseException;
 import il.co.idocare.networking.responseparsers.ServerHttpResponseParser;
@@ -482,7 +482,7 @@ public class UserStateManager {
         }
         else if (result.containsKey(ServerHttpResponseParser.KEY_ERRORS)) {
             result.putString(KEY_ERROR_MSG,
-                    NetworkingUtils.extractErrorsToString(result));
+                    ResponseParserUtils.extractErrorsToString(result));
         }
     }
 

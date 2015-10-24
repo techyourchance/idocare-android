@@ -1,17 +1,14 @@
-package il.co.idocare.networking;
+package il.co.idocare.networking.responseparsers;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 
-import il.co.idocare.networking.responseparsers.ServerHttpResponseParser;
-
 /**
- * This class contains static methods which perform a general functions which are not tied
- * to any other particular class.
+ * This class contains static methods which perform a general actions for ResponseParsers
  */
-public class NetworkingUtils {
+public class ResponseParserUtils {
 
     /**
      *
@@ -36,7 +33,7 @@ public class NetworkingUtils {
             return true;
         } else {
             if (errorCode > 0) {
-                NetworkingUtils.addErrorCode(bundle, errorCode);
+                ResponseParserUtils.addErrorCode(bundle, errorCode);
             }
             return false;
         }
