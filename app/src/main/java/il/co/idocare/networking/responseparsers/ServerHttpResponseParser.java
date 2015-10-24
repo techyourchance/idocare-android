@@ -123,8 +123,8 @@ public interface ServerHttpResponseParser {
 
     // These values are used to group errors by type (allows for handling errors in groups)
     public static final int ERROR_VALUE_GROUP_OFFSET = 1000;
-    public static final int VALUE_GENERAL_ERRORS_GROUP = 0;
-    public static final int VALUE_JSON_ERRORS_GROUP = 1;
+    public static final int VALUE_GENERAL_ERRORS_GROUP = ERROR_VALUE_GROUP_OFFSET * 0;
+    public static final int VALUE_JSON_ERRORS_GROUP = ERROR_VALUE_GROUP_OFFSET * 1;
 
     // General errors
     public final static int VALUE_NO_ENTITY_IN_RESPONSE_ERROR = VALUE_GENERAL_ERRORS_GROUP + 1;
