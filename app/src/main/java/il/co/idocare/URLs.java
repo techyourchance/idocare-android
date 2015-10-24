@@ -60,11 +60,19 @@ public class URLs {
             case RESOURCE_USER_DATA:
                 return constructUrl(ROOT_URL, NODE_USER_DATA);
             case RESOURCE_ALL_REQUESTS_DATA:
-                return constructUrl(ROOT_URL, NODE_REQUEST_DATA);
+                return constructUrl(ROOT_URL, NODE_ALL_REQUESTS_DATA);
             case RESOURCE_REQUEST_DATA:
                 return constructUrl(ROOT_URL, NODE_REQUEST_DATA);
             case RESOURCE_ALL_ARTICLES_DATA:
                 return constructUrl(ROOT_URL, NODE_ALL_ARTICLES_DATA);
+            case RESOURCE_CREATE_REQUEST:
+                return constructUrl(ROOT_URL, NODE_CREATE_REQUEST);
+            case RESOURCE_PICKUP_REQUEST:
+                return constructUrl(ROOT_URL, NODE_PICKUP_REQUEST);
+            case RESOURCE_CLOSE_REQUEST:
+                return constructUrl(ROOT_URL, NODE_CLOSE_REQUEST);
+            case RESOURCE_VOTE_FOR_REQUEST:
+                return constructUrl(ROOT_URL, NODE_VOTE_FOR_REQUEST);
             default:
                 throw new IllegalArgumentException("getUrl was called with illegal resource index");
         }
