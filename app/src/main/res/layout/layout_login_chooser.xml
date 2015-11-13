@@ -5,44 +5,44 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="bottom|center_horizontal"
+    android:gravity="top|center_horizontal"
     android:background="@drawable/default_fragment_background">
 
-    <LinearLayout
+    <Space
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:gravity="center">
+        android:layout_height="@dimen/login_chooser_margin_1"/>
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_logo_large"
-            android:contentDescription="@string/img_logo_accessibility"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_logo_large"
+        android:contentDescription="@string/img_logo_accessibility"/>
 
-    </LinearLayout>
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/login_chooser_margin_1"/>
 
     <LinearLayout
         android:id="@+id/login_buttons_layout"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:gravity="center_horizontal">
 
         <com.facebook.login.widget.LoginButton
             android:id="@+id/btn_choose_facebook_login"
             android:layout_width="@dimen/wide_button_width"
-            android:height="@dimen/wide_button_height"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"/>
+            android:layout_height="@dimen/wide_button_height"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/login_chooser_margin_2"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_horizontal"
-            android:layout_marginTop="@dimen/fragment_default_padding">
+            android:gravity="center_horizontal">
 
 
             <android.support.v7.widget.AppCompatButton
@@ -52,12 +52,9 @@
                 android:text="@string/btn_login"
                 android:textColor="@android:color/white"/>
 
-
-
             <Space
                 android:layout_width="@dimen/two_narrow_buttons_horizontal_spacing"
                 android:layout_height="match_parent" />
-
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_choose_sign_up_native"
@@ -70,15 +67,21 @@
         </LinearLayout>
 
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/login_chooser_margin_3"/>
+
+
         <TextView
             android:id="@+id/txt_choose_skip_login"
-            android:layout_width="@dimen/narrow_button_width"
-            android:layout_height="@dimen/narrow_button_height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:layout_marginTop="@dimen/fragment_default_padding"
             android:text="@string/btn_skip_login"
+            android:textSize="16sp"
             android:textColor="@android:color/black"/>
 
     </LinearLayout>
+
 
 </LinearLayout>

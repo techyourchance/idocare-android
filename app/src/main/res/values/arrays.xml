@@ -31,7 +31,7 @@
         <item>@drawable/ic_drawer_add_new_request</item>
         <item>@drawable/ic_drawer_location</item>
         <item>@drawable/ic_drawer_articles</item>
-        <item>@drawable/ic_home</item>
+        <item>@drawable/ic_drawer_home</item>
         <item>@drawable/ic_drawer_settings</item>
         <item>0</item>
     </array>

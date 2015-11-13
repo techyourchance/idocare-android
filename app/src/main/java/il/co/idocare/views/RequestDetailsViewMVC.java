@@ -197,7 +197,7 @@ public class RequestDetailsViewMVC implements ViewMVC {
                     mImgCreatedByPicture,
                     Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
         } else {
-            mImgCreatedByPicture.setImageResource(R.drawable.default_user_picture);
+            mImgCreatedByPicture.setImageResource(R.drawable.ic_default_user_picture);
         }
 
         mTxtCreatedByReputation.setText(String.valueOf(user.getReputation()));
@@ -223,7 +223,7 @@ public class RequestDetailsViewMVC implements ViewMVC {
                     mImgClosedByPicture,
                     Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
         } else {
-            mImgClosedByPicture.setImageResource(R.drawable.default_user_picture);
+            mImgClosedByPicture.setImageResource(R.drawable.ic_default_user_picture);
         }
 
         mTxtClosedByReputation.setText(String.valueOf(user.getReputation()));

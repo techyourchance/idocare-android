@@ -3,17 +3,12 @@
     <dimen name="login_fragment_padding">30dp</dimen>
     <dimen name="login_fragment_login_btn_padding">40dp</dimen>
     <dimen name="long_button_horizontal_padding">60dp</dimen>
-    <dimen name="wide_button_width">240dp</dimen>
-    <dimen name="narrow_button_width">115dp</dimen>
-    <dimen name="two_narrow_buttons_horizontal_spacing">10dp</dimen>
     <dimen name="frame_contents_padding">10dp</dimen>
 
     <dimen name="nav_drawer_item_min_height">50dp</dimen>
 
     <dimen name="map_preview_height">100dp</dimen>
     <dimen name="button_corners_radius">6dp</dimen>
-    <dimen name="wide_button_height">40dp</dimen>
-    <dimen name="narrow_button_height">40dp</dimen>
 
     <!-- Elements sizes -->
     <dimen name="request_status_bar_height">20sp</dimen>
@@ -21,12 +16,23 @@
     <dimen name="border_background_width">1px</dimen>
     <dimen name="request_thumbnail_layout_height">100dp</dimen>
 
+    <dimen name="wide_button_height">40dp</dimen>
+    <dimen name="wide_button_width">276dp</dimen>
+
+    <dimen name="narrow_button_height">40dp</dimen>
+    <dimen name="narrow_button_width">130dp</dimen>
+    <dimen name="two_narrow_buttons_horizontal_spacing">16dp</dimen>
+
     <!-- Margins and paddings-->
     <dimen name="fragment_large_padding">15dp</dimen>
     <dimen name="fragment_default_padding">10dp</dimen>
     <dimen name="fragment_small_padding">8dp</dimen>
     <dimen name="fragment_tiny_padding">5dp</dimen>
     <dimen name="fragment_tiniest_padding">2dp</dimen>
+
+    <dimen name="login_chooser_margin_1">33dp</dimen>
+    <dimen name="login_chooser_margin_2">20dp</dimen>
+    <dimen name="login_chooser_margin_3">16dp</dimen>
 
     <dimen name="nav_drawer_icon_margin_left">10dp</dimen>
     <dimen name="nav_drawer_title_margin_left">50dp</dimen>

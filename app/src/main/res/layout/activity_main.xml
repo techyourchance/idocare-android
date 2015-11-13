@@ -52,7 +52,7 @@
             android:layout_marginTop="@dimen/fragment_default_padding"
             android:layout_marginStart="@dimen/fragment_default_padding"
             android:layout_marginLeft="@dimen/fragment_default_padding"
-            android:src="@drawable/default_user_picture"/>
+            android:src="@drawable/ic_default_user_picture"/>
 
         <ListView
             android:id="@+id/drawer_list"
