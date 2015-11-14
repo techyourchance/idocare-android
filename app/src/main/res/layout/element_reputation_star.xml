@@ -2,12 +2,12 @@
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/frame_reputation"
-    android:layout_width="@dimen/reputation_star_picture_size"
-    android:layout_height="@dimen/reputation_star_picture_size">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
     <ImageView
-        android:layout_width="@dimen/reputation_star_picture_size"
-        android:layout_height="@dimen/reputation_star_picture_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:src="@drawable/ic_star_large"
         android:layout_gravity="center"/>
 

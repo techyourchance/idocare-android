@@ -12,7 +12,7 @@
     <color name="gray_light_1">#B3B3B3</color>
     <color name="gray_light_2">#CCCCCC</color>
     <color name="gray_light_3">#E6E6E6</color>
-    <color name="gray_light_4">#E6E6E6</color>
+    <color name="gray_light_4">#EEEEEE</color>
 
 
 
@@ -27,16 +27,19 @@
     <color name="faded_text">@color/gray_light_1</color>
     <color name="default_text">@color/gray_dark_1</color>
     <color name="nickname_text">@color/gray_dark_2</color>
-    <color name="date_text">@color/gray_dark_2</color>
+    <color name="date_text">@color/gray_light_1</color>
     <color name="reputation_text">@color/gray_dark_2</color>
 
-    <color name="line_separator">@color/gray</color>
+    <color name="line_separator">@color/gray_light_1</color>
 
     <color name="picture_background">@color/gray_light_3</color>
     <color name="text_on_picture_background">@color/gray</color>
 
     <color name="fragment_bg_dark">@color/gray_light_2</color>
-    <color name="fragment_bg_light">@color/gray_light_4</color>
+    <color name="fragment_bg_light">@color/gray_light_3</color>
+
+    <color name="nav_drawer_bg">@color/gray_light_4</color>
+    <color name="nav_drawer_line_separator">@color/gray_light_3</color>
 
 
 </resources>

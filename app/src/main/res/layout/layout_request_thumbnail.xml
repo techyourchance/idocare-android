@@ -19,13 +19,15 @@
         android:id="@+id/img_request_thumbnail"
         android:layout_width="@dimen/thumbnail_picture_width"
         android:layout_height="@dimen/thumbnail_picture_height"
-        android:paddingLeft="@dimen/fragment_tiny_padding"
+        android:paddingLeft="@dimen/fragment_default_padding"
+        android:paddingStart="@dimen/fragment_default_padding"
         android:paddingRight="@dimen/fragment_tiny_padding"
-        android:paddingTop="@dimen/fragment_tiny_padding"
+        android:paddingEnd="@dimen/fragment_default_padding"
+        android:layout_marginTop="@dimen/fragment_default_padding"
+        android:layout_marginBottom="@dimen/fragment_default_padding"
         android:layout_below="@id/txt_request_status"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="@dimen/fragment_tiny_padding"
         android:scaleType="centerCrop"
         android:cropToPadding="true"
         android:contentDescription="@string/img_request_thumbnail_accessibility"/>
@@ -54,7 +56,7 @@
         android:layout_toEndOf="@id/img_request_thumbnail"
         android:layout_toRightOf="@id/img_request_thumbnail"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/fragment_tiny_padding">
+        android:layout_marginBottom="@dimen/fragment_default_padding">
 
         <TextView
             android:id="@+id/txt_created_by"

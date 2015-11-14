@@ -19,7 +19,8 @@
         android:layout_width="281dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:inputType="text"
+        android:inputType="textMultiLine"
+        android:maxLines="3"
         android:hint="@string/hint_leave_comment"/>
 
 
@@ -42,6 +43,6 @@
         android:layout_marginTop="@dimen/fragment_large_padding"
         android:background="@color/new_request_color"
         android:text="@string/btn_create_new_request"
-        android:textColor="@android:color/white"/>
+        style="@style/BoldTextStyleForButton"/>
 
 </LinearLayout>

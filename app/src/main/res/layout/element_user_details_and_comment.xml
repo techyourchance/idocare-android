@@ -47,15 +47,15 @@
 
     <ImageView
         android:id="@+id/img_user_reputation_star"
-        android:layout_width="@dimen/small_reputation_star_picture_size"
-        android:layout_height="@dimen/small_reputation_star_picture_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginLeft="@dimen/fragment_default_padding"
         android:layout_marginStart="@dimen/fragment_default_padding"
         android:layout_marginTop="@dimen/fragment_tiniest_padding"
         android:layout_below="@id/img_user_picture"
-        android:src="@drawable/ic_star_large"/>
+        android:src="@drawable/ic_star_tiny"/>
 
     <TextView
         android:id="@+id/txt_user_reputation"
@@ -70,12 +70,12 @@
     <ImageView
         android:id="@+id/img_vote_up"
         android:clickable="true"
-        android:layout_width="@dimen/vote_image_button_size"
-        android:layout_height="@dimen/vote_image_button_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/txt_title"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="@dimen/fragment_small_padding"
+        android:layout_marginTop="@dimen/fragment_default_padding"
         android:src="@drawable/ic_plus"
         android:contentDescription="@string/btn_vote_up_accessibility" />
 
@@ -85,18 +85,22 @@
         android:layout_height="@dimen/reputation_star_picture_size"
         android:layout_below="@id/txt_title"
         android:layout_toLeftOf="@id/img_vote_up"
-        android:layout_toStartOf="@id/img_vote_up"/>
+        android:layout_toStartOf="@id/img_vote_up"
+        android:layout_marginLeft="@dimen/fragment_tiny_padding"
+        android:layout_marginStart="@dimen/fragment_tiny_padding"
+        android:layout_marginRight="@dimen/fragment_tiny_padding"
+        android:layout_marginEnd="@dimen/fragment_tiny_padding"/>
 
 
     <ImageView
         android:id="@+id/img_vote_down"
         android:clickable="true"
-        android:layout_width="@dimen/vote_image_button_size"
-        android:layout_height="@dimen/vote_image_button_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/txt_title"
         android:layout_toLeftOf="@id/frame_reputation"
         android:layout_toStartOf="@id/frame_reputation"
-        android:layout_marginTop="@dimen/fragment_small_padding"
+        android:layout_marginTop="@dimen/fragment_default_padding"
         android:src="@drawable/ic_minus"
         android:contentDescription="@string/btn_vote_down_accessibility" />
 
@@ -108,7 +112,7 @@
         android:layout_marginRight="@dimen/fragment_default_padding"
         android:layout_marginEnd="@dimen/fragment_default_padding"
         android:layout_below="@id/txt_user_reputation"
-        android:layout_marginTop="@dimen/fragment_tiniest_padding"
+        android:layout_marginTop="@dimen/fragment_tiny_padding"
         android:maxLines="1"
         android:ellipsize="end"/>
 

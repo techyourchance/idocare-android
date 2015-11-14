@@ -48,7 +48,7 @@
             android:layout_marginEnd="@dimen/fragment_tiniest_padding"
             android:background="@color/picture_background"
             android:src="@drawable/ic_add_picture_small"
-            android:scaleType="centerCrop"
+            android:scaleType="center"
             android:cropToPadding="true"/>
 
 
@@ -62,7 +62,7 @@
             android:layout_marginEnd="@dimen/fragment_tiniest_padding"
             android:background="@color/picture_background"
             android:src="@drawable/ic_add_picture_small"
-            android:scaleType="centerCrop"
+            android:scaleType="center"
             android:cropToPadding="true"/>
 
 
@@ -74,7 +74,7 @@
             android:layout_marginStart="@dimen/fragment_tiniest_padding"
             android:background="@color/picture_background"
             android:src="@drawable/ic_add_picture_small"
-            android:scaleType="centerCrop"
+            android:scaleType="center"
             android:cropToPadding="true"/>
 
 

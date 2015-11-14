@@ -44,7 +44,11 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:gravity="start"
-        android:background="@color/fragment_bg_dark">
+        android:background="@color/nav_drawer_bg">
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="30dp" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -54,6 +58,16 @@
             android:layout_marginLeft="@dimen/fragment_default_padding"
             android:src="@drawable/ic_default_user_picture"/>
 
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="20dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="@color/nav_drawer_line_separator"/>
+
+
         <ListView
             android:id="@+id/drawer_list"
             android:layout_width="match_parent"
@@ -62,6 +76,6 @@
             android:choiceMode="singleChoice"
             android:divider="@android:color/transparent"
             android:dividerHeight="0dp"
-            android:background="@color/fragment_bg_dark"/>
+            android:background="@color/nav_drawer_bg"/>
     </LinearLayout>
 </android.support.v4.widget.DrawerLayout>

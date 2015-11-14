@@ -17,6 +17,10 @@
         <!-- Include colorized status bar-->
         <include layout="@layout/element_request_status_bar_linear"/>
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fragment_tiny_padding" />
+
         <!-- Include "created by" details-->
         <include android:id="@+id/element_created_by"
             layout="@layout/element_user_details_and_comment"/>
@@ -35,6 +39,10 @@
         <include  android:id="@+id/element_created_pictures"
             layout="@layout/element_pictures_row_linear"/>
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fragment_default_padding" />
+
         <View
             android:id="@+id/line_users_separator"
             android:layout_width="match_parent"
@@ -43,9 +51,11 @@
             android:layout_marginStart="@dimen/fragment_default_padding"
             android:layout_marginRight="@dimen/fragment_default_padding"
             android:layout_marginEnd="@dimen/fragment_default_padding"
-            android:layout_marginTop="@dimen/line_separator_vertical_margin"
-            android:layout_marginBottom="@dimen/line_separator_vertical_margin"
             android:background="@color/line_separator"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fragment_default_padding" />
 
         <!-- Include "closed by" details-->
         <include android:id="@+id/element_closed_by"
@@ -87,6 +97,10 @@
             android:paddingEnd="@dimen/fragment_default_padding"
             android:text="TODO Location"/>
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fragment_small_padding" />
+
 
 
         <com.google.android.gms.maps.MapView
@@ -111,7 +125,7 @@
             android:layout_marginBottom="@dimen/fragment_large_padding"
             android:background="@color/picked_up_request_color"
             android:text="@string/btn_pickup_request"
-            android:textColor="@android:color/white"/>
+            style="@style/BoldTextStyleForButton"/>
 
 
         <Button
@@ -123,7 +137,7 @@
             android:layout_marginBottom="@dimen/fragment_large_padding"
             android:background="@color/closed_request_color"
             android:text="@string/btn_switch_to_close_request_fragment"
-            android:textColor="@android:color/white"/>
+            style="@style/BoldTextStyleForButton"/>
 
     </LinearLayout>
 

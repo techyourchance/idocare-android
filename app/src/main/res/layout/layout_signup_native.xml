@@ -6,14 +6,20 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/login_fragment_padding"
+    android:paddingLeft="@dimen/login_fragment_padding"
+    android:paddingRight="@dimen/login_fragment_padding"
     android:gravity="center_horizontal"
     android:background="@drawable/default_fragment_background">
 
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/signup_native_margin_1" />
+
     <ImageView
         android:id="@+id/img_user_picture"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:src="@drawable/ic_add_user_picture"
         android:layout_gravity="center_horizontal"/>
 
@@ -95,6 +101,12 @@
             android:layout_marginTop="20dp"
             android:text="@string/btn_signup"/>
 
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/signup_native_margin_2" />
+
     </LinearLayout>
+
 
 </LinearLayout>
