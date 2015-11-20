@@ -1,6 +1,5 @@
 package il.co.idocare.networking;
 
-import android.accounts.Account;
 import android.content.ContentProviderClient;
 import android.database.Cursor;
 import android.os.RemoteException;
@@ -201,8 +200,8 @@ public class DataDownloader implements LegacyServerHttpRequest.OnServerResponseC
 
     private LegacyServerHttpRequest createUserServerRequest(long userId) {
         LegacyServerHttpRequest serverRequest = new LegacyServerHttpRequest(
-                URLs.getUrl(URLs.RESOURCE_USER_DATA),
-                mUserId, mAuthToken, this, URLs.getUrl(URLs.RESOURCE_USER_DATA));
+                URLs.getUrl(URLs.RESOURCE_USERS_DATA),
+                mUserId, mAuthToken, this, URLs.getUrl(URLs.RESOURCE_USERS_DATA));
         serverRequest.addTextField(Constants.FIELD_NAME_USER_ID, String.valueOf(userId));
 
         return serverRequest;

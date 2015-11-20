@@ -29,7 +29,7 @@ public class URLs {
     private static final int USER_GROUP_OFFSET = 1000;
     public static final int RESOURCE_SIGNUP = USER_GROUP_OFFSET + 1;
     public static final int RESOURCE_LOGIN = USER_GROUP_OFFSET + 2;
-    public static final int RESOURCE_USER_DATA = USER_GROUP_OFFSET + 3;
+    public static final int RESOURCE_USERS_DATA = USER_GROUP_OFFSET + 3;
 
     private static final int REQUEST_GROUP_OFFSET = 2000;
     public static final int RESOURCE_ALL_REQUESTS_DATA = REQUEST_GROUP_OFFSET + 1;
@@ -57,7 +57,7 @@ public class URLs {
                 return constructUrl(ROOT_URL, NODE_SIGN_UP);
             case RESOURCE_LOGIN:
                 return constructUrl(ROOT_URL, NODE_LOG_IN);
-            case RESOURCE_USER_DATA:
+            case RESOURCE_USERS_DATA:
                 return constructUrl(ROOT_URL, NODE_USER_DATA);
             case RESOURCE_ALL_REQUESTS_DATA:
                 return constructUrl(ROOT_URL, NODE_ALL_REQUESTS_DATA);

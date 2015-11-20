@@ -8,6 +8,10 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.datamodels.functional.UserItem;
@@ -17,25 +21,41 @@ import il.co.idocare.datamodels.functional.UserItem;
  */
 public class LegacyUsersDownloadServerResponseHandler extends LegacyAbstractServerResponseHandler {
 
-    private static final String LOG_TAG = LegacyUsersDownloadServerResponseHandler.class.getSimpleName();
+    private static final String TAG = LegacyUsersDownloadServerResponseHandler.class.getSimpleName();
 
     @Override
     public void handleResponse(int statusCode, String reasonPhrase, String entityString,
                                ContentProviderClient provider) {
 
-        if (!ensureSuccessfulResponse(statusCode, reasonPhrase, entityString))
-            return;
+        Log.d(TAG, "handling response");
 
-        String userJsonObjectString = null;
+        if (!ensureSuccessfulResponse(statusCode, reasonPhrase, entityString)) {
+            Log.d(TAG, "unsuccessful response");
+            return;
+        }
+
+        Map<Long, String> usersJsonStrings = new HashMap<>();
         try {
             JSONObject jsonObject = new JSONObject(entityString);
-            userJsonObjectString = jsonObject.getJSONObject(Constants.FIELD_NAME_INTERNAL_DATA).toString();
+            JSONObject usersData = jsonObject.getJSONObject(Constants.FIELD_NAME_INTERNAL_DATA);
+            Iterator<String> iter = usersData.keys();
+            String key;
+            String value;
+            while (iter.hasNext()) {
+                key = iter.next();
+                value = usersData.getJSONObject(key).toString();
+                usersJsonStrings.put(Long.valueOf(key), value);
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        // Handle the update or the insertion of a single user entry
-        updateOrInsertEntry(UserItem.create(userJsonObjectString), provider);
+        for (Long id : usersJsonStrings.keySet()) {
+            String userData = usersJsonStrings.get(id);
+            // Handle the update or the insertion of a single user entry
+            updateOrInsertEntry(UserItem.create(userData), provider);
+        }
 
     }
 
@@ -57,7 +77,7 @@ public class LegacyUsersDownloadServerResponseHandler extends LegacyAbstractServ
                 // No user with that ID in the DB - insert a new entry
                 provider.insert(IDoCareContract.Users.CONTENT_URI, userItem.toContentValues());
             } else if (updated != 1) {
-                Log.e(LOG_TAG, "inconsistent number of users entries affected by the update." +
+                Log.e(TAG, "inconsistent number of users entries affected by the update." +
                         "Entries affected: " + updated);
             }
         } catch (RemoteException e) {
