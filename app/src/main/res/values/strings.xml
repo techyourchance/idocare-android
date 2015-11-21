@@ -105,6 +105,8 @@
 
     <string name="msg_pictures_required">Please take at least one picture</string>
 
+    <string name="msg_too_far_from_original_location">You are too far from the original location</string>
+
     <!--
     Facebook app ID - must be defined in strings under this particular name!
     -->

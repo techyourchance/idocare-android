@@ -240,6 +240,8 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
         Bundle args = new Bundle();
         args.putLong(Constants.FIELD_NAME_REQUEST_ID, mRequestId);
+        args.putDouble(Constants.FIELD_NAME_LATITUDE, mRequestItem.getLatitude());
+        args.putDouble(Constants.FIELD_NAME_LONGITUDE, mRequestItem.getLongitude());
         replaceFragment(CloseRequestFragment.class, true, false, args);
     }
 

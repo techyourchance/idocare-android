@@ -221,7 +221,7 @@ public class NewRequestFragment extends AbstractFragment {
 
         long timestamp = System.currentTimeMillis();
 
-        if (!validRequestParameter(createdBy, createdPictures)) {
+        if (!validRequestParameters(createdBy, createdPictures)) {
             Log.d(TAG, "aborting request creation due to invalid parameters");
             return;
         }
@@ -274,7 +274,7 @@ public class NewRequestFragment extends AbstractFragment {
         return true;
     }
 
-    private boolean validRequestParameter(String userId, String pictures) {
+    private boolean validRequestParameters(String userId, String pictures) {
 
         if (TextUtils.isEmpty(userId)) {
             userLoggedOut();

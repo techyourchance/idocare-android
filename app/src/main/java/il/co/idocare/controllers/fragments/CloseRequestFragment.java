@@ -4,11 +4,9 @@ import android.app.Activity;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.net.Uri;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,14 +17,12 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
+import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
+import il.co.idocare.GlobalEvents;
 import il.co.idocare.R;
 import il.co.idocare.authentication.UserStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
@@ -37,13 +33,14 @@ import il.co.idocare.views.CloseRequestViewMVC;
 
 public class CloseRequestFragment extends AbstractFragment {
 
-    private final static String LOG_TAG = CloseRequestFragment.class.getSimpleName();
+    private final static String TAG = CloseRequestFragment.class.getSimpleName();
 
 
 
     private CloseRequestViewMVC mCloseRequestViewMVC;
 
     private long mRequestId;
+    private Location mRequestLocation;
 
     private String mLastCameraPicturePath;
     private List<String> mCameraPicturesPaths = new ArrayList<String>(3);
@@ -56,8 +53,11 @@ public class CloseRequestFragment extends AbstractFragment {
         Bundle args = getArguments();
         if (args != null) {
             mRequestId = args.getLong(Constants.FIELD_NAME_REQUEST_ID);
+            mRequestLocation = new Location("none");
+            mRequestLocation.setLongitude(args.getDouble(Constants.FIELD_NAME_LONGITUDE));
+            mRequestLocation.setLatitude(args.getDouble(Constants.FIELD_NAME_LATITUDE));
         } else {
-            Log.e(LOG_TAG, "no arguments set for CloseRequestFragment");
+            Log.e(TAG, "no arguments set for CloseRequestFragment");
             // TODO: add error case here
         }
 
@@ -173,7 +173,7 @@ public class CloseRequestFragment extends AbstractFragment {
 
     private void showPicture(int position, String cameraPicturePath) {
         if (position >= 3) {
-            Log.e(LOG_TAG, "maximal number of pictures exceeded!");
+            Log.e(TAG, "maximal number of pictures exceeded!");
             return;
         }
         if (mCameraPicturesPaths.size() > position) {
@@ -201,12 +201,10 @@ public class CloseRequestFragment extends AbstractFragment {
 
         String closedBy = getUserStateManager().getActiveAccountUserId();
 
-        if (TextUtils.isEmpty(closedBy)) {
-            userLoggedOut();
+        if (!isValidLocation()) {
+            Log.d(TAG, "aborting request close due to invalid location");
             return;
         }
-
-        showProgressDialog("Please wait...", "Closing the request...");
 
         StringBuilder sb = new StringBuilder("");
         for (int i=0; i<mCameraPicturesPaths.size(); i++) {
@@ -218,6 +216,12 @@ public class CloseRequestFragment extends AbstractFragment {
         Bundle bundleCloseRequest = mCloseRequestViewMVC.getViewState();
         String closedComment =
                 bundleCloseRequest.getString(CloseRequestViewMVC.KEY_CLOSED_COMMENT);
+
+        if (!validRequestParameters(closedBy, closedPictures)) {
+            Log.d(TAG, "aborting request close due to invalid parameters");
+            return;
+        }
+
 
         // Create JSON object containing comment and pictures
 
@@ -247,6 +251,9 @@ public class CloseRequestFragment extends AbstractFragment {
                 IDoCareContract.UserActions.ACTION_TYPE_CLOSE_REQUEST);
         userActionCV.put(IDoCareContract.UserActions.COL_ACTION_PARAM, userActionParam);
 
+
+        showProgressDialog("Please wait...", "Closing the request...");
+
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -273,6 +280,48 @@ public class CloseRequestFragment extends AbstractFragment {
 
     }
 
+
+    private boolean isValidLocation() {
+        GlobalEvents.BestLocationEstimateEvent bestLocationEstimateEvent =
+                EventBus.getDefault().getStickyEvent(GlobalEvents.BestLocationEstimateEvent.class);
+        if (bestLocationEstimateEvent == null) {
+            Log.d(TAG, "no best location estimate found");
+            return false;
+        }
+
+        Location location = bestLocationEstimateEvent.location;
+
+        if (location == null || !location.hasAccuracy()
+                || location.getAccuracy() > Constants.MINIMUM_ACCEPTABLE_LOCATION_ACCURACY_METERS) {
+            Log.d(TAG, "location accuracy isn't high enough");
+            return false;
+        }
+
+        if (location.distanceTo(mRequestLocation)
+                > Constants.MINIMUM_ACCEPTABLE_LOCATION_ACCURACY_METERS) {
+            Log.d(TAG, "location is too far from request's location");
+            Toast.makeText(getActivity(), getString(R.string.msg_too_far_from_original_location),
+                    Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validRequestParameters(String userId, String pictures) {
+
+        if (TextUtils.isEmpty(userId)) {
+            userLoggedOut();
+            return false;
+        }
+
+        if (TextUtils.isEmpty(pictures)) {
+            Toast.makeText(getActivity(), getString(R.string.msg_pictures_required),
+                    Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        return true;
+    }
 
     private void userLoggedOut() {
         // This is a very simplified handling of user's logout
