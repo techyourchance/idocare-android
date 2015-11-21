@@ -101,6 +101,10 @@
     <string name="msg_choose_add_user_picture_method">Would you like to upload an  existing picture,
         or take a new one with device\'s camera?</string>
 
+    <string name="msg_insufficient_location_accuracy">Insufficient location accuracy</string>
+
+    <string name="msg_pictures_required">Please take at least one picture</string>
+
     <!--
     Facebook app ID - must be defined in strings under this particular name!
     -->

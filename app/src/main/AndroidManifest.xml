@@ -75,6 +75,8 @@
                 android:resource="@xml/syncadapter" />
         </service>
 
+        <service android:name=".location.LocationTrackerService" android:exported="false"/>
+
         <provider
             android:name=".contentproviders.IDoCareContentProvider"
             android:authorities="@string/content_provider_authority"

@@ -4,12 +4,8 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.location.Location;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Message;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,21 +13,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.android.gms.location.LocationServices;
-
-import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
+import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
+import il.co.idocare.GlobalEvents;
 import il.co.idocare.R;
 import il.co.idocare.authentication.UserStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.controllers.activities.AbstractActivity;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.pictures.CameraAdapter;
 import il.co.idocare.utils.UtilMethods;
@@ -40,7 +31,7 @@ import il.co.idocare.views.NewRequestViewMVC;
 
 public class NewRequestFragment extends AbstractFragment {
 
-    private final static String LOG_TAG = NewRequestFragment.class.getSimpleName();
+    private final static String TAG = NewRequestFragment.class.getSimpleName();
 
     NewRequestViewMVC mViewMVC;
 
@@ -85,7 +76,11 @@ public class NewRequestFragment extends AbstractFragment {
         if (getUserStateManager().getActiveAccount() == null) {
             // The user logged out while this fragment was paused
             userLoggedOut();
+            return;
         }
+
+        // high accuracy location required for request creation
+        EventBus.getDefault().post(new GlobalEvents.HighAccuracyLocationRequiredEvent());
     }
 
     @Override
@@ -161,7 +156,7 @@ public class NewRequestFragment extends AbstractFragment {
 
     private void showPicture(int position, String cameraPicturePath) {
         if (position >= 3) {
-            Log.e(LOG_TAG, "maximal number of pictures exceeded!");
+            Log.e(TAG, "maximal number of pictures exceeded!");
             return;
         }
         if (mCameraPicturesPaths.size() > position) {
@@ -187,30 +182,30 @@ public class NewRequestFragment extends AbstractFragment {
      * action to the local cache of user actions
      */
     private void createRequest() {
-        UserStateManager userStateManager = new UserStateManager(getActivity());
+        String createdBy = getUserStateManager().getActiveAccountUserId();
 
-        String createdBy = userStateManager.getActiveAccountUserId();
-
-        if (TextUtils.isEmpty(createdBy)) {
-            userLoggedOut();
+        GlobalEvents.BestLocationEstimateEvent bestLocationEstimateEvent =
+                EventBus.getDefault().getStickyEvent(GlobalEvents.BestLocationEstimateEvent.class);
+        if (bestLocationEstimateEvent == null
+                || !isValidLocation(bestLocationEstimateEvent.location)) {
+            Log.d(TAG, "aborting request creation due to lack of, or insufficiently accurate " +
+                    "location estimate");
+            Toast.makeText(getActivity(), getString(R.string.msg_insufficient_location_accuracy),
+                    Toast.LENGTH_LONG).show();
             return;
         }
-        
-        showProgressDialog("Please wait...", "Creating new request...");
 
-        // TODO: find a way to distribute GoogleApiClient to fragments without casting
-        // TODO: is it ok to put GoogleApiClient in AbstractActivity and add the getter to Callback IF?
-        Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                ((MainActivity) getActivity()).mGoogleApiClient);
+        Location location = bestLocationEstimateEvent.location;
+
         String latitude = "", longitude = "";
-        if (lastLocation != null) {
-            latitude = String.valueOf(lastLocation.getLatitude());
-            longitude = String.valueOf(lastLocation.getLongitude());
+        if (location != null) {
+            latitude = String.valueOf(location.getLatitude());
+            longitude = String.valueOf(location.getLongitude());
         }
         StringBuilder sb = new StringBuilder("");
         for (int i=0; i<mCameraPicturesPaths.size(); i++) {
             sb.append(mCameraPicturesPaths.get(i));
-            if (i < mCameraPicturesPaths.size()-1) sb.append(", ");
+            if (i < mCameraPicturesPaths.size()-1) sb.append(Constants.PICTURES_LIST_SEPARATOR);
         }
         String createdPictures = sb.toString();
 
@@ -221,9 +216,15 @@ public class NewRequestFragment extends AbstractFragment {
                 bundleNewRequest.getString(NewRequestViewMVC.KEY_CREATED_COMMENT);
 
         // Generate a temporary ID for this request - the actual ID will be assigned by the server
+        // TODO: this ID might be not unique
         long tempId = UUID.randomUUID().getLeastSignificantBits();
 
         long timestamp = System.currentTimeMillis();
+
+        if (!validRequestParameter(createdBy, createdPictures)) {
+            Log.d(TAG, "aborting request creation due to invalid parameters");
+            return;
+        }
 
         // Create entries for a newly created request
         final ContentValues requestCV = new ContentValues();
@@ -244,6 +245,8 @@ public class NewRequestFragment extends AbstractFragment {
         userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_ID, tempId);
         userActionCV.put(IDoCareContract.UserActions.COL_ACTION_TYPE, IDoCareContract.UserActions.ACTION_TYPE_CREATE_REQUEST);
 
+        showProgressDialog("Please wait...", "Creating new request...");
+
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -262,7 +265,33 @@ public class NewRequestFragment extends AbstractFragment {
 
     }
 
+
+    private boolean isValidLocation(Location location) {
+        if (location == null || !location.hasAccuracy()
+                || location.getAccuracy() > Constants.MINIMUM_ACCEPTABLE_LOCATION_ACCURACY_METERS) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validRequestParameter(String userId, String pictures) {
+
+        if (TextUtils.isEmpty(userId)) {
+            userLoggedOut();
+            return false;
+        }
+
+        if (TextUtils.isEmpty(pictures)) {
+            Toast.makeText(getActivity(), getString(R.string.msg_pictures_required),
+                    Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        return true;
+    }
+
     private void userLoggedOut() {
+        Log.d(TAG, "userLoggedOut() is called");
         // This is a very simplified handling of user's logout
         // TODO: think of a better handling and possible corner cases
         if (getFragmentManager().getBackStackEntryCount() > 0) {

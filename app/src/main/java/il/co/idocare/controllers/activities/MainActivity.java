@@ -3,6 +3,7 @@ package il.co.idocare.controllers.activities;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
@@ -15,17 +16,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import il.co.idocare.Constants;
 import il.co.idocare.authentication.UserStateManager;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
 import il.co.idocare.controllers.listadapters.NavigationDrawerListAdapter;
@@ -33,6 +28,7 @@ import il.co.idocare.controllers.fragments.HomeFragment;
 import il.co.idocare.R;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
 import il.co.idocare.datamodels.functional.NavigationDrawerEntry;
+import il.co.idocare.location.LocationTrackerService;
 
 
 public class MainActivity extends AbstractActivity {
@@ -48,8 +44,6 @@ public class MainActivity extends AbstractActivity {
                     syncHomeButtonViewAndFunctionality();
                 }
             };
-
-    public GoogleApiClient mGoogleApiClient;
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mActionBarDrawerToggle;
@@ -74,8 +68,6 @@ public class MainActivity extends AbstractActivity {
 
         setSupportActionBar(mToolbar);
 
-        buildGoogleApiClient();
-
         setupDrawer();
 
         // Show Home fragment if the app is not restored
@@ -83,25 +75,25 @@ public class MainActivity extends AbstractActivity {
             replaceFragment(HomeFragment.class, false, true, null);
         }
 
+        startServices();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopServices();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
-        if (mGoogleApiClient != null) mGoogleApiClient.connect();
-
         enableAutomaticSync();
         requestImmediateSync();
-
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
-        if (mGoogleApiClient != null) mGoogleApiClient.disconnect();
-
         disableAutomaticSync();
     }
 
@@ -145,6 +137,27 @@ public class MainActivity extends AbstractActivity {
     // End of activity lifecycle management
     //
     // ---------------------------------------------------------------------------------------------
+
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Services management
+
+    private void startServices() {
+        this.startService(new Intent(this, LocationTrackerService.class));
+    }
+
+
+    private void stopServices() {
+        this.stopService(new Intent(this, LocationTrackerService.class));
+    }
+
+    // End of services
+    //
+    // ---------------------------------------------------------------------------------------------
+
+
 
 
 
@@ -325,7 +338,6 @@ public class MainActivity extends AbstractActivity {
         }
     }
 
-
     public void setTitle(String title) {
         mToolbar.setTitle(title);
     }
@@ -370,16 +382,5 @@ public class MainActivity extends AbstractActivity {
     // End of up navigation button management
     //
     // ---------------------------------------------------------------------------------------------
-
-
-    /**
-     * Initialize the client which will be used to connect to Google Play Services
-     */
-    private void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(LocationServices.API)
-                .build();
-    }
-
 
 }
