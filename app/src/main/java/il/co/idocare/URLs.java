@@ -6,9 +6,7 @@ package il.co.idocare;
 public class URLs {
 
     // Host
-    private final static String DEV_ROOT_URL = "http://dev-04.idocare.co.il";
-    private final static String QA_ROOT_URL = "http://qa-04.idocare.co.il";
-    private final static String ROOT_URL = DEV_ROOT_URL;
+    private final static String ROOT_URL = BuildConfig.ROOT_URL;
 
     // Nodes
     private final static String NODE_SIGN_UP = "/api-04/user/add";
