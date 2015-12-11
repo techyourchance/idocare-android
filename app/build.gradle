@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
         applicationId "il.co.idocare"
         minSdkVersion 16
-        targetSdkVersion 22
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
     }
@@ -35,9 +35,9 @@ dependencies {
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'com.facebook.android:facebook-android-sdk:4.1.0'
-    compile 'com.google.android.gms:play-services-location:7.0.0'
-    compile 'com.google.android.gms:play-services-maps:7.0.0'
-    compile "com.android.support:appcompat-v7:22.2.1"
+    compile 'com.google.android.gms:play-services-location:7.8.0'
+    compile 'com.google.android.gms:play-services-maps:7.8.0'
+    compile "com.android.support:appcompat-v7:23.0.1"
     compile 'com.google.code.gson:gson:2.3.1'
 
     testCompile 'junit:junit:4.12'
