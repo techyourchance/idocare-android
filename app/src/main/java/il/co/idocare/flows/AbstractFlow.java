@@ -1,5 +1,7 @@
 package il.co.idocare.flows;
 
+import android.util.Log;
+
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,6 +32,8 @@ public abstract class AbstractFlow implements Flow {
 
     @Override
     public final void execute() {
+        Log.d(getName(), "started flow execution");
+        // TODO: come up with a more sophisticated execution scheme
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -53,7 +57,14 @@ public abstract class AbstractFlow implements Flow {
      */
     protected void setState(int newState) {
         synchronized (STATE_LOCK) {
-            mState = newState;
+            Log.d(getName(), "setState; current state: " + mState +"; " +
+                    "new state: " + newState);
+            if (newState == mState) {
+                Log.d(getName(), "setState; current and new states are identical - aborting");
+            } else {
+                mState = newState;
+                notifyStateChanged(newState);
+            }
         }
     }
 
@@ -71,10 +82,10 @@ public abstract class AbstractFlow implements Flow {
         mListeners.remove(listener);
     }
 
-    /**
-     * @return a reference to Set of FlowStateChangeListeners registered with this flow
-     */
-    protected Set<FlowStateChangeListener> getListeners() {
-        return mListeners;
+    private void notifyStateChanged(int newState) {
+        for (FlowStateChangeListener listener : mListeners) {
+            Log.d(getName(), "notifying the listener about state change; listener: " + listener);
+            listener.onFlowStateChanged(newState);
+        }
     }
 }

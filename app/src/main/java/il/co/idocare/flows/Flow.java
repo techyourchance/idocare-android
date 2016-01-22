@@ -18,7 +18,8 @@ public interface Flow {
     public interface FlowStateChangeListener {
 
         /**
-         * This callback method will be invoked whenever Flow's internal state changes
+         * This callback method will be invoked whenever Flow's internal state changes.<br>
+         * Note: this method might be invoked on any thread.
          * @param newState the new state of the Flow
          */
         public void onFlowStateChanged(int newState);
