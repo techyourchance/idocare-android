@@ -10,14 +10,12 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import de.greenrobot.event.EventBus;
 import il.co.idocare.R;
-import il.co.idocare.authentication.UserStateManager;
+import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
-import il.co.idocare.networking.LegacyServerHttpRequest;
 import il.co.idocare.views.LoginNativeViewMVC;
 
 /**
@@ -117,14 +115,14 @@ public class LoginNativeFragment extends AbstractFragment {
         // Notify of login init
         EventBus.getDefault().post(new LoginNativeViewMVC.LoginRequestSentEvent());
 
-        final UserStateManager userStateManager = new UserStateManager(getActivity());
+        final LoginStateManager userStateManager = new LoginStateManager(getActivity());
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 Bundle loginResult = userStateManager.logInNative(username, password);
 
-                if (loginResult.containsKey(UserStateManager.KEY_ERROR_MSG)) {
+                if (loginResult.containsKey(LoginStateManager.KEY_ERROR_MSG)) {
                     // Login failed - send notification
                     EventBus.getDefault().post(new LoginNativeViewMVC.LoginFailedEvent());
                 } else {

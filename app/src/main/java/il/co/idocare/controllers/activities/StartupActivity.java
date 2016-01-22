@@ -8,7 +8,7 @@ import android.os.Bundle;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.authentication.UserStateManager;
+import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.fragments.SplashFragment;
 
 /**
@@ -65,7 +65,7 @@ public class StartupActivity extends AbstractActivity {
             @Override
             protected void onPostExecute(Void obj) {
 
-                UserStateManager userStateManager = new UserStateManager(StartupActivity.this);
+                LoginStateManager userStateManager = new LoginStateManager(StartupActivity.this);
 
                 Intent intent;
 

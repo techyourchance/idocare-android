@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.authentication.UserStateManager;
+import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.pictures.CameraAdapter;
@@ -132,7 +132,7 @@ public class SignupNativeFragment extends AbstractFragment {
         showAddPictureDialog();
     }
 
-    public void onEventMainThread(UserStateManager.UserLoggedInEvent event) {
+    public void onEventMainThread(LoginStateManager.UserLoggedInEvent event) {
         showMultipleAccountsNotAllowedDialog();
     }
 
@@ -190,7 +190,7 @@ public class SignupNativeFragment extends AbstractFragment {
         // Notify of signup init
         EventBus.getDefault().post(new SignupNativeViewMVC.SignupRequestSentEvent());
 
-        final UserStateManager userStateManager = new UserStateManager(getActivity());
+        final LoginStateManager userStateManager = new LoginStateManager(getActivity());
 
         new Thread(new Runnable() {
             @Override
@@ -198,9 +198,9 @@ public class SignupNativeFragment extends AbstractFragment {
                 Bundle signupResult = userStateManager.signUpNative(email, password, nickname,
                         firstName, lastName, null, mUserPicturePath);
 
-                if (signupResult.containsKey(UserStateManager.KEY_ERROR_MSG)) {
+                if (signupResult.containsKey(LoginStateManager.KEY_ERROR_MSG)) {
                     Log.e(LOG_TAG, "Signup failed. Error message: " +
-                            signupResult.getString(UserStateManager.KEY_ERROR_MSG));
+                            signupResult.getString(LoginStateManager.KEY_ERROR_MSG));
 
                     // Signup failed - send notification
                     EventBus.getDefault().post(new SignupNativeViewMVC.SignupFailedEvent());

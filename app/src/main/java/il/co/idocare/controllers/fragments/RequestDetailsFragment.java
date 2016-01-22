@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.authentication.UserStateManager;
+import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.interfaces.RequestUserActionApplier;
 import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
@@ -137,7 +137,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
         voteForRequest(-1, true);
     }
 
-    public void onEventMainThread(UserStateManager.UserLoggedOutEvent event) {
+    public void onEventMainThread(LoginStateManager.UserLoggedOutEvent event) {
         getLoaderManager().restartLoader(REQUEST_LOADER, null, this);
     }
 

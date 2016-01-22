@@ -21,7 +21,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.authentication.AccountAuthenticator;
-import il.co.idocare.authentication.UserStateManager;
+import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.fragments.IDoCareFragmentCallback;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
@@ -35,7 +35,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements
     private static final String LOG_TAG = AbstractActivity.class.getSimpleName();
 
 
-    private UserStateManager mUserStateManager;
+    private LoginStateManager mUserStateManager;
 
     private Runnable mPostLoginRunnable;
 
@@ -43,7 +43,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mUserStateManager = new UserStateManager(this);
+        mUserStateManager = new LoginStateManager(this);
 
         mPostLoginRunnable = null;
 
@@ -175,7 +175,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements
     // User state management
 
     @Override
-    public UserStateManager getUserStateManager() {
+    public LoginStateManager getUserStateManager() {
         return mUserStateManager;
     }
 

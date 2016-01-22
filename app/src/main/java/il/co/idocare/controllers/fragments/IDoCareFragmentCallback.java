@@ -1,14 +1,9 @@
 package il.co.idocare.controllers.fragments;
 
-import android.accounts.Account;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.app.Fragment;
 import android.os.Bundle;
 
-import java.io.IOException;
-
-import il.co.idocare.authentication.UserStateManager;
+import il.co.idocare.authentication.LoginStateManager;
 
 /**
  * The enclosing activity must implement this interface
@@ -35,9 +30,9 @@ public interface IDoCareFragmentCallback {
 
     /**
      *
-     * @return get a reference to UserStateManager object
+     * @return get a reference to LoginStateManager object
      */
-    public UserStateManager getUserStateManager();
+    public LoginStateManager getUserStateManager();
 
 
 

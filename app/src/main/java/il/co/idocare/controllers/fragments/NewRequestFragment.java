@@ -21,7 +21,7 @@ import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.GlobalEvents;
 import il.co.idocare.R;
-import il.co.idocare.authentication.UserStateManager;
+import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.pictures.CameraAdapter;
@@ -141,7 +141,7 @@ public class NewRequestFragment extends AbstractFragment {
         createRequest();
     }
 
-    public void onEventMainThread(UserStateManager.UserLoggedOutEvent event) {
+    public void onEventMainThread(LoginStateManager.UserLoggedOutEvent event) {
         userLoggedOut();
     }
 

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import il.co.idocare.authentication.AccountAuthenticator;
-import il.co.idocare.authentication.UserStateManager;
+import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.interfaces.RequestUserActionApplier;
 import il.co.idocare.controllers.interfaces.RequestsCombinedCursorAdapter;
@@ -40,7 +40,7 @@ public class HomeListAdapter extends CursorAdapter implements
     // TODO: make use of this applier or remove it completely!
     private UserUserActionApplier mUserUserActionApplier;
 
-    private UserStateManager mUserStateManager;
+    private LoginStateManager mUserStateManager;
 
     private Map<Long, UserItem> mUsersCache;
     private Map<Long, List<UserActionItem>> mUserActionsCache;
@@ -53,7 +53,7 @@ public class HomeListAdapter extends CursorAdapter implements
         mRequestUserActionApplier = requestUserActionApplier;
         mUserUserActionApplier = userUserActionApplier;
 
-        mUserStateManager = new UserStateManager(context);
+        mUserStateManager = new LoginStateManager(context);
 
         // TODO: the below initial values are totally arbitrary. Reconsider the values or the implementation of caches
         mUsersCache = new HashMap<>(5);

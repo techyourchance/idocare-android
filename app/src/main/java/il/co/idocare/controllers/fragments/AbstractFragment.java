@@ -6,7 +6,7 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 
 import de.greenrobot.event.EventBus;
-import il.co.idocare.authentication.UserStateManager;
+import il.co.idocare.authentication.LoginStateManager;
 
 
 /**
@@ -82,7 +82,7 @@ public abstract class AbstractFragment extends Fragment implements
     /**
      * See {@link IDoCareFragmentCallback#getUserStateManager()}
      */
-    public UserStateManager getUserStateManager() {
+    public LoginStateManager getUserStateManager() {
         return mCallback.getUserStateManager();
     }
 

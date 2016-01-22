@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import il.co.idocare.authentication.UserStateManager;
+import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
 import il.co.idocare.controllers.listadapters.NavigationDrawerListAdapter;
 import il.co.idocare.controllers.fragments.HomeFragment;
@@ -165,11 +165,11 @@ public class MainActivity extends AbstractActivity {
     //
     // EventBus events handling
 
-    public void onEventMainThread(UserStateManager.UserLoggedInEvent event) {
+    public void onEventMainThread(LoginStateManager.UserLoggedInEvent event) {
         refreshDrawer();
     }
 
-    public void onEventMainThread(UserStateManager.UserLoggedOutEvent event) {
+    public void onEventMainThread(LoginStateManager.UserLoggedOutEvent event) {
         refreshDrawer();
     }
 

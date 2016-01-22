@@ -40,21 +40,21 @@ import il.co.idocare.networking.responseparsers.ServerResponseParsersFactory;
  * This class manages the login state of the user - it aggregates information from all login
  * mechanisms supported by the application (native, Facebook, etc.)
  */
-public class UserStateManager {
+public class LoginStateManager {
 
     public static final String KEY_ERROR_MSG = "il.co.idocare.authentication." +
-            UserStateManager.class.getSimpleName() + ".KEY_ERROR_MSG";
+            LoginStateManager.class.getSimpleName() + ".KEY_ERROR_MSG";
 
 
 
-    private static final String LOG_TAG = UserStateManager.class.getSimpleName();
+    private static final String LOG_TAG = LoginStateManager.class.getSimpleName();
 
 
     private Context mContext;
 
     private AccountManager mAccountManager;
 
-    public UserStateManager(Context context) {
+    public LoginStateManager(Context context) {
         if (context == null)
             throw new IllegalArgumentException("valid context must be supplied!");
         mContext = context;
@@ -107,7 +107,7 @@ public class UserStateManager {
      *     {@link AccountManager#KEY_ACCOUNT_NAME}<br>
      *     {@link AccountManager#KEY_AUTHTOKEN}<br>
      *     or, in case login attempt failed:<br>
-     *     {@link UserStateManager#KEY_ERROR_MSG}
+     *     {@link LoginStateManager#KEY_ERROR_MSG}
      */
     public Bundle logInNative(String username, String password) {
 
@@ -140,11 +140,11 @@ public class UserStateManager {
         }
 
         // Parse the response
-        loginResult = UserStateManager.handleResponse(response,
+        loginResult = LoginStateManager.handleResponse(response,
                 ServerResponseParsersFactory.newInstance(URLs.RESOURCE_LOGIN));
 
         // Check for common errors
-        UserStateManager.checkForCommonErrors(loginResult);
+        LoginStateManager.checkForCommonErrors(loginResult);
         if (loginResult.containsKey(KEY_ERROR_MSG))
             return loginResult;
 
@@ -346,11 +346,11 @@ public class UserStateManager {
         }
 
         // Parse the response
-        signupResult = UserStateManager.handleResponse(response,
+        signupResult = LoginStateManager.handleResponse(response,
                 ServerResponseParsersFactory.newInstance(URLs.RESOURCE_SIGNUP));
 
         // Check for common errors
-        UserStateManager.checkForCommonErrors(signupResult);
+        LoginStateManager.checkForCommonErrors(signupResult);
         if (signupResult.containsKey(KEY_ERROR_MSG))
             return signupResult;
 
