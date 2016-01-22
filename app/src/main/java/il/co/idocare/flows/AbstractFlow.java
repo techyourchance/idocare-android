@@ -11,9 +11,12 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class AbstractFlow implements Flow {
 
+    public static final int STATE_NONE = 0;
+
     private final Object STATE_LOCK = new Object();
 
-    private int mState = 0;
+    private int mState = STATE_NONE;
+    private boolean mExecuted = false;
 
     // the set of listeners must be thread safe
     private Set<FlowStateChangeListener> mListeners = Collections.newSetFromMap(
@@ -32,7 +35,15 @@ public abstract class AbstractFlow implements Flow {
 
     @Override
     public final void execute() {
-        Log.d(getName(), "started flow execution");
+        synchronized (STATE_LOCK) {
+            if (mExecuted) {
+                throw new IllegalStateException("the flow has already been executed");
+            }
+
+            Log.d(getName(), "started flow execution");
+            mExecuted = true;
+        }
+
         // TODO: come up with a more sophisticated execution scheme
         new Thread(new Runnable() {
             @Override
