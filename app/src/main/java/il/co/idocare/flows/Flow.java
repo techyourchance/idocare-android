@@ -12,7 +12,22 @@ package il.co.idocare.flows;
 public interface Flow {
 
     /**
-     * Execute the Flow. Flows will usually be executed on background threads.
+     * Classes implementing this interface can register with Flows in order to be notified when
+     * Flow's state changes.
+     */
+    public interface FlowStateChangeListener {
+
+        /**
+         * This callback method will be invoked whenever Flow's internal state changes
+         * @param newState the new state of the Flow
+         */
+        public void onFlowStateChanged(int newState);
+    }
+
+    /**
+     * Execute the Flow.<br>
+     * Note: implementations must not assume that this method will be called on some particular
+     * thread.
      */
     public void execute();
 
@@ -24,4 +39,17 @@ public interface Flow {
      *         publish its internal state.
      */
     public int getState();
+
+    /**
+     * Register a new listener that should be notified when Flow's internal state changes. Has no
+     * effect if the listener is already registered.
+     * @param listener listener to register for notifications; mustn't be null
+     */
+    public void registerFlowStateChangeListener(FlowStateChangeListener listener);
+
+    /**
+     * Unregister a listener. Has no effect if the listener wasn't registered.
+     * @param listener listener to unregister from notifications; mustn't be null
+     */
+    public void unregisterFlowStateChangeListener(FlowStateChangeListener listener);
 }
