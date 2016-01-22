@@ -440,11 +440,12 @@ public class LoginStateManager {
      * Use the provided response handle in order to parse the provided response. The resulting
      * Bundle contains all the relevant information - parsed details and error indicators (if
      * there were any errors)
+     * TODO: get this method out of this class (maybe inside of Flows?)
      * @param response
      * @param responseParser
      * @return
      */
-    private static Bundle handleResponse(CloseableHttpResponse response,
+    public static Bundle handleResponse(CloseableHttpResponse response,
                                          ServerHttpResponseParser responseParser) {
         Bundle result = new Bundle();
 
@@ -467,9 +468,10 @@ public class LoginStateManager {
     /**
      * Check the provided Bundle for existence of common error keys and set KEY_ERROR_MESSAGE
      * field if there are any
+     * TODO: remove this method from here (maybe in Flows?)
      * @param result
      */
-    private static void checkForCommonErrors(Bundle result) {
+    public static void checkForCommonErrors(Bundle result) {
         if (result.containsKey(KEY_ERROR_MSG)) {
             // the result already contains error message - nothing to do
         }
@@ -566,6 +568,7 @@ public class LoginStateManager {
     // ---------------------------------------------------------------------------------------------
 
 
+    // TODO: remove this method from here
     private byte[] toBytes(String plainText) {
         byte[] encodedText;
         try {
