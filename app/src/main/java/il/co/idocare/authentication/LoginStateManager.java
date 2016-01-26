@@ -30,7 +30,7 @@ import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
 import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.URLs;
-import il.co.idocare.flows.LoginNativeFlow;
+import il.co.idocare.sequences.LoginNativeSequence;
 import il.co.idocare.networking.responseparsers.ResponseParserUtils;
 import il.co.idocare.networking.ServerHttpRequest;
 import il.co.idocare.networking.responseparsers.HttpResponseParseException;
@@ -111,7 +111,7 @@ public class LoginStateManager {
      *     {@link LoginStateManager#KEY_ERROR_MSG}
      */
     public void logInNative(String username, String password) {
-        LoginNativeFlow loginNativeFlow = new LoginNativeFlow(username, password, mAccountManager);
+        LoginNativeSequence loginNativeFlow = new LoginNativeSequence(username, password, mAccountManager);
         loginNativeFlow.execute();
     }
 

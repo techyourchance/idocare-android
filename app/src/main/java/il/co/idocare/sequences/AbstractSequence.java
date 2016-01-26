@@ -1,4 +1,4 @@
-package il.co.idocare.flows;
+package il.co.idocare.sequences;
 
 import android.util.Log;
 
@@ -7,9 +7,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Base class for Flows which contain common functionality.
+ * Base class for implementations of {@link Sequence} which contain common functionality.
  */
-public abstract class AbstractFlow implements Flow {
+public abstract class AbstractSequence implements Sequence {
 
 
     private final Object STATE_LOCK = new Object();
@@ -18,17 +18,17 @@ public abstract class AbstractFlow implements Flow {
     private boolean mExecuted = false;
 
     // the set of listeners must be thread safe
-    private Set<FlowStateChangeListener> mListeners = Collections.newSetFromMap(
-            new ConcurrentHashMap<FlowStateChangeListener, Boolean>(1));
+    private Set<SequenceStateChangeListener> mListeners = Collections.newSetFromMap(
+            new ConcurrentHashMap<SequenceStateChangeListener, Boolean>(1));
 
     /**
-     * Subclasses must override this method with code that should be invoked upon Flows
+     * Subclasses must override this method with code that should be invoked upon Sequence
      * execution.
      */
     protected abstract void doWork();
 
     /**
-     * @return the name of concrete implementation of Flow for logging purposes
+     * @return the name of concrete implementation of Sequence for logging purposes
      */
     protected abstract String getName();
 
@@ -36,10 +36,10 @@ public abstract class AbstractFlow implements Flow {
     public final void execute() {
         synchronized (STATE_LOCK) {
             if (mExecuted) {
-                throw new IllegalStateException("the flow has already been executed");
+                throw new IllegalStateException("the Sequence has already been executed");
             }
 
-            Log.d(getName(), "started flow execution");
+            Log.d(getName(), "started Sequence execution");
             mExecuted = true;
         }
 
@@ -60,10 +60,10 @@ public abstract class AbstractFlow implements Flow {
     }
 
     /**
-     * Change the state of this Flow. Has no effect if the new state is the same one as the
+     * Change the state of this Sequence. Has no effect if the new state is the same one as the
      * current state.<br>
      * Note: this state is externally visible.
-     * @param newState new state of the Flow.
+     * @param newState new state of the Sequence.
      */
     protected void setState(int newState) {
         synchronized (STATE_LOCK) {
@@ -79,23 +79,23 @@ public abstract class AbstractFlow implements Flow {
     }
 
     @Override
-    public void registerFlowStateChangeListener(FlowStateChangeListener listener) {
+    public void registerSequenceStateChangeListener(SequenceStateChangeListener listener) {
         if (listener == null)
             throw new IllegalArgumentException("listener mustn't be null");
         mListeners.add(listener);
     }
 
     @Override
-    public void unregisterFlowStateChangeListener(FlowStateChangeListener listener) {
+    public void unregisterSequenceStateChangeListener(SequenceStateChangeListener listener) {
         if (listener == null)
             throw new IllegalArgumentException("listener mustn't be null");
         mListeners.remove(listener);
     }
 
     private void notifyStateChanged(int newState) {
-        for (FlowStateChangeListener listener : mListeners) {
+        for (SequenceStateChangeListener listener : mListeners) {
             Log.d(getName(), "notifying the listener about state change; listener: " + listener);
-            listener.onFlowStateChanged(newState);
+            listener.onSequenceStateChanged(newState);
         }
     }
 }

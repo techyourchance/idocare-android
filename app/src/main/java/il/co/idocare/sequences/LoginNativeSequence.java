@@ -1,4 +1,4 @@
-package il.co.idocare.flows;
+package il.co.idocare.sequences;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -15,7 +15,6 @@ import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.URLs;
 import il.co.idocare.authentication.AccountAuthenticator;
-import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.networking.ServerHttpRequest;
 import il.co.idocare.networking.responseparsers.HttpResponseParseException;
@@ -25,18 +24,18 @@ import il.co.idocare.networking.responseparsers.ServerResponseParsersFactory;
 import il.co.idocare.utils.SecurityUtils;
 
 /**
- * This Flow executes sequence of steps which log the user into the system using provided
+ * This Sequence executes sequence of steps which log the user into the system using provided
  * credentials.
  */
-public class LoginNativeFlow extends AbstractFlow {
+public class LoginNativeSequence extends AbstractSequence {
 
-    private static final String TAG = "LoginNativeFlow";
+    private static final String TAG = "LoginNativeSequence";
 
     private final String mUsername;
     private final String mPassword;
     private AccountManager mAccountManager;
 
-    public LoginNativeFlow(String username, String password, AccountManager accountManager) {
+    public LoginNativeSequence(String username, String password, AccountManager accountManager) {
         mUsername = username;
         mPassword = password;
         mAccountManager = accountManager;
@@ -61,7 +60,7 @@ public class LoginNativeFlow extends AbstractFlow {
         // Add encoded parameter
         request.addTextField(Constants.FIELD_NAME_USER_PASSWORD_LOGIN, encodedPassword);
 
-        // TODO: maybe too wasteful to build a new client for each flow?
+        // TODO: maybe too wasteful to build a new client for each sequence?
         CloseableHttpResponse response = request.execute(HttpClientBuilder.create().build());
 
         if (response == null)  {
