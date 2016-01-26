@@ -30,6 +30,7 @@ import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
 import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.URLs;
+import il.co.idocare.flows.LoginNativeFlow;
 import il.co.idocare.networking.responseparsers.ResponseParserUtils;
 import il.co.idocare.networking.ServerHttpRequest;
 import il.co.idocare.networking.responseparsers.HttpResponseParseException;
@@ -109,57 +110,9 @@ public class LoginStateManager {
      *     or, in case login attempt failed:<br>
      *     {@link LoginStateManager#KEY_ERROR_MSG}
      */
-    public Bundle logInNative(String username, String password) {
-
-        Bundle loginResult = new Bundle();
-
-        // Encode username and password
-        byte[] usernameBytes = toBytes(username);
-        byte[] passwordBytes = toBytes(password);
-
-        if (usernameBytes == null || passwordBytes == null) {
-            loginResult.putString(KEY_ERROR_MSG, "encoding error");
-            return loginResult;
-        }
-
-        ServerHttpRequest request = new ServerHttpRequest(URLs.getUrl(URLs.RESOURCE_LOGIN));
-
-        // Add encoded header
-        request.addHeader(Constants.HttpHeader.USER_USERNAME.getValue(),
-                Base64.encodeToString(usernameBytes, Base64.NO_WRAP));
-
-        // Add encoded parameter
-        request.addTextField(Constants.FIELD_NAME_USER_PASSWORD_LOGIN,
-                Base64.encodeToString(passwordBytes, Base64.NO_WRAP));
-
-        CloseableHttpResponse response = request.execute(HttpClientBuilder.create().build());
-
-        if (response == null) {
-            loginResult.putString(KEY_ERROR_MSG, "could not obtain response to login request");
-            return loginResult;
-        }
-
-        // Parse the response
-        loginResult = LoginStateManager.handleResponse(response,
-                ServerResponseParsersFactory.newInstance(URLs.RESOURCE_LOGIN));
-
-        // Check for common errors
-        LoginStateManager.checkForCommonErrors(loginResult);
-        if (loginResult.containsKey(KEY_ERROR_MSG))
-            return loginResult;
-
-        // Account name should be added manually because the response does not contain this data
-        // TODO: seems awkward that we need to store the account name and add it manually - try to resolve
-        loginResult.putString(ServerHttpResponseParser.KEY_USERNAME, username);
-
-        addNativeAccount(loginResult);
-        if (loginResult.containsKey(KEY_ERROR_MSG))
-            return loginResult;
-
-
-        EventBus.getDefault().post(new UserLoggedInEvent());
-
-        return loginResult;
+    public void logInNative(String username, String password) {
+        LoginNativeFlow loginNativeFlow = new LoginNativeFlow(username, password, mAccountManager);
+        loginNativeFlow.execute();
     }
 
 
@@ -280,27 +233,29 @@ public class LoginStateManager {
             return false;
         }
 
-        // Try to log in - this will fail if a native account corresponding to this FB account
-        // hasn't been created yet
-        Bundle loginResult = logInNative(email, facebookId);
-        if (loginResult.containsKey(KEY_ERROR_MSG)) {
-            Log.v(LOG_TAG, "native login into FB shadowed account failed. Error message: " +
-                    loginResult.getString(KEY_ERROR_MSG));
-            // Login failed therefore we need to try to create a new native account for this FB user
-            // TODO: this account should have a picture
-            Bundle signupResult =
-                    signUpNative(email, password, nickname, firstName, lastName, facebookId, null);
-            if (signupResult.containsKey(KEY_ERROR_MSG)) {
-                Log.v(LOG_TAG, "native signup for FB shadowed account failed. Error message: " +
-                        signupResult.getString(KEY_ERROR_MSG));
-                // Both login and signup attempts failed - FB login flow failed
-                return false;
-            }
-        }
+        // TODO: refactor FB login into separate flow
 
-        // We need to designate the newly created native account as FB account
-        Account account = getActiveAccount();
-        mAccountManager.setUserData(account, Constants.FIELD_NAME_USER_FACEBOOK_ID, facebookId);
+//        // Try to log in - this will fail if a native account corresponding to this FB account
+//        // hasn't been created yet
+//        Bundle loginResult = logInNative(email, facebookId);
+//        if (loginResult.containsKey(KEY_ERROR_MSG)) {
+//            Log.v(LOG_TAG, "native login into FB shadowed account failed. Error message: " +
+//                    loginResult.getString(KEY_ERROR_MSG));
+//            // Login failed therefore we need to try to create a new native account for this FB user
+//            // TODO: this account should have a picture
+//            Bundle signupResult =
+//                    signUpNative(email, password, nickname, firstName, lastName, facebookId, null);
+//            if (signupResult.containsKey(KEY_ERROR_MSG)) {
+//                Log.v(LOG_TAG, "native signup for FB shadowed account failed. Error message: " +
+//                        signupResult.getString(KEY_ERROR_MSG));
+//                // Both login and signup attempts failed - FB login flow failed
+//                return false;
+//            }
+//        }
+//
+//        // We need to designate the newly created native account as FB account
+//        Account account = getActiveAccount();
+//        mAccountManager.setUserData(account, Constants.FIELD_NAME_USER_FACEBOOK_ID, facebookId);
 
         return true;
     }

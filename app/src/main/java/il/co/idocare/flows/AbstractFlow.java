@@ -11,7 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class AbstractFlow implements Flow {
 
-    public static final int STATE_NONE = 0;
 
     private final Object STATE_LOCK = new Object();
 

@@ -1,5 +1,6 @@
 package il.co.idocare.controllers.fragments;
 
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -16,6 +17,7 @@ import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
+import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.views.LoginNativeViewMVC;
 
 /**
@@ -93,7 +95,22 @@ public class LoginNativeFragment extends AbstractFragment {
     // EventBus events handling
 
     public void onEvent(LoginNativeViewMVC.LoginButtonClickEvent event) {
+        // TODO: refactor communication with MVC views to use standard listeners instead of EventBus
         logInNative();
+    }
+
+    public void onEventMainThread(LoginStateEvents.LoginSucceededEvent event) {
+        Bundle loginResult = new Bundle();
+        loginResult.putString(AccountManager.KEY_ACCOUNT_NAME, event.getUsername());
+        loginResult.putString(AccountManager.KEY_AUTHTOKEN, event.getAuthToken());
+        Intent intent = new Intent();
+        intent.putExtras(loginResult);
+        finishActivity(Activity.RESULT_OK, intent, loginResult);
+    }
+
+    public void onEventMainThread(LoginStateEvents.LoginFailedEvent event) {
+        // TODO: refactor communication with MVC views to use standard listeners instead of EventBus
+        EventBus.getDefault().post(new LoginNativeViewMVC.LoginFailedEvent());
     }
 
     // End of EventBus events handling
@@ -115,26 +132,11 @@ public class LoginNativeFragment extends AbstractFragment {
         // Notify of login init
         EventBus.getDefault().post(new LoginNativeViewMVC.LoginRequestSentEvent());
 
-        final LoginStateManager userStateManager = new LoginStateManager(getActivity());
+        LoginStateManager loginStateManager = new LoginStateManager(getActivity());
+        loginStateManager.logInNative(username, password);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Bundle loginResult = userStateManager.logInNative(username, password);
-
-                if (loginResult.containsKey(LoginStateManager.KEY_ERROR_MSG)) {
-                    // Login failed - send notification
-                    EventBus.getDefault().post(new LoginNativeViewMVC.LoginFailedEvent());
-                } else {
-                    // Logged in successfully
-                    Intent intent = new Intent();
-                    intent.putExtras(loginResult);
-                    finishActivity(Activity.RESULT_OK, intent, loginResult);
-                }
-
-            }
-        }).start();
     }
+
 
     private void finishActivity(int resultCode, Intent data, Bundle result) {
         // This code is crap, but no time to think of a better approach
