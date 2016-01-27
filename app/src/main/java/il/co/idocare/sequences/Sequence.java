@@ -47,11 +47,11 @@ public interface Sequence {
     // Public methods
 
     /**
-     * Execute the Sequence. This method must not be called more than once.<br>
+     * Execute the Sequence in background. This method must not be called more than once.<br>
      * Note: implementations must not assume that this method will be called on some particular
      * thread.
      */
-    public void execute();
+    public void executeInBackground();
 
     /**
      * Since Sequence represents sequence of "steps", it might transition between multiple states

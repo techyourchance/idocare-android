@@ -123,7 +123,7 @@ public class LoginStateManager {
                 }
             }
         });
-        loginNativeSequence.execute();
+        loginNativeSequence.executeInBackground();
     }
 
 
