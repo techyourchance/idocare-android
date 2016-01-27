@@ -30,12 +30,14 @@ import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
 import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.URLs;
+import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.sequences.LoginNativeSequence;
 import il.co.idocare.networking.responseparsers.ResponseParserUtils;
 import il.co.idocare.networking.ServerHttpRequest;
 import il.co.idocare.networking.responseparsers.HttpResponseParseException;
 import il.co.idocare.networking.responseparsers.ServerHttpResponseParser;
 import il.co.idocare.networking.responseparsers.ServerResponseParsersFactory;
+import il.co.idocare.sequences.Sequence;
 
 /**
  * This class manages the login state of the user - it aggregates information from all login
@@ -99,20 +101,29 @@ public class LoginStateManager {
     }
 
     /**
-     * Try to perform a native log in with the provided credentials. The result info is
-     * encapsulated in the returned Bundle object.<br>
-     * NOTE: this method mustn't be called from UI thread!
+     * Attempt to perform a native log in with the provided credentials.
      * @param username
      * @param password
-     * @return a Bundle having at least the following fields in case of successful login:<br>
-     *     {@link AccountManager#KEY_ACCOUNT_NAME}<br>
-     *     {@link AccountManager#KEY_AUTHTOKEN}<br>
-     *     or, in case login attempt failed:<br>
-     *     {@link LoginStateManager#KEY_ERROR_MSG}
      */
     public void logInNative(String username, String password) {
-        LoginNativeSequence loginNativeFlow = new LoginNativeSequence(username, password, mAccountManager);
-        loginNativeFlow.execute();
+
+        final LoginNativeSequence loginNativeSequence =
+                new LoginNativeSequence(username, password, mAccountManager);
+
+        loginNativeSequence.registerStateChangeListener(new Sequence.StateChangeListener() {
+            @Override
+            public void onSequenceStateChanged(int newState) {
+                if (newState == Sequence.STATE_EXECUTED_SUCCEEDED) {
+                    String username = loginNativeSequence.getSequenceResult().getUsername();
+                    String authToken = loginNativeSequence.getSequenceResult().getAuthToken();
+                    EventBus.getDefault()
+                            .post(new LoginStateEvents.LoginSucceededEvent(username, authToken));
+                } else if (newState == Sequence.STATE_EXECUTED_FAILED) {
+                    EventBus.getDefault().post(new LoginStateEvents.LoginFailedEvent());
+                }
+            }
+        });
+        loginNativeSequence.execute();
     }
 
 

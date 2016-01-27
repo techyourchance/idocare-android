@@ -18,8 +18,8 @@ public abstract class AbstractSequence implements Sequence {
     private boolean mExecuted = false;
 
     // the set of listeners must be thread safe
-    private Set<SequenceStateChangeListener> mListeners = Collections.newSetFromMap(
-            new ConcurrentHashMap<SequenceStateChangeListener, Boolean>(1));
+    private Set<StateChangeListener> mListeners = Collections.newSetFromMap(
+            new ConcurrentHashMap<StateChangeListener, Boolean>(1));
 
     /**
      * Subclasses must override this method with code that should be invoked upon Sequence
@@ -79,21 +79,21 @@ public abstract class AbstractSequence implements Sequence {
     }
 
     @Override
-    public void registerSequenceStateChangeListener(SequenceStateChangeListener listener) {
+    public void registerStateChangeListener(StateChangeListener listener) {
         if (listener == null)
             throw new IllegalArgumentException("listener mustn't be null");
         mListeners.add(listener);
     }
 
     @Override
-    public void unregisterSequenceStateChangeListener(SequenceStateChangeListener listener) {
+    public void unregisterSequenceStateChangeListener(StateChangeListener listener) {
         if (listener == null)
             throw new IllegalArgumentException("listener mustn't be null");
         mListeners.remove(listener);
     }
 
     private void notifyStateChanged(int newState) {
-        for (SequenceStateChangeListener listener : mListeners) {
+        for (StateChangeListener listener : mListeners) {
             Log.d(getName(), "notifying the listener about state change; listener: " + listener);
             listener.onSequenceStateChanged(newState);
         }

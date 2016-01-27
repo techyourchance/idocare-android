@@ -66,13 +66,13 @@ public interface Sequence {
      * no effect if the listener is already registered.
      * @param listener listener to register for notifications; mustn't be null
      */
-    public void registerSequenceStateChangeListener(SequenceStateChangeListener listener);
+    public void registerStateChangeListener(StateChangeListener listener);
 
     /**
      * Unregister a listener. Has no effect if the listener wasn't registered.
      * @param listener listener to unregister from notifications; mustn't be null
      */
-    public void unregisterSequenceStateChangeListener(SequenceStateChangeListener listener);
+    public void unregisterSequenceStateChangeListener(StateChangeListener listener);
 
     // End of public methods
     //
@@ -87,7 +87,7 @@ public interface Sequence {
      * Classes implementing this interface can register with Sequence in order to be notified when
      * Sequence's state changes.
      */
-    public interface SequenceStateChangeListener {
+    public interface StateChangeListener {
 
         /**
          * This callback method will be invoked whenever Sequence's internal state changes.<br>

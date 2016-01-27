@@ -35,6 +35,8 @@ public class LoginNativeSequence extends AbstractSequence {
     private final String mPassword;
     private AccountManager mAccountManager;
 
+    private LoginNativeResult mLoginNativeResult;
+
     public LoginNativeSequence(String username, String password, AccountManager accountManager) {
         mUsername = username;
         mPassword = password;
@@ -183,12 +185,50 @@ public class LoginNativeSequence extends AbstractSequence {
         mAccountManager.setAuthToken(account, AccountAuthenticator.AUTH_TOKEN_TYPE_DEFAULT, authToken);
     }
 
+    private void setSequenceResult(LoginNativeResult loginNativeResult) {
+        mLoginNativeResult = loginNativeResult;
+    }
+
+    public LoginNativeResult getSequenceResult() {
+        return mLoginNativeResult;
+    }
+
     private void loginSucceeded(String username, String authToken) {
-        EventBus.getDefault().post(new LoginStateEvents.LoginSucceededEvent(username, authToken));
+        setSequenceResult(new LoginNativeResult(true, username, authToken));
+        setState(Sequence.STATE_EXECUTED_SUCCEEDED);
     }
 
     private void loginFailed() {
-        EventBus.getDefault().post(new LoginStateEvents.LoginFailedEvent());
+        setSequenceResult(new LoginNativeResult(false, null, null));
+        setState(Sequence.STATE_EXECUTED_FAILED);
+    }
+
+    /**
+     * This is the result of Sequence's execution
+     */
+    public static class LoginNativeResult {
+
+        private final boolean mSucceeded;
+        private final String mUsername;
+        private final String mAuthToken;
+
+        public LoginNativeResult(boolean succeeded, String username, String authToken) {
+            mSucceeded = succeeded;
+            mUsername = username;
+            mAuthToken = authToken;
+        }
+
+        public boolean isSucceeded() {
+            return mSucceeded;
+        }
+
+        public String getUsername() {
+            return mUsername;
+        }
+
+        public String getAuthToken() {
+            return mAuthToken;
+        }
     }
 
 
