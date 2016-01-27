@@ -2,6 +2,7 @@ package il.co.idocare.utils;
 
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
 
 import java.io.UnsupportedEncodingException;
 
@@ -10,16 +11,19 @@ import java.io.UnsupportedEncodingException;
  */
 public class SecurityUtils {
 
+    private static final String TAG = "SecurityUtils";
+
     private SecurityUtils() {}
 
     /**
      * Encode arbitrary string as credentials.
-     * @param stringToEncode must be non-empty
      * @return the encoded string, or null in case of an error
      */
     public static String encodeStringAsCredential(String stringToEncode) {
-        if (TextUtils.isEmpty(stringToEncode))
-            throw new IllegalArgumentException("parameters must be non-empty");
+        if (stringToEncode == null) {
+            Log.e(TAG, "encodeStringAsCredential: null parameter - returning null");
+            return null;
+        }
 
         byte[] encodedStringBytes;
         try {
