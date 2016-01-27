@@ -1,5 +1,6 @@
 package il.co.idocare.controllers.fragments;
 
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -27,6 +28,8 @@ import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
+import il.co.idocare.datamodels.pojos.UserSignupData;
+import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.pictures.CameraAdapter;
 import il.co.idocare.utils.UtilMethods;
 import il.co.idocare.views.SignupNativeViewMVC;
@@ -136,6 +139,24 @@ public class SignupNativeFragment extends AbstractFragment {
         showMultipleAccountsNotAllowedDialog();
     }
 
+    public void onEventMainThread(LoginStateEvents.LoginSucceededEvent event) {
+        Bundle loginResult = new Bundle();
+        loginResult.putString(AccountManager.KEY_ACCOUNT_NAME, event.getUsername());
+        loginResult.putString(AccountManager.KEY_AUTHTOKEN, event.getAuthToken());
+        Intent intent = new Intent();
+        intent.putExtras(loginResult);
+        finishActivity(Activity.RESULT_OK, intent, loginResult);
+    }
+
+    public void onEventMainThread(LoginStateEvents.LoginFailedEvent event) {
+        // TODO: refactor communication with MVC views to use standard listeners instead of EventBus
+        EventBus.getDefault().post(new SignupNativeViewMVC.SignupFailedEvent());
+        // TODO: change this toast to an informative dialog
+        Toast.makeText(getActivity(),
+                getResources().getString(R.string.msg_signup_failed),
+                Toast.LENGTH_LONG).show();
+    }
+
     // End of EventBus events handling
     //
     // ---------------------------------------------------------------------------------------------
@@ -187,42 +208,15 @@ public class SignupNativeFragment extends AbstractFragment {
             return;
         }
 
+        UserSignupData userSignupData = new UserSignupData(email, password, nickname,
+                firstName, lastName, null, mUserPicturePath);
+
         // Notify of signup init
         EventBus.getDefault().post(new SignupNativeViewMVC.SignupRequestSentEvent());
 
-        final LoginStateManager userStateManager = new LoginStateManager(getActivity());
+        final LoginStateManager loginStateManager = new LoginStateManager(getActivity());
+        loginStateManager.signUpNative(userSignupData);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Bundle signupResult = userStateManager.signUpNative(email, password, nickname,
-                        firstName, lastName, null, mUserPicturePath);
-
-                if (signupResult.containsKey(LoginStateManager.KEY_ERROR_MSG)) {
-                    Log.e(LOG_TAG, "Signup failed. Error message: " +
-                            signupResult.getString(LoginStateManager.KEY_ERROR_MSG));
-
-                    // Signup failed - send notification
-                    EventBus.getDefault().post(new SignupNativeViewMVC.SignupFailedEvent());
-                    // And notify the user
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getActivity(),
-                                    getResources().getString(R.string.msg_signup_failed),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    });
-
-                } else {
-                    // Signed up and successfully - the user is logged in
-                    Intent intent = new Intent();
-                    intent.putExtras(signupResult);
-                    finishActivity(Activity.RESULT_OK, intent, signupResult);
-                }
-
-            }
-        }).start();
     }
 
     private boolean validateFields(String email, String password, String repeatPassword,

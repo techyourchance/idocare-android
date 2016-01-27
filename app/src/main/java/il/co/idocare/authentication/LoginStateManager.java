@@ -30,6 +30,7 @@ import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
 import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.URLs;
+import il.co.idocare.datamodels.pojos.UserSignupData;
 import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.sequences.LoginNativeSequence;
 import il.co.idocare.networking.responseparsers.ResponseParserUtils;
@@ -38,6 +39,7 @@ import il.co.idocare.networking.responseparsers.HttpResponseParseException;
 import il.co.idocare.networking.responseparsers.ServerHttpResponseParser;
 import il.co.idocare.networking.responseparsers.ServerResponseParsersFactory;
 import il.co.idocare.sequences.Sequence;
+import il.co.idocare.sequences.SignupNativeSequence;
 
 /**
  * This class manages the login state of the user - it aggregates information from all login
@@ -272,66 +274,26 @@ public class LoginStateManager {
     }
 
     /**
-     * Perform native signup<br>
-     * Do not call this method from UI thread!
+     * Perform native signup
      */
-    public Bundle signUpNative(String email, String password, String nickname, String firstName,
-                                String lastName, @Nullable String facebookId,
-                                @Nullable String userPicturePath) {
+    public void signUpNative(UserSignupData userSignupData) {
+        final SignupNativeSequence signupNativeSequence =
+                new SignupNativeSequence(userSignupData, mAccountManager);
 
-        Bundle signupResult = new Bundle();
-
-        ServerHttpRequest request = new ServerHttpRequest(URLs.getUrl(URLs.RESOURCE_SIGNUP));
-
-        byte[] emailBytes = toBytes(email);
-        byte[] passwordBytes = toBytes(password);
-        if (emailBytes == null || passwordBytes == null) {
-            signupResult.putString(KEY_ERROR_MSG, "encoding error");
-            return signupResult;
-        }
-
-        request.addTextField(Constants.FIELD_NAME_USER_EMAIL, Base64.encodeToString(emailBytes, Base64.NO_WRAP));
-        request.addTextField(Constants.FIELD_NAME_USER_PASSWORD_SIGNUP, Base64.encodeToString(passwordBytes, Base64.NO_WRAP));
-        request.addTextField(Constants.FIELD_NAME_USER_NICKNAME, nickname);
-        request.addTextField(Constants.FIELD_NAME_USER_FIRST_NAME, firstName);
-        request.addTextField(Constants.FIELD_NAME_USER_LAST_NAME, lastName);
-        if (!TextUtils.isEmpty(facebookId))
-            request.addTextField(Constants.FIELD_NAME_USER_FACEBOOK_ID, facebookId);
-
-        if (!TextUtils.isEmpty(userPicturePath))
-        request.addPictureField(Constants.FIELD_NAME_USER_PICTURE,
-                "userPicture", userPicturePath);
-
-
-        CloseableHttpResponse response = request.execute(HttpClientBuilder.create().build());
-
-
-        if (response == null) {
-            signupResult.putString(KEY_ERROR_MSG, "could not obtain response to signup request");
-            return signupResult;
-        }
-
-        // Parse the response
-        signupResult = LoginStateManager.handleResponse(response,
-                ServerResponseParsersFactory.newInstance(URLs.RESOURCE_SIGNUP));
-
-        // Check for common errors
-        LoginStateManager.checkForCommonErrors(signupResult);
-        if (signupResult.containsKey(KEY_ERROR_MSG))
-            return signupResult;
-
-
-        // Account name should be added manually because the response does not contain this data
-        signupResult.putString(ServerHttpResponseParser.KEY_USERNAME, email);
-
-        addNativeAccount(signupResult);
-        if (signupResult.containsKey(KEY_ERROR_MSG))
-            return signupResult;
-
-
-        EventBus.getDefault().post(new UserLoggedInEvent());
-
-        return signupResult;
+        signupNativeSequence.registerStateChangeListener(new Sequence.StateChangeListener() {
+            @Override
+            public void onSequenceStateChanged(int newState) {
+                if (newState == Sequence.STATE_EXECUTED_SUCCEEDED) {
+                    String username = signupNativeSequence.getSequenceResult().getUsername();
+                    String authToken = signupNativeSequence.getSequenceResult().getAuthToken();
+                    EventBus.getDefault()
+                            .post(new LoginStateEvents.LoginSucceededEvent(username, authToken));
+                } else if (newState == Sequence.STATE_EXECUTED_FAILED) {
+                    EventBus.getDefault().post(new LoginStateEvents.LoginFailedEvent());
+                }
+            }
+        });
+        signupNativeSequence.executeInBackground();
     }
 
     /**
