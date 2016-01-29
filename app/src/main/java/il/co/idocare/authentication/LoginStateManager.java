@@ -8,9 +8,6 @@ import android.accounts.OperationCanceledException;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
 
 import com.facebook.AccessToken;
@@ -22,22 +19,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
 
-import ch.boye.httpclientandroidlib.client.methods.CloseableHttpResponse;
-import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
 import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
-import il.co.idocare.URLs;
-import il.co.idocare.datamodels.pojos.UserSignupData;
+import il.co.idocare.datamodels.pojos.UserSignupNativeData;
 import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.sequences.LoginNativeSequence;
-import il.co.idocare.networking.responseparsers.ResponseParserUtils;
-import il.co.idocare.networking.ServerHttpRequest;
-import il.co.idocare.networking.responseparsers.HttpResponseParseException;
-import il.co.idocare.networking.responseparsers.ServerHttpResponseParser;
-import il.co.idocare.networking.responseparsers.ServerResponseParsersFactory;
 import il.co.idocare.sequences.Sequence;
 import il.co.idocare.sequences.SignupNativeSequence;
 
@@ -47,25 +34,17 @@ import il.co.idocare.sequences.SignupNativeSequence;
  */
 public class LoginStateManager {
 
-    public static final String KEY_ERROR_MSG = "il.co.idocare.authentication." +
-            LoginStateManager.class.getSimpleName() + ".KEY_ERROR_MSG";
-
-
-
-    private static final String LOG_TAG = LoginStateManager.class.getSimpleName();
+    private static final String TAG = "LoginStateManager";
 
 
     private Context mContext;
 
     private AccountManager mAccountManager;
 
-    public LoginStateManager(Context context) {
-        if (context == null)
-            throw new IllegalArgumentException("valid context must be supplied!");
+    public LoginStateManager(Context context, AccountManager accountManager) {
         mContext = context;
-        mAccountManager = AccountManager.get(mContext);
+        mAccountManager = accountManager;
     }
-
 
     /**
      * Check whether there is a currently logged in user.
@@ -102,6 +81,30 @@ public class LoginStateManager {
         return getActiveAccount() != null;
     }
 
+
+    /**
+     * Perform native signup
+     */
+    public void signUpNative(UserSignupNativeData userData) {
+        final SignupNativeSequence signupNativeSequence =
+                new SignupNativeSequence(userData, mAccountManager);
+
+        signupNativeSequence.registerStateChangeListener(new Sequence.StateChangeListener() {
+            @Override
+            public void onSequenceStateChanged(int newState) {
+                if (newState == Sequence.STATE_EXECUTED_SUCCEEDED) {
+                    String username = signupNativeSequence.getSequenceResult().getUsername();
+                    String authToken = signupNativeSequence.getSequenceResult().getAuthToken();
+                    EventBus.getDefault()
+                            .post(new LoginStateEvents.LoginSucceededEvent(username, authToken));
+                } else if (newState == Sequence.STATE_EXECUTED_FAILED) {
+                    EventBus.getDefault().post(new LoginStateEvents.LoginFailedEvent());
+                }
+            }
+        });
+        signupNativeSequence.executeInBackground();
+    }
+
     /**
      * Attempt to perform a native log in with the provided credentials.
      * @param username
@@ -129,70 +132,6 @@ public class LoginStateManager {
     }
 
 
-    /**
-     * Call to this method will add a new account and set its auth token. Account's details are
-     * obtained from the provided Bundle. If the required account already exists - call to
-     * this method will only update its auth token.<br>
-     * The result is written back into the provided Bundle.
-     */
-    public void addNativeAccount(Bundle result) {
-
-        String username = result.getString(ServerHttpResponseParser.KEY_USERNAME);
-        String userId = result.getString(ServerHttpResponseParser.KEY_USER_ID);
-        String authToken = result.getString(ServerHttpResponseParser.KEY_PUBLIC_KEY);
-
-        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(userId) || TextUtils.isEmpty(authToken))
-            throw new IllegalArgumentException("account name, user ID and auth token must be non-empty");
-
-        String accountType = AccountAuthenticator.ACCOUNT_TYPE_DEFAULT;
-
-        final Account account = new Account(username, accountType);
-        Bundle userdata = new Bundle(1);
-        userdata.putString(Constants.FIELD_NAME_USER_ID, userId);
-        mAccountManager.addAccountExplicitly(account, null, userdata);
-
-        Account[] existingAccounts =
-                mAccountManager.getAccountsByType(AccountAuthenticator.ACCOUNT_TYPE_DEFAULT);
-
-        /*
-         The below code both checks whether the required account exists and removes all other
-         accounts, thus ensuring existence of a single account on the device...
-         TODO: reconsider single account approach and this particular implementation
-          */
-        boolean addedSuccessfully = Arrays.asList(existingAccounts).contains(account);
-
-        // If the required account wasn't added - set error flag and return
-        if (!addedSuccessfully) {
-            result.putString(KEY_ERROR_MSG, "failed to add native account");
-            return;
-        }
-
-        // The required account exists - update its authToken and remove all other accounts
-        for (Account acc : existingAccounts) {
-            if (acc.equals(account)) {
-                setNativeAccountAuthToken(username, accountType, authToken);
-            } else {
-                final Account finalAccount = acc;
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mAccountManager.removeAccount(finalAccount, null, null);
-                    }
-                }).start();
-            }
-        }
-
-        // Put account's details into the bundle under "global" keys
-        result.putString(AccountManager.KEY_ACCOUNT_NAME, username);
-        result.putString(AccountManager.KEY_AUTHTOKEN, authToken);
-    }
-
-    public void setNativeAccountAuthToken(String accountName, String accountType,
-                                          String authToken) {
-        Account account = new Account(accountName, accountType);
-        mAccountManager.setAuthToken(account, AccountAuthenticator.AUTH_TOKEN_TYPE_DEFAULT, authToken);
-    }
-
 
     /**
      * This method should be called after successful FB login. Currently it creates a new
@@ -212,10 +151,10 @@ public class LoginStateManager {
 
         GraphResponse response = GraphRequest.executeAndWait(request);
 
-        Log.v(LOG_TAG, "Contents of facebook/me response: " + response.getRawResponse());
+        Log.v(TAG, "Contents of facebook/me response: " + response.getRawResponse());
 
         if (response.getError() != null) {
-            Log.e(LOG_TAG, "facebook/me returned error response: " +
+            Log.e(TAG, "facebook/me returned error response: " +
                     response.getError().getErrorMessage());
             // TODO: facebook errors should be processed - there is a way to recover from some of them
             return false;
@@ -223,7 +162,7 @@ public class LoginStateManager {
 
         JSONObject jsonResponse = response.getJSONObject();
         if (jsonResponse == null) {
-            Log.e(LOG_TAG, "couldn't obtain JSON object from FB response");
+            Log.e(TAG, "couldn't obtain JSON object from FB response");
             return false;
         }
 
@@ -252,14 +191,14 @@ public class LoginStateManager {
 //        // hasn't been created yet
 //        Bundle loginResult = logInNative(email, facebookId);
 //        if (loginResult.containsKey(KEY_ERROR_MSG)) {
-//            Log.v(LOG_TAG, "native login into FB shadowed account failed. Error message: " +
+//            Log.v(TAG, "native login into FB shadowed account failed. Error message: " +
 //                    loginResult.getString(KEY_ERROR_MSG));
 //            // Login failed therefore we need to try to create a new native account for this FB user
 //            // TODO: this account should have a picture
 //            Bundle signupResult =
 //                    signUpNative(email, password, nickname, firstName, lastName, facebookId, null);
 //            if (signupResult.containsKey(KEY_ERROR_MSG)) {
-//                Log.v(LOG_TAG, "native signup for FB shadowed account failed. Error message: " +
+//                Log.v(TAG, "native signup for FB shadowed account failed. Error message: " +
 //                        signupResult.getString(KEY_ERROR_MSG));
 //                // Both login and signup attempts failed - FB login flow failed
 //                return false;
@@ -273,28 +212,6 @@ public class LoginStateManager {
         return true;
     }
 
-    /**
-     * Perform native signup
-     */
-    public void signUpNative(UserSignupData userSignupData) {
-        final SignupNativeSequence signupNativeSequence =
-                new SignupNativeSequence(userSignupData, mAccountManager);
-
-        signupNativeSequence.registerStateChangeListener(new Sequence.StateChangeListener() {
-            @Override
-            public void onSequenceStateChanged(int newState) {
-                if (newState == Sequence.STATE_EXECUTED_SUCCEEDED) {
-                    String username = signupNativeSequence.getSequenceResult().getUsername();
-                    String authToken = signupNativeSequence.getSequenceResult().getAuthToken();
-                    EventBus.getDefault()
-                            .post(new LoginStateEvents.LoginSucceededEvent(username, authToken));
-                } else if (newState == Sequence.STATE_EXECUTED_FAILED) {
-                    EventBus.getDefault().post(new LoginStateEvents.LoginFailedEvent());
-                }
-            }
-        });
-        signupNativeSequence.executeInBackground();
-    }
 
     /**
      * Log out the active user
@@ -324,7 +241,7 @@ public class LoginStateManager {
                 }
 
                 if (isLoggedInNative()) {
-                    Log.e(LOG_TAG, "logout process failed");
+                    Log.e(TAG, "logout process failed");
                     return;
                 }
 
@@ -357,65 +274,12 @@ public class LoginStateManager {
             prefs.edit().remove(Constants.LOGIN_SKIPPED_KEY).apply();
     }
 
+
     public boolean isLoginSkipped() {
         SharedPreferences prefs = mContext.getSharedPreferences(Constants.PREFERENCES_FILE,
                 Context.MODE_PRIVATE);
         return prefs.contains(Constants.LOGIN_SKIPPED_KEY);
     }
-
-
-    /**
-     * Use the provided response handle in order to parse the provided response. The resulting
-     * Bundle contains all the relevant information - parsed details and error indicators (if
-     * there were any errors)
-     * TODO: get this method out of this class (maybe inside of Flows?)
-     * @param response
-     * @param responseParser
-     * @return
-     */
-    public static Bundle handleResponse(CloseableHttpResponse response,
-                                         ServerHttpResponseParser responseParser) {
-        Bundle result = new Bundle();
-
-        try {
-            result = responseParser.parseResponse(response);
-        } catch (HttpResponseParseException e) {
-            e.printStackTrace();
-            result.putString(KEY_ERROR_MSG, "could not parse response to login request");
-            return result;
-        } finally {
-            try {
-                response.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Check the provided Bundle for existence of common error keys and set KEY_ERROR_MESSAGE
-     * field if there are any
-     * TODO: remove this method from here (maybe in Flows?)
-     * @param result
-     */
-    public static void checkForCommonErrors(Bundle result) {
-        if (result.containsKey(KEY_ERROR_MSG)) {
-            // the result already contains error message - nothing to do
-        }
-        else if (!result.containsKey(ServerHttpResponseParser.KEY_RESPONSE_STATUS_OK)) {
-            result.putString(KEY_ERROR_MSG, "unsuccessful HTTP response code: "
-                    + result.getInt(ServerHttpResponseParser.KEY_RESPONSE_STATUS_CODE));
-        }
-        else if (!result.containsKey(ServerHttpResponseParser.KEY_INTERNAL_STATUS_SUCCESS)) {
-            result.putString(KEY_ERROR_MSG, "unsuccessful internal status");
-        }
-        else if (result.containsKey(ServerHttpResponseParser.KEY_ERRORS)) {
-            result.putString(KEY_ERROR_MSG,
-                    ResponseParserUtils.extractErrorsToString(result));
-        }
-    }
-
 
     /**
      *
@@ -439,7 +303,7 @@ public class LoginStateManager {
 
 
         if (accounts.length > 1) {
-            Log.e(LOG_TAG, "There is more than one native account on the device. " +
+            Log.e(TAG, "There is more than one native account on the device. " +
                     "Using the first one returned." +
                     "\nTotal native accounts: " + String.valueOf(accounts.length));
         }
@@ -468,21 +332,6 @@ public class LoginStateManager {
     }
 
 
-    /**
-     *
-     * @return auth token associated with the active account, or null if there is no
-     *         native account registered on the device or there is no auth token for an active
-     *         account
-     */
-    public String getActiveAccountAuthToken() {
-        Account account = getActiveAccount();
-
-        if (account != null)
-            return mAccountManager.peekAuthToken(account, AccountAuthenticator.AUTH_TOKEN_TYPE_DEFAULT);
-        else
-            return null;
-    }
-
     // ---------------------------------------------------------------------------------------------
     //
     // EventBus events
@@ -495,17 +344,4 @@ public class LoginStateManager {
     //
     // ---------------------------------------------------------------------------------------------
 
-
-    // TODO: remove this method from here
-    private byte[] toBytes(String plainText) {
-        byte[] encodedText;
-        try {
-            encodedText = ("fuckyouhackers" + plainText).getBytes("UTF-8");
-            return encodedText;
-        } catch (UnsupportedEncodingException e ) {
-            // Really? Not supporting UTF-8???
-            e.printStackTrace();
-            return null;
-        }
-    }
 }

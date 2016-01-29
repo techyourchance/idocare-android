@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +27,7 @@ import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
-import il.co.idocare.datamodels.pojos.UserSignupData;
+import il.co.idocare.datamodels.pojos.UserSignupNativeData;
 import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.pictures.CameraAdapter;
 import il.co.idocare.utils.UtilMethods;
@@ -208,14 +207,15 @@ public class SignupNativeFragment extends AbstractFragment {
             return;
         }
 
-        UserSignupData userSignupData = new UserSignupData(email, password, nickname,
+        UserSignupNativeData userData = new UserSignupNativeData(email, password, nickname,
                 firstName, lastName, null, mUserPicturePath);
 
         // Notify of signup init
         EventBus.getDefault().post(new SignupNativeViewMVC.SignupRequestSentEvent());
 
-        final LoginStateManager loginStateManager = new LoginStateManager(getActivity());
-        loginStateManager.signUpNative(userSignupData);
+        final LoginStateManager loginStateManager = new LoginStateManager(getActivity(),
+                AccountManager.get(getActivity()));
+        loginStateManager.signUpNative(userData);
 
     }
 

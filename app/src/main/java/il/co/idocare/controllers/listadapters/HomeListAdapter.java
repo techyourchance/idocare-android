@@ -53,7 +53,7 @@ public class HomeListAdapter extends CursorAdapter implements
         mRequestUserActionApplier = requestUserActionApplier;
         mUserUserActionApplier = userUserActionApplier;
 
-        mUserStateManager = new LoginStateManager(context);
+        mUserStateManager = new LoginStateManager(context, AccountManager.get(context));
 
         // TODO: the below initial values are totally arbitrary. Reconsider the values or the implementation of caches
         mUsersCache = new HashMap<>(5);

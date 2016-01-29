@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 /**
  * Created by Vasiliy on 1/27/2016.
  */
-public class UserSignupData {
+public class UserSignupNativeData {
 
     private final String mEmail;
     private final String mPassword;
@@ -17,9 +17,9 @@ public class UserSignupData {
     @Nullable
     private final String mUserPicturePath;
 
-    public UserSignupData(String email, String password, String nickname, String firstName,
-                          String lastName, @Nullable String facebookId,
-                          @Nullable String userPicturePath) {
+    public UserSignupNativeData(String email, String password, String nickname, String firstName,
+                                String lastName, @Nullable String facebookId,
+                                @Nullable String userPicturePath) {
 
         mEmail = email;
         mPassword = password;

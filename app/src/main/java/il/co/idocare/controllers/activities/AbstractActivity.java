@@ -43,7 +43,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mUserStateManager = new LoginStateManager(this);
+        mUserStateManager = new LoginStateManager(this, AccountManager.get(this));
 
         mPostLoginRunnable = null;
 

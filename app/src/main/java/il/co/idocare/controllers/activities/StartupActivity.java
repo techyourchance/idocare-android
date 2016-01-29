@@ -1,5 +1,6 @@
 package il.co.idocare.controllers.activities;
 
+import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -65,20 +66,18 @@ public class StartupActivity extends AbstractActivity {
             @Override
             protected void onPostExecute(Void obj) {
 
-                LoginStateManager userStateManager = new LoginStateManager(StartupActivity.this);
+                LoginStateManager loginStateManager = new LoginStateManager(StartupActivity.this,
+                        AccountManager.get(StartupActivity.this));
 
                 Intent intent;
 
                 //this code don't need to know about hte exact mechanism the user used to log in
                 // TODO: remove unhealthy dependencies once proper login flow established
-                if (userStateManager.isLoggedInNative()) {
+                if (loginStateManager.isLoggedInNative()) {
                     // If the user is logged in - show the MainFragment
                     intent = new Intent(StartupActivity.this, MainActivity.class);
                 } else {
-                    SharedPreferences prefs =
-                            getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
-
-                    if (prefs.getInt(Constants.LOGIN_SKIPPED_KEY, 0) > 0) {
+                    if (loginStateManager.isLoginSkipped()) {
                         // If the user has already chosen to skip login at startup - switch to
                         // MainActivity right away.
                         intent = new Intent(StartupActivity.this, MainActivity.class);
@@ -101,8 +100,8 @@ public class StartupActivity extends AbstractActivity {
                     }
 
                     // TODO: just in case FB logout wasn't completed - remove once proper login flow established
-                    if (userStateManager.isLoggedInWithFacebook())
-                        userStateManager.logOut();
+                    if (loginStateManager.isLoggedInWithFacebook())
+                        loginStateManager.logOut();
                 }
 
                 startActivity(intent);

@@ -14,7 +14,7 @@ import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
 import il.co.idocare.Constants;
 import il.co.idocare.URLs;
 import il.co.idocare.authentication.AccountAuthenticator;
-import il.co.idocare.datamodels.pojos.UserSignupData;
+import il.co.idocare.datamodels.pojos.UserSignupNativeData;
 import il.co.idocare.networking.ServerHttpRequest;
 import il.co.idocare.networking.responseparsers.HttpResponseParseException;
 import il.co.idocare.networking.responseparsers.ResponseParserUtils;
@@ -29,12 +29,12 @@ public class SignupNativeSequence extends AbstractSequence {
 
     private static final String TAG = "SignupNativeSequence";
 
-    private UserSignupData mUserSignupData;
+    private UserSignupNativeData mUserData;
     private AccountManager mAccountManager;
     private SignupNativeResult mSignupNativeResult;
 
-    public SignupNativeSequence(UserSignupData userSignupData, AccountManager accountManager) {
-        mUserSignupData = userSignupData;
+    public SignupNativeSequence(UserSignupNativeData userData, AccountManager accountManager) {
+        mUserData = userData;
         mAccountManager = accountManager;
     }
 
@@ -48,22 +48,22 @@ public class SignupNativeSequence extends AbstractSequence {
 
         ServerHttpRequest request = new ServerHttpRequest(URLs.getUrl(URLs.RESOURCE_SIGNUP));
 
-        String encodedUsername = SecurityUtils.encodeStringAsCredential(mUserSignupData.getEmail());
-        String encodedPassword = SecurityUtils.encodeStringAsCredential(mUserSignupData.getPassword());
+        String encodedUsername = SecurityUtils.encodeStringAsCredential(mUserData.getEmail());
+        String encodedPassword = SecurityUtils.encodeStringAsCredential(mUserData.getPassword());
 
         // add encoded parameters
         request.addTextField(Constants.FIELD_NAME_USER_EMAIL, encodedUsername);
         request.addTextField(Constants.FIELD_NAME_USER_PASSWORD_SIGNUP, encodedPassword);
         // add plain text parameters
-        request.addTextField(Constants.FIELD_NAME_USER_NICKNAME, mUserSignupData.getNickname());
-        request.addTextField(Constants.FIELD_NAME_USER_FIRST_NAME, mUserSignupData.getFirstName());
-        request.addTextField(Constants.FIELD_NAME_USER_LAST_NAME, mUserSignupData.getLastName());
-        if (!TextUtils.isEmpty(mUserSignupData.getFacebookId()))
-            request.addTextField(Constants.FIELD_NAME_USER_FACEBOOK_ID, mUserSignupData.getFacebookId());
+        request.addTextField(Constants.FIELD_NAME_USER_NICKNAME, mUserData.getNickname());
+        request.addTextField(Constants.FIELD_NAME_USER_FIRST_NAME, mUserData.getFirstName());
+        request.addTextField(Constants.FIELD_NAME_USER_LAST_NAME, mUserData.getLastName());
+        if (!TextUtils.isEmpty(mUserData.getFacebookId()))
+            request.addTextField(Constants.FIELD_NAME_USER_FACEBOOK_ID, mUserData.getFacebookId());
         // add picture
-        if (!TextUtils.isEmpty(mUserSignupData.getUserPicturePath()))
+        if (!TextUtils.isEmpty(mUserData.getUserPicturePath()))
             request.addPictureField(Constants.FIELD_NAME_USER_PICTURE,
-                    "userPicture", mUserSignupData.getUserPicturePath());
+                    "userPicture", mUserData.getUserPicturePath());
 
         CloseableHttpResponse response = request.execute(HttpClientBuilder.create().build());
 
@@ -103,9 +103,9 @@ public class SignupNativeSequence extends AbstractSequence {
         String authToken = parsedResponse.getString(ServerHttpResponseParser.KEY_PUBLIC_KEY);
 
 
-        if (addNativeAccount(mUserSignupData.getEmail(), AccountAuthenticator.ACCOUNT_TYPE_DEFAULT,
+        if (addNativeAccount(mUserData.getEmail(), AccountAuthenticator.ACCOUNT_TYPE_DEFAULT,
                 userId, authToken)) {
-            signupSucceeded(mUserSignupData.getEmail(), authToken);
+            signupSucceeded(mUserData.getEmail(), authToken);
         } else {
             signupFailed();
         }
