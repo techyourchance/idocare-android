@@ -27,6 +27,7 @@ import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.sequences.LoginNativeSequence;
 import il.co.idocare.sequences.Sequence;
 import il.co.idocare.sequences.SignupNativeSequence;
+import il.co.idocare.utils.Logger;
 
 /**
  * This class manages the login state of the user - it aggregates information from all login
@@ -40,10 +41,13 @@ public class LoginStateManager {
     private Context mContext;
 
     private AccountManager mAccountManager;
+    private AccountManagerProxy mAccountManagerProxy;
 
-    public LoginStateManager(Context context, AccountManager accountManager) {
+    public LoginStateManager(Context context, AccountManager accountManager /*TODO: need to be removed*/) {
         mContext = context;
         mAccountManager = accountManager;
+        // TODO: need to be injected
+        mAccountManagerProxy = new AccountManagerProxy(accountManager, new Logger());
     }
 
     /**
@@ -87,7 +91,7 @@ public class LoginStateManager {
      */
     public void signUpNative(UserSignupNativeData userData) {
         final SignupNativeSequence signupNativeSequence =
-                new SignupNativeSequence(userData, mAccountManager);
+                new SignupNativeSequence(userData, mAccountManagerProxy);
 
         signupNativeSequence.registerStateChangeListener(new Sequence.StateChangeListener() {
             @Override

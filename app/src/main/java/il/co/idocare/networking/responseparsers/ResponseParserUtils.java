@@ -67,6 +67,6 @@ public class ResponseParserUtils {
      */
     public static String extractErrorsToString(Bundle bundle) {
         //TODO!!
-        return null;
+        return "TODO: stub string";
     }
 }
