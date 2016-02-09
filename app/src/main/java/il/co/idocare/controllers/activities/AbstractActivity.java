@@ -19,12 +19,15 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import il.co.idocare.Constants;
+import il.co.idocare.MyApplication;
 import il.co.idocare.R;
 import il.co.idocare.authentication.AccountAuthenticator;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.fragments.IDoCareFragmentCallback;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
+import il.co.idocare.dependencyinjection.components.ControllerComponent;
+import il.co.idocare.dependencyinjection.modules.ControllerModule;
 
 /**
  * This is a wrapper around a standard Activity class which provides few convenience methods
@@ -67,6 +70,20 @@ public abstract class AbstractActivity extends AppCompatActivity implements
     }
 
 
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Dependency injection
+
+    protected ControllerComponent getControllerComponent() {
+        return ((MyApplication)getApplication()).getApplicationComponent()
+                .newControllerComponent(new ControllerModule());
+    }
+
+    // End of dependency injection
+    //
+    // ---------------------------------------------------------------------------------------------
 
 
     // ---------------------------------------------------------------------------------------------
