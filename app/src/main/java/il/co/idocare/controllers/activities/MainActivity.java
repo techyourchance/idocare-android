@@ -45,6 +45,8 @@ public class MainActivity extends AbstractActivity {
                 }
             };
 
+    private LoginStateManager mLoginStateManager;
+
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mActionBarDrawerToggle;
     private Toolbar mToolbar;
@@ -62,6 +64,8 @@ public class MainActivity extends AbstractActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
+        mLoginStateManager = getControllerComponent().loginStateManager();
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setBackgroundResource(R.drawable.actionbar_background);
@@ -293,7 +297,7 @@ public class MainActivity extends AbstractActivity {
         TypedArray icons = getResources().obtainTypedArray(R.array.nav_drawer_icons);
 
         // Remove one of login/logout options (based on connectivity state)
-        if (getUserStateManager().isLoggedIn())
+        if (mLoginStateManager.isLoggedIn())
             entries.remove(getString(R.string.nav_drawer_entry_login));
         else
             entries.remove(getString(R.string.nav_drawer_entry_logout));
@@ -316,7 +320,7 @@ public class MainActivity extends AbstractActivity {
             replaceFragment(HomeFragment.class, false, true, null);
         }
         else if (chosenEntry.equals(getResources().getString(R.string.nav_drawer_entry_new_request))) {
-            if (getUserStateManager().getActiveAccount() != null) // user logged in - go to new request fragment
+            if (mLoginStateManager.getActiveAccount() != null) // user logged in - go to new request fragment
                 replaceFragment(NewRequestFragment.class, true, false, null);
             else // user isn't logged in - ask him to log in and go to new request fragment if successful
                 askUserToLogIn(

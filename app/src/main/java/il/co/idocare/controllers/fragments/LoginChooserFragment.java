@@ -22,6 +22,7 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
 import il.co.idocare.R;
+import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.views.LoginChooserViewMVC;
@@ -43,14 +44,17 @@ public class LoginChooserFragment extends AbstractFragment {
 
     private CallbackManager mFacebookCallbackManager;
 
+    private LoginStateManager mLoginStateManager;
+
     private AlertDialog mAlertDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mLoginChooserViewMVC = new LoginChooserViewMVC(inflater, container);
 
-        initializeFacebookLogin();
+        mLoginStateManager = getControllerComponent().loginStateManager();
 
+        initializeFacebookLogin();
 
         return mLoginChooserViewMVC.getRootView();
     }
@@ -114,7 +118,7 @@ public class LoginChooserFragment extends AbstractFragment {
             getArguments().remove(ARG_PLAY_ANIMATION);
         }
 
-        if (getUserStateManager().isLoggedIn())
+        if (mLoginStateManager.isLoggedIn())
             forbidMultiuserLogin();
     }
 
@@ -179,7 +183,7 @@ public class LoginChooserFragment extends AbstractFragment {
 
     public void onEvent(LoginChooserViewMVC.SkipLoginClickEvent event) {
 
-        getUserStateManager().setLoginSkipped(true);
+        mLoginStateManager.setLoginSkipped(true);
 
         finishActivity();
     }
@@ -224,7 +228,7 @@ public class LoginChooserFragment extends AbstractFragment {
                 @Override
                 public void run() {
 
-                    if (!getUserStateManager().addFacebookAccount(accessToken)) {
+                    if (!mLoginStateManager.addFacebookAccount(accessToken)) {
 
                         LoginManager.getInstance().logOut();
 

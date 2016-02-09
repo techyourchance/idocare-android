@@ -50,6 +50,8 @@ public class SignupNativeFragment extends AbstractFragment {
 
     private SignupNativeViewMVC mSignupNativeViewMVC;
 
+    private LoginStateManager mLoginStateManager;
+
     private AlertDialog mAlertDialog;
 
     private String mCameraPicturePath;
@@ -59,6 +61,8 @@ public class SignupNativeFragment extends AbstractFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mSignupNativeViewMVC = new SignupNativeViewMVC(inflater, container);
+
+        mLoginStateManager = getControllerComponent().loginStateManager();
 
         restoreSavedStateIfNeeded(savedInstanceState);
 
@@ -116,7 +120,7 @@ public class SignupNativeFragment extends AbstractFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (getUserStateManager().isLoggedIn()) {
+        if (mLoginStateManager.isLoggedIn()) {
             // Disallow multiple accounts by showing a dialog which finishes the activity
             showMultipleAccountsNotAllowedDialog();
         }

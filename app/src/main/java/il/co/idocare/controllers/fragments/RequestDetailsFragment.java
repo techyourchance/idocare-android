@@ -42,6 +42,8 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
     private RequestDetailsViewMVC mRequestDetailsViewMVC;
 
+    private LoginStateManager mLoginStateManager;
+
     private long mRequestId;
     private RequestItem mRawRequestItem;
     private RequestItem mRequestItem;
@@ -55,6 +57,8 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
         mRequestDetailsViewMVC =
                 new RequestDetailsViewMVC(getActivity(), container, savedInstanceState);
+
+        mLoginStateManager = getControllerComponent().loginStateManager();
 
         setActionBarTitle(getTitle());
 
@@ -162,7 +166,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
             return;
         }
 
-        final String pickedUpBy = getUserStateManager().getActiveAccountUserId();
+        final String pickedUpBy = mLoginStateManager.getActiveAccountUserId();
 
         // If no logged in user - ask him to log in and rerun this method in case he does
         if (TextUtils.isEmpty(pickedUpBy)) {
@@ -248,7 +252,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
     private void voteForRequest(final int amount, final boolean voteForClosed) {
 
-        String activeUserId = getUserStateManager().getActiveAccountUserId();
+        String activeUserId = mLoginStateManager.getActiveAccountUserId();
 
         // If no logged in user - ask him to log in
         if (TextUtils.isEmpty(activeUserId)) {
@@ -510,7 +514,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
         mRequestItem = combinedRequestItem;
 
-        mRequestItem.setStatus(getUserStateManager().getActiveAccountUserId());
+        mRequestItem.setStatus(mLoginStateManager.getActiveAccountUserId());
 
         mRequestDetailsViewMVC.bindRequestItem(mRequestItem);
 

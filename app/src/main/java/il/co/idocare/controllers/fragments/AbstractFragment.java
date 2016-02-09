@@ -6,7 +6,10 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 
 import de.greenrobot.event.EventBus;
+import il.co.idocare.MyApplication;
 import il.co.idocare.authentication.LoginStateManager;
+import il.co.idocare.dependencyinjection.components.ControllerComponent;
+import il.co.idocare.dependencyinjection.modules.ControllerModule;
 
 
 /**
@@ -17,7 +20,10 @@ import il.co.idocare.authentication.LoginStateManager;
 public abstract class AbstractFragment extends Fragment implements
         IDoCareFragmentInterface {
 
-    IDoCareFragmentCallback mCallback;
+
+    private ControllerComponent mControllerComponent;
+
+    private IDoCareFragmentCallback mCallback;
 
     private ProgressDialog mProgressDialog;
 
@@ -33,6 +39,25 @@ public abstract class AbstractFragment extends Fragment implements
         }
 
     }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mControllerComponent = ((MyApplication)getActivity().getApplication())
+                .getApplicationComponent().newControllerComponent(new ControllerModule());
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Dependency injection
+
+    protected ControllerComponent getControllerComponent() {
+        return mControllerComponent;
+    }
+
+    // End of dependency injection
+    //
+    // ---------------------------------------------------------------------------------------------
 
 
     /**
@@ -77,15 +102,6 @@ public abstract class AbstractFragment extends Fragment implements
             mProgressDialog = null;
         }
     }
-
-
-    /**
-     * See {@link IDoCareFragmentCallback#getUserStateManager()}
-     */
-    public LoginStateManager getUserStateManager() {
-        return mCallback.getUserStateManager();
-    }
-
 
     /**
      * See {@link IDoCareFragmentCallback#requestImmediateSync()}

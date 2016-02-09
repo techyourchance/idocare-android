@@ -40,9 +40,13 @@ public class NewRequestFragment extends AbstractFragment {
     private String mLastCameraPicturePath;
     private List<String> mCameraPicturesPaths = new ArrayList<String>(3);
 
+    private LoginStateManager mLoginStateManager;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mViewMVC = new NewRequestViewMVC(inflater, container);
+
+        mLoginStateManager = getControllerComponent().loginStateManager();
 
         setActionBarTitle(getTitle());
 
@@ -73,7 +77,7 @@ public class NewRequestFragment extends AbstractFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (getUserStateManager().getActiveAccount() == null) {
+        if (mLoginStateManager.getActiveAccount() == null) {
             // The user logged out while this fragment was paused
             userLoggedOut();
             return;
@@ -182,7 +186,7 @@ public class NewRequestFragment extends AbstractFragment {
      * action to the local cache of user actions
      */
     private void createRequest() {
-        String createdBy = getUserStateManager().getActiveAccountUserId();
+        String createdBy = mLoginStateManager.getActiveAccountUserId();
 
         GlobalEvents.BestLocationEstimateEvent bestLocationEstimateEvent =
                 EventBus.getDefault().getStickyEvent(GlobalEvents.BestLocationEstimateEvent.class);

@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
+import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.interfaces.RequestsCombinedCursorAdapter;
 import il.co.idocare.controllers.listadapters.HomeListAdapter;
@@ -38,11 +39,14 @@ public class HomeFragment extends AbstractFragment implements
     RequestsCombinedCursorAdapter mAdapter;
     HomeViewMVC mHomeViewMVC;
 
+    private LoginStateManager mLoginStateManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         mHomeViewMVC = new HomeViewMVC(inflater, container);
+
+        mLoginStateManager = getControllerComponent().loginStateManager();
 
         // This is required for automatic refresh of action bar options upon fragment's loading
         setHasOptionsMenu(true);
@@ -89,7 +93,7 @@ public class HomeFragment extends AbstractFragment implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add_new_request:
-                if (getUserStateManager().getActiveAccount() != null) // user logged in - go to new request fragment
+                if (mLoginStateManager.getActiveAccount() != null) // user logged in - go to new request fragment
                     replaceFragment(NewRequestFragment.class, true, false, null);
                 else // user isn't logged in - ask him to log in and go to new request fragment if successful
                     askUserToLogIn(

@@ -30,12 +30,16 @@ public class LoginNativeFragment extends AbstractFragment {
 
     private LoginNativeViewMVC mLoginNativeViewMVC;
 
+    private LoginStateManager mLoginStateManager;
+
     private AlertDialog mAlertDialog;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mLoginNativeViewMVC = new LoginNativeViewMVC(inflater, container);
+
+        mLoginStateManager = getControllerComponent().loginStateManager();
 
         return mLoginNativeViewMVC.getRootView();
     }
@@ -70,7 +74,7 @@ public class LoginNativeFragment extends AbstractFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (getUserStateManager().isLoggedIn()) {
+        if (mLoginStateManager.isLoggedIn()) {
             // Disallow multiple accounts by showing a dialog which finishes the activity
             if (mAlertDialog == null) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

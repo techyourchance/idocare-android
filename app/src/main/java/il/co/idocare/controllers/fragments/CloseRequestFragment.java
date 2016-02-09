@@ -39,6 +39,8 @@ public class CloseRequestFragment extends AbstractFragment {
 
     private CloseRequestViewMVC mCloseRequestViewMVC;
 
+    private LoginStateManager mLoginStateManager;
+
     private long mRequestId;
     private Location mRequestLocation;
 
@@ -49,6 +51,8 @@ public class CloseRequestFragment extends AbstractFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mCloseRequestViewMVC = new CloseRequestViewMVC(inflater, container);
+
+        mLoginStateManager = getControllerComponent().loginStateManager();
 
         Bundle args = getArguments();
         if (args != null) {
@@ -90,7 +94,7 @@ public class CloseRequestFragment extends AbstractFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (getUserStateManager().getActiveAccount() == null) {
+        if (mLoginStateManager.getActiveAccount() == null) {
             // The user logged out while this fragment was paused
             userLoggedOut();
         }
@@ -199,7 +203,7 @@ public class CloseRequestFragment extends AbstractFragment {
      */
     private void closeRequest() {
 
-        String closedBy = getUserStateManager().getActiveAccountUserId();
+        String closedBy = mLoginStateManager.getActiveAccountUserId();
 
         if (!isValidLocation()) {
             Log.d(TAG, "aborting request close due to invalid location");

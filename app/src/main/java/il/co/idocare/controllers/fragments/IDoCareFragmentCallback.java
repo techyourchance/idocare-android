@@ -29,14 +29,6 @@ public interface IDoCareFragmentCallback {
 
 
     /**
-     *
-     * @return get a reference to LoginStateManager object
-     */
-    public LoginStateManager getUserStateManager();
-
-
-
-    /**
      * This method will pop up a yes/no dialog asking the user to log in. If the user agrees
      * LoginActivity will be started.
      * @param message the message to show in a dialog

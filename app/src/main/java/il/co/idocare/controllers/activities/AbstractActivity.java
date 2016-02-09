@@ -37,8 +37,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements
 
     private static final String LOG_TAG = AbstractActivity.class.getSimpleName();
 
-
-    private LoginStateManager mUserStateManager;
+    private ControllerComponent mControllerComponent;
 
     private Runnable mPostLoginRunnable;
 
@@ -46,7 +45,8 @@ public abstract class AbstractActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mUserStateManager = new LoginStateManager(this, AccountManager.get(this));
+        mControllerComponent = ((MyApplication)getApplication()).getApplicationComponent()
+                .newControllerComponent(new ControllerModule());
 
         mPostLoginRunnable = null;
 
@@ -77,8 +77,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements
     // Dependency injection
 
     protected ControllerComponent getControllerComponent() {
-        return ((MyApplication)getApplication()).getApplicationComponent()
-                .newControllerComponent(new ControllerModule());
+        return mControllerComponent;
     }
 
     // End of dependency injection
@@ -191,14 +190,9 @@ public abstract class AbstractActivity extends AppCompatActivity implements
     //
     // User state management
 
-    @Override
-    public LoginStateManager getUserStateManager() {
-        return mUserStateManager;
-    }
-
 
     private Account getActiveOrDummyAccount() {
-        Account account = getUserStateManager().getActiveAccount();
+        Account account = getControllerComponent().loginStateManager().getActiveAccount();
 
         if (account != null) {
             return account;
@@ -263,7 +257,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements
      * Initiate a flow that will take the user through logout process
      */
     public void initiateLogoutFlow(@Nullable Runnable runnable) {
-        getUserStateManager().logOut();
+        getControllerComponent().loginStateManager().logOut();
         if (runnable != null)
             runOnUiThread(runnable);
     }
@@ -277,7 +271,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements
             case Constants.REQUEST_CODE_LOGIN:
                 // If there is a logged in user after login activity finished and the
                 // runnable was set - execute it on main thread
-                if (getUserStateManager().getActiveAccount() != null
+                if (getControllerComponent().loginStateManager().getActiveAccount() != null
                         && mPostLoginRunnable != null) {
                     runOnUiThread(mPostLoginRunnable);
                 }
