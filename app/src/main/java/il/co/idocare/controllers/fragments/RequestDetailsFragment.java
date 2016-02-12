@@ -19,6 +19,8 @@ import com.google.android.gms.maps.MapView;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
@@ -28,6 +30,7 @@ import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
 import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.datamodels.functional.UserActionItem;
+import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.views.RequestDetailsViewMVC;
 
 
@@ -42,7 +45,11 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
     private RequestDetailsViewMVC mRequestDetailsViewMVC;
 
-    private LoginStateManager mLoginStateManager;
+    @Inject
+    LoginStateManager mLoginStateManager;
+
+    @Inject
+    ServerSyncController mServerSyncController;
 
     private long mRequestId;
     private RequestItem mRawRequestItem;
@@ -58,7 +65,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
         mRequestDetailsViewMVC =
                 new RequestDetailsViewMVC(getActivity(), container, savedInstanceState);
 
-        mLoginStateManager = getControllerComponent().loginStateManager();
+        getControllerComponent().inject(this);
 
         setActionBarTitle(getTitle());
 
@@ -221,7 +228,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
                 }
 
                 // Request pickup is time critical action - need to be uploaded to the server ASAP
-                requestImmediateSync();
+                mServerSyncController.requestImmediateSync();
 
                 return (Void) null;
             }

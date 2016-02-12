@@ -1,19 +1,16 @@
 package il.co.idocare.sequences;
 
-import android.accounts.Account;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import ch.boye.httpclientandroidlib.client.methods.CloseableHttpResponse;
 import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
 import il.co.idocare.Constants;
 import il.co.idocare.URLs;
-import il.co.idocare.authentication.AccountAuthenticator;
-import il.co.idocare.authentication.AccountManagerProxy;
+import il.co.idocare.authentication.MyAccountManager;
 import il.co.idocare.datamodels.pojos.UserSignupNativeData;
 import il.co.idocare.networking.ServerHttpRequest;
 import il.co.idocare.networking.responseparsers.HttpResponseParseException;
@@ -30,14 +27,14 @@ public class SignupNativeSequence extends AbstractSequence {
     private static final String TAG = "SignupNativeSequence";
 
     private UserSignupNativeData mUserData;
-    private AccountManagerProxy mAccountManagerProxy;
+    private MyAccountManager mMyAccountManager;
 
     private SignupNativeResult mSignupNativeResult;
 
     public SignupNativeSequence(UserSignupNativeData userData,
-                                AccountManagerProxy accountManagerProxy) {
+                                MyAccountManager myAccountManager) {
         mUserData = userData;
-        mAccountManagerProxy = accountManagerProxy;
+        mMyAccountManager = myAccountManager;
     }
 
     @Override
@@ -105,7 +102,7 @@ public class SignupNativeSequence extends AbstractSequence {
         String authToken = parsedResponse.getString(ServerHttpResponseParser.KEY_PUBLIC_KEY);
 
 
-        if (mAccountManagerProxy.addNativeAccount(mUserData.getEmail(), userId, authToken)) {
+        if (mMyAccountManager.addNativeAccount(mUserData.getEmail(), userId, authToken)) {
             signupSucceeded(mUserData.getEmail(), authToken);
         } else {
             signupFailed();

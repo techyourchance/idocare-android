@@ -20,6 +20,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.GlobalEvents;
@@ -39,7 +41,7 @@ public class CloseRequestFragment extends AbstractFragment {
 
     private CloseRequestViewMVC mCloseRequestViewMVC;
 
-    private LoginStateManager mLoginStateManager;
+    @Inject LoginStateManager mLoginStateManager;
 
     private long mRequestId;
     private Location mRequestLocation;
@@ -52,7 +54,7 @@ public class CloseRequestFragment extends AbstractFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mCloseRequestViewMVC = new CloseRequestViewMVC(inflater, container);
 
-        mLoginStateManager = getControllerComponent().loginStateManager();
+        getControllerComponent().inject(this);
 
         Bundle args = getArguments();
         if (args != null) {

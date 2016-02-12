@@ -21,6 +21,8 @@ import org.apache.commons.validator.routines.EmailValidator;
 
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+
 import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.R;
@@ -50,7 +52,8 @@ public class SignupNativeFragment extends AbstractFragment {
 
     private SignupNativeViewMVC mSignupNativeViewMVC;
 
-    private LoginStateManager mLoginStateManager;
+    @Inject
+    LoginStateManager mLoginStateManager;
 
     private AlertDialog mAlertDialog;
 
@@ -62,7 +65,7 @@ public class SignupNativeFragment extends AbstractFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mSignupNativeViewMVC = new SignupNativeViewMVC(inflater, container);
 
-        mLoginStateManager = getControllerComponent().loginStateManager();
+        getControllerComponent().inject(this);
 
         restoreSavedStateIfNeeded(savedInstanceState);
 

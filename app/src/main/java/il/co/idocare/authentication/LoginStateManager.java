@@ -41,13 +41,13 @@ public class LoginStateManager {
     private Context mContext;
 
     private AccountManager mAccountManager;
-    private AccountManagerProxy mAccountManagerProxy;
+    private MyAccountManager mMyAccountManager;
 
     public LoginStateManager(Context context, AccountManager accountManager /*TODO: need to be removed*/) {
         mContext = context;
         mAccountManager = accountManager;
         // TODO: need to be injected
-        mAccountManagerProxy = new AccountManagerProxy(accountManager, new Logger());
+        mMyAccountManager = new MyAccountManager(accountManager, new Logger());
     }
 
     /**
@@ -91,7 +91,7 @@ public class LoginStateManager {
      */
     public void signUpNative(UserSignupNativeData userData) {
         final SignupNativeSequence signupNativeSequence =
-                new SignupNativeSequence(userData, mAccountManagerProxy);
+                new SignupNativeSequence(userData, mMyAccountManager);
 
         signupNativeSequence.registerStateChangeListener(new Sequence.StateChangeListener() {
             @Override

@@ -37,11 +37,5 @@ public interface IDoCareFragmentCallback {
      */
     public void askUserToLogIn(String message, final Runnable runnable);
 
-
-    /**
-     * Call to this method will initiate an immediate data sync by the underlying SyncAdapter.
-     */
-    public void requestImmediateSync();
-
 }
 

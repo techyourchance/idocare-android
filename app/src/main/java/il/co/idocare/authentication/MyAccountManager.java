@@ -13,14 +13,14 @@ import il.co.idocare.utils.Logger;
 /**
  * This class wraps the native AccountManager and adds application specific logic.
  */
-public class AccountManagerProxy {
+public class MyAccountManager {
 
-    private static final String TAG = "AccountManagerProxy";
+    private static final String TAG = "MyAccountManager";
 
     private AccountManager mAccountManager;
     private Logger mLogger;
 
-    public AccountManagerProxy(AccountManager accountManager, Logger logger) {
+    public MyAccountManager(AccountManager accountManager, Logger logger) {
         mAccountManager = accountManager;
         mLogger = logger;
     }
@@ -83,4 +83,21 @@ public class AccountManagerProxy {
         mAccountManager.setAuthToken(account, AccountAuthenticator.AUTH_TOKEN_TYPE_DEFAULT,
                 authToken);
     }
+
+    public Account getDummyAccount() {
+        Account account = new Account(AccountAuthenticator.DUMMY_ACCOUNT_NAME,
+                AccountAuthenticator.ACCOUNT_TYPE_DEFAULT);
+        return account;
+    }
+
+    public void addDummyAccount() {
+        Account dummyAccount = getDummyAccount();
+        // TODO: this call returns false in case the account exists or error ocurred - handle both separately
+        mAccountManager.addAccountExplicitly(dummyAccount, null, null);
+        mAccountManager.setAuthToken(
+                dummyAccount,
+                AccountAuthenticator.AUTH_TOKEN_TYPE_DEFAULT,
+                AccountAuthenticator.DUMMY_ACCOUNT_AUTH_TOKEN);
+    }
+
 }

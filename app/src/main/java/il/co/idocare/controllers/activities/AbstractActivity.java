@@ -2,6 +2,7 @@ package il.co.idocare.controllers.activities;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -46,7 +47,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
 
         mControllerComponent = ((MyApplication)getApplication()).getApplicationComponent()
-                .newControllerComponent(new ControllerModule());
+                .newControllerComponent(new ControllerModule(this));
 
         mPostLoginRunnable = null;
 
@@ -191,24 +192,6 @@ public abstract class AbstractActivity extends AppCompatActivity implements
     // User state management
 
 
-    private Account getActiveOrDummyAccount() {
-        Account account = getControllerComponent().loginStateManager().getActiveAccount();
-
-        if (account != null) {
-            return account;
-        } else {
-            account = new Account(AccountAuthenticator.DUMMY_ACCOUNT_NAME,
-                    AccountAuthenticator.ACCOUNT_TYPE_DEFAULT);
-            // TODO: this call returns false in case the account exists or error ocurred - handle both separately
-            AccountManager.get(this).addAccountExplicitly(account, null, null);
-            AccountManager.get(this).setAuthToken(
-                    account,
-                    AccountAuthenticator.AUTH_TOKEN_TYPE_DEFAULT,
-                    AccountAuthenticator.DUMMY_ACCOUNT_AUTH_TOKEN);
-            return account;
-        }
-    }
-
 
     @Override
     public void askUserToLogIn(String message, final Runnable runnable) {
@@ -253,14 +236,6 @@ public abstract class AbstractActivity extends AppCompatActivity implements
         startActivityForResult(intent, Constants.REQUEST_CODE_LOGIN);
     }
 
-    /**
-     * Initiate a flow that will take the user through logout process
-     */
-    public void initiateLogoutFlow(@Nullable Runnable runnable) {
-        getControllerComponent().loginStateManager().logOut();
-        if (runnable != null)
-            runOnUiThread(runnable);
-    }
 
 
     @Override
@@ -269,10 +244,9 @@ public abstract class AbstractActivity extends AppCompatActivity implements
 
         switch (requestCode) {
             case Constants.REQUEST_CODE_LOGIN:
-                // If there is a logged in user after login activity finished and the
-                // runnable was set - execute it on main thread
-                if (getControllerComponent().loginStateManager().getActiveAccount() != null
-                        && mPostLoginRunnable != null) {
+                // If login succeeded and there is a runnable - run it
+                // TODO: ensure tha RESULT_OK indeed means login succeeded
+                if (resultCode == Activity.RESULT_OK && mPostLoginRunnable != null) {
                     runOnUiThread(mPostLoginRunnable);
                 }
                 mPostLoginRunnable = null; // In any case - clear the runnable
@@ -302,39 +276,6 @@ public abstract class AbstractActivity extends AppCompatActivity implements
     // ---------------------------------------------------------------------------------------------
 
 
-
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // Sync settings management
-
-    public void enableAutomaticSync() {
-        Account acc = getActiveOrDummyAccount();
-        ContentResolver.setIsSyncable(acc, IDoCareContract.AUTHORITY, 1);
-        ContentResolver.setSyncAutomatically(acc, IDoCareContract.AUTHORITY, true);
-    }
-
-    public void disableAutomaticSync() {
-        Account acc = getActiveOrDummyAccount();
-        ContentResolver.setIsSyncable(acc, IDoCareContract.AUTHORITY, 0);
-    }
-
-    @Override
-    public void requestImmediateSync() {
-        Account acc = getActiveOrDummyAccount();
-
-        Bundle settingsBundle = new Bundle();
-        settingsBundle.putBoolean(
-                ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        settingsBundle.putBoolean(
-                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-
-        ContentResolver.requestSync(acc, IDoCareContract.AUTHORITY, settingsBundle);
-    }
-
-    // End of sync settings management
-    //
-    // ---------------------------------------------------------------------------------------------
 
 
 }

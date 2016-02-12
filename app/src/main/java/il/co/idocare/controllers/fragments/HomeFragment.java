@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import javax.inject.Inject;
+
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
@@ -23,7 +25,6 @@ import il.co.idocare.controllers.listadapters.HomeListAdapter;
 import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
 import il.co.idocare.controllers.listadapters.UserActionsOnUserApplierImpl;
 import il.co.idocare.datamodels.functional.RequestItem;
-import il.co.idocare.datamodels.pojos.RequestItemPojo;
 import il.co.idocare.views.HomeViewMVC;
 
 
@@ -39,14 +40,14 @@ public class HomeFragment extends AbstractFragment implements
     RequestsCombinedCursorAdapter mAdapter;
     HomeViewMVC mHomeViewMVC;
 
-    private LoginStateManager mLoginStateManager;
+    @Inject LoginStateManager mLoginStateManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         mHomeViewMVC = new HomeViewMVC(inflater, container);
 
-        mLoginStateManager = getControllerComponent().loginStateManager();
+        getControllerComponent().inject(this);
 
         // This is required for automatic refresh of action bar options upon fragment's loading
         setHasOptionsMenu(true);

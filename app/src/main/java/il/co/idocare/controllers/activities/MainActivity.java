@@ -6,6 +6,7 @@ import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -20,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import de.greenrobot.event.EventBus;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
@@ -29,6 +32,7 @@ import il.co.idocare.R;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
 import il.co.idocare.datamodels.functional.NavigationDrawerEntry;
 import il.co.idocare.location.LocationTrackerService;
+import il.co.idocare.networking.ServerSyncController;
 
 
 public class MainActivity extends AbstractActivity {
@@ -45,7 +49,9 @@ public class MainActivity extends AbstractActivity {
                 }
             };
 
-    private LoginStateManager mLoginStateManager;
+
+    @Inject LoginStateManager mLoginStateManager;
+    @Inject ServerSyncController iServerSyncController;
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mActionBarDrawerToggle;
@@ -65,7 +71,7 @@ public class MainActivity extends AbstractActivity {
 
         setContentView(R.layout.activity_main);
 
-        mLoginStateManager = getControllerComponent().loginStateManager();
+        getControllerComponent().inject(this);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setBackgroundResource(R.drawable.actionbar_background);
@@ -91,14 +97,14 @@ public class MainActivity extends AbstractActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        enableAutomaticSync();
-        requestImmediateSync();
+        iServerSyncController.enableAutomaticSync();
+        iServerSyncController.requestImmediateSync();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        disableAutomaticSync();
+        iServerSyncController.disableAutomaticSync();
     }
 
 
@@ -340,6 +346,16 @@ public class MainActivity extends AbstractActivity {
         else {
             Log.e(LOG_TAG, "drawer entry \"" + chosenEntry + "\" has no functionality");
         }
+    }
+
+
+    /**
+     * Initiate a flow that will take the user through logout process
+     */
+    private void initiateLogoutFlow(@Nullable Runnable runnable) {
+        mLoginStateManager.logOut();
+        if (runnable != null)
+            runOnUiThread(runnable);
     }
 
     public void setTitle(String title) {

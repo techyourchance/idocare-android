@@ -44,7 +44,7 @@ public abstract class AbstractFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mControllerComponent = ((MyApplication)getActivity().getApplication())
-                .getApplicationComponent().newControllerComponent(new ControllerModule());
+                .getApplicationComponent().newControllerComponent(new ControllerModule(getActivity()));
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -101,13 +101,6 @@ public abstract class AbstractFragment extends Fragment implements
             mProgressDialog.dismiss();
             mProgressDialog = null;
         }
-    }
-
-    /**
-     * See {@link IDoCareFragmentCallback#requestImmediateSync()}
-     */
-    public void requestImmediateSync() {
-        mCallback.requestImmediateSync();
     }
 
     // ---------------------------------------------------------------------------------------------

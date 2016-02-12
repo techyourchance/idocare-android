@@ -10,6 +10,8 @@ import dagger.Provides;
 import il.co.idocare.Constants;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.dependencyinjection.ApplicationScope;
+import il.co.idocare.nonstaticproxies.ContentResolverProxy;
+import il.co.idocare.utils.Logger;
 
 @Module
 public class ApplicationModule {
@@ -34,13 +36,20 @@ public class ApplicationModule {
 
     @Provides
     @ApplicationScope
-    LoginStateManager provideLoginStateManager(Application application, AccountManager accountManager) {
-        return new LoginStateManager(application, accountManager);
+    SharedPreferences provideSharedPreferences() {
+        return mApplication.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
     }
 
     @Provides
     @ApplicationScope
-    SharedPreferences provideSharedPreferences() {
-        return mApplication.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
+    Logger provideLogger() {
+        return new Logger();
+    }
+
+
+    @Provides
+    @ApplicationScope
+    ContentResolverProxy provideContentResolverProxy() {
+        return new ContentResolverProxy();
     }
 }

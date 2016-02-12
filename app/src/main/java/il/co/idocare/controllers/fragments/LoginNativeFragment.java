@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import javax.inject.Inject;
+
 import de.greenrobot.event.EventBus;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
@@ -30,7 +32,7 @@ public class LoginNativeFragment extends AbstractFragment {
 
     private LoginNativeViewMVC mLoginNativeViewMVC;
 
-    private LoginStateManager mLoginStateManager;
+    @Inject LoginStateManager mLoginStateManager;
 
     private AlertDialog mAlertDialog;
 
@@ -39,7 +41,7 @@ public class LoginNativeFragment extends AbstractFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mLoginNativeViewMVC = new LoginNativeViewMVC(inflater, container);
 
-        mLoginStateManager = getControllerComponent().loginStateManager();
+        getControllerComponent().inject(this);
 
         return mLoginNativeViewMVC.getRootView();
     }

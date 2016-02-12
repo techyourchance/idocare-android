@@ -21,6 +21,8 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import javax.inject.Inject;
+
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
@@ -44,7 +46,7 @@ public class LoginChooserFragment extends AbstractFragment {
 
     private CallbackManager mFacebookCallbackManager;
 
-    private LoginStateManager mLoginStateManager;
+    @Inject LoginStateManager mLoginStateManager;
 
     private AlertDialog mAlertDialog;
 
@@ -52,7 +54,7 @@ public class LoginChooserFragment extends AbstractFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mLoginChooserViewMVC = new LoginChooserViewMVC(inflater, container);
 
-        mLoginStateManager = getControllerComponent().loginStateManager();
+        getControllerComponent().inject(this);
 
         initializeFacebookLogin();
 

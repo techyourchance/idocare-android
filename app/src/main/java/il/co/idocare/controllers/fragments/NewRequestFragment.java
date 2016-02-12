@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.GlobalEvents;
@@ -24,6 +26,7 @@ import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.activities.MainActivity;
+import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.pictures.CameraAdapter;
 import il.co.idocare.utils.UtilMethods;
 import il.co.idocare.views.NewRequestViewMVC;
@@ -40,13 +43,14 @@ public class NewRequestFragment extends AbstractFragment {
     private String mLastCameraPicturePath;
     private List<String> mCameraPicturesPaths = new ArrayList<String>(3);
 
-    private LoginStateManager mLoginStateManager;
+    @Inject LoginStateManager mLoginStateManager;
+    @Inject ServerSyncController mServerSyncController;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mViewMVC = new NewRequestViewMVC(inflater, container);
 
-        mLoginStateManager = getControllerComponent().loginStateManager();
+        getControllerComponent().inject(this);
 
         setActionBarTitle(getTitle());
 
@@ -262,7 +266,7 @@ public class NewRequestFragment extends AbstractFragment {
             @Override
             protected void onPostExecute(Void aVoid) {
                 dismissProgressDialog();
-                ((MainActivity)getActivity()).requestImmediateSync(); // TODO: remove this after geocoder and names appear without sync
+                mServerSyncController.requestImmediateSync(); // TODO: remove this after geocoder and names appear without sync
                 replaceFragment(HomeFragment.class, false, true, null);
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[] {null});
