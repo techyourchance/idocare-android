@@ -102,7 +102,7 @@ public class SignupNativeSequence extends AbstractSequence {
         String authToken = parsedResponse.getString(ServerHttpResponseParser.KEY_PUBLIC_KEY);
 
 
-        if (mMyAccountManager.addNativeAccount(mUserData.getEmail(), userId, authToken)) {
+        if (mMyAccountManager.addAccount(mUserData.getEmail(), userId, authToken)) {
             signupSucceeded(mUserData.getEmail(), authToken);
         } else {
             signupFailed();

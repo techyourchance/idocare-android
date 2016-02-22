@@ -81,7 +81,7 @@ public class NewRequestFragment extends AbstractFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (mLoginStateManager.getActiveAccount() == null) {
+        if (!mLoginStateManager.isLoggedIn()) {
             // The user logged out while this fragment was paused
             userLoggedOut();
             return;

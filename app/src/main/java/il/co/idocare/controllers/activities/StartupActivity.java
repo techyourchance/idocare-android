@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import javax.inject.Inject;
+
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
@@ -20,6 +22,8 @@ public class StartupActivity extends AbstractActivity {
     private static final String LOG_TAG = StartupActivity.class.getSimpleName();
 
 
+    @Inject LoginStateManager mLoginStateManager;
+
     private long mInitTime;
 
     @Override
@@ -28,13 +32,11 @@ public class StartupActivity extends AbstractActivity {
 
         setContentView(R.layout.layout_single_frame);
 
+        getControllerComponent().inject(this);
 
         if (savedInstanceState == null) {
-
             mInitTime = System.currentTimeMillis();
-
             replaceFragment(SplashFragment.class, false, true, null);
-
         }
     }
 
@@ -65,19 +67,13 @@ public class StartupActivity extends AbstractActivity {
 
             @Override
             protected void onPostExecute(Void obj) {
-
-                LoginStateManager loginStateManager = new LoginStateManager(StartupActivity.this,
-                        AccountManager.get(StartupActivity.this));
-
                 Intent intent;
 
-                //this code don't need to know about hte exact mechanism the user used to log in
-                // TODO: remove unhealthy dependencies once proper login flow established
-                if (loginStateManager.isLoggedInNative()) {
+                if (mLoginStateManager.isLoggedIn()) {
                     // If the user is logged in - show the MainFragment
                     intent = new Intent(StartupActivity.this, MainActivity.class);
                 } else {
-                    if (loginStateManager.isLoginSkipped()) {
+                    if (mLoginStateManager.isLoginSkipped()) {
                         // If the user has already chosen to skip login at startup - switch to
                         // MainActivity right away.
                         intent = new Intent(StartupActivity.this, MainActivity.class);
@@ -98,10 +94,6 @@ public class StartupActivity extends AbstractActivity {
 
                         return;
                     }
-
-                    // TODO: just in case FB logout wasn't completed - remove once proper login flow established
-                    if (loginStateManager.isLoggedInWithFacebook())
-                        loginStateManager.logOut();
                 }
 
                 startActivity(intent);

@@ -11,6 +11,7 @@ import il.co.idocare.Constants;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.dependencyinjection.ApplicationScope;
 import il.co.idocare.nonstaticproxies.ContentResolverProxy;
+import il.co.idocare.nonstaticproxies.TextUtilsProxy;
 import il.co.idocare.utils.Logger;
 
 @Module
@@ -51,5 +52,12 @@ public class ApplicationModule {
     @ApplicationScope
     ContentResolverProxy provideContentResolverProxy() {
         return new ContentResolverProxy();
+    }
+
+
+    @Provides
+    @ApplicationScope
+    TextUtilsProxy  provideTextUtilsProxy() {
+        return new TextUtilsProxy();
     }
 }

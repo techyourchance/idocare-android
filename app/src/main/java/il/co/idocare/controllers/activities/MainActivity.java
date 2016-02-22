@@ -326,7 +326,7 @@ public class MainActivity extends AbstractActivity {
             replaceFragment(HomeFragment.class, false, true, null);
         }
         else if (chosenEntry.equals(getResources().getString(R.string.nav_drawer_entry_new_request))) {
-            if (mLoginStateManager.getActiveAccount() != null) // user logged in - go to new request fragment
+            if (mLoginStateManager.isLoggedIn()) // user logged in - go to new request fragment
                 replaceFragment(NewRequestFragment.class, true, false, null);
             else // user isn't logged in - ask him to log in and go to new request fragment if successful
                 askUserToLogIn(

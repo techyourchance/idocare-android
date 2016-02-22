@@ -138,9 +138,7 @@ public class LoginNativeFragment extends AbstractFragment {
         // Notify of login init
         EventBus.getDefault().post(new LoginNativeViewMVC.LoginRequestSentEvent());
 
-        LoginStateManager loginStateManager = new LoginStateManager(getActivity(),
-                AccountManager.get(getActivity()));
-        loginStateManager.logInNative(username, password);
+        mLoginStateManager.logInNative(username, password);
 
     }
 

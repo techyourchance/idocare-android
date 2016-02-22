@@ -11,6 +11,7 @@ import il.co.idocare.dependencyinjection.ControllerScope;
 import il.co.idocare.dependencyinjection.components.ControllerComponent;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.nonstaticproxies.ContentResolverProxy;
+import il.co.idocare.nonstaticproxies.TextUtilsProxy;
 import il.co.idocare.utils.Logger;
 
 @Module
@@ -31,15 +32,17 @@ public class ControllerModule {
 
     @Provides
     @ControllerScope
-    LoginStateManager provideLoginStateManager(Context context, AccountManager accountManager) {
-        return new LoginStateManager(context, accountManager);
+    LoginStateManager provideLoginStateManager(Context context, AccountManager accountManager,
+                                               MyAccountManager myAccountManager) {
+        return new LoginStateManager(context, accountManager, myAccountManager);
     }
 
 
     @Provides
     @ControllerScope
-    MyAccountManager provideMyAccountManager(AccountManager accountManager, Logger logger) {
-        return new MyAccountManager(accountManager, logger);
+    MyAccountManager provideMyAccountManager(AccountManager accountManager, Logger logger,
+                                             TextUtilsProxy textUtilsProxy) {
+        return new MyAccountManager(accountManager, logger, textUtilsProxy);
     }
 
     @Provides

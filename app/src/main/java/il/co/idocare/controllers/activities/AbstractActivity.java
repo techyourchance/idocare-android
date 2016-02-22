@@ -107,8 +107,6 @@ public abstract class AbstractActivity extends AppCompatActivity implements
             return;
         }
 
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-
         // Create new fragment
         Fragment newFragment;
 
@@ -123,6 +121,8 @@ public abstract class AbstractActivity extends AppCompatActivity implements
             return;
         }
 
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+
         if (addToBackStack) {
             ft.addToBackStack(null);
         }
@@ -130,15 +130,6 @@ public abstract class AbstractActivity extends AppCompatActivity implements
         // Change to a new fragment
         ft.replace(R.id.frame_contents, newFragment, claz.getClass().getSimpleName());
         ft.commit();
-
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getFragmentManager().executePendingTransactions();
-            }
-        });
-
     }
 
     /**

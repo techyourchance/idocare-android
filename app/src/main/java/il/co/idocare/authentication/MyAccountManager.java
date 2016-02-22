@@ -3,11 +3,11 @@ package il.co.idocare.authentication;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.os.Bundle;
-import android.text.TextUtils;
 
 import java.util.Arrays;
 
 import il.co.idocare.Constants;
+import il.co.idocare.nonstaticproxies.TextUtilsProxy;
 import il.co.idocare.utils.Logger;
 
 /**
@@ -19,10 +19,41 @@ public class MyAccountManager {
 
     private AccountManager mAccountManager;
     private Logger mLogger;
+    private TextUtilsProxy mTextUtils;
 
-    public MyAccountManager(AccountManager accountManager, Logger logger) {
+    public MyAccountManager(AccountManager accountManager, Logger logger, TextUtilsProxy textUtils) {
         mAccountManager = accountManager;
         mLogger = logger;
+        mTextUtils = textUtils;
+    }
+
+
+    /**
+     *
+     * @return active user account, or null if no active user account and couldn't add dummy account
+     */
+    public Account getActiveAccount() {
+        Account[] accounts =
+                mAccountManager.getAccountsByType(AccountAuthenticator.ACCOUNT_TYPE_DEFAULT);
+
+        if (accounts.length == 0) {
+            if (addDummyAccount())
+                return getDummyAccount();
+            else
+                return null;
+        }
+
+
+        if (accounts.length > 1) {
+            mLogger.e(TAG, "There is more than one account on the device. Using the first one." +
+                    " Total native accounts: " + String.valueOf(accounts.length));
+        }
+
+        // Checking for dummy account
+        if (accounts[0].equals(getDummyAccount()))
+            return null;
+        else
+            return accounts[0];
     }
 
     /**
@@ -31,27 +62,32 @@ public class MyAccountManager {
      * @return true if the account was created (or had already existed) and its auth token was
      *         set; false if account couldn't be created
      */
-    public boolean addNativeAccount(String username, String userId, String authToken) {
+    public boolean addAccount(String username, String userId, String authToken) {
+        mLogger.d(TAG, "attempting to add a native account; " +
+                "username: " + username+ "; user ID: " + userId + "; authToken: " + authToken);
 
-        mLogger.d(TAG, "attempting to add a native account; username: " + username
-                + "; user ID: " + userId + "; authToken: " + authToken);
-
-        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(userId)
-                || TextUtils.isEmpty(authToken)) {
-            mLogger.e(TAG, "account addition failed - invalid parameters");
-            return false;
+        if (mTextUtils.isEmpty(username)
+                || mTextUtils.isEmpty(userId)
+                || mTextUtils.isEmpty(authToken)) {
+            throw new IllegalArgumentException("all parameters must be non-empty");
         }
 
         String accountType = AccountAuthenticator.ACCOUNT_TYPE_DEFAULT;
 
-        final Account account = new Account(username, accountType);
+        Account account = new Account(username, accountType);
         Bundle userdata = new Bundle(1);
         userdata.putString(Constants.FIELD_NAME_USER_ID, userId);
-        mAccountManager.addAccountExplicitly(account, null, userdata);
 
-        Account[] existingAccounts =
-                mAccountManager.getAccountsByType(AccountAuthenticator.ACCOUNT_TYPE_DEFAULT);
+        return addAccount(account, userdata, authToken);
+    }
 
+    private boolean addAccount(Account account, Bundle userData, String authToken) {
+        mLogger.d(TAG, "addAccount; account = " + account + "; userData = " + userData);
+
+        String accountType = account.type;
+        mAccountManager.addAccountExplicitly(account, null, userData);
+
+        Account[] existingAccounts = mAccountManager.getAccountsByType(accountType);
         /*
          The below code both checks whether the required account exists and removes all other
          accounts, thus ensuring existence of a single account on the device...
@@ -60,14 +96,15 @@ public class MyAccountManager {
         boolean targetAccountExists = Arrays.asList(existingAccounts).contains(account);
 
         if (!targetAccountExists) {
-            mLogger.d(TAG, "failed to add native account");
+            mLogger.d(TAG, "failed to add an account");
             return false;
         }
 
         // The required account exists - update its authToken and remove all other accounts
         for (Account acc : existingAccounts) {
             if (acc.equals(account)) {
-                setNativeAccountAuthToken(username, accountType, authToken);
+                mAccountManager.setAuthToken(account, AccountAuthenticator.AUTH_TOKEN_TYPE_DEFAULT,
+                        authToken);
             } else {
                 mAccountManager.removeAccount(acc, null, null);
             }
@@ -77,27 +114,16 @@ public class MyAccountManager {
     }
 
 
-    private void setNativeAccountAuthToken(String accountName, String accountType,
-                                           String authToken) {
-        Account account = new Account(accountName, accountType);
-        mAccountManager.setAuthToken(account, AccountAuthenticator.AUTH_TOKEN_TYPE_DEFAULT,
-                authToken);
-    }
-
     public Account getDummyAccount() {
         Account account = new Account(AccountAuthenticator.DUMMY_ACCOUNT_NAME,
                 AccountAuthenticator.ACCOUNT_TYPE_DEFAULT);
         return account;
     }
 
-    public void addDummyAccount() {
+    private boolean addDummyAccount() {
         Account dummyAccount = getDummyAccount();
-        // TODO: this call returns false in case the account exists or error ocurred - handle both separately
-        mAccountManager.addAccountExplicitly(dummyAccount, null, null);
-        mAccountManager.setAuthToken(
-                dummyAccount,
-                AccountAuthenticator.AUTH_TOKEN_TYPE_DEFAULT,
-                AccountAuthenticator.DUMMY_ACCOUNT_AUTH_TOKEN);
+        return addAccount(dummyAccount, null, AccountAuthenticator.DUMMY_ACCOUNT_AUTH_TOKEN);
     }
+
 
 }

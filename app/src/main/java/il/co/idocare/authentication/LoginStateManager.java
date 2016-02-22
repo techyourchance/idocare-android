@@ -43,11 +43,12 @@ public class LoginStateManager {
     private AccountManager mAccountManager;
     private MyAccountManager mMyAccountManager;
 
-    public LoginStateManager(Context context, AccountManager accountManager /*TODO: need to be removed*/) {
+    public LoginStateManager(Context context,
+                             AccountManager accountManager /*TODO: need to be removed*/,
+                             MyAccountManager myAccountManager) {
         mContext = context;
         mAccountManager = accountManager;
-        // TODO: need to be injected
-        mMyAccountManager = new MyAccountManager(accountManager, new Logger());
+        mMyAccountManager = myAccountManager;
     }
 
     /**
@@ -70,19 +71,32 @@ public class LoginStateManager {
 
         TODO: RESOLVE THIS BUG!!!!!!!!
          */
-//        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-//        return accessToken != null;
 
-        // TODO: This is a temporary workaround which should be removed also
-        if (!isLoggedInNative() && AccessToken.getCurrentAccessToken() != null) {
-            LoginManager.getInstance().logOut();
+        Account activeAccount = mMyAccountManager.getActiveAccount();
+
+        if (activeAccount == null || activeAccount.equals(mMyAccountManager.getDummyAccount())) {
+            // There is a shitty scenario when there is no native account, but the user is
+            // logged in with facebook account - we need to account for this by logging out of FB.
+            // The optimal solution would be async request to addFacebookAccount(), but this will
+            // require too major code refactoring
+            // TODO: remove this shitty code once proper FB login flow established
+            if (AccessToken.getCurrentAccessToken() != null) {
+                LoginManager.getInstance().logOut();
+            }
+            return false;
+        } else {
+            return isFacebookAccount(activeAccount);
         }
-        return false;
-
     }
 
     public boolean isLoggedInNative() {
-        return getActiveAccount() != null;
+        Account activeAccount = mMyAccountManager.getActiveAccount();
+
+        if (activeAccount == null || activeAccount.equals(mMyAccountManager.getDummyAccount())) {
+            return false;
+        } else {
+            return !isFacebookAccount(activeAccount);
+        }
     }
 
 
@@ -216,13 +230,21 @@ public class LoginStateManager {
         return true;
     }
 
+    private boolean isFacebookAccount(Account account) {
+        return  mAccountManager.getUserData(account, Constants.FIELD_NAME_USER_FACEBOOK_ID) != null;
+    }
+
+    private void markAccountAsFacebook(Account account, String facebookId) {
+        mAccountManager.setUserData(account, Constants.FIELD_NAME_USER_FACEBOOK_ID, facebookId);
+    }
+
 
     /**
      * Log out the active user
      * TODO: this method should be rewritten once proper FB authentication implemented
      */
     public void logOut() {
-        final Account account = getActiveAccount();
+        final Account account = mMyAccountManager.getActiveAccount();
 
         if (account == null) return; // Not logged in user
 
@@ -285,54 +307,19 @@ public class LoginStateManager {
         return prefs.contains(Constants.LOGIN_SKIPPED_KEY);
     }
 
-    /**
-     *
-     * @return active user account, or null if there is no native account registered on the device
-     */
-    public Account getActiveAccount() {
-        Account[] accounts =
-                mAccountManager.getAccountsByType(AccountAuthenticator.ACCOUNT_TYPE_DEFAULT);
-
-        if (accounts.length == 0) {
-            // There is a shitty scenario when there is no native account, but the user is
-            // logged in with facebook account - we need to account for this by logging out of FB.
-            // The optimal solution would be async request to addFacebookAccount(), but this will
-            // require too major code refactoring
-            // TODO: remove this shitty code once proper FB login flow established
-            if (AccessToken.getCurrentAccessToken() != null) {
-                LoginManager.getInstance().logOut();
-            }
-            return null;
-        }
-
-
-        if (accounts.length > 1) {
-            Log.e(TAG, "There is more than one native account on the device. " +
-                    "Using the first one returned." +
-                    "\nTotal native accounts: " + String.valueOf(accounts.length));
-        }
-
-        // Checking for dummy account
-        if (accounts[0].name.equals(AccountAuthenticator.DUMMY_ACCOUNT_NAME) &&
-                mAccountManager.getUserData(accounts[0], Constants.FIELD_NAME_USER_ID) == null)
-            return null;
-        else
-            return accounts[0];
-    }
 
     /**
      *
      * @return user ID string associated with the active account, or null if there is no
-     *         native account registered on the device
+     *         user registered
      */
     public String getActiveAccountUserId() {
-        Account account = getActiveAccount();
+        Account account = mMyAccountManager.getActiveAccount();
 
         if (account != null)
             return mAccountManager.getUserData(account, Constants.FIELD_NAME_USER_ID);
         else
             return null;
-
     }
 
 

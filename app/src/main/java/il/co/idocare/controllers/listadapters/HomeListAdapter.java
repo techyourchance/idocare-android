@@ -40,20 +40,21 @@ public class HomeListAdapter extends CursorAdapter implements
     // TODO: make use of this applier or remove it completely!
     private UserUserActionApplier mUserUserActionApplier;
 
-    private LoginStateManager mUserStateManager;
+    private LoginStateManager mLoginStateManager;
 
     private Map<Long, UserItem> mUsersCache;
     private Map<Long, List<UserActionItem>> mUserActionsCache;
 
     public HomeListAdapter(Context context, Cursor cursor, int flags,
                            RequestUserActionApplier requestUserActionApplier,
-                           UserUserActionApplier userUserActionApplier) {
+                           UserUserActionApplier userUserActionApplier,
+                           LoginStateManager loginStateManager) {
         super(context, cursor, flags);
 
         mRequestUserActionApplier = requestUserActionApplier;
         mUserUserActionApplier = userUserActionApplier;
 
-        mUserStateManager = new LoginStateManager(context, AccountManager.get(context));
+        mLoginStateManager = loginStateManager;
 
         // TODO: the below initial values are totally arbitrary. Reconsider the values or the implementation of caches
         mUsersCache = new HashMap<>(5);
@@ -85,7 +86,7 @@ public class HomeListAdapter extends CursorAdapter implements
         }
 
         // Set request's status
-        request.setStatus(mUserStateManager.getActiveAccountUserId());
+        request.setStatus(mLoginStateManager.getActiveAccountUserId());
 
         ((RequestThumbnailViewMVC) view).bindRequestItem(request);
 

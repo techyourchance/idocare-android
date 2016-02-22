@@ -220,9 +220,7 @@ public class SignupNativeFragment extends AbstractFragment {
         // Notify of signup init
         EventBus.getDefault().post(new SignupNativeViewMVC.SignupRequestSentEvent());
 
-        final LoginStateManager loginStateManager = new LoginStateManager(getActivity(),
-                AccountManager.get(getActivity()));
-        loginStateManager.signUpNative(userData);
+        mLoginStateManager.signUpNative(userData);
 
     }
 

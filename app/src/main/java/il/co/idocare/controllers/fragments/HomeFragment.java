@@ -56,7 +56,8 @@ public class HomeFragment extends AbstractFragment implements
 
         // Create an adapter and pass the reference to MVC view
         mAdapter = new HomeListAdapter(getActivity(), null, 0,
-                new UserActionsOnRequestApplierImpl(), new UserActionsOnUserApplierImpl());
+                new UserActionsOnRequestApplierImpl(), new UserActionsOnUserApplierImpl(),
+                mLoginStateManager);
         mHomeViewMVC.setListAdapter(mAdapter);
 
         // Initiate loaders
@@ -94,7 +95,7 @@ public class HomeFragment extends AbstractFragment implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add_new_request:
-                if (mLoginStateManager.getActiveAccount() != null) // user logged in - go to new request fragment
+                if (mLoginStateManager.isLoggedIn()) // user logged in - go to new request fragment
                     replaceFragment(NewRequestFragment.class, true, false, null);
                 else // user isn't logged in - ask him to log in and go to new request fragment if successful
                     askUserToLogIn(

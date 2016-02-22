@@ -55,12 +55,11 @@ public class ServerSyncController {
 
 
     private Account getActiveOrDummyAccount() {
-        Account account = mLoginStateManager.getActiveAccount();
+        Account account = mMyAccountManager.getActiveAccount();
 
         if (account != null) {
             return account;
         } else {
-            mMyAccountManager.addDummyAccount();
             return mMyAccountManager.getDummyAccount();
         }
     }
