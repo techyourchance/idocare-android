@@ -67,10 +67,6 @@ public class LoginNativeViewMVC implements ViewMVC {
         authenticationInitiated();
     }
 
-    public void onEventMainThread(LoginSuccessfulEvent event) {
-        // TODO: do we need anything here?
-    }
-
     public void onEventMainThread(LoginFailedEvent event) {
         authenticationFailed();
     }
@@ -114,8 +110,6 @@ public class LoginNativeViewMVC implements ViewMVC {
     // EventBus events
 
     public static class LoginRequestSentEvent {}
-
-    public static class LoginSuccessfulEvent {}
 
     public static class LoginFailedEvent {}
 

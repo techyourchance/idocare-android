@@ -141,10 +141,6 @@ public class SignupNativeFragment extends AbstractFragment {
         showAddPictureDialog();
     }
 
-    public void onEventMainThread(LoginStateManager.UserLoggedInEvent event) {
-        showMultipleAccountsNotAllowedDialog();
-    }
-
     public void onEventMainThread(LoginStateEvents.LoginSucceededEvent event) {
         Bundle loginResult = new Bundle();
         loginResult.putString(AccountManager.KEY_ACCOUNT_NAME, event.getUsername());

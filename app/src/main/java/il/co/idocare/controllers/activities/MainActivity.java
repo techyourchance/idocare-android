@@ -31,6 +31,7 @@ import il.co.idocare.controllers.fragments.HomeFragment;
 import il.co.idocare.R;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
 import il.co.idocare.datamodels.functional.NavigationDrawerEntry;
+import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.location.LocationTrackerService;
 import il.co.idocare.networking.ServerSyncController;
 
@@ -175,7 +176,7 @@ public class MainActivity extends AbstractActivity {
     //
     // EventBus events handling
 
-    public void onEventMainThread(LoginStateManager.UserLoggedInEvent event) {
+    public void onEventMainThread(LoginStateEvents.LoginSucceededEvent event) {
         refreshDrawer();
     }
 
@@ -302,7 +303,7 @@ public class MainActivity extends AbstractActivity {
                 Arrays.asList(getResources().getStringArray(R.array.nav_drawer_entries)));
         TypedArray icons = getResources().obtainTypedArray(R.array.nav_drawer_icons);
 
-        // Remove one of login/logout options (based on connectivity state)
+        // Remove one of login/logout options
         if (mLoginStateManager.isLoggedIn())
             entries.remove(getString(R.string.nav_drawer_entry_login));
         else
