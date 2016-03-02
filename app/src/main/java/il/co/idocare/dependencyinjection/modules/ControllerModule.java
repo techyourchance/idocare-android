@@ -8,7 +8,6 @@ import dagger.Provides;
 import il.co.idocare.authentication.MyAccountManager;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.dependencyinjection.ControllerScope;
-import il.co.idocare.dependencyinjection.components.ControllerComponent;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.nonstaticproxies.ContentResolverProxy;
 import il.co.idocare.nonstaticproxies.TextUtilsProxy;
@@ -33,8 +32,8 @@ public class ControllerModule {
     @Provides
     @ControllerScope
     LoginStateManager provideLoginStateManager(Context context, AccountManager accountManager,
-                                               MyAccountManager myAccountManager) {
-        return new LoginStateManager(context, accountManager, myAccountManager);
+                                               MyAccountManager myAccountManager, Logger logger) {
+        return new LoginStateManager(context, accountManager, myAccountManager, logger);
     }
 
 

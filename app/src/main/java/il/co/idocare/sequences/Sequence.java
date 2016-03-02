@@ -47,6 +47,12 @@ public interface Sequence {
     // Public methods
 
     /**
+     * Execute the Sequence synchronously on a calling thread. This method must not be called more
+     * than once.
+     */
+    public void execute();
+
+    /**
      * Execute the Sequence in background. This method must not be called more than once.<br>
      * Note: implementations must not assume that this method will be called on some particular
      * thread.

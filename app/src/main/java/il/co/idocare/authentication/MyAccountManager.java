@@ -2,6 +2,7 @@ package il.co.idocare.authentication;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import java.util.Arrays;
@@ -45,15 +46,17 @@ public class MyAccountManager {
 
 
         if (accounts.length > 1) {
-            mLogger.e(TAG, "There is more than one account on the device. Using the first one." +
+            mLogger.e(TAG, "There is more than one account on the device. Using the first non-dummy one." +
                     " Total native accounts: " + String.valueOf(accounts.length));
         }
 
-        // Checking for dummy account
-        if (accounts[0].equals(getDummyAccount()))
-            return null;
-        else
-            return accounts[0];
+        for (Account acc : accounts) {
+            if (!acc.equals(getDummyAccount())) {
+                return acc;
+            }
+        }
+        mLogger.e(TAG, "couldn't find non-dummy account - dummy returned");
+        return accounts[0];
     }
 
     /**
@@ -106,7 +109,11 @@ public class MyAccountManager {
                 mAccountManager.setAuthToken(account, AccountAuthenticator.AUTH_TOKEN_TYPE_DEFAULT,
                         authToken);
             } else {
-                mAccountManager.removeAccount(acc, null, null);
+                if (Build.VERSION.SDK_INT < 22) {
+                    mAccountManager.removeAccount(acc, null, null);
+                } else {
+                    mAccountManager.removeAccountExplicitly(acc);
+                }
             }
         }
 
@@ -126,4 +133,24 @@ public class MyAccountManager {
     }
 
 
+    public boolean setActiveAccountUserData(String key, String value) {
+        mLogger.d(TAG, "setActiveAccountUserData called; key: " + key + "; value: " + value);
+        Account account = getActiveAccount();
+        if (account.equals(getDummyAccount())) {
+            mLogger.e(TAG, "active account is dummy - aborting");
+            return false;
+        }
+        mAccountManager.setUserData(account, key, value);
+        return true;
+    }
+
+    private String getActiveAccountUserData(String key) {
+        mLogger.d(TAG, "getActiveAccountUserData called; key: " + key);
+        Account account = getActiveAccount();
+        if (account.equals(getDummyAccount())) {
+            mLogger.e(TAG, "active account is dummy - aborting");
+            return null;
+        }
+        return mAccountManager.getUserData(account, key);
+    }
 }

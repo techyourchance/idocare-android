@@ -33,7 +33,7 @@ public abstract class AbstractSequence implements Sequence {
     protected abstract String getName();
 
     @Override
-    public final void executeInBackground() {
+    public void execute() {
         synchronized (STATE_LOCK) {
             if (mExecuted) {
                 throw new IllegalStateException("the Sequence has already been executed");
@@ -43,11 +43,17 @@ public abstract class AbstractSequence implements Sequence {
             mExecuted = true;
         }
 
+        doWork();
+    }
+
+    @Override
+    public final void executeInBackground() {
+
         // TODO: come up with a more sophisticated execution scheme
         new Thread(new Runnable() {
             @Override
             public void run() {
-                doWork();
+                execute();
             }
         }).start();
     }

@@ -7,16 +7,10 @@ import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.util.Log;
 
 import com.facebook.AccessToken;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -24,6 +18,7 @@ import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.datamodels.pojos.UserSignupNativeData;
 import il.co.idocare.eventbusevents.LoginStateEvents;
+import il.co.idocare.sequences.LoginFacebookSequence;
 import il.co.idocare.sequences.LoginNativeSequence;
 import il.co.idocare.sequences.Sequence;
 import il.co.idocare.sequences.SignupNativeSequence;
@@ -39,14 +34,14 @@ public class LoginStateManager {
 
 
     private Context mContext;
-
+    private Logger mLogger;
     private AccountManager mAccountManager;
     private MyAccountManager mMyAccountManager;
 
-    public LoginStateManager(Context context,
-                             AccountManager accountManager /*TODO: need to be removed*/,
-                             MyAccountManager myAccountManager) {
+    public LoginStateManager(Context context, AccountManager accountManager /*TODO: need to be removed*/,
+                             MyAccountManager myAccountManager, Logger logger) {
         mContext = context;
+        mLogger = logger;
         mAccountManager = accountManager;
         mMyAccountManager = myAccountManager;
     }
@@ -77,7 +72,7 @@ public class LoginStateManager {
         if (activeAccount == null || activeAccount.equals(mMyAccountManager.getDummyAccount())) {
             // There is a shitty scenario when there is no native account, but the user is
             // logged in with facebook account - we need to account for this by logging out of FB.
-            // The optimal solution would be async request to addFacebookAccount(), but this will
+            // The optimal solution would be async request to logInFacebook(), but this will
             // require too major code refactoring
             // TODO: remove this shitty code once proper FB login flow established
             if (AccessToken.getCurrentAccessToken() != null) {
@@ -131,7 +126,7 @@ public class LoginStateManager {
     public void logInNative(String username, String password) {
 
         final LoginNativeSequence loginNativeSequence =
-                new LoginNativeSequence(username, password, mAccountManager);
+                new LoginNativeSequence(username, password, mMyAccountManager);
 
         loginNativeSequence.registerStateChangeListener(new Sequence.StateChangeListener() {
             @Override
@@ -152,91 +147,34 @@ public class LoginStateManager {
 
 
     /**
-     * This method should be called after successful FB login. Currently it creates a new
-     * native Account with credentials built from user's details as obtained from facebook.<br>
-     * NOTE: this method mustn't be called from main thread
-     * TODO: refactor/remove this method once correct FB login flow implemented
-     * @param accessToken
-     * @return true if FB account was set up successfully, false otherwise
+     * TODO: write javadoc
      */
-    public boolean addFacebookAccount(AccessToken accessToken) {
+    public void logInFacebook(AccessToken accessToken) {
 
-        // Construct a request to fetch user's details
-        GraphRequest request = GraphRequest.newMeRequest(accessToken, null);
-        Bundle parameters = new Bundle();
-        parameters.putString("fields", "id, first_name, last_name, email");
-        request.setParameters(parameters);
+        final LoginFacebookSequence loginFacebookSequence =
+                new LoginFacebookSequence(accessToken, mMyAccountManager, mLogger);
 
-        GraphResponse response = GraphRequest.executeAndWait(request);
+        loginFacebookSequence.registerStateChangeListener(new Sequence.StateChangeListener() {
+            @Override
+            public void onSequenceStateChanged(int newState) {
+                if (newState == Sequence.STATE_EXECUTED_SUCCEEDED) {
+                    String username = loginFacebookSequence.getSequenceResult().getUsername();
+                    String authToken = loginFacebookSequence.getSequenceResult().getAuthToken();
+                    EventBus.getDefault()
+                            .post(new LoginStateEvents.LoginSucceededEvent(username, authToken));
+                } else if (newState == Sequence.STATE_EXECUTED_FAILED) {
+                    EventBus.getDefault().post(new LoginStateEvents.LoginFailedEvent());
+                }
+            }
+        });
+        loginFacebookSequence.executeInBackground();
 
-        Log.v(TAG, "Contents of facebook/me response: " + response.getRawResponse());
-
-        if (response.getError() != null) {
-            Log.e(TAG, "facebook/me returned error response: " +
-                    response.getError().getErrorMessage());
-            // TODO: facebook errors should be processed - there is a way to recover from some of them
-            return false;
-        }
-
-        JSONObject jsonResponse = response.getJSONObject();
-        if (jsonResponse == null) {
-            Log.e(TAG, "couldn't obtain JSON object from FB response");
-            return false;
-        }
-
-        String facebookId;
-        String email;
-        String password;
-        String firstName;
-        String lastName;
-        String nickname;
-
-        try {
-            facebookId = jsonResponse.getString("id");
-            email = jsonResponse.getString("email");
-            password = facebookId;
-            firstName = jsonResponse.getString("first_name");
-            lastName = jsonResponse.getString("last_name");
-            nickname = firstName + " " + lastName;
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        // TODO: refactor FB login into separate flow
-
-//        // Try to log in - this will fail if a native account corresponding to this FB account
-//        // hasn't been created yet
-//        Bundle loginResult = logInNative(email, facebookId);
-//        if (loginResult.containsKey(KEY_ERROR_MSG)) {
-//            Log.v(TAG, "native login into FB shadowed account failed. Error message: " +
-//                    loginResult.getString(KEY_ERROR_MSG));
-//            // Login failed therefore we need to try to create a new native account for this FB user
-//            // TODO: this account should have a picture
-//            Bundle signupResult =
-//                    signUpNative(email, password, nickname, firstName, lastName, facebookId, null);
-//            if (signupResult.containsKey(KEY_ERROR_MSG)) {
-//                Log.v(TAG, "native signup for FB shadowed account failed. Error message: " +
-//                        signupResult.getString(KEY_ERROR_MSG));
-//                // Both login and signup attempts failed - FB login flow failed
-//                return false;
-//            }
-//        }
-//
-//        // We need to designate the newly created native account as FB account
-//        Account account = getActiveAccount();
-//        mAccountManager.setUserData(account, Constants.FIELD_NAME_USER_FACEBOOK_ID, facebookId);
-
-        return true;
     }
 
     private boolean isFacebookAccount(Account account) {
         return  mAccountManager.getUserData(account, Constants.FIELD_NAME_USER_FACEBOOK_ID) != null;
     }
 
-    private void markAccountAsFacebook(Account account, String facebookId) {
-        mAccountManager.setUserData(account, Constants.FIELD_NAME_USER_FACEBOOK_ID, facebookId);
-    }
 
 
     /**

@@ -1,7 +1,6 @@
 package il.co.idocare.sequences;
 
 import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -11,11 +10,10 @@ import java.util.Arrays;
 
 import ch.boye.httpclientandroidlib.client.methods.CloseableHttpResponse;
 import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
-import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.URLs;
 import il.co.idocare.authentication.AccountAuthenticator;
-import il.co.idocare.eventbusevents.LoginStateEvents;
+import il.co.idocare.authentication.MyAccountManager;
 import il.co.idocare.networking.ServerHttpRequest;
 import il.co.idocare.networking.responseparsers.HttpResponseParseException;
 import il.co.idocare.networking.responseparsers.ResponseParserUtils;
@@ -33,14 +31,14 @@ public class LoginNativeSequence extends AbstractSequence {
 
     private final String mUsername;
     private final String mPassword;
-    private AccountManager mAccountManager;
+    private MyAccountManager mMyAccountManager;
 
     private LoginNativeResult mLoginNativeResult;
 
-    public LoginNativeSequence(String username, String password, AccountManager accountManager) {
+    public LoginNativeSequence(String username, String password, MyAccountManager myAccountManager) {
         mUsername = username;
         mPassword = password;
-        mAccountManager = accountManager;
+        mMyAccountManager = myAccountManager;
     }
 
     @Override
@@ -98,9 +96,7 @@ public class LoginNativeSequence extends AbstractSequence {
         String userId = parsedResponse.getString(ServerHttpResponseParser.KEY_USER_ID);
         String authToken = parsedResponse.getString(ServerHttpResponseParser.KEY_PUBLIC_KEY);
 
-
-        if (addNativeAccount(mUsername, AccountAuthenticator.ACCOUNT_TYPE_DEFAULT,
-                userId, authToken)) {
+        if (mMyAccountManager.addAccount(mUsername, userId, authToken)) {
             loginSucceeded(mUsername, authToken);
         } else {
             loginFailed();
@@ -131,59 +127,6 @@ public class LoginNativeSequence extends AbstractSequence {
         return true;
     }
 
-    /**
-     * Call to this method will add a new account and set its auth token. If the required account
-     * already exists - call to this method will only update its auth token.
-     */
-    private boolean addNativeAccount(String username, String accountType,
-                                    String userId, String authToken) {
-
-        Log.d(TAG, "attempting to add a native account; username: " + username + "; account type: "
-                + accountType + "; user ID: " + userId + "; authToken: " + authToken);
-
-        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(accountType)
-                || TextUtils.isEmpty(userId) || TextUtils.isEmpty(authToken)) {
-            Log.e(TAG, "account addition failed - invalid parameters");
-            return false;
-        }
-
-        final Account account = new Account(username, accountType);
-        Bundle userdata = new Bundle(1);
-        userdata.putString(Constants.FIELD_NAME_USER_ID, userId);
-        mAccountManager.addAccountExplicitly(account, null, userdata);
-
-        Account[] existingAccounts =
-                mAccountManager.getAccountsByType(AccountAuthenticator.ACCOUNT_TYPE_DEFAULT);
-
-        /*
-         The below code both checks whether the required account exists and removes all other
-         accounts, thus ensuring existence of a single account on the device...
-         TODO: reconsider single account approach and this particular implementation
-          */
-        boolean targetAccountExists = Arrays.asList(existingAccounts).contains(account);
-
-        if (!targetAccountExists) {
-            Log.d(TAG, "failed to add native account");
-            return false;
-        }
-
-        // The required account exists - update its authToken and remove all other accounts
-        for (Account acc : existingAccounts) {
-            if (acc.equals(account)) {
-                setNativeAccountAuthToken(username, accountType, authToken);
-            } else {
-                mAccountManager.removeAccount(acc, null, null);
-            }
-        }
-
-        return true;
-    }
-
-    private void setNativeAccountAuthToken(String accountName, String accountType,
-                                          String authToken) {
-        Account account = new Account(accountName, accountType);
-        mAccountManager.setAuthToken(account, AccountAuthenticator.AUTH_TOKEN_TYPE_DEFAULT, authToken);
-    }
 
     private void setSequenceResult(LoginNativeResult loginNativeResult) {
         mLoginNativeResult = loginNativeResult;

@@ -27,6 +27,7 @@ import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
+import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.views.LoginChooserViewMVC;
 
 /**
@@ -199,6 +200,15 @@ public class LoginChooserFragment extends AbstractFragment {
         replaceFragment(SignupNativeFragment.class, true, false, getArguments());
     }
 
+    public void onEventMainThread(LoginStateEvents.LoginSucceededEvent event) {
+        LoginChooserFragment.this.dismissProgressDialog();
+        finishActivity();
+    }
+
+    public void onEventMainThread(LoginStateEvents.LoginFailedEvent event) {
+        LoginChooserFragment.this.dismissProgressDialog();
+    }
+
     // End of EventBus events handling
     //
     // ---------------------------------------------------------------------------------------------
@@ -226,28 +236,7 @@ public class LoginChooserFragment extends AbstractFragment {
             LoginChooserFragment.this.showProgressDialog("Synchronizing with Facebook",
                     "Please wait while we are synchronizing with your Facebook profile...");
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-
-                    if (!mLoginStateManager.addFacebookAccount(accessToken)) {
-
-                        LoginManager.getInstance().logOut();
-
-                    }
-
-                    LoginChooserFragment.this.getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            LoginChooserFragment.this.dismissProgressDialog();
-
-                            finishActivity();
-                        }
-                    });
-
-                }
-            }).start();
-
+            mLoginStateManager.logInFacebook(accessToken);
         }
 
 
