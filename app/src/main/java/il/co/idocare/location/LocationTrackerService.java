@@ -11,7 +11,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import de.greenrobot.event.EventBus;
-import il.co.idocare.GlobalEvents;
+import il.co.idocare.eventbusevents.LocationEvents;
 
 /**
  * This service tracks the location of the user and provides this information to other app's
@@ -61,8 +61,8 @@ public class LocationTrackerService extends Service {
 
         // Use the latest best estimate as a starting point (if exists)
         if (mCurrentBestEstimate == null) {
-                GlobalEvents.BestLocationEstimateEvent pastBestEstimate = EventBus.getDefault()
-                        .getStickyEvent(GlobalEvents.BestLocationEstimateEvent.class);
+                LocationEvents.BestLocationEstimateEvent pastBestEstimate = EventBus.getDefault()
+                        .getStickyEvent(LocationEvents.BestLocationEstimateEvent.class);
             if (pastBestEstimate != null) {
                 mCurrentBestEstimate = pastBestEstimate.location;
             }
@@ -87,7 +87,7 @@ public class LocationTrackerService extends Service {
     //
     // EventBus events handling
 
-    public void onEvent(GlobalEvents.HighAccuracyLocationRequiredEvent event) {
+    public void onEvent(LocationEvents.HighAccuracyLocationRequiredEvent event) {
         gotoState(STATE_HIGHEST_ACCURACY);
     }
 
@@ -163,7 +163,7 @@ public class LocationTrackerService extends Service {
             Log.d(TAG, "new best location estimate is " + locationUpdate.toString());
             mCurrentBestEstimate = locationUpdate;
             EventBus.getDefault()
-                    .postSticky(new GlobalEvents.BestLocationEstimateEvent(mCurrentBestEstimate));
+                    .postSticky(new LocationEvents.BestLocationEstimateEvent(mCurrentBestEstimate));
         }
 
         // once reached target accuracy - go to passive state in order to conserve power

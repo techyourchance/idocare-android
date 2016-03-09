@@ -21,11 +21,10 @@ import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
-import il.co.idocare.GlobalEvents;
+import il.co.idocare.eventbusevents.LocationEvents;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.pictures.CameraAdapter;
 import il.co.idocare.utils.UtilMethods;
@@ -88,7 +87,7 @@ public class NewRequestFragment extends AbstractFragment {
         }
 
         // high accuracy location required for request creation
-        EventBus.getDefault().post(new GlobalEvents.HighAccuracyLocationRequiredEvent());
+        EventBus.getDefault().post(new LocationEvents.HighAccuracyLocationRequiredEvent());
     }
 
     @Override
@@ -192,8 +191,8 @@ public class NewRequestFragment extends AbstractFragment {
     private void createRequest() {
         String createdBy = mLoginStateManager.getActiveAccountUserId();
 
-        GlobalEvents.BestLocationEstimateEvent bestLocationEstimateEvent =
-                EventBus.getDefault().getStickyEvent(GlobalEvents.BestLocationEstimateEvent.class);
+        LocationEvents.BestLocationEstimateEvent bestLocationEstimateEvent =
+                EventBus.getDefault().getStickyEvent(LocationEvents.BestLocationEstimateEvent.class);
         if (bestLocationEstimateEvent == null
                 || !isValidLocation(bestLocationEstimateEvent.location)) {
             Log.d(TAG, "aborting request creation due to lack of, or insufficiently accurate " +

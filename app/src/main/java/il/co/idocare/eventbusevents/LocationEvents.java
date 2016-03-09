@@ -1,19 +1,13 @@
-package il.co.idocare;
+package il.co.idocare.eventbusevents;
 
 import android.location.Location;
 
 /**
- * This class contains definitions of global events used in the app.<br>
- * The only reason to put events in this class (as opposed to putting them in e.g. the
- * class that produces them) is to prevent unhealthy dependencies between the producers
- * and the consumers of those events. Please note that in many cases this dependency exists anyway
- * (e.g. MVC controller depends on particular MVC views), in which case the events used to
- * communicate between already dependent classes should be defined as static inner classes of the
- * producer.
+ *
  */
-public class GlobalEvents {
+public final class LocationEvents {
 
-    private GlobalEvents() {}
+    private LocationEvents() {}
 
     /**
      * This event should be used to broadcast the current best estimate of the location. It  makes

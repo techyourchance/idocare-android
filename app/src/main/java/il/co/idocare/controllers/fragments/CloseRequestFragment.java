@@ -24,7 +24,7 @@ import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
-import il.co.idocare.GlobalEvents;
+import il.co.idocare.eventbusevents.LocationEvents;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
@@ -288,8 +288,8 @@ public class CloseRequestFragment extends AbstractFragment {
 
 
     private boolean isValidLocation() {
-        GlobalEvents.BestLocationEstimateEvent bestLocationEstimateEvent =
-                EventBus.getDefault().getStickyEvent(GlobalEvents.BestLocationEstimateEvent.class);
+        LocationEvents.BestLocationEstimateEvent bestLocationEstimateEvent =
+                EventBus.getDefault().getStickyEvent(LocationEvents.BestLocationEstimateEvent.class);
         if (bestLocationEstimateEvent == null) {
             Log.d(TAG, "no best location estimate found");
             return false;
