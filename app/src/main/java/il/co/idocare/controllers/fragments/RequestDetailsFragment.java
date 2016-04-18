@@ -63,7 +63,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         mRequestDetailsViewMVC =
-                new RequestDetailsViewMVC(getActivity(), container, savedInstanceState);
+                new RequestDetailsViewMVC(inflater, container, savedInstanceState);
 
         getControllerComponent().inject(this);
 

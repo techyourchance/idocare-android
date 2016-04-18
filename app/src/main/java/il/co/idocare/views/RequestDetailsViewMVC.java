@@ -3,6 +3,8 @@ package il.co.idocare.views;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,14 +75,11 @@ public class RequestDetailsViewMVC implements ViewMVC {
     private Button mBtnCloseRequest;
 
 
-    public RequestDetailsViewMVC(Context context, ViewGroup container, Bundle savedInstanceState) {
-        mContext = context;
-
-        mRootView = LayoutInflater.from(mContext)
-                .inflate(R.layout.layout_request_details, container, false);
-
+    public RequestDetailsViewMVC(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                                 @Nullable Bundle savedInstanceState) {
+        mRootView = inflater.inflate(R.layout.layout_request_details, container, false);
+        mContext = getRootView().getContext();
         initialize();
-
     }
 
     @Override

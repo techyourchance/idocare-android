@@ -7,7 +7,6 @@ import android.os.Bundle;
 
 import de.greenrobot.event.EventBus;
 import il.co.idocare.MyApplication;
-import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.dependencyinjection.components.ControllerComponent;
 import il.co.idocare.dependencyinjection.modules.ControllerModule;
 
@@ -45,6 +44,7 @@ public abstract class AbstractFragment extends Fragment implements
         super.onCreate(savedInstanceState);
         mControllerComponent = ((MyApplication)getActivity().getApplication())
                 .getApplicationComponent().newControllerComponent(new ControllerModule(getActivity()));
+
     }
 
     // ---------------------------------------------------------------------------------------------

@@ -21,7 +21,6 @@ import il.co.idocare.networking.ServerHttpRequest;
 @Subcomponent(modules = ControllerModule.class)
 public interface ControllerComponent {
 
-
     void inject(MainActivity activity);
     void inject(StartupActivity activity);
 
