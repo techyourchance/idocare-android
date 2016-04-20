@@ -40,6 +40,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:7.8.0'
     compile "com.android.support:appcompat-v7:23.0.1"
     compile 'com.google.code.gson:gson:2.3.1'
+    compile 'com.makeramen:roundedimageview:2.2.1'
 
     // Dependency injection
     apt 'com.google.dagger:dagger-compiler:2.0'

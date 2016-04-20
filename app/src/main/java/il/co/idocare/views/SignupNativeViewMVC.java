@@ -28,8 +28,6 @@ public class SignupNativeViewMVC implements ViewMVC {
     public static final String VIEW_STATE_FIRST_NAME= "first_name";
     public static final String VIEW_STATE_LAST_NAME= "last_name";
 
-    private final static String LOG_TAG = SignupNativeViewMVC.class.getSimpleName();
-
     View mRootView;
 
     Button mBtnSignup;

@@ -16,12 +16,15 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/signup_native_margin_1" />
 
-    <ImageView
+    <com.makeramen.roundedimageview.RoundedImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/img_user_picture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:src="@drawable/ic_add_user_picture"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_height="@dimen/signup_native_picture_size"
+        android:layout_width="@dimen/signup_native_picture_size"
+        android:scaleType="centerCrop"
+        app:riv_oval="true"/>
+
 
     <TextView
         android:id="@+id/txt_add_user_picture"

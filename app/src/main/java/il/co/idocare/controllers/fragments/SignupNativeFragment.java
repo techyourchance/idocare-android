@@ -46,7 +46,7 @@ public class SignupNativeFragment extends AbstractFragment {
     private static final Pattern passwordValidationNoSpaces =
             Pattern.compile("^\\S+$");
     private static final Pattern passwordValidationMinimumLength =
-            Pattern.compile("^.*.{8,}$");
+            Pattern.compile("^.*.{6,}$");
     private static final Pattern passwordValidationHasDigit =
             Pattern.compile("^.*[0-9].*$");
 
