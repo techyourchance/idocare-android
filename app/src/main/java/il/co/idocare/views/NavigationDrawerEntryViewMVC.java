@@ -60,7 +60,7 @@ public class NavigationDrawerEntryViewMVC extends RelativeLayout implements View
     }
 
     public void showEntry(NavigationDrawerEntry entry) {
-        if (entry.getIcon() != 0) {
+        if (entry.getIconResId() != 0) {
 
 //            if (icons[i] != 0) {
 //                // Change of API for SDK 21 and further
@@ -71,11 +71,11 @@ public class NavigationDrawerEntryViewMVC extends RelativeLayout implements View
 //            }
 
             mImgIcon.setVisibility(View.VISIBLE);
-            mImgIcon.setImageResource(entry.getIcon());
+            mImgIcon.setImageResource(entry.getIconResId());
         } else {
             mImgIcon.setVisibility(View.INVISIBLE);
         }
-        mTxtTitle.setText(entry.getTitle());
+        mTxtTitle.setText(entry.getTitleResId());
     }
 
 }

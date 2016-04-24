@@ -6,19 +6,19 @@ package il.co.idocare.datamodels.functional;
 public class NavigationDrawerEntry {
 
 
-    private int mIcon;
-    private String mTitle;
+    private final int mTitleStringId;
+    private final int mIconDrawableId;
 
-    public NavigationDrawerEntry(String title, int icon) {
-        mIcon = icon;
-        mTitle = title;
+    public NavigationDrawerEntry(int titleStringId, int iconDrawableId) {
+        mTitleStringId = titleStringId;
+        mIconDrawableId = iconDrawableId;
     }
 
-    public int getIcon() {
-        return mIcon;
+    public int getIconResId() {
+        return mIconDrawableId;
     }
 
-    public String getTitle() {
-        return mTitle;
+    public int getTitleResId() {
+        return mTitleStringId;
     }
 }

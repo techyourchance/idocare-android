@@ -51,12 +51,12 @@
             android:layout_height="30dp" />
 
         <ImageView
+            android:id="@+id/img_user_picture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/fragment_default_padding"
             android:layout_marginStart="@dimen/fragment_default_padding"
-            android:layout_marginLeft="@dimen/fragment_default_padding"
-            android:src="@drawable/ic_default_user_picture"/>
+            android:layout_marginLeft="@dimen/fragment_default_padding"/>
 
         <Space
             android:layout_width="wrap_content"
