@@ -5,7 +5,9 @@ import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 
-import de.greenrobot.event.EventBus;
+
+import org.greenrobot.eventbus.EventBus;
+
 import il.co.idocare.MyApplication;
 import il.co.idocare.dependencyinjection.components.ControllerComponent;
 import il.co.idocare.dependencyinjection.modules.ControllerModule;

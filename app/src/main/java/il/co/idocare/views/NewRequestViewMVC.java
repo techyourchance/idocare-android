@@ -12,7 +12,9 @@ import android.widget.RatingBar;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import de.greenrobot.event.EventBus;
+
+import org.greenrobot.eventbus.EventBus;
+
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 

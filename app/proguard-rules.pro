@@ -26,23 +26,6 @@
 -keepattributes SourceFile,LineNumberTable
 
 
-
-## --------------------------------------------------------------------------------
-#
-# Preventing stripping of EventBus onEvent* methods
-#
-## --------------------------------------------------------------------------------
-
--keepclassmembers class ** {
-    public void onEvent(**);
-}
-
-
--keepclassmembers class ** {
-    public void onEventMainThread(**);
-}
-
-
 ## --------------------------------------------------------------------------------
 #
 # org.apache.commons.validator package references many other org.apache.commons

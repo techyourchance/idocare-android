@@ -17,6 +17,9 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.maps.MapView;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -124,31 +127,38 @@ public class RequestDetailsFragment extends AbstractFragment implements
     //
     // EventBus events handling
 
+    @Subscribe
     public void onEvent(RequestDetailsViewMVC.PickupRequestButtonClickEvent event) {
         pickupRequest();
     }
 
+    @Subscribe
     public void onEvent(RequestDetailsViewMVC.CloseRequestButtonClickEvent event) {
         closeRequest();
     }
 
+    @Subscribe
     public void onEvent(RequestDetailsViewMVC.CreatedVoteUpButtonClickEvent event) {
         voteForRequest(1, false);
     }
 
+    @Subscribe
     public void onEvent(RequestDetailsViewMVC.CreatedVoteDownButtonClickEvent event) {
         voteForRequest(-1, false);
     }
 
+    @Subscribe
     public void onEvent(RequestDetailsViewMVC.ClosedVoteUpButtonClickEvent event) {
         voteForRequest(1, true);
     }
 
+    @Subscribe
     public void onEvent(RequestDetailsViewMVC.ClosedVoteDownButtonClickEvent event) {
         voteForRequest(-1, true);
     }
 
-    public void onEventMainThread(LoginStateManager.UserLoggedOutEvent event) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(LoginStateManager.UserLoggedOutEvent event) {
         getLoaderManager().restartLoader(REQUEST_LOADER, null, this);
     }
 

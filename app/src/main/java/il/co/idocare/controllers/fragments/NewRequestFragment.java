@@ -13,13 +13,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
+
 import il.co.idocare.Constants;
 import il.co.idocare.eventbusevents.LocationEvents;
 import il.co.idocare.R;
@@ -140,15 +144,18 @@ public class NewRequestFragment extends AbstractFragment {
     //
     // EventBus events handling
 
+    @Subscribe
     public void onEvent(NewRequestViewMVC.TakePictureButtonClickEvent event) {
         takePictureWithCamera();
     }
 
+    @Subscribe
     public void onEvent(NewRequestViewMVC.CreateNewRequestButtonClickEvent event) {
         createRequest();
     }
 
-    public void onEventMainThread(LoginStateManager.UserLoggedOutEvent event) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(LoginStateManager.UserLoggedOutEvent event) {
         userLoggedOut();
     }
 

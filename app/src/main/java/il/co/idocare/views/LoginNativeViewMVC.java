@@ -9,7 +9,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+
 import il.co.idocare.R;
 
 /**
@@ -63,11 +67,14 @@ public class LoginNativeViewMVC implements ViewMVC {
     //
     // EventBus events handling
 
-    public void onEventMainThread(LoginRequestSentEvent event) {
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(LoginRequestSentEvent event) {
         authenticationInitiated();
     }
 
-    public void onEventMainThread(LoginFailedEvent event) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(LoginFailedEvent event) {
         authenticationFailed();
     }
 

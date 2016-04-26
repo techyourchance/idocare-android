@@ -21,6 +21,9 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import javax.inject.Inject;
 
 import il.co.idocare.R;
@@ -184,6 +187,7 @@ public class LoginChooserFragment extends AbstractFragment {
     //
     // EventBus events handling
 
+    @Subscribe
     public void onEvent(LoginChooserViewMVC.SkipLoginClickEvent event) {
 
         mLoginStateManager.setLoginSkipped(true);
@@ -191,21 +195,24 @@ public class LoginChooserFragment extends AbstractFragment {
         finishActivity();
     }
 
-
+    @Subscribe
     public void onEvent(LoginChooserViewMVC.LogInNativeClickEvent event) {
         replaceFragment(LoginNativeFragment.class, true, false, getArguments());
     }
 
+    @Subscribe
     public void onEvent(LoginChooserViewMVC.SignUpNativeClickEvent event) {
         replaceFragment(SignupNativeFragment.class, true, false, getArguments());
     }
 
-    public void onEventMainThread(LoginStateEvents.LoginSucceededEvent event) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(LoginStateEvents.LoginSucceededEvent event) {
         LoginChooserFragment.this.dismissProgressDialog();
         finishActivity();
     }
 
-    public void onEventMainThread(LoginStateEvents.LoginFailedEvent event) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(LoginStateEvents.LoginFailedEvent event) {
         LoginChooserFragment.this.dismissProgressDialog();
     }
 

@@ -18,12 +18,15 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import org.apache.commons.validator.routines.EmailValidator;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
+
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
@@ -133,15 +136,20 @@ public class SignupNativeFragment extends AbstractFragment {
     //
     // EventBus events handling
 
+
+    @Subscribe
     public void onEvent(SignupNativeViewMVC.SignupButtonClickEvent event) {
         signUpNative();
     }
 
+    @Subscribe
     public void onEvent(SignupNativeViewMVC.AddUserPictureClickEvent event) {
         showAddPictureDialog();
     }
 
-    public void onEventMainThread(LoginStateEvents.LoginSucceededEvent event) {
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(LoginStateEvents.LoginSucceededEvent event) {
         Bundle loginResult = new Bundle();
         loginResult.putString(AccountManager.KEY_ACCOUNT_NAME, event.getUsername());
         loginResult.putString(AccountManager.KEY_AUTHTOKEN, event.getAuthToken());
@@ -150,7 +158,8 @@ public class SignupNativeFragment extends AbstractFragment {
         finishActivity(Activity.RESULT_OK, intent, loginResult);
     }
 
-    public void onEventMainThread(LoginStateEvents.LoginFailedEvent event) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(LoginStateEvents.LoginFailedEvent event) {
         // TODO: refactor communication with MVC views to use standard listeners instead of EventBus
         EventBus.getDefault().post(new SignupNativeViewMVC.SignupFailedEvent());
         // TODO: change this toast to an informative dialog

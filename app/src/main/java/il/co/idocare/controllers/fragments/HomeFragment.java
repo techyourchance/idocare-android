@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.greenrobot.eventbus.Subscribe;
+
 import javax.inject.Inject;
 
 import il.co.idocare.Constants;
@@ -117,6 +119,7 @@ public class HomeFragment extends AbstractFragment implements
     //
     // EventBus events handling
 
+    @Subscribe
     public void onEvent(HomeViewMVC.ListItemClickEvent event) {
         // Get the selected request ID
         long requestId = mAdapter.getRequestAtPosition(event.mPosition).getId();

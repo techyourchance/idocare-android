@@ -11,9 +11,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
+
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.fragments.HomeFragment;
@@ -156,11 +160,14 @@ public class MainActivity extends AbstractActivity implements
     //
     // EventBus events handling
 
-    public void onEventMainThread(LoginStateEvents.LoginSucceededEvent event) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(LoginStateEvents.LoginSucceededEvent event) {
         mMainNavDrawerViewMVC.refreshDrawer();
     }
 
-    public void onEventMainThread(LoginStateManager.UserLoggedOutEvent event) {
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(LoginStateManager.UserLoggedOutEvent event) {
         mMainNavDrawerViewMVC.refreshDrawer();
     }
 

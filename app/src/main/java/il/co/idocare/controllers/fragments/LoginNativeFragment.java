@@ -12,9 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
@@ -100,12 +103,14 @@ public class LoginNativeFragment extends AbstractFragment {
     //
     // EventBus events handling
 
+    @Subscribe
     public void onEvent(LoginNativeViewMVC.LoginButtonClickEvent event) {
         // TODO: refactor communication with MVC views to use standard listeners instead of EventBus
         logInNative();
     }
 
-    public void onEventMainThread(LoginStateEvents.LoginSucceededEvent event) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(LoginStateEvents.LoginSucceededEvent event) {
         Bundle loginResult = new Bundle();
         loginResult.putString(AccountManager.KEY_ACCOUNT_NAME, event.getUsername());
         loginResult.putString(AccountManager.KEY_AUTHTOKEN, event.getAuthToken());
@@ -114,7 +119,9 @@ public class LoginNativeFragment extends AbstractFragment {
         finishActivity(Activity.RESULT_OK, intent, loginResult);
     }
 
-    public void onEventMainThread(LoginStateEvents.LoginFailedEvent event) {
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(LoginStateEvents.LoginFailedEvent event) {
         // TODO: refactor communication with MVC views to use standard listeners instead of EventBus
         EventBus.getDefault().post(new LoginNativeViewMVC.LoginFailedEvent());
     }

@@ -12,9 +12,10 @@ import android.util.Log;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.IOException;
 
-import de.greenrobot.event.EventBus;
 import il.co.idocare.Constants;
 import il.co.idocare.datamodels.pojos.UserSignupNativeData;
 import il.co.idocare.eventbusevents.LoginStateEvents;

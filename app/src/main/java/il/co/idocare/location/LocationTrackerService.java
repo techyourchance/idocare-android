@@ -10,7 +10,10 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+
 import il.co.idocare.eventbusevents.LocationEvents;
 
 /**
@@ -87,6 +90,7 @@ public class LocationTrackerService extends Service {
     //
     // EventBus events handling
 
+    @Subscribe
     public void onEvent(LocationEvents.HighAccuracyLocationRequiredEvent event) {
         gotoState(STATE_HIGHEST_ACCURACY);
     }

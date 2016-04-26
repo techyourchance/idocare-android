@@ -12,7 +12,11 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 
@@ -94,15 +98,19 @@ public class SignupNativeViewMVC implements ViewMVC {
     //
     // EventBus events handling
 
-    public void onEventMainThread(SignupRequestSentEvent event) {
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(SignupRequestSentEvent event) {
         authenticationInitiated();
     }
 
-    public void onEventMainThread(SignupSuccessfulEvent event) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(SignupSuccessfulEvent event) {
         // TODO: do we need anything here?
     }
 
-    public void onEventMainThread(SignupFailedEvent event) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(SignupFailedEvent event) {
         authenticationFailed();
     }
 

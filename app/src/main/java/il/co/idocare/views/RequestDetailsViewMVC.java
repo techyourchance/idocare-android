@@ -21,10 +21,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import de.greenrobot.event.EventBus;
+
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.datamodels.functional.RequestItem;
