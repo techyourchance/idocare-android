@@ -11,7 +11,6 @@ import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.localcachedata.LocalCacheDataChangeListener;
 import il.co.idocare.localcachedata.LocalCacheUserData;
 import il.co.idocare.networking.ServerSyncController;
-import il.co.idocare.serversync.ServerSyncUserData;
 
 /**
  * This Loader is responsible for loading user's data. It searches for the data in the local cache,
