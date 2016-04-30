@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import il.co.idocare.datamodels.functional.NavigationDrawerEntry;
-import il.co.idocare.views.NavigationDrawerEntryViewMVC;
+import il.co.idocare.mvcviews.navdrawerentry.NavigationDrawerEntryViewMVC;
 
 /**
  * Created by Vasiliy on 3/23/2015.

@@ -23,7 +23,7 @@ import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.eventbusevents.LoginStateEvents;
-import il.co.idocare.views.LoginNativeViewMVC;
+import il.co.idocare.mvcviews.loginnative.LoginNativeViewMVC;
 
 /**
  * This fragment handles native login flow

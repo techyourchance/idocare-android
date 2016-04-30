@@ -34,7 +34,7 @@ import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.datamodels.functional.UserActionItem;
 import il.co.idocare.networking.ServerSyncController;
-import il.co.idocare.views.RequestDetailsViewMVC;
+import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMVC;
 
 
 public class RequestDetailsFragment extends AbstractFragment implements

@@ -1,4 +1,4 @@
-package il.co.idocare.views;
+package il.co.idocare.mvcviews.navdrawerentry;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import il.co.idocare.R;
 import il.co.idocare.datamodels.functional.NavigationDrawerEntry;
+import il.co.idocare.mvcviews.ViewMVC;
 
 /**
  * Created by Vasiliy on 3/23/2015.

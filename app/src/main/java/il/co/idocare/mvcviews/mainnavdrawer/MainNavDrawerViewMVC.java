@@ -1,4 +1,4 @@
-package il.co.idocare.views;
+package il.co.idocare.mvcviews.mainnavdrawer;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,7 +28,7 @@ import il.co.idocare.R;
 import il.co.idocare.controllers.listadapters.NavigationDrawerListAdapter;
 import il.co.idocare.datamodels.functional.NavigationDrawerEntry;
 import il.co.idocare.datamodels.functional.UserItem;
-import il.co.idocare.nonstaticproxies.TextUtilsProxy;
+import il.co.idocare.mvcviews.ViewMVC;
 
 /**
  * This MVC view represents application's main screen which contains NavigationDrawer and a single

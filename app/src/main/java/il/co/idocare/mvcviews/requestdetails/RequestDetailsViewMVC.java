@@ -1,4 +1,4 @@
-package il.co.idocare.views;
+package il.co.idocare.mvcviews.requestdetails;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -31,6 +31,7 @@ import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.datamodels.functional.UserItem;
+import il.co.idocare.mvcviews.ViewMVC;
 
 /**
  * MVC View for New Request screen.

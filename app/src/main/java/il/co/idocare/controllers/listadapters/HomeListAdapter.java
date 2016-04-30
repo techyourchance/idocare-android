@@ -22,7 +22,7 @@ import il.co.idocare.controllers.interfaces.UserUserActionApplier;
 import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.datamodels.functional.UserActionItem;
-import il.co.idocare.views.RequestThumbnailViewMVC;
+import il.co.idocare.mvcviews.requestthumbnail.RequestThumbnailViewMVC;
 
 /**
  * Customized CursorAdapter that is used for displaying the list of requests on HomeFragment.

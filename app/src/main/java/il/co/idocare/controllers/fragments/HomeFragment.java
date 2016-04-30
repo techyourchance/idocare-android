@@ -27,7 +27,7 @@ import il.co.idocare.controllers.listadapters.HomeListAdapter;
 import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
 import il.co.idocare.controllers.listadapters.UserActionsOnUserApplierImpl;
 import il.co.idocare.datamodels.functional.RequestItem;
-import il.co.idocare.views.HomeViewMVC;
+import il.co.idocare.mvcviews.home.HomeViewMVC;
 
 
 public class HomeFragment extends AbstractFragment implements

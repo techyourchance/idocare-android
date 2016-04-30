@@ -33,7 +33,7 @@ import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.pictures.CameraAdapter;
 import il.co.idocare.utils.UtilMethods;
-import il.co.idocare.views.CloseRequestViewMVC;
+import il.co.idocare.mvcviews.closerequest.CloseRequestViewMVC;
 
 
 public class CloseRequestFragment extends AbstractFragment {

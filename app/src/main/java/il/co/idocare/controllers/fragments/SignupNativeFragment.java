@@ -36,7 +36,7 @@ import il.co.idocare.datamodels.pojos.UserSignupNativeData;
 import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.pictures.CameraAdapter;
 import il.co.idocare.utils.UtilMethods;
-import il.co.idocare.views.SignupNativeViewMVC;
+import il.co.idocare.mvcviews.signupnative.SignupNativeViewMVC;
 
 /**
  * This fragment handles native signup flow

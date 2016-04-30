@@ -1,4 +1,4 @@
-package il.co.idocare.views;
+package il.co.idocare.mvcviews.newrequest;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -16,27 +17,30 @@ import org.greenrobot.eventbus.EventBus;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
+import il.co.idocare.mvcviews.ViewMVC;
 
 /**
- * MVC View for Close Request screen.
+ * MVC View for New Request screen.
  */
-public class CloseRequestViewMVC implements ViewMVC {
+public class NewRequestViewMVC implements ViewMVC {
 
-    public static final String KEY_CLOSED_COMMENT = Constants.FIELD_NAME_CLOSED_COMMENT;
+    public final static String KEY_CREATED_COMMENT = Constants.FIELD_NAME_CREATED_COMMENT;
+    public final static String KEY_CREATED_POLLUTION_LEVEL = Constants.FIELD_NAME_CREATED_POLLUTION_LEVEL;
 
-    private final static String LOG_TAG = CloseRequestViewMVC.class.getSimpleName();
+    private final static String LOG_TAG = NewRequestViewMVC.class.getSimpleName();
 
 
     private View mRootView;
 
-    private EditText mEdtClosedComment;
+    private EditText mEdtCreatedComment;
+    private RatingBar mRatingbarPollutionLevel;
     private ImageView[] mImgPictures = new ImageView[3];
 
+    public NewRequestViewMVC(LayoutInflater inflater, ViewGroup container) {
+        mRootView = inflater.inflate(R.layout.layout_new_request, container, false);
 
-    public CloseRequestViewMVC(LayoutInflater inflater, ViewGroup container) {
-        mRootView = inflater.inflate(R.layout.layout_close_request, container, false);
-
-        mEdtClosedComment = (EditText) mRootView.findViewById(R.id.edt_closed_comment);
+        mEdtCreatedComment = (EditText) mRootView.findViewById(R.id.edt_created_comment);
+        mRatingbarPollutionLevel = (RatingBar) mRootView.findViewById(R.id.ratingbar_pollution_level);
         mImgPictures[0] = (ImageView) mRootView.findViewById(R.id.img_picture0);
         mImgPictures[1] = (ImageView) mRootView.findViewById(R.id.img_picture1);
         mImgPictures[2] = (ImageView) mRootView.findViewById(R.id.img_picture2);
@@ -49,11 +53,11 @@ public class CloseRequestViewMVC implements ViewMVC {
             }
         });
 
-        Button btnCloseRequest = (Button) mRootView.findViewById(R.id.btn_close_request);
-        btnCloseRequest.setOnClickListener(new View.OnClickListener() {
+        Button btnCreateNewRequest = (Button) mRootView.findViewById(R.id.btn_create_new_request);
+        btnCreateNewRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EventBus.getDefault().post(new CloseRequestButtonClickEvent());
+                EventBus.getDefault().post(new CreateNewRequestButtonClickEvent());
             }
         });
     }
@@ -70,6 +74,7 @@ public class CloseRequestViewMVC implements ViewMVC {
                 Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
     }
 
+
     @Override
     public View getRootView() {
         return mRootView;
@@ -78,15 +83,19 @@ public class CloseRequestViewMVC implements ViewMVC {
     @Override
     public Bundle getViewState() {
         Bundle bundle = new Bundle();
-        bundle.putString(KEY_CLOSED_COMMENT, mEdtClosedComment.getText().toString());
+        bundle.putString(Constants.FIELD_NAME_CREATED_COMMENT,
+                mEdtCreatedComment.getText().toString());
+        bundle.putString(Constants.FIELD_NAME_CREATED_POLLUTION_LEVEL,
+                String.valueOf(mRatingbarPollutionLevel.getRating()));
         return bundle;
     }
+
 
     // ---------------------------------------------------------------------------------------------
     //
     // EventBus events
 
-    public static class CloseRequestButtonClickEvent {}
+    public static class CreateNewRequestButtonClickEvent {}
 
     public static class TakePictureButtonClickEvent {}
 

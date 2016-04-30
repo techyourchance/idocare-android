@@ -32,7 +32,7 @@ import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.pictures.CameraAdapter;
 import il.co.idocare.utils.UtilMethods;
-import il.co.idocare.views.NewRequestViewMVC;
+import il.co.idocare.mvcviews.newrequest.NewRequestViewMVC;
 
 
 public class NewRequestFragment extends AbstractFragment {

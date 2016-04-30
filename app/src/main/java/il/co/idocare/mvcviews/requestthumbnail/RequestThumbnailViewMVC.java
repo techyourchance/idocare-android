@@ -1,4 +1,4 @@
-package il.co.idocare.views;
+package il.co.idocare.mvcviews.requestthumbnail;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -19,13 +19,14 @@ import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.datamodels.functional.UserItem;
+import il.co.idocare.mvcviews.ViewMVC;
 
 
 /**
  * This is the top level View which should be used as a "thumbnail" for requests
  * when they are displayed in a list.
  */
-public class RequestThumbnailViewMVC extends RelativeLayout implements ViewMVC{
+public class RequestThumbnailViewMVC extends RelativeLayout implements ViewMVC {
 
     private static final String LOG_TAG = RequestThumbnailViewMVC.class.getSimpleName();
 

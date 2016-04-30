@@ -1,4 +1,4 @@
-package il.co.idocare.views;
+package il.co.idocare.mvcviews;
 
 import android.os.Bundle;
 import android.view.View;

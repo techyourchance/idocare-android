@@ -31,7 +31,7 @@ import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.eventbusevents.LoginStateEvents;
-import il.co.idocare.views.LoginChooserViewMVC;
+import il.co.idocare.mvcviews.loginchooser.LoginChooserViewMVC;
 
 /**
  * This fragment allows the user to choose between multiple signup/login options, or skip login

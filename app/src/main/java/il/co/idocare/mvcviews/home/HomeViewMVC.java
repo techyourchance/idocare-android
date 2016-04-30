@@ -1,4 +1,4 @@
-package il.co.idocare.views;
+package il.co.idocare.mvcviews.home;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,6 +13,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import il.co.idocare.R;
 import il.co.idocare.controllers.listadapters.HomeListAdapter;
+import il.co.idocare.mvcviews.ViewMVC;
 
 /**
  * MVC View of the Home screen.

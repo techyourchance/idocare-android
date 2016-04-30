@@ -31,7 +31,7 @@ import il.co.idocare.loaders.UserInfoLoader;
 import il.co.idocare.location.LocationTrackerService;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.utils.Logger;
-import il.co.idocare.views.MainNavDrawerViewMVC;
+import il.co.idocare.mvcviews.mainnavdrawer.MainNavDrawerViewMVC;
 
 
 public class MainActivity extends AbstractActivity implements

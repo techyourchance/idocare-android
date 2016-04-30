@@ -1,17 +1,17 @@
-package il.co.idocare.views;
+package il.co.idocare.mvcviews.loginchooser;
 
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 
 import org.greenrobot.eventbus.EventBus;
 
 import il.co.idocare.R;
+import il.co.idocare.mvcviews.ViewMVC;
 
 /**
  * Created by Vasiliy on 9/5/2015.

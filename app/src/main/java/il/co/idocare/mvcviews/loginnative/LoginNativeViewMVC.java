@@ -1,4 +1,4 @@
-package il.co.idocare.views;
+package il.co.idocare.mvcviews.loginnative;
 
 import android.os.Bundle;
 import android.text.method.KeyListener;
@@ -15,6 +15,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 
 import il.co.idocare.R;
+import il.co.idocare.mvcviews.ViewMVC;
 
 /**
  * MVC View of the Home screen.
