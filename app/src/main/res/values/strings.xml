@@ -90,9 +90,8 @@
     <string name="msg_signup_failed">Signup failed</string>
 
     <string name="msg_illegal_email">provide valid email address</string>
-    <string name="msg_password_must_contain_digit">password must contain at least one digit</string>
     <string name="msg_password_must_not_contain_spaces">password must not contain spaces</string>
-    <string name="msg_password_must_not_be_short">password must be at least 8 chars long</string>
+    <string name="msg_password_must_not_be_short">password must be at least 6 chars long</string>
     <string name="msg_repeat_password_must_match">repeated password does not match the original</string>
     <string name="msg_first_name_is_required">first name is required</string>
     <string name="msg_last_name_is_required">last name is required</string>

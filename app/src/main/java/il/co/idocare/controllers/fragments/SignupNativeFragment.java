@@ -50,8 +50,6 @@ public class SignupNativeFragment extends AbstractFragment {
             Pattern.compile("^\\S+$");
     private static final Pattern passwordValidationMinimumLength =
             Pattern.compile("^.*.{6,}$");
-    private static final Pattern passwordValidationHasDigit =
-            Pattern.compile("^.*[0-9].*$");
 
     private SignupNativeViewMVC mSignupNativeViewMVC;
 
@@ -242,9 +240,6 @@ public class SignupNativeFragment extends AbstractFragment {
 
         if (!passwordValidationNoSpaces.matcher(password).find())
             errorMessageBuff.append("\n* ").append(getString(R.string.msg_password_must_not_contain_spaces));
-
-        if (!passwordValidationHasDigit.matcher(password).find())
-            errorMessageBuff.append("\n* ").append(getString(R.string.msg_password_must_contain_digit));
 
         if (!password.equals(repeatPassword))
             errorMessageBuff.append("\n* ").append(getString(R.string.msg_repeat_password_must_match));

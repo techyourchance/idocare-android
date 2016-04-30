@@ -1,6 +1,5 @@
 package il.co.idocare.views;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,24 +8,34 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.controllers.listadapters.NavigationDrawerListAdapter;
 import il.co.idocare.datamodels.functional.NavigationDrawerEntry;
+import il.co.idocare.datamodels.functional.UserItem;
+import il.co.idocare.nonstaticproxies.TextUtilsProxy;
 
 /**
  * This MVC view represents application's main screen which contains NavigationDrawer and a single
  * FrameLayout in which app's screens will be presented
  */
 public class MainNavDrawerViewMVC implements ViewMVC {
+
 
 
     public interface MainNavDrawerViewMVCListener {
@@ -60,6 +69,8 @@ public class MainNavDrawerViewMVC implements ViewMVC {
 
     private MainNavDrawerViewMVCListener mListener;
 
+    private ImageView mImgUserPicture;
+
 
     public MainNavDrawerViewMVC(@NonNull LayoutInflater inflater,
                                 @Nullable ViewGroup container,
@@ -72,6 +83,7 @@ public class MainNavDrawerViewMVC implements ViewMVC {
 
 
     private void init() {
+        mImgUserPicture = (ImageView) getRootView().findViewById(R.id.img_user_picture);
         initToolbar();
         initNavDrawer();
     }
@@ -156,12 +168,7 @@ public class MainNavDrawerViewMVC implements ViewMVC {
     /**
      * Refresh drawer's entries
      */
-    public void refreshDrawer() {
-        refreshDrawerEntries();
-        // refreshDrawerUserInfo();
-    }
-
-    private void refreshDrawerEntries() {
+    public void refreshDrawer(boolean isUserLoggedIn) {
 
         List<NavigationDrawerEntry> entries = new ArrayList<>(8);
         entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_my, R.drawable.ic_drawer_my));
@@ -170,23 +177,17 @@ public class MainNavDrawerViewMVC implements ViewMVC {
         entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_articles, R.drawable.ic_drawer_articles));
         entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_home, R.drawable.ic_drawer_home));
         entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_settings, R.drawable.ic_drawer_settings));
-        entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_login, 0));
-        entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_logout, 0));
 
-
-        // Remove one of login/logout options
-//        if (mLoginStateManager.isLoggedIn())
-//            entries.remove(getString(R.string.nav_drawer_entry_login));
-//        else
-//            entries.remove(getString(R.string.nav_drawer_entry_logout));
-        //TODO: make refresh method that will handle user's info
+        // No need for both login/logout options at once
+        if (isUserLoggedIn)
+            entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_logout, 0));
+        else
+            entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_login, 0));
 
         mNavDrawerAdapter.clear();
         mNavDrawerAdapter.addAll(entries);
         mNavDrawerAdapter.notifyDataSetChanged();
-
     }
-
 
     @Override
     public View getRootView() {
@@ -200,6 +201,29 @@ public class MainNavDrawerViewMVC implements ViewMVC {
 
     public void setTitle(String title) {
         mToolbar.setTitle(title);
+    }
+
+
+    public void bindUserData(UserItem user) {
+
+        if (!TextUtils.isEmpty(user.getPictureUrl())) {
+            String universalImageLoaderUri = user.getPictureUrl();
+            try {
+                new URL(universalImageLoaderUri);
+            } catch (MalformedURLException e) {
+                // The exception means that the current Uri is not a valid URL - it is local
+                // uri and we need to adjust it to the scheme recognized by UIL
+                universalImageLoaderUri = "file://" + universalImageLoaderUri;
+            }
+
+            ImageLoader.getInstance().displayImage(
+                    universalImageLoaderUri,
+                    mImgUserPicture,
+                    Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
+        } else {
+            mImgUserPicture.setImageResource(R.drawable.ic_default_user_picture);
+        }
+
     }
 
     /**

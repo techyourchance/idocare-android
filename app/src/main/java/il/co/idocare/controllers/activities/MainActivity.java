@@ -2,7 +2,9 @@ package il.co.idocare.controllers.activities;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.LoaderManager;
 import android.content.Intent;
+import android.content.Loader;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
@@ -23,16 +25,21 @@ import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.fragments.HomeFragment;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
+import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.eventbusevents.LoginStateEvents;
+import il.co.idocare.loaders.UserInfoLoader;
 import il.co.idocare.location.LocationTrackerService;
 import il.co.idocare.networking.ServerSyncController;
+import il.co.idocare.utils.Logger;
 import il.co.idocare.views.MainNavDrawerViewMVC;
 
 
 public class MainActivity extends AbstractActivity implements
-        MainNavDrawerViewMVC.MainNavDrawerViewMVCListener {
+        MainNavDrawerViewMVC.MainNavDrawerViewMVCListener, LoaderManager.LoaderCallbacks<UserItem> {
 
-    private static final String LOG_TAG = "MainActivity";
+    private static final String TAG = "MainActivity";
+
+    private static final int USER_LOADER = 0;
 
     private FragmentManager.OnBackStackChangedListener onBackStackChangedListener =
             new FragmentManager.OnBackStackChangedListener() {
@@ -44,7 +51,8 @@ public class MainActivity extends AbstractActivity implements
 
 
     @Inject LoginStateManager mLoginStateManager;
-    @Inject ServerSyncController iServerSyncController;
+    @Inject ServerSyncController mServerSyncController;
+    @Inject Logger mLogger;
 
 
     private MainNavDrawerViewMVC mMainNavDrawerViewMVC;
@@ -70,6 +78,8 @@ public class MainActivity extends AbstractActivity implements
             replaceFragment(HomeFragment.class, false, true, null);
         }
 
+        getLoaderManager().initLoader(USER_LOADER, null, this);
+
         startServices();
     }
 
@@ -82,21 +92,21 @@ public class MainActivity extends AbstractActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        iServerSyncController.enableAutomaticSync();
-        iServerSyncController.requestImmediateSync();
+        mServerSyncController.enableAutomaticSync();
+        mServerSyncController.requestImmediateSync();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        iServerSyncController.disableAutomaticSync();
+        mServerSyncController.disableAutomaticSync();
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        mMainNavDrawerViewMVC.refreshDrawer();
+        refreshNavDrawer();
         syncHomeButtonViewAndFunctionality();
         getFragmentManager().addOnBackStackChangedListener(onBackStackChangedListener);
         EventBus.getDefault().register(this);
@@ -162,14 +172,15 @@ public class MainActivity extends AbstractActivity implements
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginStateEvents.LoginSucceededEvent event) {
-        mMainNavDrawerViewMVC.refreshDrawer();
+        refreshNavDrawer();
     }
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginStateManager.UserLoggedOutEvent event) {
-        mMainNavDrawerViewMVC.refreshDrawer();
+        refreshNavDrawer();
     }
+
 
     // End of EventBus events handling
     //
@@ -181,6 +192,10 @@ public class MainActivity extends AbstractActivity implements
     //
     // Navigation drawer management
 
+
+    private void refreshNavDrawer() {
+        mMainNavDrawerViewMVC.refreshDrawer(mLoginStateManager.isLoggedIn());
+    }
 
     @Override
     public void onBackPressed() {
@@ -216,7 +231,7 @@ public class MainActivity extends AbstractActivity implements
             initiateLogoutFlow(null);
         }
         else {
-            Log.e(LOG_TAG, "drawer entry \"" + chosenEntry + "\" has no functionality");
+            Log.e(TAG, "drawer entry \"" + chosenEntry + "\" has no functionality");
         }
     }
 
@@ -296,5 +311,50 @@ public class MainActivity extends AbstractActivity implements
         if (runnable != null)
             runOnUiThread(runnable);
     }
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // LoaderCallback methods
+
+    @Override
+    public Loader<UserItem> onCreateLoader(int id, Bundle args) {
+        if (id == USER_LOADER) {
+            if (mLoginStateManager.isLoggedIn()) {
+                mLogger.d(TAG, "instantiating UserInfoLoader; user ID: " + mLoginStateManager.getActiveAccountUserId());
+                return new UserInfoLoader(
+                        this,
+                        getContentResolver(),
+                        mServerSyncController,
+                        Long.valueOf(mLoginStateManager.getActiveAccountUserId()));
+            } else {
+                return null;
+            }
+        } else {
+            mLogger.e(TAG, "onCreateLoader() called with unrecognized id: " + id);
+            return null;
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<UserItem> loader, UserItem data) {
+        if (loader.getId() == USER_LOADER) {
+            if (data != null)
+                mMainNavDrawerViewMVC.bindUserData(data);
+            else
+                mLogger.e(TAG, "USER_LOADER returned null data");
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<UserItem> loader) {
+
+    }
+
+
+
+    // End of LoaderCallback methods
+    //
+    // ---------------------------------------------------------------------------------------------
 
 }
