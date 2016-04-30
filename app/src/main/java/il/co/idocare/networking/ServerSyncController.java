@@ -3,11 +3,11 @@ package il.co.idocare.networking;
 import android.accounts.Account;
 import android.content.ContentResolver;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 
 import javax.inject.Inject;
 
 import il.co.idocare.authentication.MyAccountManager;
-import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.nonstaticproxies.ContentResolverProxy;
 
@@ -17,15 +17,12 @@ import il.co.idocare.nonstaticproxies.ContentResolverProxy;
  */
 public class ServerSyncController {
 
-    private LoginStateManager mLoginStateManager;
     private MyAccountManager mMyAccountManager;
     private ContentResolverProxy mContentResolverProxy;
 
     @Inject
-    public ServerSyncController(LoginStateManager loginStateManager,
-                                MyAccountManager myAccountManager,
-                                ContentResolverProxy contentResolverProxy) {
-        mLoginStateManager = loginStateManager;
+    public ServerSyncController(@NonNull MyAccountManager myAccountManager,
+                                @NonNull ContentResolverProxy contentResolverProxy) {
         mMyAccountManager = myAccountManager;
         mContentResolverProxy = contentResolverProxy;
     }
@@ -42,15 +39,12 @@ public class ServerSyncController {
     }
 
     public void requestImmediateSync() {
+        requestSync(getSyncImmediateBundle());
+    }
+
+    private void requestSync(Bundle syncExtras) {
         Account acc = getActiveOrDummyAccount();
-
-        Bundle settingsBundle = new Bundle();
-        settingsBundle.putBoolean(
-                ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        settingsBundle.putBoolean(
-                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-
-        mContentResolverProxy.requestSync(acc, IDoCareContract.AUTHORITY, settingsBundle);
+        mContentResolverProxy.requestSync(acc, IDoCareContract.AUTHORITY, syncExtras);
     }
 
 
@@ -62,6 +56,21 @@ public class ServerSyncController {
         } else {
             return mMyAccountManager.getDummyAccount();
         }
+    }
+
+    private Bundle getSyncImmediateBundle() {
+        Bundle syncImmediateBundle = new Bundle();
+        syncImmediateBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        syncImmediateBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        return syncImmediateBundle;
+    }
+
+    public void syncUserDataImeediate(long userId) {
+        Bundle syncExtras = getSyncImmediateBundle();
+        syncExtras.putLong(SyncAdapter.SYNC_EXTRAS_USER_ID, userId);
+        requestSync(syncExtras);
     }
 
 }

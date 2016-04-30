@@ -54,10 +54,9 @@ public class ControllerModule {
 
     @Provides
     @ControllerScope
-    ServerSyncController provideServerSyncController(LoginStateManager loginStateManager,
-                                                     MyAccountManager myAccountManager,
+    ServerSyncController provideServerSyncController(MyAccountManager myAccountManager,
                                                      ContentResolverProxy contentResolverProxy) {
-        return new ServerSyncController(loginStateManager, myAccountManager, contentResolverProxy);
+        return new ServerSyncController(myAccountManager, contentResolverProxy);
     }
 
     @Provides

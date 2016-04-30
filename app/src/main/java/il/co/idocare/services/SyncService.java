@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import il.co.idocare.networking.SyncAdapter;
+import il.co.idocare.utils.Logger;
 
 /**
  * Bound service to be used by the framework for SyncAdapter enablement
@@ -15,6 +16,9 @@ public class SyncService extends Service {
     private static SyncAdapter sSyncAdapter = null;
     // Object to use as a thread-safe lock
     private static final Object sSyncAdapterLock = new Object();
+
+    Logger mLogger = new Logger();
+
     /*
      * Instantiate the sync adapter object.
      */
@@ -27,7 +31,7 @@ public class SyncService extends Service {
          */
         synchronized (sSyncAdapterLock) {
             if (sSyncAdapter == null) {
-                sSyncAdapter = new SyncAdapter(getApplicationContext(), true);
+                sSyncAdapter = new SyncAdapter(getApplicationContext(), true, mLogger);
             }
         }
     }

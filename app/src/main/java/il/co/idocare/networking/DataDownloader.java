@@ -38,23 +38,20 @@ public class DataDownloader implements LegacyServerHttpRequest.OnServerResponseC
 
     private static final int SERVER_REQUEST_TIMEOUT_MILLIS = 60000;
 
-    private String mUserId;
+    private String mActiveUserId;
     private String mAuthToken;
     private ContentProviderClient mProvider;
     private LegacyServerResponseHandlerFactory mServerResponseHandlerFactory;
 
     private ThreadPoolExecutor mExecutor;
 
-    private List<Long> mUniqueUserIds;
 
     public DataDownloader(String userId, String authToken, ContentProviderClient provider,
                           LegacyServerResponseHandlerFactory serverResponseHandlerFactory) {
-        mUserId = userId;
+        mActiveUserId = userId;
         mAuthToken = authToken;
         mProvider = provider;
         mServerResponseHandlerFactory = serverResponseHandlerFactory;
-
-        mUniqueUserIds = new ArrayList<>();
 
         int numOfCores = Runtime.getRuntime().availableProcessors();
         // TODO: consider using bound queue for executor - will be easier to debug and more efficient because the commands are stored in dispatcher
@@ -72,9 +69,13 @@ public class DataDownloader implements LegacyServerHttpRequest.OnServerResponseC
 
         downloadRequestsData();
 
-        downloadUsersData();
+        List<Long> uniqueUserIds = getUniqueUserIds();
 
-        performCleanup();
+        for (long userId : uniqueUserIds) {
+            downloadUserData(userId);
+        }
+
+        performCleanup(uniqueUserIds);
 
     }
 
@@ -104,9 +105,9 @@ public class DataDownloader implements LegacyServerHttpRequest.OnServerResponseC
 
         LegacyServerHttpRequest serverRequest = new LegacyServerHttpRequest(
                 URLs.getUrl(URLs.RESOURCE_ALL_REQUESTS_DATA),
-                mUserId, mAuthToken, this, URLs.getUrl(URLs.RESOURCE_ALL_REQUESTS_DATA));
+                mActiveUserId, mAuthToken, this, URLs.getUrl(URLs.RESOURCE_ALL_REQUESTS_DATA));
 
-        if (!TextUtils.isEmpty(mUserId) && !TextUtils.isEmpty(mAuthToken))
+        if (!TextUtils.isEmpty(mActiveUserId) && !TextUtils.isEmpty(mAuthToken))
             serverRequest.addStandardHeaders();
 
         Thread workerThread = new Thread(serverRequest);
@@ -125,10 +126,12 @@ public class DataDownloader implements LegacyServerHttpRequest.OnServerResponseC
 
 
 
-    private void downloadUsersData() {
+    public void downloadUserData(long userId) {
+            LegacyServerHttpRequest serverRequest = createUserServerRequest(userId);
+            mExecutor.execute(serverRequest);
+    }
 
-        mUniqueUserIds.clear();
-
+    private List<Long> getUniqueUserIds() {
         Cursor cursor = null;
         try {
             synchronized (CONTENT_PROVIDER_CLIENT_LOCK) {
@@ -136,40 +139,48 @@ public class DataDownloader implements LegacyServerHttpRequest.OnServerResponseC
                         null, null, null, null);
             }
 
+            List<Long> uniqueUserIds;
             long userId;
             if (cursor != null && cursor.moveToFirst()) {
+                uniqueUserIds = new ArrayList<>(cursor.getCount());
                 do {
                     userId = cursor.getLong(
                             cursor.getColumnIndexOrThrow(IDoCareContract.UniqueUserIds.COL_USER_ID));
 
                     if (userId != 0) { // TODO: can we avoid 0 from being present here (maybe DEFAULT NULL for columns in DB?)
-                        mUniqueUserIds.add(userId);
-
-                        LegacyServerHttpRequest serverRequest = createUserServerRequest(userId);
-                        mExecutor.execute(serverRequest);
+                        uniqueUserIds.add(userId);
                     }
                 } while (cursor.moveToNext());
+            } else {
+                uniqueUserIds = new ArrayList<>(1);
             }
+
+            // Make sure the currently logged in user is counted
+            if (!TextUtils.isEmpty(mActiveUserId) && !uniqueUserIds.contains(mActiveUserId)) {
+                uniqueUserIds.add(Long.valueOf(mActiveUserId));
+            }
+
+            return uniqueUserIds;
         } catch (RemoteException e) {
             e.printStackTrace();
+            return new ArrayList<>(0);
         } finally {
             if (cursor != null) cursor.close();
         }
-
-        mExecutor.shutdown();
-        try {
-            mExecutor.awaitTermination(30, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
     }
 
 
-    private void performCleanup() {
+    private void performCleanup(List<Long> uniqueUserIds) {
+
+//        mExecutor.shutdown();
+//        try {
+//            mExecutor.awaitTermination(30, TimeUnit.SECONDS);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
         // Create a list of unique user ids that will be used in delete statement
-        String idsForQuery = getIdsForQuery(mUniqueUserIds);
+        String idsForQuery = getIdsForQuery(uniqueUserIds);
 
         // Delete users that do not appear in the list of unique referenced users
         try {
@@ -201,9 +212,10 @@ public class DataDownloader implements LegacyServerHttpRequest.OnServerResponseC
     private LegacyServerHttpRequest createUserServerRequest(long userId) {
         LegacyServerHttpRequest serverRequest = new LegacyServerHttpRequest(
                 URLs.getUrl(URLs.RESOURCE_USERS_DATA),
-                mUserId, mAuthToken, this, URLs.getUrl(URLs.RESOURCE_USERS_DATA));
+                mActiveUserId, mAuthToken, this, URLs.getUrl(URLs.RESOURCE_USERS_DATA));
         serverRequest.addTextField(Constants.FIELD_NAME_USER_ID, String.valueOf(userId));
 
         return serverRequest;
     }
+
 }
