@@ -31,12 +31,14 @@ import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.eventbusevents.LoginStateEvents;
-import il.co.idocare.mvcviews.loginchooser.LoginChooserViewMVC;
+import il.co.idocare.mvcviews.loginchooser.LoginChooserViewMvc;
+import il.co.idocare.mvcviews.loginchooser.LoginChooserViewMvcImpl;
 
 /**
  * This fragment allows the user to choose between multiple signup/login options, or skip login
  */
-public class LoginChooserFragment extends AbstractFragment {
+public class LoginChooserFragment extends AbstractFragment
+        implements LoginChooserViewMvc.LoginChooserViewMvcListener {
 
     /**
      * When LoginChooserFragment is started with this key in arguments, a slide in animation
@@ -46,7 +48,7 @@ public class LoginChooserFragment extends AbstractFragment {
 
     private static final String LOG_TAG = LoginChooserFragment.class.getSimpleName();
 
-    private LoginChooserViewMVC mLoginChooserViewMVC;
+    private LoginChooserViewMvcImpl mLoginChooserViewMVC;
 
     private CallbackManager mFacebookCallbackManager;
 
@@ -56,7 +58,8 @@ public class LoginChooserFragment extends AbstractFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mLoginChooserViewMVC = new LoginChooserViewMVC(inflater, container);
+        mLoginChooserViewMVC = new LoginChooserViewMvcImpl(inflater, container);
+        mLoginChooserViewMVC.registerListener(this);
 
         getControllerComponent().inject(this);
 
@@ -187,24 +190,6 @@ public class LoginChooserFragment extends AbstractFragment {
     //
     // EventBus events handling
 
-    @Subscribe
-    public void onEvent(LoginChooserViewMVC.SkipLoginClickEvent event) {
-
-        mLoginStateManager.setLoginSkipped(true);
-
-        finishActivity();
-    }
-
-    @Subscribe
-    public void onEvent(LoginChooserViewMVC.LogInNativeClickEvent event) {
-        replaceFragment(LoginNativeFragment.class, true, false, getArguments());
-    }
-
-    @Subscribe
-    public void onEvent(LoginChooserViewMVC.SignUpNativeClickEvent event) {
-        replaceFragment(SignupNativeFragment.class, true, false, getArguments());
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginStateEvents.LoginSucceededEvent event) {
         LoginChooserFragment.this.dismissProgressDialog();
@@ -219,6 +204,34 @@ public class LoginChooserFragment extends AbstractFragment {
     // End of EventBus events handling
     //
     // ---------------------------------------------------------------------------------------------
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Callbacks from MVC view(s)
+
+
+    @Override
+    public void onSkipClicked() {
+        mLoginStateManager.setLoginSkipped(true);
+        finishActivity();
+    }
+
+    @Override
+    public void onSignupNativeClicked() {
+        replaceFragment(SignupNativeFragment.class, true, false, getArguments());
+    }
+
+    @Override
+    public void onLoginNativeClicked() {
+        replaceFragment(LoginNativeFragment.class, true, false, getArguments());
+    }
+
+    // End of callbacks from MVC view(s)
+    //
+    // ---------------------------------------------------------------------------------------------
+
+
 
     private class LoginFacebookCallback implements FacebookCallback<LoginResult> {
 

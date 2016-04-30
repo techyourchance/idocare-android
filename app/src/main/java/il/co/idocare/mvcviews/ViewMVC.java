@@ -18,13 +18,13 @@ public interface ViewMVC {
      * properties of either the root Android View itself, or any of its child Android View's.
      * @return root Android View of this MVC View
      */
-    public View getRootView();
+    View getRootView();
 
     /**
      * This method aggregates all the information about the state of this MVC View into Bundle
      * object.
      * @return Bundle containing the state of this MVC View
      */
-    public Bundle getViewState();
+    Bundle getViewState();
 
 }
