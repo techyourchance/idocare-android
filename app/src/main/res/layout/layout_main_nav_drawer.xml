@@ -18,13 +18,8 @@
         android:layout_height="match_parent"
         android:clickable="true">
 
-        <android.support.v7.widget.Toolbar
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/toolbar"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:minHeight="?attr/actionBarSize"
-            app:theme="@style/ActionBarStyle"/>
+
+        <include android:id="@+id/toolbar" layout="@layout/element_toolbar"/>
 
         <FrameLayout
             android:id="@+id/frame_contents"
