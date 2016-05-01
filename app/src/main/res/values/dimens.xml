@@ -8,7 +8,8 @@
     <dimen name="nav_drawer_item_min_height">50dp</dimen>
 
     <dimen name="map_preview_height">100dp</dimen>
-    <dimen name="button_corners_radius">6dp</dimen>
+    <dimen name="button_corners_radius">3dp</dimen>
+    <dimen name="button_stroke_width">1dp</dimen>
 
     <!-- Elements sizes -->
     <dimen name="request_status_bar_height">26dp</dimen>
@@ -21,7 +22,11 @@
 
     <dimen name="narrow_button_height">40dp</dimen>
     <dimen name="narrow_button_width">112dp</dimen>
-    <dimen name="two_narrow_buttons_horizontal_spacing">16dp</dimen>
+    <dimen name="two_medium_buttons_horizontal_spacing">16dp</dimen>
+
+    <dimen name="button_height">40dp</dimen>
+    <dimen name="large_button_width">276dp</dimen>
+    <dimen name="medium_button_width">130dp</dimen>
 
     <!-- Margins and paddings-->
     <dimen name="fragment_large_padding">15dp</dimen>
@@ -61,6 +66,10 @@
     <dimen name="thumbnail_coarse_location_text_size">11sp</dimen>
     <dimen name="comments_text_size">15sp</dimen>
 
+    <dimen name="button_text_size">13sp</dimen>
+
+
+
     <!-- Picture sizes -->
     <dimen name="user_small_picture_size">30dp</dimen>
     <dimen name="request_picture_width">90dp</dimen>
@@ -80,7 +89,6 @@
     <dimen name="fb_margin_override_lr">10dp</dimen>
     <!--The next value changes the margin between the FB icon and the login text:-->
     <dimen name="fb_margin_override_textpadding">17dp</dimen>
-
 
 
     <!-- This is the initial offset that the "sliding buttons" will be slided for -->

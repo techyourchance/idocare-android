@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="top|center_horizontal"
-    android:background="@drawable/default_fragment_background">
+    android:background="@color/background">
 
     <Space
         android:layout_width="match_parent"
@@ -30,9 +30,11 @@
         android:gravity="center_horizontal">
 
         <com.facebook.login.widget.LoginButton
+            xmlns:facebook="http://schemas.android.com/apk/res-auto"
             android:id="@+id/btn_choose_facebook_login"
-            android:layout_width="@dimen/wide_button_width"
-            android:layout_height="@dimen/wide_button_height"/>
+            android:layout_width="@dimen/large_button_width"
+            android:layout_height="@dimen/button_height"
+            facebook:com_facebook_login_text="@string/btn_login_facebook"/>
 
         <Space
             android:layout_width="match_parent"
@@ -47,22 +49,21 @@
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_choose_log_in_native"
-                android:layout_width="@dimen/narrow_button_width"
-                android:layout_height="@dimen/narrow_button_height"
+                android:layout_width="@dimen/medium_button_width"
+                android:layout_height="@dimen/button_height"
                 android:text="@string/btn_login"
-                android:textColor="@android:color/white"/>
+                style="@style/AppTheme.Widget.GreenButton"/>
 
             <Space
-                android:layout_width="@dimen/two_narrow_buttons_horizontal_spacing"
+                android:layout_width="@dimen/two_medium_buttons_horizontal_spacing"
                 android:layout_height="match_parent" />
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_choose_sign_up_native"
-                android:layout_width="@dimen/narrow_button_width"
-                android:layout_height="@dimen/narrow_button_height"
+                android:layout_width="@dimen/medium_button_width"
+                android:layout_height="@dimen/button_height"
                 android:text="@string/btn_sign_up"
-                android:background="@drawable/gray_button_background"
-                android:textColor="@android:color/white"/>
+                style="@style/AppTheme.Widget.RedButton"/>
 
         </LinearLayout>
 
@@ -74,12 +75,12 @@
 
         <TextView
             android:id="@+id/txt_choose_skip_login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/medium_button_width"
+            android:layout_height="@dimen/button_height"
             android:gravity="center"
             android:text="@string/btn_skip_login"
-            android:textSize="16sp"
-            android:textColor="@android:color/black"/>
+            android:textSize="@dimen/button_text_size"
+            android:textColor="@color/skip_login_button_text_color"/>
 
     </LinearLayout>
 

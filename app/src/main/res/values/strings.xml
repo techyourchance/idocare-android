@@ -42,10 +42,9 @@
     <string name="btn_dialog_close">Close</string>
 
     <string name="btn_skip_login">Skip</string>
-    <string name="btn_signup">Sign up</string>
-    <string name="btn_sign_up">Sign up</string>
-    <string name="btn_login">Log in</string>
-    <string name="btn_login_capital">LOG IN</string>
+    <string name="btn_sign_up">Sign Up</string>
+    <string name="btn_login">Log In</string>
+    <string name="btn_login_facebook">Continue with Facebook</string>
     <string name="btn_create_new_request">CREATE</string>
     <string name="btn_switch_to_new_request_fragment">Create new request</string>
     <string name="btn_pickup_request">ASSIGN TO ME</string>

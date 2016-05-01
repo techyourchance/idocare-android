@@ -102,7 +102,7 @@
             android:layout_width="@dimen/wide_button_width"
             android:layout_height="@dimen/wide_button_height"
             android:layout_marginTop="20dp"
-            android:text="@string/btn_signup"/>
+            android:text="@string/btn_sign_up"/>
 
 
         <Space
