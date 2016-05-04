@@ -6,10 +6,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/login_fragment_padding"
-    android:paddingRight="@dimen/login_fragment_padding"
     android:gravity="center_horizontal"
-    android:background="@drawable/default_fragment_background">
+    android:background="@color/background">
 
 
     <Space
@@ -41,45 +39,10 @@
         android:layout_height="match_parent"
         android:gravity="center_horizontal|bottom">
 
-        <EditText
-            android:id="@+id/edt_email"
-            android:layout_width="@dimen/wide_button_width"
-            android:layout_height="wrap_content"
-            android:lines="1"
-            android:inputType="textEmailAddress"
-            style="@style/EditTextStyle"
-            android:hint="@string/hint_email"/>
-
-        <EditText
-            android:id="@+id/edt_password"
-            android:layout_width="@dimen/wide_button_width"
-            android:layout_height="wrap_content"
-            android:lines="1"
-            android:inputType="textPassword"
-            style="@style/EditTextStyle"
-            android:hint="@string/hint_password"/>
-
-        <EditText
-            android:id="@+id/edt_repeat_password"
-            android:layout_width="@dimen/wide_button_width"
-            android:layout_height="wrap_content"
-            android:lines="1"
-            android:inputType="textPassword"
-            style="@style/EditTextStyle"
-            android:hint="@string/hint_repeat_password"/>
-
-        <EditText
-            android:id="@+id/edt_nickname"
-            android:layout_width="@dimen/wide_button_width"
-            android:layout_height="wrap_content"
-            android:lines="1"
-            android:inputType="text"
-            style="@style/EditTextStyle"
-            android:hint="@string/hint_nickname"/>
 
         <EditText
             android:id="@+id/edt_first_name"
-            android:layout_width="@dimen/wide_button_width"
+            android:layout_width="@dimen/large_button_width"
             android:layout_height="wrap_content"
             android:lines="1"
             android:inputType="text"
@@ -88,26 +51,92 @@
 
         <EditText
             android:id="@+id/edt_last_name"
-            android:layout_width="@dimen/wide_button_width"
+            android:layout_width="@dimen/large_button_width"
             android:layout_height="wrap_content"
             android:lines="1"
             android:inputType="text"
             style="@style/EditTextStyle"
             android:hint="@string/hint_last_name"/>
 
+        <EditText
+            android:id="@+id/edt_nickname"
+            android:layout_width="@dimen/large_button_width"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:inputType="text"
+            style="@style/EditTextStyle"
+            android:hint="@string/hint_nickname"/>
 
+
+        <EditText
+            android:id="@+id/edt_email"
+            android:layout_width="@dimen/large_button_width"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:inputType="textEmailAddress"
+            style="@style/EditTextStyle"
+            android:hint="@string/hint_email"/>
+
+        <EditText
+            android:id="@+id/edt_password"
+            android:layout_width="@dimen/large_button_width"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:inputType="textPassword"
+            style="@style/EditTextStyle"
+            android:hint="@string/hint_password"/>
+
+        <EditText
+            android:id="@+id/edt_confirm_password"
+            android:layout_width="@dimen/large_button_width"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:inputType="textPassword"
+            style="@style/EditTextStyle"
+            android:hint="@string/hint_confirm_password"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="10dp" />
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_signup"
-            android:layout_width="@dimen/wide_button_width"
-            android:layout_height="@dimen/wide_button_height"
-            android:layout_marginTop="20dp"
-            android:text="@string/btn_sign_up"/>
+            android:layout_width="@dimen/large_button_width"
+            android:layout_height="@dimen/button_height"
+            android:text="@string/btn_sign_up"
+            style="@style/AppTheme.Widget.RedButton"/>
 
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="@dimen/signup_native_margin_2" />
+            android:layout_height="30dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txt_has_account_question"
+                style="@style/LoginTextViewStyle"/>
+
+            <TextView
+                android:id="@+id/txt_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txt_log_in_link"
+                style="@style/LoginTextViewStyle"
+                android:textColor="@color/green"/>
+
+        </LinearLayout>
+
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
 
     </LinearLayout>
 

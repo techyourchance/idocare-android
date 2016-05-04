@@ -81,7 +81,7 @@
     <dimen name="thumbnail_picture_height">70dp</dimen>
     <dimen name="thumbnail_picture_width">120dp</dimen>
     <dimen name="vote_image_button_size">25dp</dimen>
-    <dimen name="signup_native_picture_size">200dp</dimen>
+    <dimen name="signup_native_picture_size">130dp</dimen>
 
     <!-- Facebook login button related stuff (in order to change its shape)-->
     <dimen name="fb_margin_override_top">13dp</dimen>

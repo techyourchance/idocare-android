@@ -34,6 +34,7 @@ public class SignupNativeViewMvcImpl
     EditText mEdtLastName;
     ImageView mImgUserPicture;
     TextView mTxtAddUserPicture;
+    TextView mTxtLogin;
 
 
     public SignupNativeViewMvcImpl(LayoutInflater inflater, ViewGroup container) {
@@ -50,9 +51,20 @@ public class SignupNativeViewMvcImpl
             }
         });
 
+        mTxtLogin = (TextView) mRootView.findViewById(R.id.txt_login);
+        mTxtLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (SignupNativeViewMvcListener listener : getListeners()) {
+                    listener.onLoginClicked();
+                }
+            }
+        });
+
+
         mEdtEmail = (EditText) mRootView.findViewById(R.id.edt_email);
         mEdtPassword = (EditText) mRootView.findViewById(R.id.edt_password);
-        mEdtRepeatPassword = (EditText) mRootView.findViewById(R.id.edt_repeat_password);
+        mEdtRepeatPassword = (EditText) mRootView.findViewById(R.id.edt_confirm_password);
         mEdtNickname = (EditText) mRootView.findViewById(R.id.edt_nickname);
         mEdtFirstName = (EditText) mRootView.findViewById(R.id.edt_first_name);
         mEdtLastName= (EditText) mRootView.findViewById(R.id.edt_last_name);

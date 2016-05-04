@@ -133,6 +133,11 @@ public class SignupNativeFragment extends AbstractFragment implements SignupNati
         showAddPictureDialog();
     }
 
+    @Override
+    public void onLoginClicked() {
+        replaceFragment(LoginNativeFragment.class, true, false, null);
+    }
+
     // End of callbacks from MVC view(s)
     //
     // ---------------------------------------------------------------------------------------------

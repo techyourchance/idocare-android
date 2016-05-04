@@ -33,6 +33,8 @@
     <string name="txt_change_user_photo">Change photo</string>
     <string name="txt_no_account_question">Don\'t have an account yet?</string>
     <string name="txt_sign_up_link">" Sign up."</string>
+    <string name="txt_has_account_question">Already have an account?</string>
+    <string name="txt_log_in_link">" Login."</string>
 
     <!--
     Screen titles
@@ -72,7 +74,7 @@
     <string name="hint_leave_comment">Leave a comment</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
-    <string name="hint_repeat_password">Repeat password</string>
+    <string name="hint_confirm_password">Confirm password</string>
     <string name="hint_nickname">Nickname</string>
     <string name="hint_first_name">First name</string>
     <string name="hint_last_name">Last name</string>

@@ -22,6 +22,7 @@ public interface SignupNativeViewMvc extends ViewMVC {
     public interface SignupNativeViewMvcListener {
         void onSignupClicked();
         void onChangeUserPictureClicked();
+        void onLoginClicked();
     }
 
     /**
