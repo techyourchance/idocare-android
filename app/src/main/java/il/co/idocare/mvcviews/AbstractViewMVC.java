@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * This is the base class for MVC views' implementations which provides basic common functionality
  */
-public abstract class AbstractViewMVC<ListenerType> implements ViewMVC {
+public abstract class AbstractViewMVC<ListenerType> implements ObservableViewMVC<ListenerType> {
 
     private View mRootView;
 
@@ -18,16 +18,12 @@ public abstract class AbstractViewMVC<ListenerType> implements ViewMVC {
     private Set<ListenerType> mListeners =
             Collections.newSetFromMap(new ConcurrentHashMap<ListenerType, Boolean>(1));
 
-    /**
-     * Register a listener that will be notified of any input events performed on this MVC view
-     */
+    @Override
     public void registerListener(ListenerType listener) {
         if (listener != null) mListeners.add(listener);
     }
 
-    /**
-     * Unregister a previously registered listener. Does nothing if the listener wasn't registered.
-     */
+    @Override
     public void unregisterListener(ListenerType listener) {
         mListeners.remove(listener);
     }
