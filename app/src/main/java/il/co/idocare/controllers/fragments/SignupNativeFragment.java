@@ -15,10 +15,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import org.apache.commons.validator.routines.EmailValidator;
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -33,14 +31,15 @@ import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.datamodels.pojos.UserSignupNativeData;
 import il.co.idocare.eventbusevents.LoginStateEvents;
-import il.co.idocare.mvcviews.signupnative.SignupNativeViewMVC;
+import il.co.idocare.mvcviews.signupnative.SignupNativeViewMvc;
+import il.co.idocare.mvcviews.signupnative.SignupNativeViewMvcImpl;
 import il.co.idocare.pictures.CameraAdapter;
 import il.co.idocare.utils.UtilMethods;
 
 /**
  * This fragment handles native signup flow
  */
-public class SignupNativeFragment extends AbstractFragment {
+public class SignupNativeFragment extends AbstractFragment implements SignupNativeViewMvcImpl.SignupNativeViewMvcListener {
 
 
     private static final String LOG_TAG = SignupNativeFragment.class.getSimpleName();
@@ -50,7 +49,7 @@ public class SignupNativeFragment extends AbstractFragment {
     private static final Pattern passwordValidationMinimumLength =
             Pattern.compile("^.*.{6,}$");
 
-    private SignupNativeViewMVC mSignupNativeViewMVC;
+    private SignupNativeViewMvcImpl mSignupNativeViewMvc;
 
     @Inject
     LoginStateManager mLoginStateManager;
@@ -63,13 +62,14 @@ public class SignupNativeFragment extends AbstractFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mSignupNativeViewMVC = new SignupNativeViewMVC(inflater, container);
-
         getControllerComponent().inject(this);
+
+        mSignupNativeViewMvc = new SignupNativeViewMvcImpl(inflater, container);
+        mSignupNativeViewMvc.registerListener(this);
 
         restoreSavedStateIfNeeded(savedInstanceState);
 
-        return mSignupNativeViewMVC.getRootView();
+        return mSignupNativeViewMvc.getRootView();
     }
 
     @Override
@@ -89,7 +89,7 @@ public class SignupNativeFragment extends AbstractFragment {
 
         if (savedInstanceState.containsKey("user_picture_path")) {
             mUserPicturePath = savedInstanceState.getString("user_picture_path");
-            mSignupNativeViewMVC.showUserPicture(mUserPicturePath);
+            mSignupNativeViewMvc.showUserPicture(mUserPicturePath);
         }
     }
 
@@ -105,19 +105,7 @@ public class SignupNativeFragment extends AbstractFragment {
 
     @Override
     public String getTitle() {
-        return "Sign up";
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(mSignupNativeViewMVC);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(mSignupNativeViewMVC);
+        return getString(R.string.title_signup_native);
     }
 
     @Override
@@ -129,21 +117,31 @@ public class SignupNativeFragment extends AbstractFragment {
         }
     }
 
+
+
     // ---------------------------------------------------------------------------------------------
     //
-    // EventBus events handling
+    // Callbacks from MVC view(s)
 
-
-    @Subscribe
-    public void onEvent(SignupNativeViewMVC.SignupButtonClickEvent event) {
+    @Override
+    public void onSignupClicked() {
         signUpNative();
     }
 
-    @Subscribe
-    public void onEvent(SignupNativeViewMVC.AddUserPictureClickEvent event) {
+    @Override
+    public void onChangeUserPictureClicked() {
         showAddPictureDialog();
     }
 
+    // End of callbacks from MVC view(s)
+    //
+    // ---------------------------------------------------------------------------------------------
+
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // EventBus events handling
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginStateEvents.LoginSucceededEvent event) {
@@ -157,12 +155,8 @@ public class SignupNativeFragment extends AbstractFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginStateEvents.LoginFailedEvent event) {
-        // TODO: refactor communication with MVC views to use standard listeners instead of EventBus
-        EventBus.getDefault().post(new SignupNativeViewMVC.SignupFailedEvent());
-        // TODO: change this toast to an informative dialog
-        Toast.makeText(getActivity(),
-                getResources().getString(R.string.msg_signup_failed),
-                Toast.LENGTH_LONG).show();
+        mSignupNativeViewMvc.enableUserInput();
+
     }
 
     // End of EventBus events handling
@@ -176,7 +170,7 @@ public class SignupNativeFragment extends AbstractFragment {
             if (resultCode == Activity.RESULT_OK) {
                 mUserPicturePath = mCameraPicturePath;
                 UtilMethods.adjustCameraPicture(mUserPicturePath);
-                mSignupNativeViewMVC.showUserPicture(mUserPicturePath);
+                mSignupNativeViewMvc.showUserPicture(mUserPicturePath);
             } else {
                 // TODO: do we need anything here?
             }
@@ -190,7 +184,7 @@ public class SignupNativeFragment extends AbstractFragment {
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 mUserPicturePath = cursor.getString(columnIndex);
                 cursor.close();
-                mSignupNativeViewMVC.showUserPicture(mUserPicturePath);
+                mSignupNativeViewMvc.showUserPicture(mUserPicturePath);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -202,14 +196,14 @@ public class SignupNativeFragment extends AbstractFragment {
      */
     private void signUpNative() {
 
-        final Bundle userDataBundle = mSignupNativeViewMVC.getViewState();
+        final Bundle userDataBundle = mSignupNativeViewMvc.getViewState();
 
-        final String email = userDataBundle.getString(SignupNativeViewMVC.VIEW_STATE_EMAIL);
-        final String password = userDataBundle.getString(SignupNativeViewMVC.VIEW_STATE_PASSWORD);
-        final String repeatPassword = userDataBundle.getString(SignupNativeViewMVC.VIEW_STATE_REPEAT_PASSWORD);
-        final String nickname = userDataBundle.getString(SignupNativeViewMVC.VIEW_STATE_NICKNAME);
-        final String firstName = userDataBundle.getString(SignupNativeViewMVC.VIEW_STATE_FIRST_NAME);
-        final String lastName = userDataBundle.getString(SignupNativeViewMVC.VIEW_STATE_LAST_NAME);
+        final String email = userDataBundle.getString(SignupNativeViewMvc.VIEW_STATE_EMAIL);
+        final String password = userDataBundle.getString(SignupNativeViewMvc.VIEW_STATE_PASSWORD);
+        final String repeatPassword = userDataBundle.getString(SignupNativeViewMvc.VIEW_STATE_REPEAT_PASSWORD);
+        final String nickname = userDataBundle.getString(SignupNativeViewMvc.VIEW_STATE_NICKNAME);
+        final String firstName = userDataBundle.getString(SignupNativeViewMvc.VIEW_STATE_FIRST_NAME);
+        final String lastName = userDataBundle.getString(SignupNativeViewMvc.VIEW_STATE_LAST_NAME);
 
         // Basic validation of user's input
         if (!validateFields(email, password, repeatPassword, nickname, firstName, lastName)) {
@@ -219,8 +213,8 @@ public class SignupNativeFragment extends AbstractFragment {
         UserSignupNativeData userData = new UserSignupNativeData(email, password, nickname,
                 firstName, lastName, null, mUserPicturePath);
 
-        // Notify of signup init
-        EventBus.getDefault().post(new SignupNativeViewMVC.SignupRequestSentEvent());
+        // disable user input during signup
+        mSignupNativeViewMvc.disableUserInput();
 
         mLoginStateManager.signUpNative(userData);
 

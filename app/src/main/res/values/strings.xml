@@ -38,6 +38,7 @@
     Screen titles
     -->
     <string name="title_login_native">Login</string>
+    <string name="title_signup_native">Create account</string>
 
 
 
