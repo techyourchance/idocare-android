@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -23,30 +22,29 @@ import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.eventbusevents.LoginStateEvents;
-import il.co.idocare.mvcviews.loginnative.LoginNativeViewMVC;
+import il.co.idocare.mvcviews.loginnative.LoginNativeViewMvc;
+import il.co.idocare.mvcviews.loginnative.LoginNativeViewMvcImpl;
 
 /**
  * This fragment handles native login flow
  */
-public class LoginNativeFragment extends AbstractFragment {
+public class LoginNativeFragment extends AbstractFragment implements LoginNativeViewMvc.LoginNativeViewMvcListener {
 
-
-    private static final String LOG_TAG = LoginNativeFragment.class.getSimpleName();
-
-    private LoginNativeViewMVC mLoginNativeViewMVC;
 
     @Inject LoginStateManager mLoginStateManager;
 
+    private LoginNativeViewMvc mLoginNativeViewMvc;
     private AlertDialog mAlertDialog;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mLoginNativeViewMVC = new LoginNativeViewMVC(inflater, container);
+        mLoginNativeViewMvc = new LoginNativeViewMvcImpl(inflater, container);
+        mLoginNativeViewMvc.registerListener(this);
 
         getControllerComponent().inject(this);
 
-        return mLoginNativeViewMVC.getRootView();
+        return mLoginNativeViewMvc.getRootView();
     }
 
     @Override
@@ -62,18 +60,6 @@ public class LoginNativeFragment extends AbstractFragment {
     @Override
     public String getTitle() {
         return "Log in";
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(mLoginNativeViewMVC);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(mLoginNativeViewMVC);
     }
 
     @Override
@@ -101,13 +87,21 @@ public class LoginNativeFragment extends AbstractFragment {
 
     // ---------------------------------------------------------------------------------------------
     //
-    // EventBus events handling
+    // Callbacks from MVC view(s)
 
-    @Subscribe
-    public void onEvent(LoginNativeViewMVC.LoginButtonClickEvent event) {
-        // TODO: refactor communication with MVC views to use standard listeners instead of EventBus
+    @Override
+    public void onLoginClicked() {
         logInNative();
     }
+
+    // End of callbacks from MVC view(s)
+    //
+    // ---------------------------------------------------------------------------------------------
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // EventBus events handling
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginStateEvents.LoginSucceededEvent event) {
@@ -122,8 +116,8 @@ public class LoginNativeFragment extends AbstractFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginStateEvents.LoginFailedEvent event) {
-        // TODO: refactor communication with MVC views to use standard listeners instead of EventBus
-        EventBus.getDefault().post(new LoginNativeViewMVC.LoginFailedEvent());
+        // "unfreeze" UI
+        mLoginNativeViewMvc.enableUserInput();
     }
 
     // End of EventBus events handling
@@ -137,13 +131,13 @@ public class LoginNativeFragment extends AbstractFragment {
      */
     private void logInNative() {
 
-        final Bundle userDataBundle = mLoginNativeViewMVC.getViewState();
+        final Bundle userDataBundle = mLoginNativeViewMvc.getViewState();
 
-        final String username = userDataBundle.getString(LoginNativeViewMVC.VIEW_STATE_USERNAME);
-        final String password = userDataBundle.getString(LoginNativeViewMVC.VIEW_STATE_PASSWORD);
+        final String username = userDataBundle.getString(LoginNativeViewMvcImpl.VIEW_STATE_USERNAME);
+        final String password = userDataBundle.getString(LoginNativeViewMvcImpl.VIEW_STATE_PASSWORD);
 
-        // Notify of login init
-        EventBus.getDefault().post(new LoginNativeViewMVC.LoginRequestSentEvent());
+        // "freeze" UI during login
+        mLoginNativeViewMvc.disableUserInput();
 
         mLoginStateManager.logInNative(username, password);
 

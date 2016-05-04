@@ -58,10 +58,10 @@ public class LoginChooserFragment extends AbstractFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        getControllerComponent().inject(this);
+
         mLoginChooserViewMVC = new LoginChooserViewMvcImpl(inflater, container);
         mLoginChooserViewMVC.registerListener(this);
-
-        getControllerComponent().inject(this);
 
         initializeFacebookLogin();
 
