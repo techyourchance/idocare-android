@@ -26,7 +26,6 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
-
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
@@ -34,9 +33,9 @@ import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.datamodels.pojos.UserSignupNativeData;
 import il.co.idocare.eventbusevents.LoginStateEvents;
+import il.co.idocare.mvcviews.signupnative.SignupNativeViewMVC;
 import il.co.idocare.pictures.CameraAdapter;
 import il.co.idocare.utils.UtilMethods;
-import il.co.idocare.mvcviews.signupnative.SignupNativeViewMVC;
 
 /**
  * This fragment handles native signup flow

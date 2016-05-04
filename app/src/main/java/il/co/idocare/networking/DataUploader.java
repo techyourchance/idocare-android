@@ -17,10 +17,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.datamodels.functional.UserActionItem;
 import il.co.idocare.networking.interfaces.LegacyServerResponseHandler;
 import il.co.idocare.networking.responsehandlers.LegacyUserActionsServerResponseHandler;
-import il.co.idocare.contentproviders.IDoCareContract;
 
 /**
  * This class synchronizes the local modifications made by the user to the server.

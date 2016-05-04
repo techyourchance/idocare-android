@@ -1,13 +1,10 @@
 package il.co.idocare.controllers.activities;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,9 +19,6 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import il.co.idocare.Constants;
 import il.co.idocare.MyApplication;
 import il.co.idocare.R;
-import il.co.idocare.authentication.AccountAuthenticator;
-import il.co.idocare.authentication.LoginStateManager;
-import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.fragments.IDoCareFragmentCallback;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
 import il.co.idocare.dependencyinjection.components.ControllerComponent;

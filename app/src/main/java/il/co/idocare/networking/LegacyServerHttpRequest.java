@@ -1,7 +1,6 @@
 package il.co.idocare.networking;
 
 
-import android.accounts.Account;
 import android.text.TextUtils;
 import android.util.Log;
 

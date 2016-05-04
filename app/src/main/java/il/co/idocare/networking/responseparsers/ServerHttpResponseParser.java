@@ -3,7 +3,6 @@ package il.co.idocare.networking.responseparsers;
 import android.os.Bundle;
 
 import ch.boye.httpclientandroidlib.HttpResponse;
-import il.co.idocare.ApplicationException;
 import il.co.idocare.Constants;
 
 /**

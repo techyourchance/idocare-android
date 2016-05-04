@@ -31,10 +31,10 @@ import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.interfaces.RequestUserActionApplier;
 import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
 import il.co.idocare.datamodels.functional.RequestItem;
-import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.datamodels.functional.UserActionItem;
-import il.co.idocare.networking.ServerSyncController;
+import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMVC;
+import il.co.idocare.networking.ServerSyncController;
 
 
 public class RequestDetailsFragment extends AbstractFragment implements

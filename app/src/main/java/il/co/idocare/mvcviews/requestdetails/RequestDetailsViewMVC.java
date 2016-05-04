@@ -26,7 +26,6 @@ import org.greenrobot.eventbus.EventBus;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.datamodels.functional.RequestItem;

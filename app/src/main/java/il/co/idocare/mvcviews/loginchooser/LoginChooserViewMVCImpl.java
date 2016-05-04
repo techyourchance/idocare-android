@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
 import il.co.idocare.R;
 import il.co.idocare.mvcviews.AbstractViewMVC;
 

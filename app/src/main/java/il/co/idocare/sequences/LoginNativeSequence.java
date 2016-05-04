@@ -1,18 +1,14 @@
 package il.co.idocare.sequences;
 
-import android.accounts.Account;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import ch.boye.httpclientandroidlib.client.methods.CloseableHttpResponse;
 import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
 import il.co.idocare.Constants;
 import il.co.idocare.URLs;
-import il.co.idocare.authentication.AccountAuthenticator;
 import il.co.idocare.authentication.MyAccountManager;
 import il.co.idocare.networking.ServerHttpRequest;
 import il.co.idocare.networking.responseparsers.HttpResponseParseException;

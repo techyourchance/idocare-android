@@ -3,8 +3,6 @@ package il.co.idocare.controllers.fragments;
 import android.app.Fragment;
 import android.os.Bundle;
 
-import il.co.idocare.authentication.LoginStateManager;
-
 /**
  * The enclosing activity must implement this interface
  */

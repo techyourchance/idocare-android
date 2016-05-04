@@ -17,8 +17,8 @@ import java.util.Locale;
 
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.location.ReverseGeocoder;
 import il.co.idocare.datamodels.pojos.RequestItemPojo;
+import il.co.idocare.location.ReverseGeocoder;
 
 /**
  * This class processes a response from the server containing array of requests

@@ -1,12 +1,6 @@
 package il.co.idocare.controllers.fragments;
 
-import android.accounts.Account;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.app.Fragment;
-import android.os.Bundle;
-
-import java.io.IOException;
 
 /**
  *

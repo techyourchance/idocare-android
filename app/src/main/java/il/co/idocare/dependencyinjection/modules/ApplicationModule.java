@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import dagger.Module;
 import dagger.Provides;
 import il.co.idocare.Constants;
-import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.dependencyinjection.ApplicationScope;
 import il.co.idocare.nonstaticproxies.ContentResolverProxy;
 import il.co.idocare.nonstaticproxies.TextUtilsProxy;

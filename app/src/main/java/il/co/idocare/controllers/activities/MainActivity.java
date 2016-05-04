@@ -19,7 +19,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import javax.inject.Inject;
 
-
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.fragments.HomeFragment;
@@ -29,9 +28,9 @@ import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.loaders.UserInfoLoader;
 import il.co.idocare.location.LocationTrackerService;
+import il.co.idocare.mvcviews.mainnavdrawer.MainNavDrawerViewMVC;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.utils.Logger;
-import il.co.idocare.mvcviews.mainnavdrawer.MainNavDrawerViewMVC;
 
 
 public class MainActivity extends AbstractActivity implements

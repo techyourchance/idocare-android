@@ -7,8 +7,8 @@ import android.support.annotation.NonNull;
 
 import dagger.Module;
 import dagger.Provides;
-import il.co.idocare.authentication.MyAccountManager;
 import il.co.idocare.authentication.LoginStateManager;
+import il.co.idocare.authentication.MyAccountManager;
 import il.co.idocare.dependencyinjection.ControllerScope;
 import il.co.idocare.deviceinfo.GooglePlayServicesChecker;
 import il.co.idocare.networking.ServerSyncController;

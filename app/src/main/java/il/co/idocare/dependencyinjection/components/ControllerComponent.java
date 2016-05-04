@@ -1,11 +1,8 @@
 package il.co.idocare.dependencyinjection.components;
 
 import dagger.Subcomponent;
-import il.co.idocare.authentication.LoginStateManager;
-import il.co.idocare.controllers.activities.AbstractActivity;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.controllers.activities.StartupActivity;
-import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.controllers.fragments.CloseRequestFragment;
 import il.co.idocare.controllers.fragments.HomeFragment;
 import il.co.idocare.controllers.fragments.LoginChooserFragment;
@@ -15,7 +12,6 @@ import il.co.idocare.controllers.fragments.RequestDetailsFragment;
 import il.co.idocare.controllers.fragments.SignupNativeFragment;
 import il.co.idocare.dependencyinjection.ControllerScope;
 import il.co.idocare.dependencyinjection.modules.ControllerModule;
-import il.co.idocare.networking.ServerHttpRequest;
 
 @ControllerScope
 @Subcomponent(modules = ControllerModule.class)

@@ -1,7 +1,5 @@
 package il.co.idocare.sequences;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.os.Bundle;
 
 import com.facebook.AccessToken;

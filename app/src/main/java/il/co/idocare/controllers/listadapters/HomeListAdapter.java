@@ -20,8 +20,8 @@ import il.co.idocare.controllers.interfaces.RequestUserActionApplier;
 import il.co.idocare.controllers.interfaces.RequestsCombinedCursorAdapter;
 import il.co.idocare.controllers.interfaces.UserUserActionApplier;
 import il.co.idocare.datamodels.functional.RequestItem;
-import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.datamodels.functional.UserActionItem;
+import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.mvcviews.requestthumbnail.RequestThumbnailViewMVC;
 
 /**

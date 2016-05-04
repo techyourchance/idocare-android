@@ -2,9 +2,7 @@ package il.co.idocare.datamodels.pojos;
 
 
 import android.content.ContentValues;
-import android.database.Cursor;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;

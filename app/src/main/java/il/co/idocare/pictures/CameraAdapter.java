@@ -13,8 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import il.co.idocare.Constants;
-
 /**
  * This class handles interactions with device camera
  */

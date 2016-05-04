@@ -2,10 +2,7 @@ package il.co.idocare.networking.responseparsers;
 
 import android.os.Bundle;
 
-import java.io.IOException;
-
 import ch.boye.httpclientandroidlib.HttpResponse;
-import ch.boye.httpclientandroidlib.client.ClientProtocolException;
 
 /**
  * This is the decorator which should be used to process server responses to signup requests

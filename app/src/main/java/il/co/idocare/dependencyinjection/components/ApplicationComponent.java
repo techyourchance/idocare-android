@@ -1,16 +1,9 @@
 package il.co.idocare.dependencyinjection.components;
 
-import android.accounts.AccountManager;
-import android.app.Application;
-import android.content.Context;
-import android.content.SharedPreferences;
-
 import dagger.Component;
 import il.co.idocare.dependencyinjection.ApplicationScope;
-import il.co.idocare.dependencyinjection.modules.ControllerModule;
 import il.co.idocare.dependencyinjection.modules.ApplicationModule;
-import il.co.idocare.nonstaticproxies.ContentResolverProxy;
-import il.co.idocare.utils.Logger;
+import il.co.idocare.dependencyinjection.modules.ControllerModule;
 
 @ApplicationScope
 @Component(modules = ApplicationModule.class)

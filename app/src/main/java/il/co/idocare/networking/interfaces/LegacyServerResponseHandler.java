@@ -1,13 +1,6 @@
 package il.co.idocare.networking.interfaces;
 
 import android.content.ContentProviderClient;
-import android.text.TextUtils;
-import android.util.Log;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import il.co.idocare.Constants;
 
 /**
  * Object implementing this interface can be used for handling a parsed response from

@@ -8,7 +8,6 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-
 import org.greenrobot.eventbus.EventBus;
 
 import il.co.idocare.R;

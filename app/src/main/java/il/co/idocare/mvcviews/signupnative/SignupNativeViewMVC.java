@@ -16,7 +16,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.mvcviews.ViewMVC;

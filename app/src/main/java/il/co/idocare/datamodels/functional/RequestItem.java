@@ -5,10 +5,7 @@ import android.database.Cursor;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.gson.Gson;
-
 import il.co.idocare.Constants;
-import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.datamodels.pojos.RequestItemPojo;
 
 /**

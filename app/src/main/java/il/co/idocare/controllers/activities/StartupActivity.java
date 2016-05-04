@@ -1,15 +1,11 @@
 package il.co.idocare.controllers.activities;
 
-import android.accounts.AccountManager;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
 import javax.inject.Inject;
 
-import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.fragments.SplashFragment;
