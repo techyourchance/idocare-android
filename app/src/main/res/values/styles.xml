@@ -35,6 +35,7 @@
 
     <style name="ActionBarStyle" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:background">@color/green</item>
     </style>
 
     <style name="DefaultButtonStyle" parent="Widget.AppCompat.Button">
@@ -42,17 +43,27 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
-    <style name="LoginEditTextStyle" parent="Widget.AppCompat.EditText">
-        <item name="android:textSize">@dimen/default_text_size</item>
+    <style name="EditTextStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:textSize">@dimen/edit_text_text_size</item>
+        <item name="android:textColorHint">@color/edit_text_hint_color</item>
     </style>
+
 
     <style name="DefaultTextViewStyle" parent="android:Widget.TextView">
         <item name="android:fontFamily">sans-serif-light</item>
-        <item name="android:textColor">@color/default_text</item>
+        <item name="android:textColor">@color/text_color_primary</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">@dimen/default_text_size</item>
-
     </style>
+
+
+    <style name="LoginTextViewStyle" parent="DefaultTextViewStyle">
+        <item name="android:textColor">@color/text_color_secondary</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
+    </style>
+
+
+    <!-- TODO: the below styles should be removed/replaced - they belong to old design -->
 
     <style name="NicknameTextViewStyle" parent="DefaultTextViewStyle">
         <item name="android:textColor">@color/nickname_text</item>

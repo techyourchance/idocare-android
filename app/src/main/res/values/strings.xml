@@ -4,7 +4,7 @@
     <string name="app_name">IDoCare</string>
     <string name="menu_add_new_request_title">Add new request</string>
     <string name="image_request_thumbnail_content_description">Cleanup request thumbnail</string>
-    <string name="img_logo_accessibility">IDoCare logo</string>
+    <string name="img_login_accessibility">IDoCare logo</string>
     <string name="img_grass_accessibility">Grass picture</string>
     <string name="img_request_thumbnail_accessibility">Request thumbnail picture</string>
     <string name="img_user_picture_accessibility">User picture</string>
@@ -31,6 +31,14 @@
     <string name="txt_location_title">Location:</string>
     <string name="txt_add_user_photo">Upload Photo</string>
     <string name="txt_change_user_photo">Change photo</string>
+    <string name="txt_no_account_question">Don\'t have an account yet?</string>
+    <string name="txt_sign_up_link">" Sign up."</string>
+
+    <!--
+    Screen titles
+    -->
+    <string name="title_login_native">Login</string>
+
 
 
     <!--
@@ -42,8 +50,8 @@
     <string name="btn_dialog_close">Close</string>
 
     <string name="btn_skip_login">Skip</string>
-    <string name="btn_sign_up">Sign Up</string>
-    <string name="btn_login">Log In</string>
+    <string name="btn_sign_up">Sign up</string>
+    <string name="btn_login">Log in</string>
     <string name="btn_login_facebook">Continue with Facebook</string>
     <string name="btn_create_new_request">CREATE</string>
     <string name="btn_switch_to_new_request_fragment">Create new request</string>

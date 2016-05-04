@@ -3,6 +3,8 @@ package il.co.idocare.controllers.activities;
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import il.co.idocare.R;
 import il.co.idocare.controllers.fragments.LoginChooserFragment;
@@ -33,7 +35,9 @@ public class LoginActivity extends AbstractActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.layout_single_frame);
+        setContentView(R.layout.layout_single_frame_with_toolbar);
+
+        initActionBar();
 
         if (savedInstanceState == null) {
             if (getIntent().hasExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE)) {
@@ -61,6 +65,20 @@ public class LoginActivity extends AbstractActivity {
             mAccountAuthenticatorResponse.onRequestContinued();
         }
 
+    }
+
+    private void initActionBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onNavigateUp();
+            }
+        });
     }
 
 
@@ -97,6 +115,6 @@ public class LoginActivity extends AbstractActivity {
 
     @Override
     public void setTitle(String title) {
-        // This method is irrelevant here
+        getSupportActionBar().setTitle(title);
     }
 }

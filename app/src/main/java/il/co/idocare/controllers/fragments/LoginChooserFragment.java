@@ -83,6 +83,10 @@ public class LoginChooserFragment extends AbstractFragment
         return "";
     }
 
+    @Override
+    public boolean shouldShowActionBar() {
+        return false;
+    }
 
     private void initializeFacebookLogin() {
 

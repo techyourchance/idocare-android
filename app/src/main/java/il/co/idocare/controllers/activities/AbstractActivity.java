@@ -70,7 +70,15 @@ public abstract class AbstractActivity extends AppCompatActivity implements
         super.onBackPressed();
     }
 
-
+    @Override
+    public void showActionBar(boolean show) {
+        if (getSupportActionBar() != null) {
+            if (show)
+                getSupportActionBar().show();
+            else
+                getSupportActionBar().hide();
+        }
+    }
 
 
     // ---------------------------------------------------------------------------------------------

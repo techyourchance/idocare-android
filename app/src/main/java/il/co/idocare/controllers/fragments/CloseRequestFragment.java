@@ -122,8 +122,6 @@ public class CloseRequestFragment extends AbstractFragment {
         return getResources().getString(R.string.close_request_fragment_title);
     }
 
-
-
     // ---------------------------------------------------------------------------------------------
     //
     // EventBus events handling

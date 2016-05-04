@@ -39,4 +39,12 @@ public interface IDoCareFragmentInterface {
      */
     public String getTitle();
 
+
+    /**
+     * This method is used to control ActionBar visibility from Fragment (ActionBar should be
+     * shown by default)
+     * @return true if the fragment should be shown with action bar; false otherwise
+     */
+    boolean shouldShowActionBar();
+
 }

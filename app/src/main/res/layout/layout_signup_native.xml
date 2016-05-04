@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:lines="1"
             android:inputType="textEmailAddress"
-            style="@style/LoginEditTextStyle"
+            style="@style/EditTextStyle"
             android:hint="@string/hint_email"/>
 
         <EditText
@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:lines="1"
             android:inputType="textPassword"
-            style="@style/LoginEditTextStyle"
+            style="@style/EditTextStyle"
             android:hint="@string/hint_password"/>
 
         <EditText
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:lines="1"
             android:inputType="textPassword"
-            style="@style/LoginEditTextStyle"
+            style="@style/EditTextStyle"
             android:hint="@string/hint_repeat_password"/>
 
         <EditText
@@ -74,7 +74,7 @@
             android:layout_height="wrap_content"
             android:lines="1"
             android:inputType="text"
-            style="@style/LoginEditTextStyle"
+            style="@style/EditTextStyle"
             android:hint="@string/hint_nickname"/>
 
         <EditText
@@ -83,7 +83,7 @@
             android:layout_height="wrap_content"
             android:lines="1"
             android:inputType="text"
-            style="@style/LoginEditTextStyle"
+            style="@style/EditTextStyle"
             android:hint="@string/hint_first_name"/>
 
         <EditText
@@ -92,7 +92,7 @@
             android:layout_height="wrap_content"
             android:lines="1"
             android:inputType="text"
-            style="@style/LoginEditTextStyle"
+            style="@style/EditTextStyle"
             android:hint="@string/hint_last_name"/>
 
 

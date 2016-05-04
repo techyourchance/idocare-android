@@ -18,6 +18,7 @@ public interface LoginNativeViewMvc
      */
     interface LoginNativeViewMvcListener {
         void onLoginClicked();
+        void onSignupClicked();
     }
 
     /**

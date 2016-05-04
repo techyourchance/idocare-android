@@ -16,8 +16,8 @@
 
     <!-- These are the colors used in the app. All other colors just reference one of these -->
     <color name="green">#00C767</color>
-    <color name="orange">#FBB732</color>
-    <color name="red">#FF5500</color>
+    <color name="yellow">#FBB732</color>
+    <color name="orange">#FF5500</color>
     <color name="gray_dark">#353535</color>
     <color name="gray">#727272</color>
     <color name="gray_light">#BEBBB9</color>
@@ -30,6 +30,7 @@
          reference one of the colors above -->
     <color name="text_color_primary">@color/gray_dark</color>
     <color name="text_color_secondary">@color/gray</color>
+    <color name="edit_text_hint_color">@color/gray_light</color>
 
     <color name="background">@color/gray_lightest</color>
     <color name="button_pressed_text_color">@color/gray_lightest</color>

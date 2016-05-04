@@ -37,5 +37,11 @@ public interface IDoCareFragmentCallback {
      */
     public void askUserToLogIn(String message, final Runnable runnable);
 
+    /**
+     * Calls to this method will alter the visibility of action bar
+     * @param show set to true in order for action bar to be shown; false otherwise
+     */
+    public void showActionBar(boolean show);
+
 }
 

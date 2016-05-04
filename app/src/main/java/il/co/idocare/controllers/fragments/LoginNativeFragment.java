@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +38,7 @@ public class LoginNativeFragment extends AbstractFragment implements LoginNative
     private LoginNativeViewMvc mLoginNativeViewMvc;
     private AlertDialog mAlertDialog;
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,8 +62,9 @@ public class LoginNativeFragment extends AbstractFragment implements LoginNative
 
     @Override
     public String getTitle() {
-        return "Log in";
+        return getString(R.string.title_login_native);
     }
+
 
     @Override
     public void onResume() {
@@ -92,6 +96,11 @@ public class LoginNativeFragment extends AbstractFragment implements LoginNative
     @Override
     public void onLoginClicked() {
         logInNative();
+    }
+
+    @Override
+    public void onSignupClicked() {
+        replaceFragment(SignupNativeFragment.class, true, false, null);
     }
 
     // End of callbacks from MVC view(s)
