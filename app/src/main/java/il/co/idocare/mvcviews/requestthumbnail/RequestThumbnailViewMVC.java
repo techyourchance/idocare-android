@@ -1,13 +1,11 @@
 package il.co.idocare.mvcviews.requestthumbnail;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -27,13 +25,11 @@ import il.co.idocare.mvcviews.ViewMVC;
  * This is the top level View which should be used as a "thumbnail" for requests
  * when they are displayed in a list.
  */
-public class RequestThumbnailViewMVC
-        extends AbstractViewMVC<RequestThumbnailViewMVC.RequestThumbnailViewMVCListener>
+public class RequestThumbnailViewMvc
+        extends AbstractViewMVC<RequestThumbnailViewMvc.RequestThumbnailViewMvcListener>
         implements ViewMVC {
 
-    private static final String LOG_TAG = RequestThumbnailViewMVC.class.getSimpleName();
-
-    public interface RequestThumbnailViewMVCListener {
+    public interface RequestThumbnailViewMvcListener {
 
     }
 
@@ -49,7 +45,7 @@ public class RequestThumbnailViewMVC
 
     private String mCurrentPictureUrl = "";
 
-    public RequestThumbnailViewMVC(LayoutInflater inflater, ViewGroup container) {
+    public RequestThumbnailViewMvc(LayoutInflater inflater, ViewGroup container) {
         setRootView(inflater.inflate(R.layout.layout_request_thumbnail, container, false));
 
 

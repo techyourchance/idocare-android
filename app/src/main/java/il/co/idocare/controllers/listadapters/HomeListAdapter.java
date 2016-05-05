@@ -23,7 +23,7 @@ import il.co.idocare.controllers.interfaces.UserUserActionApplier;
 import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.datamodels.functional.UserActionItem;
 import il.co.idocare.datamodels.functional.UserItem;
-import il.co.idocare.mvcviews.requestthumbnail.RequestThumbnailViewMVC;
+import il.co.idocare.mvcviews.requestthumbnail.RequestThumbnailViewMvc;
 
 /**
  * Customized CursorAdapter that is used for displaying the list of requests on HomeFragment.
@@ -63,10 +63,10 @@ public class HomeListAdapter extends CursorAdapter implements
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
-        RequestThumbnailViewMVC requestThumbnailViewMVC =
-                new RequestThumbnailViewMVC(LayoutInflater.from(context), viewGroup);
-        View rootView = requestThumbnailViewMVC.getRootView();
-        rootView.setTag(requestThumbnailViewMVC);
+        RequestThumbnailViewMvc requestThumbnailViewMvc =
+                new RequestThumbnailViewMvc(LayoutInflater.from(context), viewGroup);
+        View rootView = requestThumbnailViewMvc.getRootView();
+        rootView.setTag(requestThumbnailViewMvc);
         return rootView;
     }
 
@@ -91,22 +91,22 @@ public class HomeListAdapter extends CursorAdapter implements
         // Set request's status
         request.setStatus(mLoginStateManager.getActiveAccountUserId());
 
-        RequestThumbnailViewMVC requestThumbnailViewMVC = (RequestThumbnailViewMVC) view.getTag();
+        RequestThumbnailViewMvc requestThumbnailViewMvc = (RequestThumbnailViewMvc) view.getTag();
 
-        requestThumbnailViewMVC.bindRequestItem(request);
+        requestThumbnailViewMvc.bindRequestItem(request);
 
         UserItem createdByUser = getUser(request.getCreatedBy());
         if (createdByUser != null)
-            requestThumbnailViewMVC.bindCreatedByUser(createdByUser);
+            requestThumbnailViewMvc.bindCreatedByUser(createdByUser);
         else
-            requestThumbnailViewMVC.bindCreatedByUser(UserItem.createAnonymousUser());
+            requestThumbnailViewMvc.bindCreatedByUser(UserItem.createAnonymousUser());
 
         if (request.isPickedUp()) {
             UserItem pickedUpByUser = getUser(request.getPickedUpBy());
             if (pickedUpByUser != null)
-                requestThumbnailViewMVC.bindPickedUpByUser(pickedUpByUser);
+                requestThumbnailViewMvc.bindPickedUpByUser(pickedUpByUser);
             else
-                requestThumbnailViewMVC.bindPickedUpByUser(UserItem.createAnonymousUser());
+                requestThumbnailViewMvc.bindPickedUpByUser(UserItem.createAnonymousUser());
         }
     }
 
