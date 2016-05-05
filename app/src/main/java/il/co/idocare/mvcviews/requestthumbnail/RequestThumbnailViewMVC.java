@@ -19,6 +19,7 @@ import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.datamodels.functional.UserItem;
+import il.co.idocare.mvcviews.AbstractViewMVC;
 import il.co.idocare.mvcviews.ViewMVC;
 
 
@@ -26,9 +27,15 @@ import il.co.idocare.mvcviews.ViewMVC;
  * This is the top level View which should be used as a "thumbnail" for requests
  * when they are displayed in a list.
  */
-public class RequestThumbnailViewMVC extends RelativeLayout implements ViewMVC {
+public class RequestThumbnailViewMVC
+        extends AbstractViewMVC<RequestThumbnailViewMVC.RequestThumbnailViewMVCListener>
+        implements ViewMVC {
 
     private static final String LOG_TAG = RequestThumbnailViewMVC.class.getSimpleName();
+
+    public interface RequestThumbnailViewMVCListener {
+
+    }
 
     private RequestItem mRequestItem;
 
@@ -40,26 +47,10 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements ViewMVC {
     private TextView mTxtCreatedAt;
     private TextView mTxtCreatedReputation;
 
-    private String mCurrentPictureUrl;
+    private String mCurrentPictureUrl = "";
 
-
-
-    public RequestThumbnailViewMVC(Context context) {
-        super(context);
-
-        mCurrentPictureUrl = "";
-
-        // Inflate the underlying layout
-        LayoutInflater.from(context).inflate(R.layout.layout_request_thumbnail, this, true);
-
-        // Set a border around this layout
-        setBackgroundResource(R.drawable.border_background);
-        // This is required in order for "layout_marginBottom" to work with
-        // "layout_alignParentBottom" in XML (doesn't work for "match_parent" height)
-        RelativeLayout.LayoutParams rel_btn = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                context.getResources().getDimensionPixelSize(R.dimen.request_thumbnail_layout_height));
-        setLayoutParams(rel_btn);
+    public RequestThumbnailViewMVC(LayoutInflater inflater, ViewGroup container) {
+        setRootView(inflater.inflate(R.layout.layout_request_thumbnail, container, false));
 
 
         initialize();
@@ -72,22 +63,13 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements ViewMVC {
      */
     private void initialize() {
 
-        // This padding is required in order not to hide the border when colorizing inner views
-        int padding = (int) getResources().getDimension(R.dimen.border_background_width);
-        getRootView().setPadding(padding, padding, padding, padding);
-
-        // Set background color and border for the whole item
-        getRootView().setBackgroundColor(getResources().getColor(android.R.color.white));
-        getRootView().setBackgroundResource(R.drawable.border_background);
-
-
-        mTxtRequestStatus = (TextView) findViewById(R.id.txt_request_status);
-        mTxtRequestLocation = (TextView) findViewById(R.id.txt_request_fine_location);
-        mImgRequestThumbnail = (ImageView) findViewById(R.id.img_request_thumbnail);
-        mTxtCreatedComment = (TextView) findViewById(R.id.txt_created_comment);
-        mTxtCreatedBy = (TextView) findViewById(R.id.txt_created_by);
-        mTxtCreatedAt = (TextView) findViewById(R.id.txt_created_at);
-        mTxtCreatedReputation = (TextView) findViewById(R.id.txt_votes);
+        mTxtRequestStatus = (TextView) getRootView().findViewById(R.id.txt_request_status);
+        mTxtRequestLocation = (TextView) getRootView().findViewById(R.id.txt_request_fine_location);
+        mImgRequestThumbnail = (ImageView) getRootView().findViewById(R.id.img_request_thumbnail);
+        mTxtCreatedComment = (TextView) getRootView().findViewById(R.id.txt_created_comment);
+        mTxtCreatedBy = (TextView) getRootView().findViewById(R.id.txt_created_by);
+        mTxtCreatedAt = (TextView) getRootView().findViewById(R.id.txt_created_at);
+        mTxtCreatedReputation = (TextView) getRootView().findViewById(R.id.txt_votes);
 
     }
 
@@ -129,12 +111,12 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements ViewMVC {
         if (mRequestItem.isPickedUp() ) {
             if (mRequestItem.getStatus() == RequestItem.RequestStatus.PICKED_UP_BY_OTHER) {
                 mTxtRequestStatus.setText(
-                        getResources().getString(R.string.txt_picked_up_request_title) + " " +
-                                getResources().getString(R.string.txt_by) + " " + user.getNickname());
+                        getRootView().getResources().getString(R.string.txt_picked_up_request_title) + " " +
+                                getRootView().getResources().getString(R.string.txt_by) + " " + user.getNickname());
             } else {
                 mTxtRequestStatus.setText(
-                        getResources().getString(R.string.txt_picked_up_request_title) + " " +
-                                getResources().getString(R.string.txt_by_me));
+                        getRootView().getResources().getString(R.string.txt_picked_up_request_title) + " " +
+                                getRootView().getResources().getString(R.string.txt_by_me));
             }
         }
     }
@@ -142,11 +124,11 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements ViewMVC {
         int statusColor;
 
         if (mRequestItem.isClosed())
-            statusColor = getResources().getColor(R.color.closed_request_color);
+            statusColor = getRootView().getResources().getColor(R.color.closed_request_color);
         else if (mRequestItem.isPickedUp())
-            statusColor = getResources().getColor(R.color.picked_up_request_color);
+            statusColor = getRootView().getResources().getColor(R.color.picked_up_request_color);
         else
-            statusColor = getResources().getColor(R.color.new_request_color);
+            statusColor = getRootView().getResources().getColor(R.color.new_request_color);
 
         mTxtRequestStatus.setBackgroundColor(statusColor);
         mTxtRequestLocation.setBackgroundColor(statusColor);
@@ -154,11 +136,11 @@ public class RequestThumbnailViewMVC extends RelativeLayout implements ViewMVC {
 
     private void setTexts() {
         if (mRequestItem.isClosed())
-            mTxtRequestStatus.setText(getResources().getString(R.string.txt_closed_request_title));
+            mTxtRequestStatus.setText(getRootView().getResources().getString(R.string.txt_closed_request_title));
         else if (mRequestItem.isPickedUp())
-            mTxtRequestStatus.setText(getResources().getString(R.string.txt_picked_up_request_title));
+            mTxtRequestStatus.setText(getRootView().getResources().getString(R.string.txt_picked_up_request_title));
         else
-            mTxtRequestStatus.setText(getResources().getString(R.string.txt_new_request_title));
+            mTxtRequestStatus.setText(getRootView().getResources().getString(R.string.txt_new_request_title));
 
         // TODO: need to set city name
         mTxtRequestLocation.setText("");

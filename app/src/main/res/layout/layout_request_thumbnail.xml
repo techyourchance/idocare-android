@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-    <!-- This layout will be inflated in a subclass of RelativeLayout, therefore the top level
-         tag here is merge -->
 
-<!--<RelativeLayout-->
-    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:layout_width="match_parent">-->
-
-    <merge
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="@dimen/request_thumbnail_layout_height"
+    android:layout_width="match_parent"
+    android:padding="@dimen/border_background_width"
+    android:background="@drawable/border_background"
+    >
 
     <!-- Include colorized status bar-->
     <include layout="@layout/element_request_status_bar_relative"/>
@@ -76,12 +74,12 @@
 
 
     <include layout="@layout/element_reputation_star"
-        android:layout_width="@dimen/reputation_star_picture_size"
-        android:layout_height="@dimen/reputation_star_picture_size"
-        android:layout_alignParentBottom="true"
-        android:layout_toStartOf="@+id/space_bottom_end"
-        android:layout_toLeftOf="@+id/space_bottom_end"
-        android:layout_marginBottom="@dimen/fragment_tiny_padding"/>
+             android:layout_width="@dimen/reputation_star_picture_size"
+             android:layout_height="@dimen/reputation_star_picture_size"
+             android:layout_alignParentBottom="true"
+             android:layout_toStartOf="@+id/space_bottom_end"
+             android:layout_toLeftOf="@+id/space_bottom_end"
+             android:layout_marginBottom="@dimen/fragment_tiny_padding"/>
 
     <Space
         android:id="@+id/space_bottom_end"
@@ -91,9 +89,4 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"/>
 
-
-
-
-</merge>
-
-<!--</RelativeLayout>-->
+</RelativeLayout>

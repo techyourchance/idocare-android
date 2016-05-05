@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
 import android.database.Cursor;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
@@ -29,8 +30,6 @@ import il.co.idocare.mvcviews.requestthumbnail.RequestThumbnailViewMVC;
  */
 public class HomeListAdapter extends CursorAdapter implements
         RequestsCombinedCursorAdapter {
-
-    private final static String LOG_TAG = HomeListAdapter.class.getSimpleName();
 
     private Cursor mUsersCursor;
     private Cursor mUserActionsCursor;
@@ -64,7 +63,11 @@ public class HomeListAdapter extends CursorAdapter implements
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
-        return new RequestThumbnailViewMVC(context);
+        RequestThumbnailViewMVC requestThumbnailViewMVC =
+                new RequestThumbnailViewMVC(LayoutInflater.from(context), viewGroup);
+        View rootView = requestThumbnailViewMVC.getRootView();
+        rootView.setTag(requestThumbnailViewMVC);
+        return rootView;
     }
 
     @Override
@@ -88,20 +91,22 @@ public class HomeListAdapter extends CursorAdapter implements
         // Set request's status
         request.setStatus(mLoginStateManager.getActiveAccountUserId());
 
-        ((RequestThumbnailViewMVC) view).bindRequestItem(request);
+        RequestThumbnailViewMVC requestThumbnailViewMVC = (RequestThumbnailViewMVC) view.getTag();
+
+        requestThumbnailViewMVC.bindRequestItem(request);
 
         UserItem createdByUser = getUser(request.getCreatedBy());
         if (createdByUser != null)
-            ((RequestThumbnailViewMVC) view).bindCreatedByUser(createdByUser);
+            requestThumbnailViewMVC.bindCreatedByUser(createdByUser);
         else
-            ((RequestThumbnailViewMVC) view).bindCreatedByUser(UserItem.createAnonymousUser());
+            requestThumbnailViewMVC.bindCreatedByUser(UserItem.createAnonymousUser());
 
         if (request.isPickedUp()) {
             UserItem pickedUpByUser = getUser(request.getPickedUpBy());
             if (pickedUpByUser != null)
-                ((RequestThumbnailViewMVC) view).bindPickedUpByUser(pickedUpByUser);
+                requestThumbnailViewMVC.bindPickedUpByUser(pickedUpByUser);
             else
-                ((RequestThumbnailViewMVC) view).bindPickedUpByUser(UserItem.createAnonymousUser());
+                requestThumbnailViewMVC.bindPickedUpByUser(UserItem.createAnonymousUser());
         }
     }
 
