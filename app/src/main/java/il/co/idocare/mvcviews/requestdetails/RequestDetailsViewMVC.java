@@ -109,7 +109,7 @@ public class RequestDetailsViewMVC implements ViewMVC {
         mTxtCreatedByNickname = (TextView) includedView.findViewById(R.id.txt_user_nickname);
         mTxtCreatedAt = (TextView) includedView.findViewById(R.id.txt_created_at);
         mTxtCreatedByReputation = (TextView) includedView.findViewById(R.id.txt_user_reputation);
-        mTxtCreatedReputation = (TextView) includedView.findViewById(R.id.txt_votes);
+        mTxtCreatedReputation = (TextView) includedView.findViewById(R.id.txt_created_votes);
         mTxtCreatedComment = (TextView) includedView.findViewById(R.id.txt_comment);
         mImgCreatedVoteUp = (ImageView) includedView.findViewById(R.id.img_vote_up);
         mImgCreatedVoteDown = (ImageView) includedView.findViewById(R.id.img_vote_down);
@@ -132,7 +132,7 @@ public class RequestDetailsViewMVC implements ViewMVC {
         mTxtClosedByNickname = (TextView) includedView.findViewById(R.id.txt_user_nickname);
         mTxtClosedAt = (TextView) includedView.findViewById(R.id.txt_created_at);
         mTxtClosedByReputation = (TextView) includedView.findViewById(R.id.txt_user_reputation);
-        mTxtClosedReputation = (TextView) includedView.findViewById(R.id.txt_votes);
+        mTxtClosedReputation = (TextView) includedView.findViewById(R.id.txt_created_votes);
         mTxtClosedComment = (TextView) includedView.findViewById(R.id.txt_comment);
         mImgClosedVoteUp = (ImageView) includedView.findViewById(R.id.img_vote_up);
         mImgClosedVoteDown = (ImageView) includedView.findViewById(R.id.img_vote_down);

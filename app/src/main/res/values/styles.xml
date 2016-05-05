@@ -48,20 +48,41 @@
         <item name="android:textColorHint">@color/edit_text_hint_color</item>
     </style>
 
+    <!-- TEXT VIEW STYLES -->
 
     <style name="DefaultTextViewStyle" parent="android:Widget.TextView">
-        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:fontFamily">sans-serif</item>
         <item name="android:textColor">@color/text_color_primary</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">@dimen/default_text_size</item>
     </style>
 
+    <style name="SmallSecondaryTextViewStyle" parent="DefaultTextViewStyle">
+        <item name="android:textColor">@color/text_color_secondary</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
+    </style>
 
     <style name="LoginTextViewStyle" parent="DefaultTextViewStyle">
         <item name="android:textColor">@color/text_color_secondary</item>
         <item name="android:textSize">@dimen/small_text_size</item>
     </style>
 
+    <style name="RequestThumbnailStatusAndLocation" parent="DefaultTextViewStyle">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/background</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="RequestThumbnailCreatedBy" parent="DefaultTextViewStyle">
+        <item name="android:textColor">@color/green</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
+    </style>
+
+    <style name="RequestThumbnailCreatedVotes" parent="DefaultTextViewStyle">
+        <item name="android:textColor">@color/background</item>
+        <item name="android:textSize">@dimen/smallest_text_size</item>
+    </style>
 
     <!-- TODO: the below styles should be removed/replaced - they belong to old design -->
 

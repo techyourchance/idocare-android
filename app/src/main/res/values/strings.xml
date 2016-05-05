@@ -11,7 +11,7 @@
     <string name="btn_vote_up_accessibility">Vote up</string>
     <string name="btn_vote_down_accessibility">Vote down</string>
     <string name="img_picture_accessibility">Picture</string>
-    <string name="home_fragment_title">Home</string>
+    <string name="home_fragment_title">Requests list</string>
     <string name="new_request_fragment_title">New request</string>
     <string name="close_request_fragment_title">Close request</string>
     <string name="request_details_fragment_title">Request details</string>

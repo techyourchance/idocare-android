@@ -1,92 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
-<RelativeLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="@dimen/request_thumbnail_layout_height"
-    android:layout_width="match_parent"
-    android:padding="@dimen/border_background_width"
-    android:background="@drawable/border_background"
-    >
-
-    <!-- Include colorized status bar-->
-    <include layout="@layout/element_request_status_bar_relative"/>
-
+    android:layout_width="match_parent">
 
     <ImageView
         android:id="@+id/img_request_thumbnail"
-        android:layout_width="@dimen/thumbnail_picture_width"
-        android:layout_height="@dimen/thumbnail_picture_height"
-        android:paddingLeft="@dimen/fragment_default_padding"
-        android:paddingStart="@dimen/fragment_default_padding"
-        android:paddingRight="@dimen/fragment_tiny_padding"
-        android:paddingEnd="@dimen/fragment_default_padding"
-        android:layout_marginTop="@dimen/fragment_default_padding"
-        android:layout_marginBottom="@dimen/fragment_default_padding"
-        android:layout_below="@id/txt_request_status"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:cropToPadding="true"
         android:contentDescription="@string/img_request_thumbnail_accessibility"/>
 
-    <TextView
-        android:id="@+id/txt_created_comment"
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/txt_request_status"
-        android:layout_toRightOf="@id/img_request_thumbnail"
-        android:layout_toEndOf="@id/img_request_thumbnail"
-        android:layout_marginEnd="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginTop="@dimen/fragment_tiny_padding"
-        android:maxLines="2"
-        android:ellipsize="end"/>
+        android:padding="@dimen/fragment_tiny_padding"
+        android:paddingBottom="@dimen/fragment_small_padding"
+        android:background="@drawable/request_thumbnail_picture_gradient_overlay">
 
-
-    <!-- This linear layout is a waste of performance and will make the drawing on the screen
-         slower, but it seems that relative layout has some bug and I can't position two
-         text views at the bottom without additional nesting. TODO: resolve -->
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_toEndOf="@id/img_request_thumbnail"
-        android:layout_toRightOf="@id/img_request_thumbnail"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/fragment_default_padding">
+        <TextView
+            android:id="@+id/txt_request_status"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/text_view_default_padding"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            style="@style/RequestThumbnailStatusAndLocation"/>
+        
+        <TextView
+            android:id="@+id/txt_request_coarse_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_above="@+id/txt_created_by"
+            style="@style/RequestThumbnailStatusAndLocation"
+            android:text="Location"/>
 
         <TextView
             android:id="@+id/txt_created_by"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/NicknameTextViewStyle"/>
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            style="@style/RequestThumbnailCreatedBy"/>
 
 
         <TextView
             android:id="@+id/txt_created_at"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/DateTextViewStyle"/>
+            android:layout_alignParentBottom="true"
+            android:layout_toEndOf="@+id/txt_created_by"
+            android:layout_toRightOf="@+id/txt_created_by"
+            android:layout_marginStart="@dimen/fragment_tiny_padding"
+            android:layout_marginLeft="@dimen/fragment_tiny_padding"
+            style="@style/SmallSecondaryTextViewStyle"/>
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/txt_created_votes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="@dimen/fragment_tiny_padding"
+            android:layout_marginLeft="@dimen/fragment_tiny_padding"
+            style="@style/RequestThumbnailCreatedVotes"/>
 
+        <ImageView
+            android:id="@+id/img_votes_star"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toStartOf="@+id/txt_created_votes"
+            android:layout_toLeftOf="@+id/txt_created_votes"
+            android:paddingBottom="2dp"
+            android:src="@drawable/ic_star_request_thumbnail"/>
 
+    </RelativeLayout>
 
-    <include layout="@layout/element_reputation_star"
-             android:layout_width="@dimen/reputation_star_picture_size"
-             android:layout_height="@dimen/reputation_star_picture_size"
-             android:layout_alignParentBottom="true"
-             android:layout_toStartOf="@+id/space_bottom_end"
-             android:layout_toLeftOf="@+id/space_bottom_end"
-             android:layout_marginBottom="@dimen/fragment_tiny_padding"/>
-
-    <Space
-        android:id="@+id/space_bottom_end"
-        android:layout_height="@dimen/reputation_star_picture_size"
-        android:layout_width="@dimen/fragment_tiny_padding"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
-
-</RelativeLayout>
+</FrameLayout>

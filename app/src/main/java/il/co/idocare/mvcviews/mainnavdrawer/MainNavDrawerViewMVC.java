@@ -90,7 +90,6 @@ public class MainNavDrawerViewMVC implements ViewMVC {
 
     private void initToolbar() {
         mToolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
-        mToolbar.setBackgroundResource(R.drawable.actionbar_background);
         mActivity.setSupportActionBar(mToolbar);
     }
 

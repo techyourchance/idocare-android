@@ -36,12 +36,13 @@
     <color name="button_pressed_text_color">@color/gray_lightest</color>
     <color name="skip_login_button_text_color">@color/text_color_secondary</color>
 
+    <color name="new_request_color">@color/orange</color>
+    <color name="picked_up_request_color">@color/yellow</color>
+    <color name="closed_request_color">@color/green</color>
+
 
 
     <!-- TODO: these entries should be removed/replaced - they belong to old design -->
-    <color name="new_request_color">@color/light_orange</color>
-    <color name="picked_up_request_color">@color/light_green</color>
-    <color name="closed_request_color">@color/dark_green</color>
 
 
     <color name="faded_text">@color/gray_light_1</color>

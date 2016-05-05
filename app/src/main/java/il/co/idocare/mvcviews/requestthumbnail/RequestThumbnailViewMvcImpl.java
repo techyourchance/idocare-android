@@ -30,19 +30,17 @@ public class RequestThumbnailViewMvcImpl
 
     private RequestItem mRequestItem;
 
+    private ImageView mImgRequestThumbnail;
     private TextView mTxtRequestStatus;
     private TextView mTxtRequestLocation;
-    private ImageView mImgRequestThumbnail;
-    private TextView mTxtCreatedComment;
     private TextView mTxtCreatedBy;
     private TextView mTxtCreatedAt;
-    private TextView mTxtCreatedReputation;
+    private TextView mTxtCreatedVotes;
 
     private String mCurrentPictureUrl = "";
 
     public RequestThumbnailViewMvcImpl(LayoutInflater inflater, ViewGroup container) {
         setRootView(inflater.inflate(R.layout.layout_request_thumbnail, container, false));
-
 
         initialize();
     }
@@ -55,12 +53,11 @@ public class RequestThumbnailViewMvcImpl
     private void initialize() {
 
         mTxtRequestStatus = (TextView) getRootView().findViewById(R.id.txt_request_status);
-        mTxtRequestLocation = (TextView) getRootView().findViewById(R.id.txt_request_fine_location);
+        mTxtRequestLocation = (TextView) getRootView().findViewById(R.id.txt_request_coarse_location);
         mImgRequestThumbnail = (ImageView) getRootView().findViewById(R.id.img_request_thumbnail);
-        mTxtCreatedComment = (TextView) getRootView().findViewById(R.id.txt_created_comment);
         mTxtCreatedBy = (TextView) getRootView().findViewById(R.id.txt_created_by);
         mTxtCreatedAt = (TextView) getRootView().findViewById(R.id.txt_created_at);
-        mTxtCreatedReputation = (TextView) getRootView().findViewById(R.id.txt_votes);
+        mTxtCreatedVotes = (TextView) getRootView().findViewById(R.id.txt_created_votes);
 
     }
 
@@ -105,8 +102,7 @@ public class RequestThumbnailViewMvcImpl
         if (mRequestItem.isPickedUp() ) {
             if (mRequestItem.getStatus() == RequestItem.RequestStatus.PICKED_UP_BY_OTHER) {
                 mTxtRequestStatus.setText(
-                        getRootView().getResources().getString(R.string.txt_picked_up_request_title) + " " +
-                                getRootView().getResources().getString(R.string.txt_by) + " " + user.getNickname());
+                        getRootView().getResources().getString(R.string.txt_picked_up_request_title));
             } else {
                 mTxtRequestStatus.setText(
                         getRootView().getResources().getString(R.string.txt_picked_up_request_title) + " " +
@@ -125,7 +121,6 @@ public class RequestThumbnailViewMvcImpl
             statusColor = getRootView().getResources().getColor(R.color.new_request_color);
 
         mTxtRequestStatus.setBackgroundColor(statusColor);
-        mTxtRequestLocation.setBackgroundColor(statusColor);
     }
 
     private void setTexts() {
@@ -136,13 +131,9 @@ public class RequestThumbnailViewMvcImpl
         else
             mTxtRequestStatus.setText(getRootView().getResources().getString(R.string.txt_new_request_title));
 
-        // TODO: need to set city name
-        mTxtRequestLocation.setText("");
-
-        mTxtCreatedComment.setText(mRequestItem.getCreatedComment());
         mTxtCreatedAt.setText(mRequestItem.getCreatedAt());
 
-        mTxtCreatedReputation.setText(String.valueOf(mRequestItem.getCreatedReputation()));
+        mTxtCreatedVotes.setText(String.valueOf(mRequestItem.getCreatedReputation()));
     }
 
 
