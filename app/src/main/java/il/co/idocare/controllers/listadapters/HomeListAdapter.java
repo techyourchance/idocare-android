@@ -24,6 +24,7 @@ import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.datamodels.functional.UserActionItem;
 import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.mvcviews.requestthumbnail.RequestThumbnailViewMvc;
+import il.co.idocare.mvcviews.requestthumbnail.RequestThumbnailViewMvcImpl;
 
 /**
  * Customized CursorAdapter that is used for displaying the list of requests on HomeFragment.
@@ -64,7 +65,7 @@ public class HomeListAdapter extends CursorAdapter implements
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
         RequestThumbnailViewMvc requestThumbnailViewMvc =
-                new RequestThumbnailViewMvc(LayoutInflater.from(context), viewGroup);
+                new RequestThumbnailViewMvcImpl(LayoutInflater.from(context), viewGroup);
         View rootView = requestThumbnailViewMvc.getRootView();
         rootView.setTag(requestThumbnailViewMvc);
         return rootView;
