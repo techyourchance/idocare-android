@@ -32,6 +32,9 @@
     <color name="text_color_secondary">@color/gray</color>
     <color name="edit_text_hint_color">@color/gray_light</color>
 
+
+    <color name="divider_color">@color/gray_light</color>
+
     <color name="background">@color/gray_lightest</color>
     <color name="button_pressed_text_color">@color/gray_lightest</color>
     <color name="skip_login_button_text_color">@color/text_color_secondary</color>

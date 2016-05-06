@@ -26,8 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="true"
-            android:padding="@dimen/frame_contents_padding"
-            android:background="@drawable/default_fragment_background"/>
+            android:background="@color/background"/>
 
     </LinearLayout>
 

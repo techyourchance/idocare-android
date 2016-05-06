@@ -9,12 +9,6 @@
     android:paddingRight="@dimen/fragment_default_padding"
     android:paddingEnd="@dimen/fragment_default_padding">
 
-    <TextView
-        android:id="@+id/txt_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-
     <com.makeramen.roundedimageview.RoundedImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/img_user_picture"
@@ -36,7 +30,7 @@
         android:layout_toEndOf="@id/img_user_picture"
         android:layout_marginLeft="@dimen/fragment_tiny_padding"
         android:layout_marginStart="@dimen/fragment_tiny_padding"
-        style="@style/NicknameTextViewStyle"/>
+        style="@style/UserDetailsNicknameTextViewStyle"/>
 
     <TextView
         android:id="@+id/txt_created_at"
@@ -60,7 +54,7 @@
         android:layout_marginStart="@dimen/fragment_default_padding"
         android:layout_marginTop="@dimen/fragment_tiniest_padding"
         android:layout_below="@id/img_user_picture"
-        android:src="@drawable/ic_star_tiny"/>
+        android:src="@drawable/ic_star_tiny_green"/>
 
     <TextView
         android:id="@+id/txt_user_reputation"
@@ -70,45 +64,16 @@
         android:layout_toEndOf="@id/img_user_reputation_star"
         android:layout_below="@id/img_user_picture"
         android:layout_marginTop="@dimen/fragment_tiniest_padding"
-        style="@style/ReputationTextViewStyleSmall"/>
+        style="@style/UserDetailsReputationTextViewStyle"/>
 
-    <ImageView
-        android:id="@+id/img_vote_up"
-        android:clickable="true"
+
+    <include
+        layout="@layout/element_vote_panel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/txt_title"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="@dimen/fragment_default_padding"
-        android:src="@drawable/ic_plus"
-        android:contentDescription="@string/btn_vote_up_accessibility" />
-
-
-    <include layout="@layout/element_reputation_star"
-        android:layout_width="@dimen/reputation_star_picture_size"
-        android:layout_height="@dimen/reputation_star_picture_size"
-        android:layout_below="@id/txt_title"
-        android:layout_toLeftOf="@id/img_vote_up"
-        android:layout_toStartOf="@id/img_vote_up"
-        android:layout_marginLeft="@dimen/fragment_tiny_padding"
-        android:layout_marginStart="@dimen/fragment_tiny_padding"
-        android:layout_marginRight="@dimen/fragment_tiny_padding"
-        android:layout_marginEnd="@dimen/fragment_tiny_padding"/>
-
-
-    <ImageView
-        android:id="@+id/img_vote_down"
-        android:clickable="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/txt_title"
-        android:layout_toLeftOf="@id/frame_reputation"
-        android:layout_toStartOf="@id/frame_reputation"
-        android:layout_marginTop="@dimen/fragment_default_padding"
-        android:src="@drawable/ic_minus"
-        android:contentDescription="@string/btn_vote_down_accessibility" />
-
+        android:layout_alignParentEnd="true"/>
 
     <TextView
         android:id="@+id/txt_comment"

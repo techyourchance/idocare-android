@@ -67,20 +67,34 @@
         <item name="android:textSize">@dimen/small_text_size</item>
     </style>
 
-    <style name="RequestThumbnailStatusAndLocation" parent="DefaultTextViewStyle">
+    <style name="RequestThumbnailStatusAndLocationTextViewStyle" parent="DefaultTextViewStyle">
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/background</item>
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="RequestThumbnailCreatedBy" parent="DefaultTextViewStyle">
+    <style name="RequestThumbnailNicknameTextViewStyle" parent="DefaultTextViewStyle">
         <item name="android:textColor">@color/green</item>
         <item name="android:textSize">@dimen/small_text_size</item>
     </style>
 
-    <style name="RequestThumbnailCreatedVotes" parent="DefaultTextViewStyle">
+    <style name="RequestThumbnailCreatedVotesTextViewStyle" parent="DefaultTextViewStyle">
         <item name="android:textColor">@color/background</item>
+        <item name="android:textSize">@dimen/smallest_text_size</item>
+    </style>
+
+    <style name="UserDetailsNicknameTextViewStyle" parent="DefaultTextViewStyle">
+        <item name="android:textColor">@color/green</item>
+    </style>
+
+    <style name="UserDetailsReputationTextViewStyle" parent="DefaultTextViewStyle">
+        <item name="android:textColor">@color/green</item>
+        <item name="android:textSize">@dimen/tiny_text_size</item>
+    </style>
+
+    <style name="VotePanelTextViewStyle" parent="DefaultTextViewStyle">
+        <item name="android:textColor">@color/green</item>
         <item name="android:textSize">@dimen/smallest_text_size</item>
     </style>
 

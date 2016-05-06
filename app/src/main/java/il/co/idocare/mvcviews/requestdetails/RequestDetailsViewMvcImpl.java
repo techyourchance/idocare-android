@@ -53,7 +53,6 @@ public class RequestDetailsViewMvcImpl
     private TextView mTxtCreatedByReputation;
     private TextView mTxtCreatedReputation;
     private TextView mTxtCreatedComment;
-    private TextView mTxtBefore;
     private ImageView[] mImgCreatedPictures;
     private ImageView mImgCreatedVoteUp;
     private ImageView mImgCreatedVoteDown;
@@ -64,7 +63,6 @@ public class RequestDetailsViewMvcImpl
     private TextView mTxtClosedByReputation;
     private TextView mTxtClosedReputation;
     private TextView mTxtClosedComment;
-    private TextView mTxtAfter;
     private ImageView[] mImgClosedPictures;
     private ImageView mImgClosedVoteUp;
     private ImageView mImgClosedVoteDown;
@@ -94,18 +92,20 @@ public class RequestDetailsViewMvcImpl
         mTxtStatus = (TextView) getRootView().findViewById(R.id.txt_request_status);
         mTxtCoarseLocation = (TextView) getRootView().findViewById(R.id.txt_request_coarse_location);
 
+
+        mTxtCreatedTitle = (TextView) getRootView().findViewById(R.id.txt_created_by_title);
+        mTxtClosedByTitle = (TextView) getRootView().findViewById(R.id.txt_closed_by_title);
+
         // "Created by" views
         includedView = getRootView().findViewById(R.id.element_created_by);
-        mTxtCreatedTitle = (TextView) includedView.findViewById(R.id.txt_title);
         mImgCreatedByPicture = (ImageView) includedView.findViewById(R.id.img_user_picture);
         mTxtCreatedByNickname = (TextView) includedView.findViewById(R.id.txt_user_nickname);
         mTxtCreatedAt = (TextView) includedView.findViewById(R.id.txt_created_at);
         mTxtCreatedByReputation = (TextView) includedView.findViewById(R.id.txt_user_reputation);
-        mTxtCreatedReputation = (TextView) includedView.findViewById(R.id.txt_created_votes);
+        mTxtCreatedReputation = (TextView) includedView.findViewById(R.id.txt_votes);
         mTxtCreatedComment = (TextView) includedView.findViewById(R.id.txt_comment);
         mImgCreatedVoteUp = (ImageView) includedView.findViewById(R.id.img_vote_up);
         mImgCreatedVoteDown = (ImageView) includedView.findViewById(R.id.img_vote_down);
-        mTxtBefore = (TextView) getRootView().findViewById(R.id.txt_before);
 
         // "Created pictures" views
         includedView = getRootView().findViewById(R.id.element_created_pictures);
@@ -119,16 +119,14 @@ public class RequestDetailsViewMvcImpl
 
         // "Closed by" views
         includedView = getRootView().findViewById(R.id.element_closed_by);
-        mTxtClosedByTitle = (TextView) includedView.findViewById(R.id.txt_title);
         mImgClosedByPicture = (ImageView) includedView.findViewById(R.id.img_user_picture);
         mTxtClosedByNickname = (TextView) includedView.findViewById(R.id.txt_user_nickname);
         mTxtClosedAt = (TextView) includedView.findViewById(R.id.txt_created_at);
         mTxtClosedByReputation = (TextView) includedView.findViewById(R.id.txt_user_reputation);
-        mTxtClosedReputation = (TextView) includedView.findViewById(R.id.txt_created_votes);
+        mTxtClosedReputation = (TextView) includedView.findViewById(R.id.txt_votes);
         mTxtClosedComment = (TextView) includedView.findViewById(R.id.txt_comment);
         mImgClosedVoteUp = (ImageView) includedView.findViewById(R.id.img_vote_up);
         mImgClosedVoteDown = (ImageView) includedView.findViewById(R.id.img_vote_down);
-        mTxtAfter = (TextView) getRootView().findViewById(R.id.txt_after);
 
         // "Closed pictures" views
         includedView = getRootView().findViewById(R.id.element_closed_pictures);
@@ -293,8 +291,6 @@ public class RequestDetailsViewMvcImpl
         String[] createdPictures = mRequestItem.getCreatedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
         for (int i = 0; i < 3; i++) {
             if (createdPictures.length > i && !TextUtils.isEmpty(createdPictures[i])) {
-                // Make this text visible for closed request if pictures present
-                if (mRequestItem.isClosed()) mTxtBefore.setVisibility(View.VISIBLE);
 
                 String universalImageLoaderUri = createdPictures[i];
                 try {
@@ -349,14 +345,12 @@ public class RequestDetailsViewMvcImpl
             getRootView().findViewById(R.id.element_closed_by).setVisibility(View.GONE);
             getRootView().findViewById(R.id.element_closed_pictures).setVisibility(View.GONE);
             getRootView().findViewById(R.id.btn_close_request).setVisibility(View.GONE);
-            getRootView().findViewById(R.id.line_users_separator).setVisibility(View.GONE);
             return;
         }
 
         getRootView().findViewById(R.id.element_closed_by).setVisibility(View.VISIBLE);
         getRootView().findViewById(R.id.element_closed_pictures).setVisibility(View.VISIBLE);
         getRootView().findViewById(R.id.btn_close_request).setVisibility(View.VISIBLE);
-        getRootView().findViewById(R.id.line_users_separator).setVisibility(View.VISIBLE);
 
         mTxtClosedByTitle.setText(R.string.txt_closed_by_title); // This should be complemented by "closed by" user's nickname
         mTxtClosedAt.setText(mRequestItem.getClosedAt());
@@ -373,8 +367,6 @@ public class RequestDetailsViewMvcImpl
         for (int i=0; i<3; i++) {
             if (closedPictures.length > i && !TextUtils.isEmpty(closedPictures[i])) {
 
-                // Make this text visible for closed request if pictures present
-                if (mRequestItem.isClosed()) mTxtAfter.setVisibility(View.VISIBLE);
 
                 String universalImageLoaderUri = closedPictures[i];
                 try {

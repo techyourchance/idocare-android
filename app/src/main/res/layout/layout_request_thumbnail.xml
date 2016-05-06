@@ -28,7 +28,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            style="@style/RequestThumbnailStatusAndLocation"/>
+            style="@style/RequestThumbnailStatusAndLocationTextViewStyle"/>
         
         <TextView
             android:id="@+id/txt_request_coarse_location"
@@ -37,7 +37,7 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_above="@+id/txt_created_by"
-            style="@style/RequestThumbnailStatusAndLocation"
+            style="@style/RequestThumbnailStatusAndLocationTextViewStyle"
             android:text="Location"/>
 
         <TextView
@@ -47,7 +47,7 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true"
-            style="@style/RequestThumbnailCreatedBy"/>
+            style="@style/RequestThumbnailNicknameTextViewStyle"/>
 
 
         <TextView
@@ -70,7 +70,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginStart="@dimen/fragment_tiny_padding"
             android:layout_marginLeft="@dimen/fragment_tiny_padding"
-            style="@style/RequestThumbnailCreatedVotes"/>
+            style="@style/RequestThumbnailCreatedVotesTextViewStyle"/>
 
         <ImageView
             android:id="@+id/img_votes_star"

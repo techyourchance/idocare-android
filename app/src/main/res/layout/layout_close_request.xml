@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
     android:background="@drawable/border_background"
-    android:padding="@dimen/border_background_width">
+    android:padding="@dimen/divider_width">
 
 
     <include layout="@layout/element_camera_control_linear"/>

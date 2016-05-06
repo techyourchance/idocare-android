@@ -5,14 +5,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:padding="1px"
-    android:background="@drawable/border_background">
+    android:padding="@dimen/fragment_default_padding">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white">
+        android:layout_height="wrap_content">
 
         <!-- Include colorized status bar-->
         <include layout="@layout/element_request_status_bar_linear"/>
@@ -21,19 +19,15 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/fragment_tiny_padding" />
 
+        <TextView
+            android:id="@+id/txt_created_by_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
         <!-- Include "created by" details-->
         <include android:id="@+id/element_created_by"
             layout="@layout/element_user_details_and_comment"/>
 
-        <TextView
-            android:id="@+id/txt_before"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/fragment_default_padding"
-            android:layout_marginLeft="@dimen/fragment_default_padding"
-            android:text="@string/txt_before"
-            style="@style/GreenTextViewStyle"
-            android:visibility="gone"/>
 
         <!-- Include "created" pictures -->
         <include  android:id="@+id/element_created_pictures"
@@ -43,34 +37,16 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/fragment_default_padding" />
 
-        <View
-            android:id="@+id/line_users_separator"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="@dimen/fragment_default_padding"
-            android:layout_marginStart="@dimen/fragment_default_padding"
-            android:layout_marginRight="@dimen/fragment_default_padding"
-            android:layout_marginEnd="@dimen/fragment_default_padding"
-            android:background="@color/line_separator"/>
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/fragment_default_padding" />
+        <TextView
+            android:id="@+id/txt_closed_by_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
         <!-- Include "closed by" details-->
         <include android:id="@+id/element_closed_by"
             layout="@layout/element_user_details_and_comment"/>
 
-
-        <TextView
-            android:id="@+id/txt_after"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/fragment_default_padding"
-            android:layout_marginLeft="@dimen/fragment_default_padding"
-            android:text="@string/txt_after"
-            style="@style/GreenTextViewStyle"
-            android:visibility="gone"/>
 
         <!-- Include "closed" pictures -->
         <include  android:id="@+id/element_closed_pictures"

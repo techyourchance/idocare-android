@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:padding="@dimen/vote_panel_spacing"
+              android:gravity="center_vertical"
+              android:background="@drawable/border_background">
+
+
+    <ImageView
+        android:id="@+id/img_vote_down"
+        android:clickable="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_minus"
+        android:contentDescription="@string/btn_vote_down_accessibility" />
+
+    <Space
+        android:layout_width="@dimen/vote_panel_spacing"
+        android:layout_height="match_parent"/>
+
+    <View
+        android:layout_width="@dimen/divider_width"
+        android:layout_height="@dimen/vote_panel_divider_height"
+        android:background="@color/divider_color"/>
+
+    <Space
+        android:layout_width="@dimen/vote_panel_spacing"
+        android:layout_height="match_parent"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_star_green"/>
+
+    <Space
+        android:layout_width="@dimen/vote_panel_spacing"
+        android:layout_height="match_parent"/>
+
+    <TextView
+        android:id="@+id/txt_votes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/UserDetailsReputationTextViewStyle"/>
+
+    <Space
+        android:layout_width="@dimen/vote_panel_spacing"
+        android:layout_height="match_parent"/>
+
+    <View
+        android:layout_width="@dimen/divider_width"
+        android:layout_height="@dimen/vote_panel_divider_height"
+        android:background="@color/divider_color"/>
+
+    <Space
+        android:layout_width="@dimen/vote_panel_spacing"
+        android:layout_height="match_parent"/>
+
+    <ImageView
+        android:id="@+id/img_vote_up"
+        android:clickable="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_plus"
+        android:contentDescription="@string/btn_vote_up_accessibility" />
+
+</LinearLayout>
