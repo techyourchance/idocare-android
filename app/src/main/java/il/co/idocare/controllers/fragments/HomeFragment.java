@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import javax.inject.Inject;
 
@@ -27,11 +28,13 @@ import il.co.idocare.controllers.listadapters.HomeListAdapter;
 import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
 import il.co.idocare.controllers.listadapters.UserActionsOnUserApplierImpl;
 import il.co.idocare.datamodels.functional.RequestItem;
-import il.co.idocare.mvcviews.home.HomeViewMVC;
+import il.co.idocare.eventbusevents.LoginStateEvents;
+import il.co.idocare.mvcviews.home.HomeViewMvc;
+import il.co.idocare.mvcviews.home.HomeViewMvcImpl;
 
 
 public class HomeFragment extends AbstractFragment implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+        LoaderManager.LoaderCallbacks<Cursor>,HomeViewMvc.HomeViewMvcListener {
 
     private final static String LOG_TAG = HomeFragment.class.getSimpleName();
 
@@ -40,14 +43,15 @@ public class HomeFragment extends AbstractFragment implements
     private final static int USER_ACTIONS_LOADER_ID = 2;
 
     RequestsCombinedCursorAdapter mAdapter;
-    HomeViewMVC mHomeViewMVC;
+    HomeViewMvc mHomeViewMvc;
 
     @Inject LoginStateManager mLoginStateManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        mHomeViewMVC = new HomeViewMVC(inflater, container);
+        mHomeViewMvc = new HomeViewMvcImpl(inflater, container);
+        mHomeViewMvc.registerListener(this);
 
         getControllerComponent().inject(this);
 
@@ -60,14 +64,14 @@ public class HomeFragment extends AbstractFragment implements
         mAdapter = new HomeListAdapter(getActivity(), null, 0,
                 new UserActionsOnRequestApplierImpl(), new UserActionsOnUserApplierImpl(),
                 mLoginStateManager);
-        mHomeViewMVC.setListAdapter(mAdapter);
+        mHomeViewMvc.setListAdapter(mAdapter);
 
         // Initiate loaders
         getLoaderManager().initLoader(REQUESTS_LOADER_ID, null, this);
         getLoaderManager().initLoader(USERS_LOADER_ID, null, this);
         getLoaderManager().initLoader(USER_ACTIONS_LOADER_ID, null, this);
 
-        return mHomeViewMVC.getRootView();
+        return mHomeViewMvc.getRootView();
     }
 
 
@@ -117,12 +121,13 @@ public class HomeFragment extends AbstractFragment implements
 
     // ---------------------------------------------------------------------------------------------
     //
-    // EventBus events handling
+    // Callbacks from MVC view(s)
 
-    @Subscribe
-    public void onEvent(HomeViewMVC.ListItemClickEvent event) {
+
+    @Override
+    public void onListItemClick(int position, long id) {
         // Get the selected request ID
-        long requestId = mAdapter.getRequestAtPosition(event.mPosition).getId();
+        long requestId = mAdapter.getRequestAtPosition(position).getId();
 
         // Create a bundle and put the id of the selected item there
         Bundle args = new Bundle();
@@ -131,12 +136,29 @@ public class HomeFragment extends AbstractFragment implements
         replaceFragment(RequestDetailsFragment.class, true, false, args);
     }
 
-
-    // End of EventBus events handling
+    // End of callbacks from MVC view(s)
     //
     // ---------------------------------------------------------------------------------------------
 
 
+    // ---------------------------------------------------------------------------------------------
+    //
+    // EventBus events handling
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(LoginStateEvents.LoginSucceededEvent event) {
+        // Currently no-op
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(LoginStateEvents.LoginFailedEvent event) {
+        // Currently no-op
+    }
+
+    // End of EventBus events handling
+    //
+    // ---------------------------------------------------------------------------------------------
 
 
     // ---------------------------------------------------------------------------------------------
@@ -237,6 +259,7 @@ public class HomeFragment extends AbstractFragment implements
         }
 
     }
+
 
     // End of LoaderCallback methods
     //
