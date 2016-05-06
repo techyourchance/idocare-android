@@ -33,12 +33,13 @@ import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
 import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.datamodels.functional.UserActionItem;
 import il.co.idocare.datamodels.functional.UserItem;
-import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMVC;
+import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvc;
+import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvcImpl;
 import il.co.idocare.networking.ServerSyncController;
 
 
 public class RequestDetailsFragment extends AbstractFragment implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+        LoaderManager.LoaderCallbacks<Cursor>,RequestDetailsViewMvc.RequestDetailsViewMvcListener {
 
     private final static String LOG_TAG = RequestDetailsFragment.class.getSimpleName();
 
@@ -46,7 +47,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
     private final static int USERS_LOADER = 1;
     private final static int USER_ACTIONS_LOADER = 2;
 
-    private RequestDetailsViewMVC mRequestDetailsViewMVC;
+    private RequestDetailsViewMvc mRequestDetailsViewMvc;
 
     @Inject
     LoginStateManager mLoginStateManager;
@@ -65,8 +66,9 @@ public class RequestDetailsFragment extends AbstractFragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        mRequestDetailsViewMVC =
-                new RequestDetailsViewMVC(inflater, container, savedInstanceState);
+        mRequestDetailsViewMvc =
+                new RequestDetailsViewMvcImpl(inflater, container);
+        mRequestDetailsViewMvc.registerListener(this);
 
         getControllerComponent().inject(this);
 
@@ -82,12 +84,12 @@ public class RequestDetailsFragment extends AbstractFragment implements
         }
 
         // Initialize the MapView inside the MVC view
-        ((MapView)mRequestDetailsViewMVC.getRootView().findViewById(R.id.map_preview))
+        ((MapView) mRequestDetailsViewMvc.getRootView().findViewById(R.id.map_preview))
                 .onCreate(savedInstanceState);
 
         getLoaderManager().initLoader(REQUEST_LOADER, null, this);
 
-        return mRequestDetailsViewMVC.getRootView();
+        return mRequestDetailsViewMvc.getRootView();
     }
 
     @Override
@@ -127,35 +129,6 @@ public class RequestDetailsFragment extends AbstractFragment implements
     //
     // EventBus events handling
 
-    @Subscribe
-    public void onEvent(RequestDetailsViewMVC.PickupRequestButtonClickEvent event) {
-        pickupRequest();
-    }
-
-    @Subscribe
-    public void onEvent(RequestDetailsViewMVC.CloseRequestButtonClickEvent event) {
-        closeRequest();
-    }
-
-    @Subscribe
-    public void onEvent(RequestDetailsViewMVC.CreatedVoteUpButtonClickEvent event) {
-        voteForRequest(1, false);
-    }
-
-    @Subscribe
-    public void onEvent(RequestDetailsViewMVC.CreatedVoteDownButtonClickEvent event) {
-        voteForRequest(-1, false);
-    }
-
-    @Subscribe
-    public void onEvent(RequestDetailsViewMVC.ClosedVoteUpButtonClickEvent event) {
-        voteForRequest(1, true);
-    }
-
-    @Subscribe
-    public void onEvent(RequestDetailsViewMVC.ClosedVoteDownButtonClickEvent event) {
-        voteForRequest(-1, true);
-    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginStateManager.UserLoggedOutEvent event) {
@@ -167,6 +140,45 @@ public class RequestDetailsFragment extends AbstractFragment implements
     //
     // ---------------------------------------------------------------------------------------------
 
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Callbacks from MVC view(s)
+
+    @Override
+    public void onCloseRequestClicked() {
+        closeRequest();
+    }
+
+    @Override
+    public void onPickupRequestClicked() {
+        pickupRequest();
+    }
+
+    @Override
+    public void onClosedVoteUpClicked() {
+        voteForRequest(1, true);
+    }
+
+    @Override
+    public void onClosedVoteDownClicked() {
+        voteForRequest(-1, true);
+    }
+
+    @Override
+    public void onCreatedVoteUpClicked() {
+        voteForRequest(1, false);
+    }
+
+    @Override
+    public void onCreatedVoteDownClicked() {
+        voteForRequest(-1, false);
+    }
+
+    // End of callbacks from MVC view(s)
+    //
+    // ---------------------------------------------------------------------------------------------
 
 
     // ---------------------------------------------------------------------------------------------
@@ -498,7 +510,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         if (loader.getId() == REQUEST_LOADER) {
-            // TODO: should we do s.t. here? Maybe mRequestDetailsViewMVC.bindRequestItem(null)?
+            // TODO: should we do s.t. here? Maybe mRequestDetailsViewMvc.bindRequestItem(null)?
         } else if (loader.getId() == USERS_LOADER) {
             // TODO: should do anything here?
         } else if (loader.getId() == USER_ACTIONS_LOADER) {
@@ -533,7 +545,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
         mRequestItem.setStatus(mLoginStateManager.getActiveAccountUserId());
 
-        mRequestDetailsViewMVC.bindRequestItem(mRequestItem);
+        mRequestDetailsViewMvc.bindRequestItem(mRequestItem);
 
         refreshUsers();
 
@@ -550,15 +562,15 @@ public class RequestDetailsFragment extends AbstractFragment implements
                 boolean used = false;
 
                 if (user.getId() == mRequestItem.getCreatedBy()) {
-                    mRequestDetailsViewMVC.bindCreatedByUser(user);
+                    mRequestDetailsViewMvc.bindCreatedByUser(user);
                     used = true;
                 }
                 if (user.getId() == mRequestItem.getPickedUpBy()) {
-                    mRequestDetailsViewMVC.bindPickedUpByUser(user);
+                    mRequestDetailsViewMvc.bindPickedUpByUser(user);
                     used = true;
                 }
                 if (user.getId() == mRequestItem.getClosedBy()) {
-                    mRequestDetailsViewMVC.bindClosedByUser(user);
+                    mRequestDetailsViewMvc.bindClosedByUser(user);
                     used = true;
                 }
 
@@ -570,4 +582,5 @@ public class RequestDetailsFragment extends AbstractFragment implements
             } while (mUsersCursor.moveToNext());
         }
     }
+
 }
