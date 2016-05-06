@@ -11,21 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alexvasilkov.gestures.Settings;
+import com.alexvasilkov.gestures.views.GestureImageView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-
-import org.greenrobot.eventbus.EventBus;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
@@ -48,27 +43,23 @@ public class RequestDetailsViewMvcImpl
     private RequestItem mRequestItem;
 
     private TextView mTxtStatus;
-    private TextView mTxtCoarseLocation;
     private TextView mTxtFineLocation;
-    private TextView mTxtCreatedTitle;
+    private TextView mTxtCreatedByTitle;
     private RequestRelatedUserInfoViewMvc mCreatedByUserInfoViewMvc;
-    private TextView mTxtCreatedReputation;
-    private TextView mTxtCreatedComment;
-    private ImageView[] mImgCreatedPictures;
-    private ImageView mImgCreatedVoteUp;
-    private ImageView mImgCreatedVoteDown;
+    private GestureImageView mGestureImgCreatedPictures;
     private TextView mTxtClosedByTitle;
     private RequestRelatedUserInfoViewMvc mClosedByUserInfoViewMvc;
-    private TextView mTxtClosedReputation;
-    private TextView mTxtClosedComment;
-    private ImageView[] mImgClosedPictures;
-    private ImageView mImgClosedVoteUp;
-    private ImageView mImgClosedVoteDown;
+    private GestureImageView mGestureImgClosedPictures;
+
+    private FrameLayout mFrameUserInfoTop;
+    private FrameLayout mFrameUserInfoBottom;
 
     private MapView mMapPreview;
 
     private Button mBtnPickUpRequest;
     private Button mBtnCloseRequest;
+    private String[] mCreatedPictures;
+    private String[] mClosedPictures;
 
 
     public RequestDetailsViewMvcImpl(@NonNull LayoutInflater inflater,
@@ -77,6 +68,51 @@ public class RequestDetailsViewMvcImpl
         setRootView(inflater.inflate(R.layout.layout_request_details, container, false));
         mImageViewPictureLoader = imageViewPictureLoader;
         mContext = getRootView().getContext();
+
+
+        // "Created by" MVC sub-view
+        mCreatedByUserInfoViewMvc = new RequestRelatedUserInfoViewMvc(
+                LayoutInflater.from(mContext),
+                null,
+                mImageViewPictureLoader);
+        mCreatedByUserInfoViewMvc.registerListener(new RequestRelatedUserInfoViewMvc.RequestRelatedUserInfoViewMvcListener() {
+            @Override
+            public void onVoteUpClicked() {
+                for (RequestDetailsViewMvcListener listener : getListeners()) {
+                    listener.onCreatedVoteUpClicked();
+                }
+            }
+
+            @Override
+            public void onVoteDownClicked() {
+                for (RequestDetailsViewMvcListener listener : getListeners()) {
+                    listener.onCreatedVoteDownClicked();
+                }
+            }
+        });
+
+
+        // "Closed by" MVC sub-view
+        mClosedByUserInfoViewMvc = new RequestRelatedUserInfoViewMvc(
+                LayoutInflater.from(mContext),
+                null,
+                mImageViewPictureLoader);
+        mClosedByUserInfoViewMvc.registerListener(new RequestRelatedUserInfoViewMvc.RequestRelatedUserInfoViewMvcListener() {
+            @Override
+            public void onVoteUpClicked() {
+                for (RequestDetailsViewMvcListener listener : getListeners()) {
+                    listener.onClosedVoteUpClicked();
+                }
+            }
+
+            @Override
+            public void onVoteDownClicked() {
+                for (RequestDetailsViewMvcListener listener : getListeners()) {
+                    listener.onClosedVoteDownClicked();
+                }
+            }
+        });
+
         initialize();
     }
 
@@ -87,66 +123,42 @@ public class RequestDetailsViewMvcImpl
 
     @SuppressLint("CutPasteId")
     private void initialize() {
-        View includedView; // Used to reference compound sub-views
 
-        // Status bar views
         mTxtStatus = (TextView) getRootView().findViewById(R.id.txt_request_status);
-        mTxtCoarseLocation = (TextView) getRootView().findViewById(R.id.txt_request_coarse_location);
 
-
-        mTxtCreatedTitle = (TextView) getRootView().findViewById(R.id.txt_created_by_title);
+        mTxtCreatedByTitle = (TextView) getRootView().findViewById(R.id.txt_created_by_title);
         mTxtClosedByTitle = (TextView) getRootView().findViewById(R.id.txt_closed_by_title);
 
-        // "Created by" views
-        mCreatedByUserInfoViewMvc = new RequestRelatedUserInfoViewMvc(
-                LayoutInflater.from(mContext),
-                (FrameLayout) getRootView().findViewById(R.id.frame_created_by_info),
-                mImageViewPictureLoader);
+        mFrameUserInfoTop = (FrameLayout) getRootView().findViewById(R.id.frame_user_info_top);
+        mFrameUserInfoBottom = (FrameLayout) getRootView().findViewById(R.id.frame_user_info_bottom);
 
-        View createdVotePanel = getRootView().findViewById(R.id.element_created_vote_panel);
-        mTxtCreatedReputation = (TextView) createdVotePanel.findViewById(R.id.txt_votes);
-        mImgCreatedVoteUp = (ImageView) createdVotePanel.findViewById(R.id.img_vote_up);
-        mImgCreatedVoteDown = (ImageView) createdVotePanel.findViewById(R.id.img_vote_down);
-
-        mTxtCreatedComment = (TextView) getRootView().findViewById(R.id.txt_created_comment);
 
         // "Created pictures" views
-        includedView = getRootView().findViewById(R.id.element_created_pictures);
-        mImgCreatedPictures = new ImageView[3];
-        mImgCreatedPictures[0] = (ImageView) includedView.findViewById(R.id.img_picture0);
-        mImgCreatedPictures[1] = (ImageView) includedView.findViewById(R.id.img_picture1);
-        mImgCreatedPictures[2] = (ImageView) includedView.findViewById(R.id.img_picture2);
+        mGestureImgCreatedPictures =
+                (GestureImageView) getRootView().findViewById(R.id.gestureImgCreatedPictures);
+        initGestureImageView(mGestureImgCreatedPictures);
 
         // Fine location view
         mTxtFineLocation = (TextView) getRootView().findViewById(R.id.txt_request_fine_location);
 
-        // "Closed by" views
-        mClosedByUserInfoViewMvc = new RequestRelatedUserInfoViewMvc(
-                LayoutInflater.from(mContext),
-                (FrameLayout) getRootView().findViewById(R.id.frame_closed_by_info),
-                mImageViewPictureLoader);
-
-        View closedVotePanel = getRootView().findViewById(R.id.element_closed_vote_panel);
-        mTxtClosedReputation = (TextView) closedVotePanel.findViewById(R.id.txt_votes);
-        mImgClosedVoteUp = (ImageView) closedVotePanel.findViewById(R.id.img_vote_up);
-        mImgClosedVoteDown = (ImageView) closedVotePanel.findViewById(R.id.img_vote_down);
-
-        mTxtClosedComment = (TextView) getRootView().findViewById(R.id.txt_closed_comment);
         
         // "Closed pictures" views
-        includedView = getRootView().findViewById(R.id.element_closed_pictures);
-        mImgClosedPictures = new ImageView[3];
-        mImgClosedPictures[0] = (ImageView) includedView.findViewById(R.id.img_picture0);
-        mImgClosedPictures[1] = (ImageView) includedView.findViewById(R.id.img_picture1);
-        mImgClosedPictures[2] = (ImageView) includedView.findViewById(R.id.img_picture2);
+        mGestureImgClosedPictures =
+                (GestureImageView) getRootView().findViewById(R.id.gestureImgClosedPictures);
+        initGestureImageView(mGestureImgClosedPictures);
 
         // The map
         mMapPreview = (MapView) getRootView().findViewById(R.id.map_preview);
 
-        // "Close" button
         mBtnPickUpRequest = (Button) getRootView().findViewById(R.id.btn_pickup_request);
         mBtnCloseRequest = (Button) getRootView().findViewById(R.id.btn_close_request);
 
+    }
+
+    private void initGestureImageView(GestureImageView gestureImageView) {
+        Settings settings = gestureImageView.getController().getSettings();
+        settings.setFitMethod(Settings.Fit.OUTSIDE);
+        settings.setPanEnabled(false);
     }
 
 
@@ -160,18 +172,30 @@ public class RequestDetailsViewMvcImpl
 
         mRequestItem = requestItem;
 
-        // Handle the status bar
-        configureStatusBar();
+
+        if (mRequestItem.isClosed() || mRequestItem.isPickedUp()) {
+            mFrameUserInfoTop.removeAllViews();
+            mFrameUserInfoTop.addView(mClosedByUserInfoViewMvc.getRootView());
+            mFrameUserInfoBottom.removeAllViews();
+            mFrameUserInfoBottom.addView(mCreatedByUserInfoViewMvc.getRootView());
+        } else {
+            mFrameUserInfoTop.removeAllViews();
+            mFrameUserInfoTop.addView(mCreatedByUserInfoViewMvc.getRootView());
+            mFrameUserInfoBottom.removeAllViews();
+            mFrameUserInfoBottom.setVisibility(View.GONE);
+        }
+
+        updateStatus();
         // Handle the views related to initial request
-        configureCreatedViews();
+        updateCreatedViews();
         // Handle the views related to pickup info
-        configureClosedViews();
+        updateClosedViews();
         // Configure location
-        configureLocationViews();
+        updateLocationViews();
         // Handle the pickup button functionality
-        configurePickupButton();
+        updatePickupButton();
         // Handle the close button functionality
-        configureClosedButton();
+        updateClosedButton();
     }
 
 
@@ -204,13 +228,7 @@ public class RequestDetailsViewMvcImpl
         }
     }
 
-
-
-    /**
-     * Handle the status bar text and color
-     */
-    private void configureStatusBar() {
-
+    private void updateStatus() {
         int statusColor;
         String statusText;
 
@@ -227,149 +245,65 @@ public class RequestDetailsViewMvcImpl
 
         mTxtStatus.setBackgroundColor(statusColor);
         mTxtStatus.setText(statusText);
-
-        mTxtCoarseLocation.setBackgroundColor(statusColor);
-        mTxtCoarseLocation.setText("");
-
-
     }
 
     /**
      * Handle the views describing the initial request
      */
-    private void configureCreatedViews() {
+    private void updateCreatedViews() {
 
-        mTxtCreatedTitle.setText(R.string.txt_created_by_title);
+        mTxtCreatedByTitle.setText(R.string.txt_created_by_title);
 
-        mCreatedByUserInfoViewMvc.bindCustomInfo(mRequestItem.getCreatedAt());
-        mTxtCreatedReputation.setText(String.valueOf(mRequestItem.getCreatedReputation()));
+        mCreatedByUserInfoViewMvc.bindDate(mRequestItem.getCreatedAt());
+        mCreatedByUserInfoViewMvc.bindVotes(String.valueOf(mRequestItem.getCreatedReputation()));
 
         if (TextUtils.isEmpty(mRequestItem.getCreatedComment())) {
-            mTxtCreatedComment.setVisibility(View.GONE);
+            mCreatedByUserInfoViewMvc.setCommentVisible(false);
         } else {
-            mTxtCreatedComment.setVisibility(View.VISIBLE);
-            mTxtCreatedComment.setText(mRequestItem.getCreatedComment());
+            mCreatedByUserInfoViewMvc.setCommentVisible(true);
+            mCreatedByUserInfoViewMvc.bindComment(mRequestItem.getCreatedComment());
         }
 
-        String[] createdPictures = mRequestItem.getCreatedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
-        for (int i = 0; i < 3; i++) {
-            if (createdPictures.length > i && !TextUtils.isEmpty(createdPictures[i])) {
+        mCreatedPictures = mRequestItem.getCreatedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
 
-                String universalImageLoaderUri = createdPictures[i];
-                try {
-                    new URL(universalImageLoaderUri);
-                } catch (MalformedURLException e) {
-                    // The exception means that the current Uri is not a valid URL - it is local
-                    // uri and we need to adjust it to the scheme recognized by UIL
-                    universalImageLoaderUri = "file://" + universalImageLoaderUri;
-                }
-
-                ImageLoader.getInstance().displayImage(
-                        universalImageLoaderUri,
-                        mImgCreatedPictures[i],
-                        Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
-            } else {
-                mImgCreatedPictures[i].setVisibility(View.GONE);
-
-            }
-        }
-
+        mImageViewPictureLoader.loadFromWebOrFile(mGestureImgCreatedPictures, mCreatedPictures[0],
+                R.drawable.ic_default_user_picture);
 
         mTxtFineLocation.setText("");
-
-        mImgCreatedVoteUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for (RequestDetailsViewMvcListener listener : getListeners()) {
-                    listener.onCreatedVoteUpClicked();
-                }
-            }
-        });
-
-        mImgCreatedVoteDown.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for (RequestDetailsViewMvcListener listener : getListeners()) {
-                    listener.onCreatedVoteDownClicked();
-                }
-            }
-        });
-
     }
 
 
     /**
      * Handle the views describing the info about request's closure
      */
-    private void configureClosedViews() {
+    private void updateClosedViews() {
         if (mRequestItem.getStatus() != RequestItem.RequestStatus.CLOSED_BY_OTHER &&
                 mRequestItem.getStatus() != RequestItem.RequestStatus.CLOSED_BY_ME) {
             // Hide all "closed" views if the request is not closed
-            getRootView().findViewById(R.id.element_closed_pictures).setVisibility(View.GONE);
             getRootView().findViewById(R.id.btn_close_request).setVisibility(View.GONE);
             return;
         }
 
-        getRootView().findViewById(R.id.element_closed_pictures).setVisibility(View.VISIBLE);
         getRootView().findViewById(R.id.btn_close_request).setVisibility(View.VISIBLE);
 
         mTxtClosedByTitle.setText(R.string.txt_closed_by_title); // This should be complemented by "closed by" user's nickname
-        mClosedByUserInfoViewMvc.bindCustomInfo(mRequestItem.getClosedAt());
-        mTxtClosedReputation.setText(String.valueOf(mRequestItem.getClosedReputation()));
+        mClosedByUserInfoViewMvc.bindDate(mRequestItem.getClosedAt());
+        mClosedByUserInfoViewMvc.bindVotes(String.valueOf(mRequestItem.getClosedReputation()));
 
         if (TextUtils.isEmpty(mRequestItem.getClosedComment())) {
-            mTxtClosedComment.setVisibility(View.GONE);
+            mClosedByUserInfoViewMvc.setCommentVisible(false);
         } else {
-            mTxtClosedComment.setVisibility(View.VISIBLE);
-            mTxtClosedComment.setText(mRequestItem.getClosedComment());
-        }
-        
-        String[] closedPictures = mRequestItem.getClosedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
-        for (int i=0; i<3; i++) {
-            if (closedPictures.length > i && !TextUtils.isEmpty(closedPictures[i])) {
-
-
-                String universalImageLoaderUri = closedPictures[i];
-                try {
-                    new URL(universalImageLoaderUri);
-                } catch (MalformedURLException e) {
-                    // The exception means that the current Uri is not a valid URL - it is local
-                    // uri and we need to adjust it to the scheme recognized by UIL
-                    universalImageLoaderUri = "file://" + universalImageLoaderUri;
-                }
-
-                ImageLoader.getInstance().displayImage(
-                        universalImageLoaderUri,
-                        mImgClosedPictures[i],
-                        Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
-            } else {
-                mImgClosedPictures[i].setVisibility(View.GONE);
-
-            }
+            mClosedByUserInfoViewMvc.setCommentVisible(true);
+            mClosedByUserInfoViewMvc.bindComment(mRequestItem.getClosedComment());
         }
 
+        mClosedPictures = mRequestItem.getClosedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
 
-        mImgClosedVoteUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for (RequestDetailsViewMvcListener listener : getListeners()) {
-                    listener.onClosedVoteUpClicked();
-                }
-            }
-        });
-
-        mImgClosedVoteDown.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for (RequestDetailsViewMvcListener listener : getListeners()) {
-                    listener.onClosedVoteDownClicked();
-                }
-            }
-        });
-
+        mImageViewPictureLoader.loadFromWebOrFile(mGestureImgClosedPictures, mClosedPictures[0],
+                R.drawable.ic_default_user_picture);
     }
 
-    private void configureLocationViews() {
+    private void updateLocationViews() {
 
         mTxtFineLocation.setText(mRequestItem.getLocation());
 
@@ -397,7 +331,7 @@ public class RequestDetailsViewMvcImpl
     /**
      * Handle the view of the pickup button
      */
-    private void configurePickupButton() {
+    private void updatePickupButton() {
 
         if (mRequestItem.getStatus() == RequestItem.RequestStatus.NEW_BY_ME ||
                 mRequestItem.getStatus() == RequestItem.RequestStatus.NEW_BY_OTHER) {
@@ -422,7 +356,7 @@ public class RequestDetailsViewMvcImpl
     /**
      * Handle the view of the close button
      */
-    private void configureClosedButton() {
+    private void updateClosedButton() {
 
         if (mRequestItem.getStatus() == RequestItem.RequestStatus.PICKED_UP_BY_ME) {
             mBtnCloseRequest.setVisibility(View.VISIBLE);

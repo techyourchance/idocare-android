@@ -56,10 +56,10 @@
     <string name="btn_sign_up">Sign up</string>
     <string name="btn_login">Log in</string>
     <string name="btn_login_facebook">Continue with Facebook</string>
-    <string name="btn_create_new_request">CREATE</string>
+    <string name="btn_create_new_request">Create new request</string>
     <string name="btn_switch_to_new_request_fragment">Create new request</string>
-    <string name="btn_pickup_request">ASSIGN TO ME</string>
-    <string name="btn_switch_to_close_request_fragment">CLOSE</string>
+    <string name="btn_pickup_request">Assign to me</string>
+    <string name="btn_switch_to_close_request_fragment">Complete request</string>
     <string name="btn_close_request">I DID IT!</string>
     <string name="btn_take_picture">Add photo</string>
     <string name="btn_add_picture">Add a picture</string>

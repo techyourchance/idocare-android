@@ -67,7 +67,7 @@
         <item name="android:textSize">@dimen/small_text_size</item>
     </style>
 
-    <style name="RequestThumbnailStatusAndLocationTextViewStyle" parent="DefaultTextViewStyle">
+    <style name="RequestStatusTextViewStyle" parent="DefaultTextViewStyle">
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/background</item>

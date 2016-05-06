@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import il.co.idocare.pictures.ImageViewPictureLoader;
 /**
  * Created by Vasiliy on 5/6/2016.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class RequestRelatedUserInfoViewMvc
         extends AbstractViewMVC<RequestRelatedUserInfoViewMvc.RequestRelatedUserInfoViewMvcListener>
         implements ViewMVC {
@@ -24,29 +26,57 @@ public class RequestRelatedUserInfoViewMvc
     @NonNull
     private final ImageViewPictureLoader mImageViewPictureLoader;
 
-    interface RequestRelatedUserInfoViewMvcListener {
 
+    public interface RequestRelatedUserInfoViewMvcListener {
+        void onVoteUpClicked();
+        void onVoteDownClicked();
     }
 
     private ImageView mImgUserPicture;
     private TextView mTxtUserNickname;
-    private TextView mTxtCustomInfo;
+    private TextView mTxtDate;
     private TextView mTxtUserReputation;
+    private TextView mTxtComment;
+    private TextView mTxtVotes;
+    private ImageView mImgVoteUp;
+    private ImageView mImgVoteDown;
 
 
     public RequestRelatedUserInfoViewMvc(@NonNull LayoutInflater inflater,
                                          @Nullable ViewGroup container,
                                          @NonNull ImageViewPictureLoader imageViewPictureLoader) {
         mImageViewPictureLoader = imageViewPictureLoader;
-        setRootView(inflater.inflate(R.layout.element_request_related_user_info, container, true));
+        setRootView(inflater.inflate(R.layout.element_request_related_user_info, container, false));
         initialize();
     }
 
     private void initialize() {
         mImgUserPicture = (ImageView) getRootView().findViewById(R.id.img_user_picture);
         mTxtUserNickname = (TextView) getRootView().findViewById(R.id.txt_user_nickname);
-        mTxtCustomInfo = (TextView) getRootView().findViewById(R.id.txt_custom_info);
+        mTxtDate = (TextView) getRootView().findViewById(R.id.txt_custom_info);
         mTxtUserReputation = (TextView) getRootView().findViewById(R.id.txt_user_reputation);
+        mTxtComment = (TextView) getRootView().findViewById(R.id.txt_comment);
+        mTxtVotes = (TextView) getRootView().findViewById(R.id.txt_votes);
+        mImgVoteUp = (ImageView) getRootView().findViewById(R.id.img_vote_up);
+        mImgVoteDown = (ImageView) getRootView().findViewById(R.id.img_vote_down);
+
+        mImgVoteUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (RequestRelatedUserInfoViewMvcListener listener : getListeners()) {
+                    listener.onVoteUpClicked();
+                }
+            }
+        });
+
+        mImgVoteDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (RequestRelatedUserInfoViewMvcListener listener : getListeners()) {
+                    listener.onVoteDownClicked();
+                }
+            }
+        });
     }
 
     @Override
@@ -64,7 +94,23 @@ public class RequestRelatedUserInfoViewMvc
         mTxtUserReputation.setText(String.valueOf(userItem.getReputation()));
     }
 
-    public void bindCustomInfo(String customInfo) {
-        mTxtCustomInfo.setText(customInfo);
+    public void bindDate(String customInfo) {
+        mTxtDate.setText(customInfo);
+    }
+
+
+    public void setCommentVisible(boolean visible) {
+        if (visible)
+            mTxtComment.setVisibility(View.VISIBLE);
+        else
+            mTxtComment.setVisibility(View.GONE);
+    }
+
+    public void bindComment(String comment) {
+        mTxtComment.setText(comment);
+    }
+
+    public void bindVotes(String votes) {
+        mTxtVotes.setText(votes);
     }
 }
