@@ -28,7 +28,7 @@
             android:name=".controllers.activities.StartupActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/NoActionBarTheme"
+            android:theme="@style/AppTheme"
             android:noHistory="true">
 
             <intent-filter>
@@ -42,18 +42,18 @@
             android:name=".controllers.activities.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/NoActionBarTheme"/>
+            android:theme="@style/AppTheme"/>
 
         <activity
             android:name=".controllers.activities.LoginActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/NoActionBarTheme"/>
+            android:theme="@style/AppTheme"/>
 
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges= "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:theme="@style/NoActionBarTheme"
+            android:theme="@style/AppTheme"
             android:label="@string/app_name" />
 
 

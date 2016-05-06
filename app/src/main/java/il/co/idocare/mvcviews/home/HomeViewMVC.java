@@ -17,6 +17,8 @@ public interface HomeViewMvc
      */
     interface HomeViewMvcListener {
         void onListItemClick(int position, long id);
+
+        void onCreateNewRequestClick();
     }
 
     void setListAdapter(ListAdapter adapter);

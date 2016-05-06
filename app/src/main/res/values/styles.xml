@@ -2,7 +2,12 @@
 
     <!-- Application's styles-->
 
-    <style name="AppTheme"/>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="buttonStyle">@style/AppTheme.Widget.Button</item>
+        <item name="buttonBarStyle">@style/AppTheme.Widget.Button</item>
+        <item name="buttonBarButtonStyle">@style/AppTheme.Widget.Button</item>
+        <item name="android:textViewStyle">@style/DefaultTextViewStyle</item>
+    </style>
 
     <style name="AppTheme.Widget"/>
 
@@ -25,12 +30,7 @@
     </style>
     
     <!-- TODO: the below should be removed/replaced - they belong to old design -->
-    <style name="NoActionBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="buttonStyle">@style/DefaultButtonStyle</item>
-        <item name="buttonBarStyle">@style/DefaultButtonStyle</item>
-        <item name="buttonBarButtonStyle">@style/DefaultButtonStyle</item>
-        <item name="android:textViewStyle">@style/DefaultTextViewStyle</item>
-    </style>
+
 
 
     <style name="ActionBarStyle" parent="ThemeOverlay.AppCompat.ActionBar">
