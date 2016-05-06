@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,6 +32,8 @@ import il.co.idocare.R;
 import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.mvcviews.AbstractViewMVC;
+import il.co.idocare.mvcviews.userinfo.RequestRelatedUserInfoViewMvc;
+import il.co.idocare.pictures.ImageViewPictureLoader;
 
 /**
  * MVC View for New Request screen.
@@ -39,6 +42,7 @@ public class RequestDetailsViewMvcImpl
         extends AbstractViewMVC<RequestDetailsViewMvc.RequestDetailsViewMvcListener>
         implements RequestDetailsViewMvc {
 
+    private final ImageViewPictureLoader mImageViewPictureLoader;
     private Context mContext;
 
     private RequestItem mRequestItem;
@@ -47,20 +51,14 @@ public class RequestDetailsViewMvcImpl
     private TextView mTxtCoarseLocation;
     private TextView mTxtFineLocation;
     private TextView mTxtCreatedTitle;
-    private ImageView mImgCreatedByPicture;
-    private TextView mTxtCreatedByNickname;
-    private TextView mTxtCreatedAt;
-    private TextView mTxtCreatedByReputation;
+    private RequestRelatedUserInfoViewMvc mCreatedByUserInfoViewMvc;
     private TextView mTxtCreatedReputation;
     private TextView mTxtCreatedComment;
     private ImageView[] mImgCreatedPictures;
     private ImageView mImgCreatedVoteUp;
     private ImageView mImgCreatedVoteDown;
     private TextView mTxtClosedByTitle;
-    private ImageView mImgClosedByPicture;
-    private TextView mTxtClosedByNickname;
-    private TextView mTxtClosedAt;
-    private TextView mTxtClosedByReputation;
+    private RequestRelatedUserInfoViewMvc mClosedByUserInfoViewMvc;
     private TextView mTxtClosedReputation;
     private TextView mTxtClosedComment;
     private ImageView[] mImgClosedPictures;
@@ -73,8 +71,11 @@ public class RequestDetailsViewMvcImpl
     private Button mBtnCloseRequest;
 
 
-    public RequestDetailsViewMvcImpl(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
+    public RequestDetailsViewMvcImpl(@NonNull LayoutInflater inflater,
+                                     @Nullable ViewGroup container,
+                                     @NonNull ImageViewPictureLoader imageViewPictureLoader) {
         setRootView(inflater.inflate(R.layout.layout_request_details, container, false));
+        mImageViewPictureLoader = imageViewPictureLoader;
         mContext = getRootView().getContext();
         initialize();
     }
@@ -97,15 +98,17 @@ public class RequestDetailsViewMvcImpl
         mTxtClosedByTitle = (TextView) getRootView().findViewById(R.id.txt_closed_by_title);
 
         // "Created by" views
-        includedView = getRootView().findViewById(R.id.element_created_by);
-        mImgCreatedByPicture = (ImageView) includedView.findViewById(R.id.img_user_picture);
-        mTxtCreatedByNickname = (TextView) includedView.findViewById(R.id.txt_user_nickname);
-        mTxtCreatedAt = (TextView) includedView.findViewById(R.id.txt_created_at);
-        mTxtCreatedByReputation = (TextView) includedView.findViewById(R.id.txt_user_reputation);
-        mTxtCreatedReputation = (TextView) includedView.findViewById(R.id.txt_votes);
-        mTxtCreatedComment = (TextView) includedView.findViewById(R.id.txt_comment);
-        mImgCreatedVoteUp = (ImageView) includedView.findViewById(R.id.img_vote_up);
-        mImgCreatedVoteDown = (ImageView) includedView.findViewById(R.id.img_vote_down);
+        mCreatedByUserInfoViewMvc = new RequestRelatedUserInfoViewMvc(
+                LayoutInflater.from(mContext),
+                (FrameLayout) getRootView().findViewById(R.id.frame_created_by_info),
+                mImageViewPictureLoader);
+
+        View createdVotePanel = getRootView().findViewById(R.id.element_created_vote_panel);
+        mTxtCreatedReputation = (TextView) createdVotePanel.findViewById(R.id.txt_votes);
+        mImgCreatedVoteUp = (ImageView) createdVotePanel.findViewById(R.id.img_vote_up);
+        mImgCreatedVoteDown = (ImageView) createdVotePanel.findViewById(R.id.img_vote_down);
+
+        mTxtCreatedComment = (TextView) getRootView().findViewById(R.id.txt_created_comment);
 
         // "Created pictures" views
         includedView = getRootView().findViewById(R.id.element_created_pictures);
@@ -118,16 +121,18 @@ public class RequestDetailsViewMvcImpl
         mTxtFineLocation = (TextView) getRootView().findViewById(R.id.txt_request_fine_location);
 
         // "Closed by" views
-        includedView = getRootView().findViewById(R.id.element_closed_by);
-        mImgClosedByPicture = (ImageView) includedView.findViewById(R.id.img_user_picture);
-        mTxtClosedByNickname = (TextView) includedView.findViewById(R.id.txt_user_nickname);
-        mTxtClosedAt = (TextView) includedView.findViewById(R.id.txt_created_at);
-        mTxtClosedByReputation = (TextView) includedView.findViewById(R.id.txt_user_reputation);
-        mTxtClosedReputation = (TextView) includedView.findViewById(R.id.txt_votes);
-        mTxtClosedComment = (TextView) includedView.findViewById(R.id.txt_comment);
-        mImgClosedVoteUp = (ImageView) includedView.findViewById(R.id.img_vote_up);
-        mImgClosedVoteDown = (ImageView) includedView.findViewById(R.id.img_vote_down);
+        mClosedByUserInfoViewMvc = new RequestRelatedUserInfoViewMvc(
+                LayoutInflater.from(mContext),
+                (FrameLayout) getRootView().findViewById(R.id.frame_closed_by_info),
+                mImageViewPictureLoader);
 
+        View closedVotePanel = getRootView().findViewById(R.id.element_closed_vote_panel);
+        mTxtClosedReputation = (TextView) closedVotePanel.findViewById(R.id.txt_votes);
+        mImgClosedVoteUp = (ImageView) closedVotePanel.findViewById(R.id.img_vote_up);
+        mImgClosedVoteDown = (ImageView) closedVotePanel.findViewById(R.id.img_vote_down);
+
+        mTxtClosedComment = (TextView) getRootView().findViewById(R.id.txt_closed_comment);
+        
         // "Closed pictures" views
         includedView = getRootView().findViewById(R.id.element_closed_pictures);
         mImgClosedPictures = new ImageView[3];
@@ -172,55 +177,13 @@ public class RequestDetailsViewMvcImpl
 
     @Override
     public void bindCreatedByUser(UserItem user) {
-
-        mTxtCreatedByNickname.setText(user.getNickname());
-
-        if (!TextUtils.isEmpty(user.getPictureUrl())) {
-            String universalImageLoaderUri = user.getPictureUrl();
-            try {
-                new URL(universalImageLoaderUri);
-            } catch (MalformedURLException e) {
-                // The exception means that the current Uri is not a valid URL - it is local
-                // uri and we need to adjust it to the scheme recognized by UIL
-                universalImageLoaderUri = "file://" + universalImageLoaderUri;
-            }
-
-            ImageLoader.getInstance().displayImage(
-                    universalImageLoaderUri,
-                    mImgCreatedByPicture,
-                    Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
-        } else {
-            mImgCreatedByPicture.setImageResource(R.drawable.ic_default_user_picture);
-        }
-
-        mTxtCreatedByReputation.setText(String.valueOf(user.getReputation()));
+        mCreatedByUserInfoViewMvc.bindUser(user);
     }
 
 
     @Override
     public void bindClosedByUser(UserItem user) {
-
-        mTxtClosedByNickname.setText(user.getNickname());
-
-        if (!TextUtils.isEmpty(user.getPictureUrl())) {
-            String universalImageLoaderUri = user.getPictureUrl();
-            try {
-                new URL(universalImageLoaderUri);
-            } catch (MalformedURLException e) {
-                // The exception means that the current Uri is not a valid URL - it is local
-                // uri and we need to adjust it to the scheme recognized by UIL
-                universalImageLoaderUri = "file://" + universalImageLoaderUri;
-            }
-
-            ImageLoader.getInstance().displayImage(
-                    universalImageLoaderUri,
-                    mImgClosedByPicture,
-                    Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
-        } else {
-            mImgClosedByPicture.setImageResource(R.drawable.ic_default_user_picture);
-        }
-
-        mTxtClosedByReputation.setText(String.valueOf(user.getReputation()));
+        mClosedByUserInfoViewMvc.bindUser(user);
     }
 
 
@@ -278,7 +241,7 @@ public class RequestDetailsViewMvcImpl
 
         mTxtCreatedTitle.setText(R.string.txt_created_by_title);
 
-        mTxtCreatedAt.setText(mRequestItem.getCreatedAt());
+        mCreatedByUserInfoViewMvc.bindCustomInfo(mRequestItem.getCreatedAt());
         mTxtCreatedReputation.setText(String.valueOf(mRequestItem.getCreatedReputation()));
 
         if (TextUtils.isEmpty(mRequestItem.getCreatedComment())) {
@@ -342,18 +305,16 @@ public class RequestDetailsViewMvcImpl
         if (mRequestItem.getStatus() != RequestItem.RequestStatus.CLOSED_BY_OTHER &&
                 mRequestItem.getStatus() != RequestItem.RequestStatus.CLOSED_BY_ME) {
             // Hide all "closed" views if the request is not closed
-            getRootView().findViewById(R.id.element_closed_by).setVisibility(View.GONE);
             getRootView().findViewById(R.id.element_closed_pictures).setVisibility(View.GONE);
             getRootView().findViewById(R.id.btn_close_request).setVisibility(View.GONE);
             return;
         }
 
-        getRootView().findViewById(R.id.element_closed_by).setVisibility(View.VISIBLE);
         getRootView().findViewById(R.id.element_closed_pictures).setVisibility(View.VISIBLE);
         getRootView().findViewById(R.id.btn_close_request).setVisibility(View.VISIBLE);
 
         mTxtClosedByTitle.setText(R.string.txt_closed_by_title); // This should be complemented by "closed by" user's nickname
-        mTxtClosedAt.setText(mRequestItem.getClosedAt());
+        mClosedByUserInfoViewMvc.bindCustomInfo(mRequestItem.getClosedAt());
         mTxtClosedReputation.setText(String.valueOf(mRequestItem.getClosedReputation()));
 
         if (TextUtils.isEmpty(mRequestItem.getClosedComment())) {

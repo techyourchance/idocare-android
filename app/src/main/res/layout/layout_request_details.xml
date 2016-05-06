@@ -24,9 +24,37 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-        <!-- Include "created by" details-->
-        <include android:id="@+id/element_created_by"
-            layout="@layout/element_user_details_and_comment"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Placeholder for "created by" MVC view-->
+            <FrameLayout
+                android:id="@+id/frame_created_by_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+
+            <include
+                layout="@layout/element_vote_panel"
+                android:id="@+id/element_created_vote_panel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txt_title"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/txt_created_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/fragment_default_padding"
+            android:layout_marginEnd="@dimen/fragment_default_padding"
+            android:layout_marginTop="@dimen/fragment_tiny_padding"
+            android:maxLines="1"
+            android:ellipsize="end"/>
 
 
         <!-- Include "created" pictures -->
@@ -43,10 +71,39 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-        <!-- Include "closed by" details-->
-        <include android:id="@+id/element_closed_by"
-            layout="@layout/element_user_details_and_comment"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
+
+            <!-- Placeholder for "created by" MVC view-->
+            <FrameLayout
+                android:id="@+id/frame_closed_by_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+
+            <include
+                layout="@layout/element_vote_panel"
+                android:id="@+id/element_closed_vote_panel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txt_title"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"/>
+
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/txt_closed_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/fragment_default_padding"
+            android:layout_marginEnd="@dimen/fragment_default_padding"
+            android:layout_marginTop="@dimen/fragment_tiny_padding"
+            android:maxLines="1"
+            android:ellipsize="end"/>
 
         <!-- Include "closed" pictures -->
         <include  android:id="@+id/element_closed_pictures"

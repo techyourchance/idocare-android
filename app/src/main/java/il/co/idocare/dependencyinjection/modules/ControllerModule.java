@@ -14,6 +14,7 @@ import il.co.idocare.deviceinfo.GooglePlayServicesChecker;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.nonstaticproxies.ContentResolverProxy;
 import il.co.idocare.nonstaticproxies.TextUtilsProxy;
+import il.co.idocare.pictures.ImageViewPictureLoader;
 import il.co.idocare.utils.Logger;
 
 @Module
@@ -63,6 +64,12 @@ public class ControllerModule {
     @ControllerScope
     GooglePlayServicesChecker provideGooglePlayServicesChecker(Activity activity) {
         return new GooglePlayServicesChecker(activity);
+    }
+
+    @Provides
+    @ControllerScope
+    ImageViewPictureLoader provideImageViewPictureLoader() {
+        return new ImageViewPictureLoader();
     }
 
 }

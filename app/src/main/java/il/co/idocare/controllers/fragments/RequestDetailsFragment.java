@@ -36,6 +36,7 @@ import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvc;
 import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvcImpl;
 import il.co.idocare.networking.ServerSyncController;
+import il.co.idocare.pictures.ImageViewPictureLoader;
 
 
 public class RequestDetailsFragment extends AbstractFragment implements
@@ -55,6 +56,9 @@ public class RequestDetailsFragment extends AbstractFragment implements
     @Inject
     ServerSyncController mServerSyncController;
 
+    @Inject
+    ImageViewPictureLoader mImageViewPictureLoader;
+
     private long mRequestId;
     private RequestItem mRawRequestItem;
     private RequestItem mRequestItem;
@@ -65,12 +69,12 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        getControllerComponent().inject(this);
 
         mRequestDetailsViewMvc =
-                new RequestDetailsViewMvcImpl(inflater, container);
+                new RequestDetailsViewMvcImpl(inflater, container, mImageViewPictureLoader);
         mRequestDetailsViewMvc.registerListener(this);
 
-        getControllerComponent().inject(this);
 
         setActionBarTitle(getTitle());
 
