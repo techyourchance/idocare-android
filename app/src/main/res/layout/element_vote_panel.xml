@@ -13,7 +13,11 @@
         android:clickable="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_minus"
+        android:paddingStart="@dimen/vote_panel_spacing"
+        android:paddingLeft="@dimen/vote_panel_spacing"
+        android:paddingEnd="@dimen/vote_panel_spacing"
+        android:paddingRight="@dimen/vote_panel_spacing"
+        android:src="@drawable/ic_vote_down"
         android:contentDescription="@string/btn_vote_down_accessibility" />
 
     <Space
@@ -62,7 +66,11 @@
         android:clickable="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_plus"
+        android:paddingStart="@dimen/vote_panel_spacing"
+        android:paddingLeft="@dimen/vote_panel_spacing"
+        android:paddingEnd="@dimen/vote_panel_spacing"
+        android:paddingRight="@dimen/vote_panel_spacing"
+        android:src="@drawable/ic_vote_up"
         android:contentDescription="@string/btn_vote_up_accessibility" />
 
 </LinearLayout>

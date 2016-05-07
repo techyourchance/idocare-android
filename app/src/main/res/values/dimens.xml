@@ -95,7 +95,7 @@
     <!--The next value changes the margin between the FB icon and the login text:-->
     <dimen name="fb_margin_override_textpadding">17dp</dimen>
     <dimen name="vote_panel_spacing">5dp</dimen>
-    <dimen name="vote_panel_divider_height">15dp</dimen>
+    <dimen name="vote_panel_divider_height">23dp</dimen>
     <dimen name="login_chooser_screen_margin_bottom">20dp</dimen>
 
 
