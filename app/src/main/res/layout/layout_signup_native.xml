@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
-    android:background="@color/background">
+    android:background="@color/background_white">
 
 
     <Space
@@ -18,8 +18,8 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/img_user_picture"
         android:src="@drawable/ic_add_user_picture"
-        android:layout_height="@dimen/signup_native_picture_size"
-        android:layout_width="@dimen/signup_native_picture_size"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
         android:scaleType="centerCrop"
         app:riv_oval="true"/>
 
