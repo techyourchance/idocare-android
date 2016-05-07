@@ -67,9 +67,16 @@
     </style>
 
     <style name="RequestStatusTextViewStyle" parent="DefaultTextViewStyle">
-        <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/background</item>
         <item name="android:gravity">center</item>
+        <item name="android:textSize">12dp</item>
+    </style>
+
+
+    <style name="RequestLocatioTextViewStyle" parent="DefaultTextViewStyle">
+        <item name="android:textColor">@color/background</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/large_text_size</item>
     </style>
 
     <style name="RequestThumbnailNicknameTextViewStyle" parent="DefaultTextViewStyle">

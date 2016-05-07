@@ -15,7 +15,7 @@
     <dimen name="request_status_bar_height">26dp</dimen>
     <dimen name="request_thumbnail_status_bar_height">26dp</dimen>
     <dimen name="divider_width">1dp</dimen>
-    <dimen name="request_thumbnail_layout_height">116dp</dimen>
+    <dimen name="request_thumbnail_layout_height">160dp</dimen>
 
     <dimen name="wide_button_height">40dp</dimen>
     <dimen name="wide_button_width">240dp</dimen>
@@ -49,6 +49,10 @@
     <dimen name="list_pictures_padding_vertical">10dp</dimen>
     <dimen name="text_view_default_padding">5dp</dimen>
     <dimen name="text_view_large_padding">8dp</dimen>
+
+    <dimen name="home_list_view_padding">@dimen/fragment_default_padding</dimen>
+
+
 
     <!-- Text sizes -->
     <dimen name="largest_text_size">15sp</dimen>

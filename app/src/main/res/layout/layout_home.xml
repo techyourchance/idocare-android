@@ -14,6 +14,12 @@
         android:layout_height="match_parent"
         android:scrollbars="none"
         android:clipToPadding="true"
+        android:paddingTop="@dimen/home_list_view_padding"
+        android:paddingStart="@dimen/home_list_view_padding"
+        android:paddingLeft="@dimen/home_list_view_padding"
+        android:paddingEnd="@dimen/home_list_view_padding"
+        android:paddingRight="@dimen/home_list_view_padding"
+        android:paddingBottom="0dp"
         android:divider="@android:color/transparent"
         android:dividerHeight="10.0dp"/>
 
