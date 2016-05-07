@@ -1,33 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="top|center_horizontal"
-    android:background="@color/background">
+    android:layout_height="match_parent">
 
-    <Space
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/login_chooser_margin_1"/>
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:gravity="top|center_horizontal"
+        android:background="@color/background">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_logo_large"
-        android:contentDescription="@string/img_login_accessibility"/>
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/login_chooser_margin_1"/>
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/login_chooser_margin_1"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_logo_large"
+            android:contentDescription="@string/img_login_accessibility"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/login_chooser_margin_1"/>
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/login_buttons_layout"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal">
+        android:layout_alignParentBottom="true"
+        android:gravity="center_horizontal"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="@dimen/login_chooser_screen_margin_bottom">
 
         <com.facebook.login.widget.LoginButton
             xmlns:facebook="http://schemas.android.com/apk/res-auto"
@@ -85,4 +97,4 @@
     </LinearLayout>
 
 
-</LinearLayout>
+</RelativeLayout>
