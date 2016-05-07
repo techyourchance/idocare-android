@@ -2,7 +2,9 @@ package il.co.idocare.mvcviews.requestdetails;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -39,27 +41,31 @@ public class RequestDetailsViewMvcImpl
 
     private final ImageViewPictureLoader mImageViewPictureLoader;
     private Context mContext;
+    private Resources mResources;
+
+    private PresentationStrategy mPresentationStrategy;
+
+    private FrameLayout mFrameUserInfoTop;
+    private FrameLayout mFrameUserInfoBottom;
+    private RequestRelatedUserInfoViewMvc mUserInfoTopViewMvc;
+    private RequestRelatedUserInfoViewMvc mUserInfoBottomViewMvc;
 
     private RequestItem mRequestItem;
 
     private TextView mTxtStatus;
     private TextView mTxtFineLocation;
-    private TextView mTxtCreatedByTitle;
-    private RequestRelatedUserInfoViewMvc mCreatedByUserInfoViewMvc;
+    private TextView mTxtTopUserTitle;
     private GestureImageView mGestureImgCreatedPictures;
-    private TextView mTxtClosedByTitle;
-    private RequestRelatedUserInfoViewMvc mClosedByUserInfoViewMvc;
+    private TextView mTxtBottomUserTitle;
     private GestureImageView mGestureImgClosedPictures;
 
-    private FrameLayout mFrameUserInfoTop;
-    private FrameLayout mFrameUserInfoBottom;
 
     private MapView mMapPreview;
 
     private Button mBtnPickUpRequest;
     private Button mBtnCloseRequest;
-    private String[] mCreatedPictures;
-    private String[] mClosedPictures;
+    private String[] mTopPictures;
+    private String[] mBottomPictures;
 
 
     public RequestDetailsViewMvcImpl(@NonNull LayoutInflater inflater,
@@ -67,15 +73,16 @@ public class RequestDetailsViewMvcImpl
                                      @NonNull ImageViewPictureLoader imageViewPictureLoader) {
         setRootView(inflater.inflate(R.layout.layout_request_details, container, false));
         mImageViewPictureLoader = imageViewPictureLoader;
-        mContext = getRootView().getContext();
+        mContext = inflater.getContext();
+        mResources = mContext.getResources();
 
 
         // "Created by" MVC sub-view
-        mCreatedByUserInfoViewMvc = new RequestRelatedUserInfoViewMvc(
+        mUserInfoTopViewMvc = new RequestRelatedUserInfoViewMvc(
                 LayoutInflater.from(mContext),
                 null,
                 mImageViewPictureLoader);
-        mCreatedByUserInfoViewMvc.registerListener(new RequestRelatedUserInfoViewMvc.RequestRelatedUserInfoViewMvcListener() {
+        mUserInfoTopViewMvc.registerListener(new RequestRelatedUserInfoViewMvc.RequestRelatedUserInfoViewMvcListener() {
             @Override
             public void onVoteUpClicked() {
                 for (RequestDetailsViewMvcListener listener : getListeners()) {
@@ -93,11 +100,11 @@ public class RequestDetailsViewMvcImpl
 
 
         // "Closed by" MVC sub-view
-        mClosedByUserInfoViewMvc = new RequestRelatedUserInfoViewMvc(
+        mUserInfoBottomViewMvc = new RequestRelatedUserInfoViewMvc(
                 LayoutInflater.from(mContext),
                 null,
                 mImageViewPictureLoader);
-        mClosedByUserInfoViewMvc.registerListener(new RequestRelatedUserInfoViewMvc.RequestRelatedUserInfoViewMvcListener() {
+        mUserInfoBottomViewMvc.registerListener(new RequestRelatedUserInfoViewMvc.RequestRelatedUserInfoViewMvcListener() {
             @Override
             public void onVoteUpClicked() {
                 for (RequestDetailsViewMvcListener listener : getListeners()) {
@@ -126,8 +133,8 @@ public class RequestDetailsViewMvcImpl
 
         mTxtStatus = (TextView) getRootView().findViewById(R.id.txt_request_status);
 
-        mTxtCreatedByTitle = (TextView) getRootView().findViewById(R.id.txt_created_by_title);
-        mTxtClosedByTitle = (TextView) getRootView().findViewById(R.id.txt_closed_by_title);
+        mTxtTopUserTitle = (TextView) getRootView().findViewById(R.id.txt_created_by_title);
+        mTxtBottomUserTitle = (TextView) getRootView().findViewById(R.id.txt_closed_by_title);
 
         mFrameUserInfoTop = (FrameLayout) getRootView().findViewById(R.id.frame_user_info_top);
         mFrameUserInfoBottom = (FrameLayout) getRootView().findViewById(R.id.frame_user_info_bottom);
@@ -172,207 +179,207 @@ public class RequestDetailsViewMvcImpl
 
         mRequestItem = requestItem;
 
-
-        if (mRequestItem.isClosed() || mRequestItem.isPickedUp()) {
-            mFrameUserInfoTop.removeAllViews();
-            mFrameUserInfoTop.addView(mClosedByUserInfoViewMvc.getRootView());
-            mFrameUserInfoBottom.removeAllViews();
-            mFrameUserInfoBottom.addView(mCreatedByUserInfoViewMvc.getRootView());
+        if (mRequestItem.isClosed()) {
+            mPresentationStrategy = new ClosedPresentationStrategy();
+        } else if (mRequestItem.isPickedUp()) {
+            mPresentationStrategy = new PickedUpPresentationStrategy();
         } else {
-            mFrameUserInfoTop.removeAllViews();
-            mFrameUserInfoTop.addView(mCreatedByUserInfoViewMvc.getRootView());
-            mFrameUserInfoBottom.removeAllViews();
-            mFrameUserInfoBottom.setVisibility(View.GONE);
+            mPresentationStrategy = new NewPresentationStrategy();
         }
 
-        updateStatus();
-        // Handle the views related to initial request
-        updateCreatedViews();
-        // Handle the views related to pickup info
-        updateClosedViews();
-        // Configure location
-        updateLocationViews();
-        // Handle the pickup button functionality
-        updatePickupButton();
-        // Handle the close button functionality
-        updateClosedButton();
+        mPresentationStrategy.bindRequestItem(requestItem);
+
     }
 
 
     @Override
     public void bindCreatedByUser(UserItem user) {
-        mCreatedByUserInfoViewMvc.bindUser(user);
+        mPresentationStrategy.bindCreatedByUser(user);
     }
 
 
     @Override
     public void bindClosedByUser(UserItem user) {
-        mClosedByUserInfoViewMvc.bindUser(user);
+        mPresentationStrategy.bindClosedByUser(user);
     }
 
 
     @Override
     public void bindPickedUpByUser(UserItem user) {
-        if (mRequestItem.isPickedUp()) {
-            if (mRequestItem.getStatus() == RequestItem.RequestStatus.PICKED_UP_BY_OTHER) {
-                mTxtStatus.setText(
-                        mContext.getResources().getString(R.string.txt_picked_up_request_title)
-                                + " " +
-                                mContext.getResources().getString(R.string.txt_by) + " " + user.getNickname());
+        mPresentationStrategy.bindPickedUpByUser(user);
+    }
+
+
+
+
+
+    private abstract class PresentationStrategy {
+
+        protected void bindRequestItem(RequestItem request) {
+            mTxtStatus.setBackgroundColor(mResources.getColor(getStatusColorResId()));
+            mTxtStatus.setText(getStatusString());
+
+            if (TextUtils.isEmpty(getTopUserTitle())) {
+                mTxtTopUserTitle.setVisibility(View.GONE);
             } else {
-                mTxtStatus.setText(
-                        mContext.getResources().getString(R.string.txt_picked_up_request_title)
-                                + " " +
-                                mContext.getResources().getString(R.string.txt_by_me));
+                mTxtTopUserTitle.setVisibility(View.VISIBLE);
+                mTxtTopUserTitle.setText(getTopUserTitle());
+            }
+
+            mUserInfoTopViewMvc.bindDate(getTopUserDate());
+            mUserInfoTopViewMvc.bindVotes(getTopUserVotes());
+
+            if (TextUtils.isEmpty(getTopUserComment())) {
+                mUserInfoTopViewMvc.setCommentVisible(false);
+            } else {
+                mUserInfoTopViewMvc.setCommentVisible(true);
+                mUserInfoTopViewMvc.bindComment(getTopUserComment());
+            }
+
+            mTopPictures = getTopPictures();
+
+            mImageViewPictureLoader.loadFromWebOrFile(mGestureImgCreatedPictures, mTopPictures[0],
+                    R.drawable.ic_default_user_picture);
+
+            if (showCloseRequestButton()) {
+                mBtnCloseRequest.setVisibility(View.VISIBLE);
+            } else {
+                mBtnCloseRequest.setVisibility(View.GONE);
+            }
+
+
+            mTxtBottomUserTitle.setText(getBottomUserTitle());
+            mUserInfoBottomViewMvc.bindDate(getBottomUserDate());
+            mUserInfoBottomViewMvc.bindVotes(getBottomUserVotes());
+
+            if (TextUtils.isEmpty(getBottomUserComment())) {
+                mUserInfoBottomViewMvc.setCommentVisible(false);
+            } else {
+                mUserInfoBottomViewMvc.setCommentVisible(true);
+                mUserInfoBottomViewMvc.bindComment(getBottomUserComment());
+            }
+
+            mBottomPictures = getBottomPictures();
+
+            mImageViewPictureLoader.loadFromWebOrFile(mGestureImgClosedPictures, mBottomPictures[0],
+                    R.drawable.ic_default_user_picture);
+
+
+            mTxtFineLocation.setText(mRequestItem.getLocation());
+
+            if (mRequestItem.isClosed()) {
+                // Don't show the map for closed requests
+                mMapPreview.setVisibility(View.GONE);
+                return;
+            }
+
+            GoogleMap map = mMapPreview.getMap();
+
+            MapsInitializer.initialize(mContext);
+            map.setMyLocationEnabled(false); // Don't show my location
+            map.setBuildingsEnabled(false); // Don't show 3D buildings
+            map.getUiSettings().setMapToolbarEnabled(false); // No toolbar needed in a lite preview
+
+            LatLng location = new LatLng(mRequestItem.getLatitude(), mRequestItem.getLongitude());
+            // Center the camera at request location
+            map.moveCamera(CameraUpdateFactory.newLatLng(location));
+            // Put a marker
+            map.addMarker(new MarkerOptions().position(location));
+
+            if (showPickUpRequestButton()) {
+                mBtnPickUpRequest.setVisibility(View.VISIBLE);
+            } else {
+                mBtnPickUpRequest.setVisibility(View.GONE);
             }
         }
+
+        protected abstract String getBottomUserDate();
+        protected abstract String getBottomUserVotes();
+        protected abstract String getBottomUserComment();
+        protected abstract String[] getBottomPictures();
+        protected abstract boolean showPickUpRequestButton();
+        protected abstract String getBottomUserTitle();
+        protected abstract boolean showCloseRequestButton();
+
+
+        abstract void bindCreatedByUser(UserItem user);
+        abstract void bindPickedUpByUser(UserItem user);
+        abstract void bindClosedByUser(UserItem user);
+
+        protected abstract @ColorRes int getStatusColorResId();
+        protected abstract String getStatusString();
+        protected abstract String getTopUserTitle();
+        protected abstract String[] getTopPictures();
+        protected abstract String getTopUserComment();
+        protected abstract String getTopUserVotes();
+        protected abstract String getTopUserDate();
     }
 
-    private void updateStatus() {
-        int statusColor;
-        String statusText;
+    private class NewPresentationStrategy extends PresentationStrategy {
 
-        if (mRequestItem.isClosed()) {
-            statusColor = mContext.getResources().getColor(R.color.closed_request_color);
-            statusText = mContext.getResources().getString(R.string.txt_closed_request_title);
-        } else if (mRequestItem.isPickedUp()) {
-            statusColor = mContext.getResources().getColor(R.color.picked_up_request_color);
-            statusText = mContext.getResources().getString(R.string.txt_picked_up_request_title);
-        } else {
-            statusColor = mContext.getResources().getColor(R.color.new_request_color);
-            statusText = mContext.getResources().getString(R.string.txt_new_request_title);
+
+        @Override
+        public void bindCreatedByUser(UserItem user) {
+
         }
 
-        mTxtStatus.setBackgroundColor(statusColor);
-        mTxtStatus.setText(statusText);
+        @Override
+        public void bindPickedUpByUser(UserItem user) {
+
+        }
+
+        @Override
+        public void bindClosedByUser(UserItem user) {
+
+        }
     }
 
-    /**
-     * Handle the views describing the initial request
-     */
-    private void updateCreatedViews() {
+    private class PickedUpPresentationStrategy implements PresentationStrategy {
 
-        mTxtCreatedByTitle.setText(R.string.txt_created_by_title);
+        @Override
+        public void bindRequestItem(RequestItem request) {
+            mTxtStatus.setBackgroundColor(mResources.getColor(R.color.picked_up_request_color);
+            mTxtStatus.setText(mResources.getString(R.string.txt_picked_up_request_title));
 
-        mCreatedByUserInfoViewMvc.bindDate(mRequestItem.getCreatedAt());
-        mCreatedByUserInfoViewMvc.bindVotes(String.valueOf(mRequestItem.getCreatedReputation()));
-
-        if (TextUtils.isEmpty(mRequestItem.getCreatedComment())) {
-            mCreatedByUserInfoViewMvc.setCommentVisible(false);
-        } else {
-            mCreatedByUserInfoViewMvc.setCommentVisible(true);
-            mCreatedByUserInfoViewMvc.bindComment(mRequestItem.getCreatedComment());
         }
 
-        mCreatedPictures = mRequestItem.getCreatedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
+        @Override
+        public void bindCreatedByUser(UserItem user) {
 
-        mImageViewPictureLoader.loadFromWebOrFile(mGestureImgCreatedPictures, mCreatedPictures[0],
-                R.drawable.ic_default_user_picture);
+        }
 
-        mTxtFineLocation.setText("");
+        @Override
+        public void bindPickedUpByUser(UserItem user) {
+
+        }
+
+        @Override
+        public void bindClosedByUser(UserItem user) {
+
+        }
     }
 
+    private class ClosedPresentationStrategy implements PresentationStrategy {
 
-    /**
-     * Handle the views describing the info about request's closure
-     */
-    private void updateClosedViews() {
-        if (mRequestItem.getStatus() != RequestItem.RequestStatus.CLOSED_BY_OTHER &&
-                mRequestItem.getStatus() != RequestItem.RequestStatus.CLOSED_BY_ME) {
-            // Hide all "closed" views if the request is not closed
-            getRootView().findViewById(R.id.btn_close_request).setVisibility(View.GONE);
-            return;
+        @Override
+        public void bindRequestItem(RequestItem request) {
+            mTxtStatus.setBackgroundColor(mResources.getColor(R.color.closed_request_color));
+            mTxtStatus.setText(mResources.getString(R.string.txt_closed_request_title));
         }
 
-        getRootView().findViewById(R.id.btn_close_request).setVisibility(View.VISIBLE);
+        @Override
+        public void bindCreatedByUser(UserItem user) {
 
-        mTxtClosedByTitle.setText(R.string.txt_closed_by_title); // This should be complemented by "closed by" user's nickname
-        mClosedByUserInfoViewMvc.bindDate(mRequestItem.getClosedAt());
-        mClosedByUserInfoViewMvc.bindVotes(String.valueOf(mRequestItem.getClosedReputation()));
-
-        if (TextUtils.isEmpty(mRequestItem.getClosedComment())) {
-            mClosedByUserInfoViewMvc.setCommentVisible(false);
-        } else {
-            mClosedByUserInfoViewMvc.setCommentVisible(true);
-            mClosedByUserInfoViewMvc.bindComment(mRequestItem.getClosedComment());
         }
 
-        mClosedPictures = mRequestItem.getClosedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
+        @Override
+        public void bindPickedUpByUser(UserItem user) {
 
-        mImageViewPictureLoader.loadFromWebOrFile(mGestureImgClosedPictures, mClosedPictures[0],
-                R.drawable.ic_default_user_picture);
+        }
+
+        @Override
+        public void bindClosedByUser(UserItem user) {
+
+        }
     }
-
-    private void updateLocationViews() {
-
-        mTxtFineLocation.setText(mRequestItem.getLocation());
-
-        if (mRequestItem.isClosed()) {
-            // Don't show the map for closed requests
-            mMapPreview.setVisibility(View.GONE);
-            return;
-        }
-
-        GoogleMap map = mMapPreview.getMap();
-
-        MapsInitializer.initialize(getRootView().getContext());
-        map.setMyLocationEnabled(false); // Don't show my location
-        map.setBuildingsEnabled(false); // Don't show 3D buildings
-        map.getUiSettings().setMapToolbarEnabled(false); // No toolbar needed in a lite preview
-
-        LatLng location = new LatLng(mRequestItem.getLatitude(), mRequestItem.getLongitude());
-        // Center the camera at request location
-        map.moveCamera(CameraUpdateFactory.newLatLng(location));
-        // Put a marker
-        map.addMarker(new MarkerOptions().position(location));
-
-    }
-
-    /**
-     * Handle the view of the pickup button
-     */
-    private void updatePickupButton() {
-
-        if (mRequestItem.getStatus() == RequestItem.RequestStatus.NEW_BY_ME ||
-                mRequestItem.getStatus() == RequestItem.RequestStatus.NEW_BY_OTHER) {
-            mBtnPickUpRequest.setVisibility(View.VISIBLE);
-            mBtnPickUpRequest.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    for (RequestDetailsViewMvcListener listener : getListeners()) {
-                        listener.onPickupRequestClicked();
-                    }
-                }
-            });
-        }
-        else {
-            mBtnPickUpRequest.setVisibility(View.GONE);
-        }
-
-    }
-
-
-
-    /**
-     * Handle the view of the close button
-     */
-    private void updateClosedButton() {
-
-        if (mRequestItem.getStatus() == RequestItem.RequestStatus.PICKED_UP_BY_ME) {
-            mBtnCloseRequest.setVisibility(View.VISIBLE);
-            mBtnCloseRequest.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    for (RequestDetailsViewMvcListener listener : getListeners()) {
-                        listener.onCloseRequestClicked();
-                    }
-                }
-            });
-        } else {
-            mBtnCloseRequest.setVisibility(View.GONE);
-        }
-
-    }
-
-
 }
