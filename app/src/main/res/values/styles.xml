@@ -51,7 +51,6 @@
     <!-- TEXT VIEW STYLES -->
 
     <style name="DefaultTextViewStyle" parent="android:Widget.TextView">
-        <item name="android:fontFamily">sans-serif</item>
         <item name="android:textColor">@color/text_color_primary</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">@dimen/default_text_size</item>
@@ -68,7 +67,6 @@
     </style>
 
     <style name="RequestStatusTextViewStyle" parent="DefaultTextViewStyle">
-        <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/background</item>
         <item name="android:gravity">center</item>
@@ -106,14 +104,12 @@
     </style>
 
     <style name="DateTextViewStyle" parent="DefaultTextViewStyle">
-        <item name="android:fontFamily">sans-serif</item>
         <item name="android:textColor">@color/date_text</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">@dimen/small_text_size</item>
     </style>
 
     <style name="ReputationTextViewStyle" parent="DefaultTextViewStyle">
-        <item name="android:fontFamily">sans-serif</item>
         <item name="android:textColor">@color/reputation_text</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">@dimen/default_text_size</item>
@@ -124,21 +120,18 @@
     </style>
 
     <style name="StatusTextViewStyle" parent="DefaultTextViewStyle">
-        <item name="android:fontFamily">sans-serif</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">@dimen/default_text_size</item>
     </style>
 
     <style name="GreenTextViewStyle" parent="DefaultTextViewStyle">
-        <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/light_green</item>
         <item name="android:textSize">@dimen/default_text_size</item>
     </style>
 
     <style name="BoldTextStyleForButton" parent="DefaultTextViewStyle">
-        <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">@dimen/large_text_size</item>
