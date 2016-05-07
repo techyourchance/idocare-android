@@ -23,9 +23,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_add_circle_black_24dp"
+        android:src="@drawable/ic_add_white_24dp"
         android:clickable="true"
-        app:rippleColor="@color/orange"
+        app:backgroundTint="@color/orange"
         app:layout_anchor="@id/list_requests_thumbnails"
         app:layout_anchorGravity="bottom|right|end" />
 
