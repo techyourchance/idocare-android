@@ -39,10 +39,10 @@ public class UserActionsOnRequestApplierImpl implements RequestUserActionApplier
                 int voteValue = Integer.valueOf(userAction.mActionParam);
                 if (userAction.mEntityParam
                         .equals(IDoCareContract.UserActions.ENTITY_PARAM_REQUEST_CREATED))
-                    request.setCreatedReputation(request.getCreatedReputation() + voteValue);
+                    request.setCreatedReputation(request.getCreatedVotes() + voteValue);
                 else if (userAction.mEntityParam
                         .equals(IDoCareContract.UserActions.ENTITY_PARAM_REQUEST_CLOSED))
-                    request.setClosedReputation(request.getClosedReputation() + voteValue);
+                    request.setClosedReputation(request.getClosedVotes() + voteValue);
                 else
                     throw new IllegalArgumentException("unrecognized ENTITY_PARAM '" +
                             userAction.mEntityParam + "' for ACTION_TYPE '" + userAction.mActionType + "'");

@@ -15,7 +15,6 @@ public class RequestItem extends RequestItemPojo {
 
     private static final String LOG_TAG = RequestItem.class.getSimpleName();
 
-
     public enum RequestStatus {NEW_BY_OTHER, NEW_BY_ME, PICKED_UP_BY_OTHER, PICKED_UP_BY_ME,
         CLOSED_BY_OTHER, CLOSED_BY_ME, UNKNOWN}
 
@@ -137,7 +136,7 @@ public class RequestItem extends RequestItemPojo {
         RequestItem newRequest = new RequestItem(other.getId(), other.getCreatedBy(),
                 other.getCreatedAt(), other.getCreatedComment(), other.getCreatedPictures(),
                 other.getLatitude(), other.getLongitude());
-        newRequest.setCreatedReputation(other.getCreatedReputation())
+        newRequest.setCreatedReputation(other.getCreatedVotes())
                 .setCreatedPollutionLevel(other.getCreatedPollutionLevel())
                 .setPickedUpBy(other.getPickedUpBy())
                 .setPickedUpAt(other.getPickedUpAt())
@@ -145,7 +144,7 @@ public class RequestItem extends RequestItemPojo {
                 .setClosedAt(other.getClosedAt())
                 .setClosedComment(other.getClosedComment())
                 .setClosedPictures(other.getClosedPictures())
-                .setClosedReputation(other.getClosedReputation())
+                .setClosedReputation(other.getClosedVotes())
                 .setLocation(other.getLocation());
 
         return newRequest;

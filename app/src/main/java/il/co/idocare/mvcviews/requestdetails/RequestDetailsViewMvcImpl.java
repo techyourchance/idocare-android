@@ -55,17 +55,15 @@ public class RequestDetailsViewMvcImpl
     private TextView mTxtStatus;
     private TextView mTxtFineLocation;
     private TextView mTxtTopUserTitle;
-    private GestureImageView mGestureImgCreatedPictures;
+    private GestureImageView mImgTopPictures;
     private TextView mTxtBottomUserTitle;
-    private GestureImageView mGestureImgClosedPictures;
+    private GestureImageView mImgBottomPictures;
 
 
     private MapView mMapPreview;
 
     private Button mBtnPickUpRequest;
     private Button mBtnCloseRequest;
-    private String[] mTopPictures;
-    private String[] mBottomPictures;
 
 
     public RequestDetailsViewMvcImpl(@NonNull LayoutInflater inflater,
@@ -82,6 +80,7 @@ public class RequestDetailsViewMvcImpl
                 LayoutInflater.from(mContext),
                 null,
                 mImageViewPictureLoader);
+
         mUserInfoTopViewMvc.registerListener(new RequestRelatedUserInfoViewMvc.RequestRelatedUserInfoViewMvcListener() {
             @Override
             public void onVoteUpClicked() {
@@ -104,6 +103,7 @@ public class RequestDetailsViewMvcImpl
                 LayoutInflater.from(mContext),
                 null,
                 mImageViewPictureLoader);
+        
         mUserInfoBottomViewMvc.registerListener(new RequestRelatedUserInfoViewMvc.RequestRelatedUserInfoViewMvcListener() {
             @Override
             public void onVoteUpClicked() {
@@ -123,14 +123,15 @@ public class RequestDetailsViewMvcImpl
         initialize();
     }
 
-    @Override
-    public Bundle getViewState() {
-        return null;
-    }
-
     @SuppressLint("CutPasteId")
     private void initialize() {
 
+        mFrameUserInfoTop = (FrameLayout) getRootView().findViewById(R.id.frame_user_info_top); 
+        mFrameUserInfoTop.addView(mUserInfoTopViewMvc.getRootView());
+
+        mFrameUserInfoBottom = (FrameLayout) getRootView().findViewById(R.id.frame_user_info_bottom);
+        mFrameUserInfoBottom.addView(mUserInfoBottomViewMvc.getRootView());
+        
         mTxtStatus = (TextView) getRootView().findViewById(R.id.txt_request_status);
 
         mTxtTopUserTitle = (TextView) getRootView().findViewById(R.id.txt_created_by_title);
@@ -141,24 +142,40 @@ public class RequestDetailsViewMvcImpl
 
 
         // "Created pictures" views
-        mGestureImgCreatedPictures =
+        mImgTopPictures =
                 (GestureImageView) getRootView().findViewById(R.id.gestureImgCreatedPictures);
-        initGestureImageView(mGestureImgCreatedPictures);
+        initGestureImageView(mImgTopPictures);
 
         // Fine location view
         mTxtFineLocation = (TextView) getRootView().findViewById(R.id.txt_request_fine_location);
 
         
         // "Closed pictures" views
-        mGestureImgClosedPictures =
+        mImgBottomPictures =
                 (GestureImageView) getRootView().findViewById(R.id.gestureImgClosedPictures);
-        initGestureImageView(mGestureImgClosedPictures);
+        initGestureImageView(mImgBottomPictures);
 
         // The map
         mMapPreview = (MapView) getRootView().findViewById(R.id.map_preview);
 
         mBtnPickUpRequest = (Button) getRootView().findViewById(R.id.btn_pickup_request);
+        mBtnPickUpRequest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (RequestDetailsViewMvcListener listener : getListeners()) {
+                    listener.onPickupRequestClicked();
+                }
+            }
+        });
         mBtnCloseRequest = (Button) getRootView().findViewById(R.id.btn_close_request);
+        mBtnCloseRequest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (RequestDetailsViewMvcListener listener : getListeners()) {
+                    listener.onCloseRequestClicked();
+                }
+            }
+        });
 
     }
 
@@ -168,6 +185,12 @@ public class RequestDetailsViewMvcImpl
         settings.setPanEnabled(false);
     }
 
+
+
+    @Override
+    public Bundle getViewState() {
+        return null;
+    }
 
     /**
      *
@@ -210,12 +233,23 @@ public class RequestDetailsViewMvcImpl
     }
 
 
-
-
-
+    /**
+     * This is a base class for objects that will encapsulate the differentiation logic
+     * between requests of different status
+     */
     private abstract class PresentationStrategy {
 
-        protected void bindRequestItem(RequestItem request) {
+        private RequestItem mRequestItemCopy;
+
+        protected RequestItem getRequestItem() {
+            return mRequestItemCopy;
+        }
+
+        private void bindRequestItem(RequestItem request) {
+            beforeBindRequestItem();
+
+            mRequestItemCopy = RequestItem.create(request); // copy in order to prevent accidental changes
+
             mTxtStatus.setBackgroundColor(mResources.getColor(getStatusColorResId()));
             mTxtStatus.setText(getStatusString());
 
@@ -236,10 +270,13 @@ public class RequestDetailsViewMvcImpl
                 mUserInfoTopViewMvc.bindComment(getTopUserComment());
             }
 
-            mTopPictures = getTopPictures();
-
-            mImageViewPictureLoader.loadFromWebOrFile(mGestureImgCreatedPictures, mTopPictures[0],
-                    R.drawable.ic_default_user_picture);
+            String[] mTopPictures = getTopPictures();
+            if (mTopPictures == null || mTopPictures.length == 0) {
+                mImgTopPictures.setVisibility(View.GONE);
+            } else {
+                mImageViewPictureLoader.loadFromWebOrFile(mImgTopPictures, mTopPictures[0],
+                        R.drawable.ic_default_user_picture);
+            }
 
             if (showCloseRequestButton()) {
                 mBtnCloseRequest.setVisibility(View.VISIBLE);
@@ -259,11 +296,13 @@ public class RequestDetailsViewMvcImpl
                 mUserInfoBottomViewMvc.bindComment(getBottomUserComment());
             }
 
-            mBottomPictures = getBottomPictures();
-
-            mImageViewPictureLoader.loadFromWebOrFile(mGestureImgClosedPictures, mBottomPictures[0],
-                    R.drawable.ic_default_user_picture);
-
+            String[] mBottomPictures = getBottomPictures();
+            if (mBottomPictures == null || mBottomPictures.length == 0) {
+                mImgBottomPictures.setVisibility(View.GONE);
+            } else {
+                mImageViewPictureLoader.loadFromWebOrFile(mImgBottomPictures, mBottomPictures[0],
+                        R.drawable.ic_default_user_picture);
+            }
 
             mTxtFineLocation.setText(mRequestItem.getLocation());
 
@@ -291,95 +330,331 @@ public class RequestDetailsViewMvcImpl
             } else {
                 mBtnPickUpRequest.setVisibility(View.GONE);
             }
-        }
 
-        protected abstract String getBottomUserDate();
-        protected abstract String getBottomUserVotes();
-        protected abstract String getBottomUserComment();
-        protected abstract String[] getBottomPictures();
-        protected abstract boolean showPickUpRequestButton();
-        protected abstract String getBottomUserTitle();
-        protected abstract boolean showCloseRequestButton();
+            afterBindRequestItem();
+        }
 
 
         abstract void bindCreatedByUser(UserItem user);
         abstract void bindPickedUpByUser(UserItem user);
         abstract void bindClosedByUser(UserItem user);
 
+
+        protected abstract void beforeBindRequestItem();
+        protected abstract void afterBindRequestItem();
+
         protected abstract @ColorRes int getStatusColorResId();
         protected abstract String getStatusString();
+
         protected abstract String getTopUserTitle();
         protected abstract String[] getTopPictures();
         protected abstract String getTopUserComment();
         protected abstract String getTopUserVotes();
         protected abstract String getTopUserDate();
+
+        protected abstract String getBottomUserDate();
+        protected abstract String getBottomUserVotes();
+        protected abstract String getBottomUserComment();
+        protected abstract String[] getBottomPictures();
+        protected abstract String getBottomUserTitle();
+
+        protected abstract boolean showPickUpRequestButton();
+        protected abstract boolean showCloseRequestButton();
     }
 
     private class NewPresentationStrategy extends PresentationStrategy {
 
-
         @Override
-        public void bindCreatedByUser(UserItem user) {
-
+        void bindCreatedByUser(UserItem user) {
+            mUserInfoTopViewMvc.bindUser(user);
         }
 
         @Override
-        public void bindPickedUpByUser(UserItem user) {
-
+        void bindPickedUpByUser(UserItem user) {
+            throw new UnsupportedOperationException("new requests can't have 'picked up by' user");
         }
 
         @Override
-        public void bindClosedByUser(UserItem user) {
+        void bindClosedByUser(UserItem user) {
+            throw new UnsupportedOperationException("new requests can't have 'closed by' user");
+        }
 
+        @Override
+        protected void beforeBindRequestItem() {
+            mFrameUserInfoTop.setVisibility(View.VISIBLE);
+            mFrameUserInfoBottom.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected void afterBindRequestItem() {
+        }
+
+        @Override
+        protected int getStatusColorResId() {
+            return R.color.new_request_color;
+        }
+
+        @Override
+        protected String getStatusString() {
+            return mContext.getString(R.string.txt_new_request_title);
+        }
+
+        @Override
+        protected String getTopUserTitle() {
+            return null;
+        }
+
+        @Override
+        protected String[] getTopPictures() {
+            return getRequestItem().getCreatedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
+        }
+
+        @Override
+        protected String getTopUserComment() {
+            return getRequestItem().getCreatedComment();
+        }
+
+        @Override
+        protected String getTopUserVotes() {
+            return String.valueOf(getRequestItem().getCreatedVotes());
+        }
+
+        @Override
+        protected String getTopUserDate() {
+            return getRequestItem().getCreatedAt();
+        }
+
+        @Override
+        protected String getBottomUserDate() {
+            return null;
+        }
+
+        @Override
+        protected String getBottomUserVotes() {
+            return null;
+        }
+
+        @Override
+        protected String getBottomUserComment() {
+            return null;
+        }
+
+        @Override
+        protected String[] getBottomPictures() {
+            return new String[0];
+        }
+
+        @Override
+        protected String getBottomUserTitle() {
+            return null;
+        }
+
+        @Override
+        protected boolean showPickUpRequestButton() {
+            return true;
+        }
+
+        @Override
+        protected boolean showCloseRequestButton() {
+            return false;
         }
     }
 
-    private class PickedUpPresentationStrategy implements PresentationStrategy {
+    private class PickedUpPresentationStrategy extends PresentationStrategy {
 
         @Override
-        public void bindRequestItem(RequestItem request) {
-            mTxtStatus.setBackgroundColor(mResources.getColor(R.color.picked_up_request_color);
-            mTxtStatus.setText(mResources.getString(R.string.txt_picked_up_request_title));
+        void bindCreatedByUser(UserItem user) {
+            mUserInfoBottomViewMvc.bindUser(user);
+        }
+
+        @Override
+        void bindPickedUpByUser(UserItem user) {
+            mUserInfoTopViewMvc.bindUser(user);
+        }
+
+        @Override
+        void bindClosedByUser(UserItem user) {
+            throw new UnsupportedOperationException("picked up requests can't have 'closed by' user");
+        }
+
+        @Override
+        protected void beforeBindRequestItem() {
+            mFrameUserInfoTop.setVisibility(View.VISIBLE);
+            mFrameUserInfoBottom.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void afterBindRequestItem() {
 
         }
 
         @Override
-        public void bindCreatedByUser(UserItem user) {
-
+        protected int getStatusColorResId() {
+            return R.color.picked_up_request_color;
         }
 
         @Override
-        public void bindPickedUpByUser(UserItem user) {
-
+        protected String getStatusString() {
+            return mContext.getString(R.string.txt_picked_up_request_title);
         }
 
         @Override
-        public void bindClosedByUser(UserItem user) {
+        protected String getTopUserTitle() {
+            return mContext.getString(R.string.txt_picked_up_by_title);
+        }
 
+        @Override
+        protected String[] getTopPictures() {
+            return getRequestItem().getCreatedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
+        }
+
+        @Override
+        protected String getTopUserComment() {
+            return null;
+        }
+
+        @Override
+        protected String getTopUserVotes() {
+            return null;
+        }
+
+        @Override
+        protected String getTopUserDate() {
+            return mRequestItem.getPickedUpAt();
+        }
+
+        @Override
+        protected String getBottomUserDate() {
+            return mRequestItem.getCreatedAt();
+        }
+
+        @Override
+        protected String getBottomUserVotes() {
+            return String.valueOf(getRequestItem().getCreatedVotes());
+        }
+
+        @Override
+        protected String getBottomUserComment() {
+            return getRequestItem().getCreatedComment();
+        }
+
+        @Override
+        protected String[] getBottomPictures() {
+            return new String[0];
+        }
+
+        @Override
+        protected String getBottomUserTitle() {
+            return mContext.getString(R.string.txt_created_by_title);
+        }
+
+        @Override
+        protected boolean showPickUpRequestButton() {
+            return false;
+        }
+
+        @Override
+        protected boolean showCloseRequestButton() {
+            return getRequestItem().getStatus() == RequestItem.RequestStatus.PICKED_UP_BY_ME;
         }
     }
 
-    private class ClosedPresentationStrategy implements PresentationStrategy {
+    private class ClosedPresentationStrategy extends PresentationStrategy {
 
         @Override
-        public void bindRequestItem(RequestItem request) {
-            mTxtStatus.setBackgroundColor(mResources.getColor(R.color.closed_request_color));
-            mTxtStatus.setText(mResources.getString(R.string.txt_closed_request_title));
+        void bindCreatedByUser(UserItem user) {
+            mUserInfoBottomViewMvc.bindUser(user);
         }
 
         @Override
-        public void bindCreatedByUser(UserItem user) {
+        void bindPickedUpByUser(UserItem user) {
+            // no-op - this user should be identical to "closed by"
+        }
+
+        @Override
+        void bindClosedByUser(UserItem user) {
+            mUserInfoTopViewMvc.bindUser(user);
+        }
+
+        @Override
+        protected void beforeBindRequestItem() {
+            mFrameUserInfoTop.setVisibility(View.VISIBLE);
+            mFrameUserInfoBottom.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void afterBindRequestItem() {
 
         }
 
         @Override
-        public void bindPickedUpByUser(UserItem user) {
-
+        protected int getStatusColorResId() {
+            return R.color.closed_request_color;
         }
 
         @Override
-        public void bindClosedByUser(UserItem user) {
+        protected String getStatusString() {
+            return mContext.getString(R.string.txt_closed_request_title);
+        }
 
+        @Override
+        protected String getTopUserTitle() {
+            return mContext.getString(R.string.txt_closed_by_title);
+        }
+
+        @Override
+        protected String[] getTopPictures() {
+            return getRequestItem().getClosedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
+        }
+
+        @Override
+        protected String getTopUserComment() {
+            return getRequestItem().getClosedComment();
+        }
+
+        @Override
+        protected String getTopUserVotes() {
+            return String.valueOf(getRequestItem().getClosedVotes());
+        }
+
+        @Override
+        protected String getTopUserDate() {
+            return getRequestItem().getClosedAt();
+        }
+
+        @Override
+        protected String getBottomUserDate() {
+            return getRequestItem().getCreatedAt();
+        }
+
+        @Override
+        protected String getBottomUserVotes() {
+            return String.valueOf(getRequestItem().getCreatedVotes());
+        }
+
+        @Override
+        protected String getBottomUserComment() {
+            return getRequestItem().getCreatedComment();
+        }
+
+        @Override
+        protected String[] getBottomPictures() {
+            return getRequestItem().getClosedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
+        }
+
+        @Override
+        protected String getBottomUserTitle() {
+            return mContext.getString(R.string.txt_created_by_title);
+        }
+
+        @Override
+        protected boolean showPickUpRequestButton() {
+            return false;
+        }
+
+        @Override
+        protected boolean showCloseRequestButton() {
+            return false;
         }
     }
 }

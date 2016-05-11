@@ -133,7 +133,7 @@ public class RequestThumbnailViewMvcImpl
 
         mTxtCreatedAt.setText(mRequestItem.getCreatedAt());
 
-        mTxtCreatedVotes.setText(String.valueOf(mRequestItem.getCreatedReputation()));
+        mTxtCreatedVotes.setText(String.valueOf(mRequestItem.getCreatedVotes()));
     }
 
 

@@ -25,6 +25,7 @@
     <string name="txt_picked_up_request_title">IN PROGRESS</string>
     <string name="txt_closed_request_title">DONE</string>
     <string name="txt_created_by_title">Created by:</string>
+    <string name="txt_picked_up_by_title">Assigned to:</string>
     <string name="txt_closed_by_title">Closed by:</string>
     <string name="txt_before">BEFORE:</string>
     <string name="txt_after">AFTER:</string>
