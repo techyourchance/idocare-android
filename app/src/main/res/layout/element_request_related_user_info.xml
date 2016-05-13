@@ -76,6 +76,7 @@
 
     <include
         layout="@layout/element_vote_panel"
+        android:id="@+id/element_votes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/txt_title"

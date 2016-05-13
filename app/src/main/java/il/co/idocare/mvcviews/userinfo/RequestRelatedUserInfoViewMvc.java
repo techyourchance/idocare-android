@@ -27,6 +27,7 @@ public class RequestRelatedUserInfoViewMvc
     private final ImageViewPictureLoader mImageViewPictureLoader;
 
 
+
     public interface RequestRelatedUserInfoViewMvcListener {
         void onVoteUpClicked();
         void onVoteDownClicked();
@@ -40,6 +41,7 @@ public class RequestRelatedUserInfoViewMvc
     private TextView mTxtVotes;
     private ImageView mImgVoteUp;
     private ImageView mImgVoteDown;
+    private View mViewVotePanel;
 
 
     public RequestRelatedUserInfoViewMvc(@NonNull LayoutInflater inflater,
@@ -59,6 +61,7 @@ public class RequestRelatedUserInfoViewMvc
         mTxtVotes = (TextView) getRootView().findViewById(R.id.txt_votes);
         mImgVoteUp = (ImageView) getRootView().findViewById(R.id.img_vote_up);
         mImgVoteDown = (ImageView) getRootView().findViewById(R.id.img_vote_down);
+        mViewVotePanel = getRootView().findViewById(R.id.element_votes);
 
         mImgVoteUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,6 +107,15 @@ public class RequestRelatedUserInfoViewMvc
             mTxtComment.setVisibility(View.VISIBLE);
         else
             mTxtComment.setVisibility(View.GONE);
+    }
+
+
+    public void setVotesVisible(boolean visible) {
+        if (visible) {
+            mViewVotePanel.setVisibility(View.VISIBLE);
+        } else {
+            mViewVotePanel.setVisibility(View.GONE);
+        }
     }
 
     public void bindComment(String comment) {

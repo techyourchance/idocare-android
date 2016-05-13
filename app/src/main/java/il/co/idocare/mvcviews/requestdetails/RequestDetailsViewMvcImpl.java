@@ -251,8 +251,14 @@ public class RequestDetailsViewMvcImpl
             }
 
             mUserInfoTopViewMvc.bindDate(getTopUserDate());
-            mUserInfoTopViewMvc.bindVotes(getTopUserVotes());
-
+            
+            if (getTopUserVotes() == null || getTopUserVotes().length() == 0) {
+                mUserInfoTopViewMvc.setVotesVisible(false);
+            } else {
+                mUserInfoTopViewMvc.setVotesVisible(true);
+                mUserInfoTopViewMvc.bindVotes(getTopUserVotes());
+            }
+            
             if (TextUtils.isEmpty(getTopUserComment())) {
                 mUserInfoTopViewMvc.setCommentVisible(false);
             } else {
@@ -276,9 +282,15 @@ public class RequestDetailsViewMvcImpl
 
 
             mTxtBottomUserTitle.setText(getBottomUserTitle());
-            mUserInfoBottomViewMvc.bindDate(getBottomUserDate());
-            mUserInfoBottomViewMvc.bindVotes(getBottomUserVotes());
 
+            mUserInfoBottomViewMvc.bindDate(getBottomUserDate());
+            if (getBottomUserVotes() == null || getBottomUserVotes().length() == 0) {
+                mUserInfoBottomViewMvc.setVotesVisible(false);
+            } else {
+                mUserInfoBottomViewMvc.setVotesVisible(true);
+                mUserInfoBottomViewMvc.bindVotes(getBottomUserVotes());
+            }
+            
             if (TextUtils.isEmpty(getBottomUserComment())) {
                 mUserInfoBottomViewMvc.setCommentVisible(false);
             } else {
