@@ -28,6 +28,9 @@
     <dimen name="large_button_width">276dp</dimen>
     <dimen name="medium_button_width">130dp</dimen>
 
+    <dimen name="txt_request_status_width">120dp</dimen>
+    <dimen name="vote_panel_divider_height">23dp</dimen>
+
     <!-- Margins and paddings-->
     <dimen name="fragment_large_padding">15dp</dimen>
     <dimen name="fragment_default_padding">10dp</dimen>
@@ -76,7 +79,7 @@
 
 
     <!-- Picture sizes -->
-    <dimen name="user_small_picture_size">30dp</dimen>
+    <dimen name="user_small_picture_size">35dp</dimen>
     <dimen name="request_picture_width">90dp</dimen>
     <dimen name="request_picture_height">67dp</dimen>
     <dimen name="list_pictures_height">150dp</dimen>
@@ -95,8 +98,8 @@
     <!--The next value changes the margin between the FB icon and the login text:-->
     <dimen name="fb_margin_override_textpadding">17dp</dimen>
     <dimen name="vote_panel_spacing">5dp</dimen>
-    <dimen name="vote_panel_divider_height">23dp</dimen>
     <dimen name="login_chooser_screen_margin_bottom">20dp</dimen>
+    <dimen name="request_details_picture_height">170dp</dimen>
 
 
     <!-- This is the initial offset that the "sliding buttons" will be slided for -->

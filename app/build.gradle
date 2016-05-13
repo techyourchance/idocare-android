@@ -42,7 +42,6 @@ dependencies {
     compile 'com.google.code.gson:gson:2.4'
     compile "com.android.support:design:23.2.1"
     compile 'com.makeramen:roundedimageview:2.2.1'
-    compile 'com.alexvasilkov:gesture-views:2.1.1'
     compile 'uk.co.chrisjenx:calligraphy:2.2.0'
 
     // Dependency injection

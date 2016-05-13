@@ -13,10 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.alexvasilkov.gestures.Settings;
-import com.alexvasilkov.gestures.views.GestureImageView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -53,11 +52,12 @@ public class RequestDetailsViewMvcImpl
     private RequestItem mRequestItem;
 
     private TextView mTxtStatus;
+    private TextView mTxtLocationTitle;
     private TextView mTxtFineLocation;
     private TextView mTxtTopUserTitle;
-    private GestureImageView mImgTopPictures;
+    private ImageView mImgTopPictures;
     private TextView mTxtBottomUserTitle;
-    private GestureImageView mImgBottomPictures;
+    private ImageView mImgBottomPictures;
 
 
     private MapView mMapPreview;
@@ -75,7 +75,7 @@ public class RequestDetailsViewMvcImpl
         mResources = mContext.getResources();
 
 
-        // "Created by" MVC sub-view
+        // "TOP" MVC sub-view
         mUserInfoTopViewMvc = new RequestRelatedUserInfoViewMvc(
                 LayoutInflater.from(mContext),
                 null,
@@ -98,7 +98,7 @@ public class RequestDetailsViewMvcImpl
         });
 
 
-        // "Closed by" MVC sub-view
+        // "BOTTOM" MVC sub-view
         mUserInfoBottomViewMvc = new RequestRelatedUserInfoViewMvc(
                 LayoutInflater.from(mContext),
                 null,
@@ -134,26 +134,23 @@ public class RequestDetailsViewMvcImpl
         
         mTxtStatus = (TextView) getRootView().findViewById(R.id.txt_request_status);
 
-        mTxtTopUserTitle = (TextView) getRootView().findViewById(R.id.txt_created_by_title);
-        mTxtBottomUserTitle = (TextView) getRootView().findViewById(R.id.txt_closed_by_title);
+        mTxtTopUserTitle = (TextView) getRootView().findViewById(R.id.txt_top_user_title);
+        mTxtBottomUserTitle = (TextView) getRootView().findViewById(R.id.txt_bottom_user_title);
 
         mFrameUserInfoTop = (FrameLayout) getRootView().findViewById(R.id.frame_user_info_top);
         mFrameUserInfoBottom = (FrameLayout) getRootView().findViewById(R.id.frame_user_info_bottom);
 
 
-        // "Created pictures" views
-        mImgTopPictures =
-                (GestureImageView) getRootView().findViewById(R.id.gestureImgCreatedPictures);
-        initGestureImageView(mImgTopPictures);
+        // "Top pictures" views
+        mImgTopPictures = (ImageView) getRootView().findViewById(R.id.imgTopPictures);
 
         // Fine location view
         mTxtFineLocation = (TextView) getRootView().findViewById(R.id.txt_request_fine_location);
+        mTxtLocationTitle = (TextView) getRootView().findViewById(R.id.txt_location_title);
 
         
         // "Closed pictures" views
-        mImgBottomPictures =
-                (GestureImageView) getRootView().findViewById(R.id.gestureImgClosedPictures);
-        initGestureImageView(mImgBottomPictures);
+        mImgBottomPictures = (ImageView) getRootView().findViewById(R.id.imgBottomPictures);
 
         // The map
         mMapPreview = (MapView) getRootView().findViewById(R.id.map_preview);
@@ -178,13 +175,6 @@ public class RequestDetailsViewMvcImpl
         });
 
     }
-
-    private void initGestureImageView(GestureImageView gestureImageView) {
-        Settings settings = gestureImageView.getController().getSettings();
-        settings.setFitMethod(Settings.Fit.OUTSIDE);
-        settings.setPanEnabled(false);
-    }
-
 
 
     @Override
@@ -304,7 +294,14 @@ public class RequestDetailsViewMvcImpl
                         R.drawable.ic_default_user_picture);
             }
 
-            mTxtFineLocation.setText(mRequestItem.getLocation());
+            if (mRequestItem.getLocation() == null || mRequestItem.getLocation().length() == 0) {
+                mTxtLocationTitle.setVisibility(View.GONE);
+                mTxtFineLocation.setVisibility(View.GONE);
+            } else {
+                mTxtLocationTitle.setVisibility(View.VISIBLE);
+                mTxtFineLocation.setVisibility(View.VISIBLE);
+                mTxtFineLocation.setText(mRequestItem.getLocation());
+            }
 
             if (mRequestItem.isClosed()) {
                 // Don't show the map for closed requests
