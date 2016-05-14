@@ -23,18 +23,6 @@
         android:maxLines="3"
         android:hint="@string/hint_leave_comment"/>
 
-
-    <RatingBar
-        android:id="@+id/ratingbar_pollution_level"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/fragment_large_padding"
-        android:numStars="5"
-        android:stepSize="1"
-        android:rating="2"
-        android:visibility="gone"/>
-
     <Button
         android:id="@+id/btn_create_new_request"
         android:layout_gravity="center_horizontal"

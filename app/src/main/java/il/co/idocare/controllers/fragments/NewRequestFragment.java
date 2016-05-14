@@ -28,17 +28,18 @@ import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.eventbusevents.LocationEvents;
-import il.co.idocare.mvcviews.newrequest.NewRequestViewMVC;
+import il.co.idocare.mvcviews.newrequest.NewRequestViewMvc;
+import il.co.idocare.mvcviews.newrequest.NewRequestViewMvcImpl;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.pictures.CameraAdapter;
 import il.co.idocare.utils.UtilMethods;
 
 
-public class NewRequestFragment extends AbstractFragment {
+public class NewRequestFragment extends AbstractFragment implements NewRequestViewMvc.NewRequestViewMvcListener {
 
     private final static String TAG = NewRequestFragment.class.getSimpleName();
 
-    NewRequestViewMVC mViewMVC;
+    NewRequestViewMvc mNewRequestViewMvc;
 
     private long mRequestId;
 
@@ -50,7 +51,8 @@ public class NewRequestFragment extends AbstractFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mViewMVC = new NewRequestViewMVC(inflater, container);
+        mNewRequestViewMvc = new NewRequestViewMvcImpl(inflater, container);
+        mNewRequestViewMvc.registerListener(this);
 
         getControllerComponent().inject(this);
 
@@ -59,7 +61,7 @@ public class NewRequestFragment extends AbstractFragment {
         // Restore state from bundle (if required)
         restoreSavedStateIfNeeded(savedInstanceState);
 
-        return mViewMVC.getRootView();
+        return mNewRequestViewMvc.getRootView();
     }
 
 
@@ -143,16 +145,6 @@ public class NewRequestFragment extends AbstractFragment {
     //
     // EventBus events handling
 
-    @Subscribe
-    public void onEvent(NewRequestViewMVC.TakePictureButtonClickEvent event) {
-        takePictureWithCamera();
-    }
-
-    @Subscribe
-    public void onEvent(NewRequestViewMVC.CreateNewRequestButtonClickEvent event) {
-        createRequest();
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginStateManager.UserLoggedOutEvent event) {
         userLoggedOut();
@@ -161,6 +153,27 @@ public class NewRequestFragment extends AbstractFragment {
     // End of EventBus events handling
     //
     // ---------------------------------------------------------------------------------------------
+
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Callbacks from MVC view(s)
+
+    @Override
+    public void createRequestClicked() {
+        createRequest();
+    }
+
+    @Override
+    public void takePictureClicked() {
+        takePictureWithCamera();
+    }
+
+    // End callbacks from MVC view(s)
+    //
+    // ---------------------------------------------------------------------------------------------
+
 
 
     private void showPicture(String cameraPicturePath) {
@@ -176,7 +189,7 @@ public class NewRequestFragment extends AbstractFragment {
             mCameraPicturesPaths.remove(position);
         }
         mCameraPicturesPaths.add(position, cameraPicturePath);
-        mViewMVC.showPicture(position, cameraPicturePath);
+        mNewRequestViewMvc.showPicture(position, cameraPicturePath);
     }
 
 
@@ -222,11 +235,9 @@ public class NewRequestFragment extends AbstractFragment {
         }
         String createdPictures = sb.toString();
 
-        Bundle bundleNewRequest = mViewMVC.getViewState();
-        String pollutionLevel =
-                bundleNewRequest.getString(NewRequestViewMVC.KEY_CREATED_POLLUTION_LEVEL);
+        Bundle bundleNewRequest = mNewRequestViewMvc.getViewState();
         String createdComment =
-                bundleNewRequest.getString(NewRequestViewMVC.KEY_CREATED_COMMENT);
+                bundleNewRequest.getString(NewRequestViewMvc.KEY_CREATED_COMMENT);
 
         // Generate a temporary ID for this request - the actual ID will be assigned by the server
         // TODO: this ID might be not unique
