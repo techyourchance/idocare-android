@@ -72,9 +72,14 @@ public class LocationTrackerService extends Service {
 
         gotoState(STATE_HIGHEST_ACCURACY);
 
-        EventBus.getDefault().register(this);
 
         return Service.START_STICKY;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        EventBus.getDefault().register(this);
     }
 
     @Override
