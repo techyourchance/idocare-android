@@ -60,7 +60,7 @@
 
     <!-- Picture sizes -->
     <dimen name="user_small_picture_size">35dp</dimen>
-    <dimen name="nav_drawer_user_picture_size">70dp</dimen>
+    <dimen name="nav_drawer_user_picture_size">60dp</dimen>
 
     <!-- Facebook login button related stuff (in order to change its shape)-->
     <dimen name="fb_margin_override_top">13dp</dimen>

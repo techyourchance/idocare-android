@@ -6,19 +6,20 @@
     android:layout_height="match_parent"
     android:background="@color/nav_drawer_header_bg">
 
-
     <com.makeramen.roundedimageview.RoundedImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/img_user_picture"
         android:layout_height="@dimen/nav_drawer_user_picture_size"
         android:layout_width="@dimen/nav_drawer_user_picture_size"
-        android:layout_centerVertical="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="30dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_marginStart="@dimen/nav_drawer_margin"
         android:layout_marginLeft="@dimen/nav_drawer_margin"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_default_user_picture"
+        android:visibility="gone"
         app:riv_oval="true"/>
 
     <RelativeLayout
@@ -26,7 +27,8 @@
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/img_user_picture"
         android:layout_toRightOf="@id/img_user_picture"
-        android:layout_centerVertical="true">
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="47dp">
 
         <TextView
             android:id="@+id/txt_user_nickname"
@@ -34,9 +36,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
-            android:layout_marginStart="@dimen/fragment_tiny_padding"
-            android:layout_marginLeft="@dimen/fragment_tiny_padding"
-            style="@style/NavDrawerHeaderUserNicknameStyle"/>
+            android:layout_marginStart="@dimen/fragment_small_padding"
+            android:layout_marginLeft="@dimen/fragment_small_padding"
+            style="@style/NavDrawerHeaderUserNicknameStyle"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/img_reputation_star"
@@ -45,10 +48,11 @@
             android:layout_below="@id/txt_user_nickname"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
-            android:layout_marginStart="@dimen/fragment_tiny_padding"
-            android:layout_marginLeft="@dimen/fragment_tiny_padding"
+            android:layout_marginStart="@dimen/fragment_small_padding"
+            android:layout_marginLeft="@dimen/fragment_small_padding"
             android:layout_marginTop="1dp"
-            android:src="@drawable/ic_star_nav_drawer"/>
+            android:src="@drawable/ic_star_nav_drawer"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/txt_user_reputation"
@@ -59,7 +63,8 @@
             android:layout_toRightOf="@id/img_reputation_star"
             android:layout_marginStart="@dimen/fragment_tiny_padding"
             android:layout_marginLeft="@dimen/fragment_tiny_padding"
-            style="@style/NavDrawerHeaderUserReputationStyle"/>
+            style="@style/NavDrawerHeaderUserReputationStyle"
+            android:visibility="gone"/>
 
     </RelativeLayout>
 

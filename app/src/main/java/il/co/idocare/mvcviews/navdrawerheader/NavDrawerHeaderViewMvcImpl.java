@@ -52,6 +52,7 @@ public class NavDrawerHeaderViewMvcImpl
     public void bindUserData(UserItem user) {
 
         if (user != null && user.getId() > 0) {
+            mImgUserPicture.setVisibility(View.VISIBLE);
             mImgReputationStar.setVisibility(View.VISIBLE);
             mTxtUserReputation.setVisibility(View.VISIBLE);
             mTxtUserNickname.setVisibility(View.VISIBLE);
@@ -65,10 +66,10 @@ public class NavDrawerHeaderViewMvcImpl
                 mImgUserPicture.setImageResource(R.drawable.ic_default_user_picture);
             }
         } else {
+            mImgUserPicture.setVisibility(View.GONE);
             mImgReputationStar.setVisibility(View.GONE);
             mTxtUserReputation.setVisibility(View.GONE);
             mTxtUserNickname.setVisibility(View.GONE);
-            mImgUserPicture.setImageResource(R.drawable.ic_default_user_picture);
         }
     }
 

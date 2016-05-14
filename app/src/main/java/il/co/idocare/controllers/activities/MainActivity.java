@@ -338,10 +338,7 @@ public class MainActivity extends AbstractActivity implements
     @Override
     public void onLoadFinished(Loader<UserItem> loader, UserItem data) {
         if (loader.getId() == USER_LOADER) {
-            if (data != null)
-                mMainNavDrawerViewMVC.bindUserData(data);
-            else
-                mLogger.e(TAG, "USER_LOADER returned null data");
+            mMainNavDrawerViewMVC.bindUserData(data);
         }
     }
 
