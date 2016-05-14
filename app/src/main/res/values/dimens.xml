@@ -1,27 +1,18 @@
 <resources>
     <dimen name="drawer_width">230dp</dimen>
-    <dimen name="login_fragment_padding">30dp</dimen>
-    <dimen name="login_fragment_login_btn_padding">40dp</dimen>
     <dimen name="long_button_horizontal_padding">60dp</dimen>
-    <dimen name="frame_contents_padding">10dp</dimen>
-
-    <dimen name="nav_drawer_item_min_height">50dp</dimen>
 
     <dimen name="map_preview_height">110dp</dimen>
     <dimen name="button_corners_radius">3dp</dimen>
     <dimen name="button_stroke_width">1dp</dimen>
 
     <!-- Elements sizes -->
-    <dimen name="request_status_bar_height">26dp</dimen>
-    <dimen name="request_thumbnail_status_bar_height">26dp</dimen>
     <dimen name="divider_width">1dp</dimen>
     <dimen name="request_thumbnail_layout_height">160dp</dimen>
 
     <dimen name="wide_button_height">40dp</dimen>
     <dimen name="wide_button_width">240dp</dimen>
 
-    <dimen name="narrow_button_height">40dp</dimen>
-    <dimen name="narrow_button_width">112dp</dimen>
     <dimen name="two_medium_buttons_horizontal_spacing">16dp</dimen>
 
     <dimen name="button_height">40dp</dimen>
@@ -43,15 +34,10 @@
     <dimen name="login_chooser_margin_3">12dp</dimen>
 
     <dimen name="signup_native_margin_1">70dp</dimen>
-    <dimen name="signup_native_margin_2">30dp</dimen>
 
     <dimen name="nav_drawer_icon_margin_left">10dp</dimen>
     <dimen name="nav_drawer_title_margin_left">50dp</dimen>
-    <dimen name="line_separator_vertical_margin">3dp</dimen>
-    <dimen name="list_pictures_padding_horizontal">30dp</dimen>
-    <dimen name="list_pictures_padding_vertical">10dp</dimen>
     <dimen name="text_view_default_padding">5dp</dimen>
-    <dimen name="text_view_large_padding">8dp</dimen>
 
     <dimen name="home_list_view_padding">@dimen/fragment_default_padding</dimen>
 
@@ -66,12 +52,6 @@
     <dimen name="tiny_text_size">10sp</dimen>
 
     <dimen name="title_text_size">@dimen/largest_text_size</dimen>
-    <dimen name="username_text_size">15sp</dimen>
-    <dimen name="status_text_size">@dimen/default_text_size</dimen>
-    <dimen name="coarse_location_text_size">13sp</dimen>
-    <dimen name="thumbnail_status_text_size">13sp</dimen>
-    <dimen name="thumbnail_coarse_location_text_size">11sp</dimen>
-    <dimen name="comments_text_size">15sp</dimen>
 
     <dimen name="button_text_size">13sp</dimen>
     <dimen name="edit_text_text_size">13sp</dimen>
@@ -80,14 +60,6 @@
 
     <!-- Picture sizes -->
     <dimen name="user_small_picture_size">35dp</dimen>
-    <dimen name="request_picture_width">90dp</dimen>
-    <dimen name="request_picture_height">67dp</dimen>
-    <dimen name="list_pictures_height">150dp</dimen>
-    <dimen name="reputation_star_picture_size">35dp</dimen>
-    <dimen name="small_reputation_star_picture_size">10dp</dimen>
-    <dimen name="thumbnail_picture_height">70dp</dimen>
-    <dimen name="thumbnail_picture_width">120dp</dimen>
-    <dimen name="vote_image_button_size">25dp</dimen>
     <dimen name="signup_native_picture_size">130dp</dimen>
 
     <!-- Facebook login button related stuff (in order to change its shape)-->

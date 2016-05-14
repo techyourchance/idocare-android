@@ -2,15 +2,11 @@
 <resources>
 
     <string name="app_name">IDoCare</string>
-    <string name="menu_add_new_request_title">Add new request</string>
-    <string name="image_request_thumbnail_content_description">Cleanup request thumbnail</string>
     <string name="img_login_accessibility">IDoCare logo</string>
-    <string name="img_grass_accessibility">Grass picture</string>
     <string name="img_request_thumbnail_accessibility">Request thumbnail picture</string>
     <string name="img_user_picture_accessibility">User picture</string>
     <string name="btn_vote_up_accessibility">Vote up</string>
     <string name="btn_vote_down_accessibility">Vote down</string>
-    <string name="img_picture_accessibility">Picture</string>
     <string name="home_fragment_title">Requests list</string>
     <string name="new_request_fragment_title">New request</string>
     <string name="close_request_fragment_title">Close request</string>
@@ -54,11 +50,9 @@
     <string name="btn_login">Log in</string>
     <string name="btn_login_facebook">Continue with Facebook</string>
     <string name="btn_create_new_request">Create new request</string>
-    <string name="btn_switch_to_new_request_fragment">Create new request</string>
     <string name="btn_pickup_request">Assign to me</string>
     <string name="btn_switch_to_close_request_fragment">Complete request</string>
     <string name="btn_close_request">I DID IT!</string>
-    <string name="btn_take_picture">Add photo</string>
     <string name="btn_add_picture">Add a picture</string>
 
     <string name="btn_upload_existing">Upload existing</string>
@@ -67,7 +61,6 @@
     <!--
     Hints for EditText's
     -->
-    <string name="hint_comment">Comment</string>
     <string name="hint_leave_comment">Leave a comment</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
@@ -92,9 +85,6 @@
 
     <string name="msg_ask_to_log_in_before_vote">In order to vote for reputation you need
         to be logged in. Would you like to log in now?</string>
-
-    <string name="msg_login_failed">Login failed</string>
-    <string name="msg_signup_failed">Signup failed</string>
 
     <string name="msg_illegal_email">provide valid email address</string>
     <string name="msg_password_must_not_contain_spaces">password must not contain spaces</string>

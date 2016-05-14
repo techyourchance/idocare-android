@@ -53,7 +53,6 @@
         android:gravity="center">
 
         <ImageView
-            android:id="@+id/img_user_reputation_star"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_star_tiny_green"/>

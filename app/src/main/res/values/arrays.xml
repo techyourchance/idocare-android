@@ -12,27 +12,6 @@
     <string name="nav_drawer_entry_login">Log in</string>
 
 
-    <string-array name="nav_drawer_entries">
-        <item>@string/nav_drawer_entry_my</item>
-        <item>@string/nav_drawer_entry_new_request</item>
-        <item>@string/nav_drawer_entry_map</item>
-        <item>@string/nav_drawer_entry_articles</item>
-        <item>@string/nav_drawer_entry_home</item>
-        <item>@string/nav_drawer_entry_settings</item>
-        <item>@string/nav_drawer_entry_login</item>
-        <item>@string/nav_drawer_entry_logout</item>
-    </string-array>
-
-
     <!-- Nav Drawer List Item Icons -->
     <!-- Keep them in order as the titles are in -->
-    <array name="nav_drawer_icons">
-        <item>@drawable/ic_drawer_my</item>
-        <item>@drawable/ic_drawer_add_new_request</item>
-        <item>@drawable/ic_drawer_location</item>
-        <item>@drawable/ic_drawer_articles</item>
-        <item>@drawable/ic_drawer_home</item>
-        <item>@drawable/ic_drawer_settings</item>
-        <item>0</item>
-    </array>
 </resources>
