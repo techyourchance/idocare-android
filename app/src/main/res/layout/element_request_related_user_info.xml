@@ -3,11 +3,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingLeft="@dimen/fragment_default_padding"
-    android:paddingStart="@dimen/fragment_default_padding"
-    android:paddingRight="@dimen/fragment_default_padding"
-    android:paddingEnd="@dimen/fragment_default_padding">
+    android:layout_height="wrap_content">
 
     <com.makeramen.roundedimageview.RoundedImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"

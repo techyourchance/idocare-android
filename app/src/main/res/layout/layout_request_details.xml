@@ -60,43 +60,10 @@
             android:layout_height="@dimen/fragment_small_padding" />
 
 
-        <TextView
-            android:id="@+id/txt_location_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/fragment_default_padding"
-            android:paddingStart="@dimen/fragment_default_padding"
-            android:paddingRight="@dimen/fragment_default_padding"
-            android:paddingEnd="@dimen/fragment_default_padding"
-            android:text="@string/txt_location_title"
-            android:textStyle="bold"/>
-
-        <TextView
-        android:id="@+id/txt_request_fine_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/fragment_default_padding"
-        android:paddingStart="@dimen/fragment_default_padding"
-        android:paddingRight="@dimen/fragment_default_padding"
-        android:paddingEnd="@dimen/fragment_default_padding"
-        android:text="TODO Location"/>
-
-        <Space
+        <FrameLayout
+            android:id="@+id/frame_location_info"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/fragment_small_padding" />
-
-        <com.google.android.gms.maps.MapView
-            xmlns:map="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/map_preview"
-            android:layout_width="fill_parent"
-            android:layout_height="@dimen/map_preview_height"
-            android:layout_marginLeft="@dimen/fragment_default_padding"
-            android:layout_marginStart="@dimen/fragment_default_padding"
-            android:layout_marginRight="@dimen/fragment_default_padding"
-            android:layout_marginEnd="@dimen/fragment_default_padding"
-            android:padding="0dp"
-            map:liteMode="true"
-            map:cameraZoom="@integer/map_preview_lite_default_zoom"/>
+            android:layout_height="@dimen/map_preview_height"/>
 
         <Space
             android:layout_width="match_parent"
@@ -115,7 +82,10 @@
             android:id="@+id/frame_user_info_bottom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-
+        
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fragment_tiny_padding" />
 
         <ImageView
             android:id="@+id/imgBottomPictures"

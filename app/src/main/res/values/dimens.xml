@@ -7,7 +7,7 @@
 
     <dimen name="nav_drawer_item_min_height">50dp</dimen>
 
-    <dimen name="map_preview_height">100dp</dimen>
+    <dimen name="map_preview_height">110dp</dimen>
     <dimen name="button_corners_radius">3dp</dimen>
     <dimen name="button_stroke_width">1dp</dimen>
 

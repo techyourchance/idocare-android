@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -28,6 +27,8 @@ import il.co.idocare.R;
 import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.mvcviews.AbstractViewMVC;
+import il.co.idocare.mvcviews.location.LocationInfoViewMvcImpl;
+import il.co.idocare.mvcviews.location.LocationInfoViewMvc;
 import il.co.idocare.mvcviews.userinfo.RequestRelatedUserInfoViewMvc;
 import il.co.idocare.pictures.ImageViewPictureLoader;
 
@@ -46,21 +47,20 @@ public class RequestDetailsViewMvcImpl
 
     private FrameLayout mFrameUserInfoTop;
     private FrameLayout mFrameUserInfoBottom;
+    private FrameLayout mFrameLocationInfo;
+
     private RequestRelatedUserInfoViewMvc mUserInfoTopViewMvc;
     private RequestRelatedUserInfoViewMvc mUserInfoBottomViewMvc;
+
+    private LocationInfoViewMvc mLocationInfoViewMvc;
 
     private RequestItem mRequestItem;
 
     private TextView mTxtStatus;
-    private TextView mTxtLocationTitle;
-    private TextView mTxtFineLocation;
     private TextView mTxtTopUserTitle;
     private ImageView mImgTopPictures;
     private TextView mTxtBottomUserTitle;
     private ImageView mImgBottomPictures;
-
-
-    private MapView mMapPreview;
 
     private Button mBtnPickUpRequest;
     private Button mBtnCloseRequest;
@@ -74,6 +74,14 @@ public class RequestDetailsViewMvcImpl
         mContext = inflater.getContext();
         mResources = mContext.getResources();
 
+        initialize();
+        registerListeners();
+    }
+
+    private void initialize() {
+
+        // "Location info" MVC sub-view
+        mLocationInfoViewMvc = new LocationInfoViewMvcImpl(LayoutInflater.from(mContext), null);
 
         // "TOP" MVC sub-view
         mUserInfoTopViewMvc = new RequestRelatedUserInfoViewMvc(
@@ -81,42 +89,14 @@ public class RequestDetailsViewMvcImpl
                 null,
                 mImageViewPictureLoader);
 
-        mUserInfoTopViewMvc.registerListener(new RequestRelatedUserInfoViewMvc.RequestRelatedUserInfoViewMvcListener() {
-            @Override
-            public void onVoteUpClicked() {
-                mPresentationStrategy.onTopUserVoteUpClicked();
-            }
-
-            @Override
-            public void onVoteDownClicked() {
-                mPresentationStrategy.onTopUserVoteDownClicked();
-            }
-        });
-
-
         // "BOTTOM" MVC sub-view
         mUserInfoBottomViewMvc = new RequestRelatedUserInfoViewMvc(
                 LayoutInflater.from(mContext),
                 null,
                 mImageViewPictureLoader);
-        
-        mUserInfoBottomViewMvc.registerListener(new RequestRelatedUserInfoViewMvc.RequestRelatedUserInfoViewMvcListener() {
-            @Override
-            public void onVoteUpClicked() {
-                mPresentationStrategy.onBottomUserVoteUpClicked();
-            }
 
-            @Override
-            public void onVoteDownClicked() {
-                mPresentationStrategy.onBottomUserVoteDownClicked();
-            }
-        });
-
-        initialize();
-    }
-
-    @SuppressLint("CutPasteId")
-    private void initialize() {
+        mFrameLocationInfo = (FrameLayout) getRootView().findViewById(R.id.frame_location_info);
+        mFrameLocationInfo.addView(mLocationInfoViewMvc.getRootView());
 
         mFrameUserInfoTop = (FrameLayout) getRootView().findViewById(R.id.frame_user_info_top); 
         mFrameUserInfoTop.addView(mUserInfoTopViewMvc.getRootView());
@@ -132,22 +112,51 @@ public class RequestDetailsViewMvcImpl
         mFrameUserInfoTop = (FrameLayout) getRootView().findViewById(R.id.frame_user_info_top);
         mFrameUserInfoBottom = (FrameLayout) getRootView().findViewById(R.id.frame_user_info_bottom);
 
-
         // "Top pictures" views
         mImgTopPictures = (ImageView) getRootView().findViewById(R.id.imgTopPictures);
 
-        // Fine location view
-        mTxtFineLocation = (TextView) getRootView().findViewById(R.id.txt_request_fine_location);
-        mTxtLocationTitle = (TextView) getRootView().findViewById(R.id.txt_location_title);
-
-        
         // "Closed pictures" views
         mImgBottomPictures = (ImageView) getRootView().findViewById(R.id.imgBottomPictures);
 
-        // The map
-        mMapPreview = (MapView) getRootView().findViewById(R.id.map_preview);
-
         mBtnPickUpRequest = (Button) getRootView().findViewById(R.id.btn_pickup_request);
+
+        mBtnCloseRequest = (Button) getRootView().findViewById(R.id.btn_close_request);
+    }
+
+
+    private void registerListeners() {
+
+        mLocationInfoViewMvc.registerListener(new LocationInfoViewMvc.LocationInfoViewMvcListener() {
+            @Override
+            public void onMapClicked() {
+                // TODO: show full screen map
+            }
+        });
+
+        mUserInfoTopViewMvc.registerListener(new RequestRelatedUserInfoViewMvc.RequestRelatedUserInfoViewMvcListener() {
+            @Override
+            public void onVoteUpClicked() {
+                mPresentationStrategy.onTopUserVoteUpClicked();
+            }
+
+            @Override
+            public void onVoteDownClicked() {
+                mPresentationStrategy.onTopUserVoteDownClicked();
+            }
+        });
+
+        mUserInfoBottomViewMvc.registerListener(new RequestRelatedUserInfoViewMvc.RequestRelatedUserInfoViewMvcListener() {
+            @Override
+            public void onVoteUpClicked() {
+                mPresentationStrategy.onBottomUserVoteUpClicked();
+            }
+
+            @Override
+            public void onVoteDownClicked() {
+                mPresentationStrategy.onBottomUserVoteDownClicked();
+            }
+        });
+
         mBtnPickUpRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -156,7 +165,7 @@ public class RequestDetailsViewMvcImpl
                 }
             }
         });
-        mBtnCloseRequest = (Button) getRootView().findViewById(R.id.btn_close_request);
+
         mBtnCloseRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -165,7 +174,6 @@ public class RequestDetailsViewMvcImpl
                 }
             }
         });
-
     }
 
 
@@ -298,33 +306,7 @@ public class RequestDetailsViewMvcImpl
                         R.drawable.ic_default_user_picture);
             }
 
-            if (mRequestItem.getLocation() == null || mRequestItem.getLocation().length() == 0) {
-                mTxtLocationTitle.setVisibility(View.GONE);
-                mTxtFineLocation.setVisibility(View.GONE);
-            } else {
-                mTxtLocationTitle.setVisibility(View.VISIBLE);
-                mTxtFineLocation.setVisibility(View.VISIBLE);
-                mTxtFineLocation.setText(mRequestItem.getLocation());
-            }
-
-            if (mRequestItem.isClosed()) {
-                // Don't show the map for closed requests
-                mMapPreview.setVisibility(View.GONE);
-                return;
-            }
-
-            GoogleMap map = mMapPreview.getMap();
-
-            MapsInitializer.initialize(mContext);
-            map.setMyLocationEnabled(false); // Don't show my location
-            map.setBuildingsEnabled(false); // Don't show 3D buildings
-            map.getUiSettings().setMapToolbarEnabled(false); // No toolbar needed in a lite preview
-
-            LatLng location = new LatLng(mRequestItem.getLatitude(), mRequestItem.getLongitude());
-            // Center the camera at request location
-            map.moveCamera(CameraUpdateFactory.newLatLng(location));
-            // Put a marker
-            map.addMarker(new MarkerOptions().position(location));
+            bindLocationFields(request);
 
             if (showPickUpRequestButton()) {
                 mBtnPickUpRequest.setVisibility(View.VISIBLE);
@@ -333,6 +315,13 @@ public class RequestDetailsViewMvcImpl
             }
 
             afterBindRequestItem();
+        }
+
+        private void bindLocationFields(RequestItem request) {
+            mLocationInfoViewMvc.setLocationString(request.getLocation());
+
+            mLocationInfoViewMvc.setLocation(
+                    mRequestItem.getLatitude(), mRequestItem.getLongitude());
         }
 
 

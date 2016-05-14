@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <integer name="map_preview_lite_default_zoom">18</integer>
+    <integer name="map_preview_lite_default_zoom">16</integer>
 
 </resources>
