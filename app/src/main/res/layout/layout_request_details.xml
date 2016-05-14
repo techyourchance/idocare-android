@@ -37,12 +37,16 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="@dimen/fragment_small_padding" />
+            android:layout_height="@dimen/fragment_tiny_padding" />
 
         <TextView
             android:id="@+id/txt_top_user_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fragment_tiny_padding" />
 
 
         <FrameLayout
@@ -96,13 +100,16 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="@dimen/fragment_small_padding" />
+            android:layout_height="@dimen/fragment_tiny_padding" />
 
         <TextView
             android:id="@+id/txt_bottom_user_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fragment_tiny_padding" />
 
         <FrameLayout
             android:id="@+id/frame_user_info_bottom"

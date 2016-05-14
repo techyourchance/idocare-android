@@ -73,7 +73,7 @@
     </style>
 
 
-    <style name="RequestLocatioTextViewStyle" parent="DefaultTextViewStyle">
+    <style name="RequestLocationTextViewStyle" parent="DefaultTextViewStyle">
         <item name="android:textColor">@color/background</item>
         <item name="android:gravity">center</item>
         <item name="android:textSize">@dimen/large_text_size</item>

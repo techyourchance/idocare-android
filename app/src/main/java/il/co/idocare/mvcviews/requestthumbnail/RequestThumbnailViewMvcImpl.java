@@ -99,14 +99,14 @@ public class RequestThumbnailViewMvcImpl
      */
     @Override
     public void bindPickedUpByUser(UserItem user) {
+        // TODO: differentiate between request picked up by me and by other users
         if (mRequestItem.isPickedUp() ) {
             if (mRequestItem.getStatus() == RequestItem.RequestStatus.PICKED_UP_BY_OTHER) {
                 mTxtRequestStatus.setText(
                         getRootView().getResources().getString(R.string.txt_picked_up_request_title));
             } else {
                 mTxtRequestStatus.setText(
-                        getRootView().getResources().getString(R.string.txt_picked_up_request_title) + " " +
-                                getRootView().getResources().getString(R.string.txt_by_me));
+                        getRootView().getResources().getString(R.string.txt_picked_up_request_title));
             }
         }
     }

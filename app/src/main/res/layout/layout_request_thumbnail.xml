@@ -37,7 +37,7 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_above="@+id/txt_created_by"
-            style="@style/RequestLocatioTextViewStyle"
+            style="@style/RequestLocationTextViewStyle"
             android:text="Location"/>
 
         <TextView

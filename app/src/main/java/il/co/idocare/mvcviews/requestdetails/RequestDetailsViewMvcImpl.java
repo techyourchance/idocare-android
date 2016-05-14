@@ -84,16 +84,12 @@ public class RequestDetailsViewMvcImpl
         mUserInfoTopViewMvc.registerListener(new RequestRelatedUserInfoViewMvc.RequestRelatedUserInfoViewMvcListener() {
             @Override
             public void onVoteUpClicked() {
-                for (RequestDetailsViewMvcListener listener : getListeners()) {
-                    listener.onCreatedVoteUpClicked();
-                }
+                mPresentationStrategy.onTopUserVoteUpClicked();
             }
 
             @Override
             public void onVoteDownClicked() {
-                for (RequestDetailsViewMvcListener listener : getListeners()) {
-                    listener.onCreatedVoteDownClicked();
-                }
+                mPresentationStrategy.onTopUserVoteDownClicked();
             }
         });
 
@@ -107,16 +103,12 @@ public class RequestDetailsViewMvcImpl
         mUserInfoBottomViewMvc.registerListener(new RequestRelatedUserInfoViewMvc.RequestRelatedUserInfoViewMvcListener() {
             @Override
             public void onVoteUpClicked() {
-                for (RequestDetailsViewMvcListener listener : getListeners()) {
-                    listener.onClosedVoteUpClicked();
-                }
+                mPresentationStrategy.onBottomUserVoteUpClicked();
             }
 
             @Override
             public void onVoteDownClicked() {
-                for (RequestDetailsViewMvcListener listener : getListeners()) {
-                    listener.onClosedVoteDownClicked();
-                }
+                mPresentationStrategy.onBottomUserVoteDownClicked();
             }
         });
 
@@ -369,6 +361,12 @@ public class RequestDetailsViewMvcImpl
 
         protected abstract boolean showPickUpRequestButton();
         protected abstract boolean showCloseRequestButton();
+
+        protected abstract void onTopUserVoteUpClicked();
+        protected abstract void onTopUserVoteDownClicked();
+
+        protected abstract void onBottomUserVoteUpClicked();
+        protected abstract void onBottomUserVoteDownClicked();
     }
 
     private class NewPresentationStrategy extends PresentationStrategy {
@@ -466,6 +464,30 @@ public class RequestDetailsViewMvcImpl
         @Override
         protected boolean showCloseRequestButton() {
             return false;
+        }
+
+        @Override
+        protected void onTopUserVoteUpClicked() {
+            for (RequestDetailsViewMvcListener listener : getListeners()) {
+                listener.onCreatedVoteUpClicked();
+            }
+        }
+
+        @Override
+        protected void onTopUserVoteDownClicked() {
+            for (RequestDetailsViewMvcListener listener : getListeners()) {
+                listener.onCreatedVoteDownClicked();
+            }
+        }
+
+        @Override
+        protected void onBottomUserVoteUpClicked() {
+           throw new RuntimeException("should not show bottom votes in new request");
+        }
+
+        @Override
+        protected void onBottomUserVoteDownClicked() {
+            throw new RuntimeException("should not show bottom votes in new request");
         }
     }
 
@@ -566,6 +588,31 @@ public class RequestDetailsViewMvcImpl
         protected boolean showCloseRequestButton() {
             return getRequestItem().getStatus() == RequestItem.RequestStatus.PICKED_UP_BY_ME;
         }
+
+        @Override
+        protected void onTopUserVoteUpClicked() {
+            throw new RuntimeException("should not show top votes in picked up request");
+        }
+
+        @Override
+        protected void onTopUserVoteDownClicked() {
+            throw new RuntimeException("should not show top votes in picked up request");
+        }
+
+        @Override
+        protected void onBottomUserVoteUpClicked() {
+            for (RequestDetailsViewMvcListener listener : getListeners()) {
+                listener.onCreatedVoteUpClicked();
+            }
+        }
+
+        @Override
+        protected void onBottomUserVoteDownClicked() {
+            for (RequestDetailsViewMvcListener listener : getListeners()) {
+                listener.onCreatedVoteDownClicked();
+            }
+        }
+
     }
 
     private class ClosedPresentationStrategy extends PresentationStrategy {
@@ -665,5 +712,34 @@ public class RequestDetailsViewMvcImpl
         protected boolean showCloseRequestButton() {
             return false;
         }
+
+        @Override
+        protected void onTopUserVoteUpClicked() {
+            for (RequestDetailsViewMvcListener listener : getListeners()) {
+                listener.onClosedVoteUpClicked();
+            }
+        }
+
+        @Override
+        protected void onTopUserVoteDownClicked() {
+            for (RequestDetailsViewMvcListener listener : getListeners()) {
+                listener.onClosedVoteDownClicked();
+            }
+        }
+
+        @Override
+        protected void onBottomUserVoteUpClicked() {
+            for (RequestDetailsViewMvcListener listener : getListeners()) {
+                listener.onCreatedVoteUpClicked();
+            }
+        }
+
+        @Override
+        protected void onBottomUserVoteDownClicked() {
+            for (RequestDetailsViewMvcListener listener : getListeners()) {
+                listener.onCreatedVoteDownClicked();
+            }
+        }
     }
+
 }
