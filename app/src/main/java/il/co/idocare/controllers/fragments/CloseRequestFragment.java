@@ -30,18 +30,19 @@ import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.eventbusevents.LocationEvents;
-import il.co.idocare.mvcviews.closerequest.CloseRequestViewMVC;
+import il.co.idocare.mvcviews.closerequest.CloseRequestViewMvc;
+import il.co.idocare.mvcviews.closerequest.CloseRequestViewMvcImpl;
 import il.co.idocare.pictures.CameraAdapter;
 import il.co.idocare.utils.UtilMethods;
 
 
-public class CloseRequestFragment extends AbstractFragment {
+public class CloseRequestFragment extends AbstractFragment implements CloseRequestViewMvc.CloseRequestViewMvcListener {
 
     private final static String TAG = CloseRequestFragment.class.getSimpleName();
 
 
 
-    private CloseRequestViewMVC mCloseRequestViewMVC;
+    private CloseRequestViewMvc mCloseRequestViewMvc;
 
     @Inject LoginStateManager mLoginStateManager;
 
@@ -54,7 +55,8 @@ public class CloseRequestFragment extends AbstractFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mCloseRequestViewMVC = new CloseRequestViewMVC(inflater, container);
+        mCloseRequestViewMvc = new CloseRequestViewMvcImpl(inflater, container);
+        mCloseRequestViewMvc.registerListener(this);
 
         getControllerComponent().inject(this);
 
@@ -74,7 +76,7 @@ public class CloseRequestFragment extends AbstractFragment {
 
         setActionBarTitle(getTitle());
 
-        return mCloseRequestViewMVC.getRootView();
+        return mCloseRequestViewMvc.getRootView();
     }
 
 
@@ -125,15 +127,6 @@ public class CloseRequestFragment extends AbstractFragment {
     //
     // EventBus events handling
 
-    @Subscribe
-    public void onEvent(CloseRequestViewMVC.TakePictureButtonClickEvent event) {
-        takePictureWithCamera();
-    }
-
-    @Subscribe
-    public void onEvent(CloseRequestViewMVC.CloseRequestButtonClickEvent event) {
-        closeRequest();
-    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginStateManager.UserLoggedOutEvent event) {
@@ -144,6 +137,28 @@ public class CloseRequestFragment extends AbstractFragment {
     // End of EventBus events handling
     //
     // ---------------------------------------------------------------------------------------------
+
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Callbacks from MVC view(s)
+
+
+    @Override
+    public void onCloseRequestClicked() {
+        closeRequest();
+    }
+
+    @Override
+    public void onTakePictureClicked() {
+        takePictureWithCamera();
+    }
+
+    // End callbacks from MVC view(s)
+    //
+    // ---------------------------------------------------------------------------------------------
+
+
 
 
     @Override
@@ -188,7 +203,7 @@ public class CloseRequestFragment extends AbstractFragment {
             mCameraPicturesPaths.remove(position);
         }
         mCameraPicturesPaths.add(position, cameraPicturePath);
-        mCloseRequestViewMVC.showPicture(position, cameraPicturePath);
+        mCloseRequestViewMvc.showPicture(position, cameraPicturePath);
     }
 
 
@@ -221,9 +236,9 @@ public class CloseRequestFragment extends AbstractFragment {
         }
         String closedPictures = sb.toString();
 
-        Bundle bundleCloseRequest = mCloseRequestViewMVC.getViewState();
+        Bundle bundleCloseRequest = mCloseRequestViewMvc.getViewState();
         String closedComment =
-                bundleCloseRequest.getString(CloseRequestViewMVC.KEY_CLOSED_COMMENT);
+                bundleCloseRequest.getString(CloseRequestViewMvc.KEY_CLOSED_COMMENT);
 
         if (!validRequestParameters(closedBy, closedPictures)) {
             Log.d(TAG, "aborting request close due to invalid parameters");

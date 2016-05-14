@@ -161,7 +161,7 @@ public class NewRequestFragment extends AbstractFragment implements NewRequestVi
     // Callbacks from MVC view(s)
 
     @Override
-    public void createRequestClicked() {
+    public void onCreateRequestClicked() {
         createRequest();
     }
 

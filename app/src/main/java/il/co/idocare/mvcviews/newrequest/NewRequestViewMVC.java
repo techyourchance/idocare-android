@@ -14,7 +14,7 @@ public interface NewRequestViewMvc
         /**
          * Will be invoked when the user clicks on "create request" button
          */
-        void createRequestClicked();
+        void onCreateRequestClicked();
 
         /**
          * Will be invoked when the user clicks on "take picture" button

@@ -1,17 +1,12 @@
 package il.co.idocare.mvcviews.newrequest;
 
 import android.os.Bundle;
-import android.support.v7.widget.LinearSmoothScroller;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
@@ -55,7 +50,7 @@ public class NewRequestViewMvcImpl
             @Override
             public void onClick(View view) {
                 for (NewRequestViewMvcListener listener : getListeners()) {
-                    listener.createRequestClicked();
+                    listener.onCreateRequestClicked();
                 }
             }
         });
