@@ -8,33 +8,32 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageView;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.controllers.listadapters.NavigationDrawerListAdapter;
 import il.co.idocare.datamodels.functional.NavigationDrawerEntry;
 import il.co.idocare.datamodels.functional.UserItem;
+import il.co.idocare.mvcviews.AbstractViewMVC;
 import il.co.idocare.mvcviews.ViewMVC;
+import il.co.idocare.mvcviews.navdrawerheader.NavDrawerHeaderViewMvc;
+import il.co.idocare.mvcviews.navdrawerheader.NavDrawerHeaderViewMvcImpl;
 
 /**
  * This MVC view represents application's main screen which contains NavigationDrawer and a single
  * FrameLayout in which app's screens will be presented
  */
-public class MainNavDrawerViewMVC implements ViewMVC {
+public class MainNavDrawerViewMVC
+        extends AbstractViewMVC<MainNavDrawerViewMVC.MainNavDrawerViewMVCListener>
+        implements ViewMVC {
 
 
 
@@ -59,7 +58,6 @@ public class MainNavDrawerViewMVC implements ViewMVC {
 
     @NonNull
     private final AppCompatActivity mActivity;
-    private View mRootView;
 
     private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
@@ -69,27 +67,37 @@ public class MainNavDrawerViewMVC implements ViewMVC {
 
     private MainNavDrawerViewMVCListener mListener;
 
-    private ImageView mImgUserPicture;
-
+    private FrameLayout mFrameHeader;
+    private NavDrawerHeaderViewMvc mNavDrawerHeaderViewMvc;
 
     public MainNavDrawerViewMVC(@NonNull LayoutInflater inflater,
                                 @Nullable ViewGroup container,
                                 @NonNull AppCompatActivity activity) {
         mActivity = activity;
-        mRootView = inflater.inflate(R.layout.layout_main_nav_drawer, container);
+        setRootView(inflater.inflate(R.layout.layout_main_nav_drawer, container));
+
 
         init();
     }
 
 
     private void init() {
-        mImgUserPicture = (ImageView) getRootView().findViewById(R.id.img_user_picture);
         initToolbar();
         initNavDrawer();
+        initHeader();
+    }
+
+    private void initHeader() {
+        mFrameHeader = (FrameLayout) getRootView().findViewById(R.id.frame_nav_drawer_header);
+
+        mNavDrawerHeaderViewMvc = new NavDrawerHeaderViewMvcImpl(
+                LayoutInflater.from(getRootView().getContext()), null);
+        mFrameHeader.addView(mNavDrawerHeaderViewMvc.getRootView());
+
     }
 
     private void initToolbar() {
-        mToolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
+        mToolbar = (Toolbar) getRootView().findViewById(R.id.toolbar);
         mActivity.setSupportActionBar(mToolbar);
     }
 
@@ -98,7 +106,7 @@ public class MainNavDrawerViewMVC implements ViewMVC {
      */
     private void initNavDrawer() {
 
-        mDrawerLayout = (DrawerLayout) mRootView.findViewById(R.id.drawer_layout);
+        mDrawerLayout = (DrawerLayout) getRootView().findViewById(R.id.drawer_layout);
 
         mActionBarDrawerToggle = new ActionBarDrawerToggle(
                 mActivity,
@@ -145,7 +153,7 @@ public class MainNavDrawerViewMVC implements ViewMVC {
         final ListView drawerList = (ListView) mDrawerLayout.findViewById(R.id.drawer_list);
 
         // Set the adapter for the list view
-        mNavDrawerAdapter = new NavigationDrawerListAdapter(mRootView.getContext(), 0);
+        mNavDrawerAdapter = new NavigationDrawerListAdapter(getRootView().getContext(), 0);
         drawerList.setAdapter(mNavDrawerAdapter);
 
         drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -156,7 +164,7 @@ public class MainNavDrawerViewMVC implements ViewMVC {
                 drawerList.setItemChecked(position, true);
                 closeDrawer();
 
-                String chosenEntry = mRootView.getResources().getString(
+                String chosenEntry = getRootView().getResources().getString(
                         mNavDrawerAdapter.getItem(position).getTitleResId());
 
                 if (mListener != null) mListener.onDrawerEntryChosen(chosenEntry);
@@ -170,27 +178,21 @@ public class MainNavDrawerViewMVC implements ViewMVC {
     public void refreshDrawer(boolean isUserLoggedIn) {
 
         List<NavigationDrawerEntry> entries = new ArrayList<>(8);
-        entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_my, R.drawable.ic_drawer_my));
+        entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_my, R.drawable.ic_drawer_assigned_to_me));
         entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_new_request, R.drawable.ic_drawer_add_new_request));
         entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_map, R.drawable.ic_drawer_location));
-        entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_articles, R.drawable.ic_drawer_articles));
-        entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_home, R.drawable.ic_drawer_home));
+        entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_requests_list, R.drawable.ic_drawer_requests_list));
         entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_settings, R.drawable.ic_drawer_settings));
 
         // No need for both login/logout options at once
         if (isUserLoggedIn)
-            entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_logout, 0));
+            entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_logout, R.drawable.ic_drawer_logout));
         else
             entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_login, 0));
 
         mNavDrawerAdapter.clear();
         mNavDrawerAdapter.addAll(entries);
         mNavDrawerAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public View getRootView() {
-        return mRootView;
     }
 
     @Override
@@ -204,25 +206,7 @@ public class MainNavDrawerViewMVC implements ViewMVC {
 
 
     public void bindUserData(UserItem user) {
-
-        if (!TextUtils.isEmpty(user.getPictureUrl())) {
-            String universalImageLoaderUri = user.getPictureUrl();
-            try {
-                new URL(universalImageLoaderUri);
-            } catch (MalformedURLException e) {
-                // The exception means that the current Uri is not a valid URL - it is local
-                // uri and we need to adjust it to the scheme recognized by UIL
-                universalImageLoaderUri = "file://" + universalImageLoaderUri;
-            }
-
-            ImageLoader.getInstance().displayImage(
-                    universalImageLoaderUri,
-                    mImgUserPicture,
-                    Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
-        } else {
-            mImgUserPicture.setImageResource(R.drawable.ic_default_user_picture);
-        }
-
+        mNavDrawerHeaderViewMvc.bindUserData(user);
     }
 
     /**

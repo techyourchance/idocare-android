@@ -103,6 +103,17 @@
         <item name="android:textSize">@dimen/smallest_text_size</item>
     </style>
 
+
+    <style name="NavDrawerHeaderUserNicknameStyle" parent="DefaultTextViewStyle">
+        <item name="android:textColor">@color/background</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
+    </style>
+
+    <style name="NavDrawerHeaderUserReputationStyle" parent="DefaultTextViewStyle">
+        <item name="android:textColor">@color/background</item>
+        <item name="android:textSize">@dimen/smallest_text_size</item>
+    </style>
+
     <!-- TODO: the below styles should be removed/replaced - they belong to old design -->
 
     <style name="NicknameTextViewStyle" parent="DefaultTextViewStyle">

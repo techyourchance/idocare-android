@@ -208,7 +208,7 @@ public class MainActivity extends AbstractActivity implements
 
     @Override
     public void onDrawerEntryChosen(String chosenEntry) {
-        if (chosenEntry.equals(getString(R.string.nav_drawer_entry_home))) {
+        if (chosenEntry.equals(getString(R.string.nav_drawer_entry_requests_list))) {
             replaceFragment(HomeFragment.class, false, true, null);
         }
         else if (chosenEntry.equals(getString(R.string.nav_drawer_entry_new_request))) {

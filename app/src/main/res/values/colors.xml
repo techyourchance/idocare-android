@@ -42,6 +42,10 @@
     <color name="picked_up_request_color">@color/yellow</color>
     <color name="closed_request_color">@color/green</color>
 
+    <color name="nav_drawer_bg">@color/background</color>
+    <color name="nav_drawer_header_bg">@color/green</color>
+    <color name="nav_drawer_line_separator">@color/gray_light_3</color>
+
 
 
     <!-- TODO: these entries should be removed/replaced - they belong to old design -->
@@ -57,9 +61,6 @@
     <color name="fragment_bg_dark">@color/gray_light_2</color>
     <color name="fragment_bg_light">@color/gray_light_3</color>
 
-
-    <color name="nav_drawer_bg">@color/gray_light</color>
-    <color name="nav_drawer_line_separator">@color/gray_light_3</color>
 
 
 </resources>

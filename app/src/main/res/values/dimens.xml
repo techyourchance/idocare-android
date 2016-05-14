@@ -60,7 +60,7 @@
 
     <!-- Picture sizes -->
     <dimen name="user_small_picture_size">35dp</dimen>
-    <dimen name="signup_native_picture_size">130dp</dimen>
+    <dimen name="nav_drawer_user_picture_size">70dp</dimen>
 
     <!-- Facebook login button related stuff (in order to change its shape)-->
     <dimen name="fb_margin_override_top">13dp</dimen>
@@ -72,6 +72,7 @@
     <dimen name="vote_panel_spacing">5dp</dimen>
     <dimen name="login_chooser_screen_margin_bottom">20dp</dimen>
     <dimen name="request_details_picture_height">170dp</dimen>
+    <dimen name="nav_drawer_margin">@dimen/fragment_default_padding</dimen>
 
 
     <!-- This is the initial offset that the "sliding buttons" will be slided for -->
