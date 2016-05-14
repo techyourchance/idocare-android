@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/border_background"
-    android:padding="@dimen/divider_width">
+    android:background="@color/background">
 
-
-
-    <!-- Include camera control layout -->
-    <include layout="@layout/element_camera_control_linear" />
-
+    <FrameLayout
+        android:id="@+id/frame_camera_control"
+        android:layout_width="281dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/fragment_large_padding"/>
 
     <EditText
         android:id="@+id/edt_created_comment"
         android:layout_width="281dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/frame_camera_control"
         android:inputType="textMultiLine"
-        android:maxLines="3"
+        android:maxLines="4"
         android:hint="@string/hint_leave_comment"/>
 
     <Button
@@ -28,9 +29,10 @@
         android:layout_gravity="center_horizontal"
         android:layout_width="@dimen/wide_button_width"
         android:layout_height="@dimen/wide_button_height"
-        android:layout_marginTop="@dimen/fragment_large_padding"
-        android:background="@color/new_request_color"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="25dp"
         android:text="@string/btn_create_new_request"
-        style="@style/BoldTextStyleForButton"/>
+        style="@style/AppTheme.Widget.RedButton"/>
 
-</LinearLayout>
+</RelativeLayout>

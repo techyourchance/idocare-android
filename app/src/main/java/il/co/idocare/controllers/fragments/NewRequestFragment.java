@@ -166,7 +166,7 @@ public class NewRequestFragment extends AbstractFragment implements NewRequestVi
     }
 
     @Override
-    public void takePictureClicked() {
+    public void onTakePictureClicked() {
         takePictureWithCamera();
     }
 

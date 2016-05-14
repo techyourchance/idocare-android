@@ -10,7 +10,7 @@
     android:padding="@dimen/divider_width">
 
 
-    <include layout="@layout/element_camera_control_linear"/>
+    <include layout="@layout/element_camera_control"/>
 
 
     <EditText

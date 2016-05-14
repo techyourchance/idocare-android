@@ -19,7 +19,7 @@ public interface NewRequestViewMvc
         /**
          * Will be invoked when the user clicks on "take picture" button
          */
-        void takePictureClicked();
+        void onTakePictureClicked();
     }
 
     String KEY_CREATED_COMMENT = Constants.FIELD_NAME_CREATED_COMMENT;

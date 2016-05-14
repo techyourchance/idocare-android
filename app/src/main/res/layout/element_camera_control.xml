@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_gravity="center_horizontal">
 
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/view_take_picture"
-        android:orientation="vertical"
-        android:layout_width="281dp"
-        android:layout_height="150dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/fragment_large_padding"
-        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
         android:background="@color/picture_background"
         android:clickable="true">
 
         <ImageView
+            android:id="@+id/img_take_picture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:background="@color/picture_background"
             android:src="@drawable/ic_add_picture_large"
             android:scaleType="centerInside"/>
@@ -24,26 +27,29 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/img_take_picture"
+            android:layout_centerHorizontal="true"
             android:background="@color/picture_background"
             android:text="@string/btn_add_picture"
             android:textSize="@dimen/title_text_size"
             android:textColor="@color/text_on_picture_background"/>
 
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_height="wrap_content"
-        android:layout_width="300dp"
+        android:layout_height="70dp"
+        android:layout_width="match_parent"
         android:layout_marginTop="@dimen/fragment_tiny_padding"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_horizontal">
-        
+        android:gravity="center_horizontal"
+        android:weightSum="3">
+
         <ImageView
             android:id="@+id/img_picture0"
-            android:layout_width="91dp"
-            android:layout_height="70dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
             android:layout_marginRight="@dimen/fragment_tiniest_padding"
             android:layout_marginEnd="@dimen/fragment_tiniest_padding"
             android:background="@color/picture_background"
@@ -54,8 +60,9 @@
 
         <ImageView
             android:id="@+id/img_picture1"
-            android:layout_width="91dp"
-            android:layout_height="70dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
             android:layout_marginLeft="@dimen/fragment_tiniest_padding"
             android:layout_marginStart="@dimen/fragment_tiniest_padding"
             android:layout_marginRight="@dimen/fragment_tiniest_padding"
@@ -68,8 +75,9 @@
 
         <ImageView
             android:id="@+id/img_picture2"
-            android:layout_width="91dp"
-            android:layout_height="70dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
             android:layout_marginLeft="@dimen/fragment_tiniest_padding"
             android:layout_marginStart="@dimen/fragment_tiniest_padding"
             android:background="@color/picture_background"
@@ -79,5 +87,4 @@
 
 
     </LinearLayout>
-
-</merge>
+</LinearLayout>
