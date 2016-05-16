@@ -9,6 +9,7 @@ import dagger.Module;
 import dagger.Provides;
 import il.co.idocare.Constants;
 import il.co.idocare.dependencyinjection.ApplicationScope;
+import il.co.idocare.settings.AppSettings;
 import il.co.idocare.nonstaticproxies.ContentResolverProxy;
 import il.co.idocare.nonstaticproxies.TextUtilsProxy;
 import il.co.idocare.utils.Logger;
@@ -38,6 +39,11 @@ public class ApplicationModule {
     @ApplicationScope
     SharedPreferences provideSharedPreferences() {
         return mApplication.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
+    }
+
+    @Provides
+    AppSettings provideSettingsManager(SharedPreferences sharedPreferences) {
+        return new AppSettings(sharedPreferences);
     }
 
     @Provides
