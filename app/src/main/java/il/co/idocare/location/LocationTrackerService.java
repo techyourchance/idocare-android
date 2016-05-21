@@ -1,13 +1,16 @@
 package il.co.idocare.location;
 
+import android.Manifest;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
@@ -60,6 +63,15 @@ public class LocationTrackerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand called with intent: " + intent);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "no ACCESS_FINE_LOCATION permission - terminating");
+            EventBus.getDefault().removeStickyEvent(LocationEvents.BestLocationEstimateEvent.class);
+            stopSelf();
+            return Service.START_NOT_STICKY;
+        }
 
         // Use the latest best estimate as a starting point (if exists)
         if (mCurrentBestEstimate == null) {
