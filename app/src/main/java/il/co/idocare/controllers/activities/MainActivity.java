@@ -1,12 +1,17 @@
 package il.co.idocare.controllers.activities;
 
+import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -16,6 +21,9 @@ import android.view.Menu;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.Arrays;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -39,6 +47,10 @@ public class MainActivity extends AbstractActivity implements
     private static final String TAG = "MainActivity";
 
     private static final int USER_LOADER = 0;
+
+    private static final int PERMISSION_REQUEST_GPS = 1;
+
+    public static final String EXTRA_GPS_PERMISSION_REQUEST_RETRY = "EXTRA_GPS_PERMISSION_REQUEST_RETRY";
 
     private FragmentManager.OnBackStackChangedListener onBackStackChangedListener =
             new FragmentManager.OnBackStackChangedListener() {
@@ -91,13 +103,18 @@ public class MainActivity extends AbstractActivity implements
     @Override
     protected void onStart() {
         super.onStart();
+        EventBus.getDefault().register(this);
+        getFragmentManager().addOnBackStackChangedListener(onBackStackChangedListener);
         mServerSyncController.enableAutomaticSync();
         mServerSyncController.requestImmediateSync();
+        checkPermissions();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        EventBus.getDefault().unregister(this);
+        getFragmentManager().removeOnBackStackChangedListener(onBackStackChangedListener);
         mServerSyncController.disableAutomaticSync();
     }
 
@@ -107,15 +124,6 @@ public class MainActivity extends AbstractActivity implements
         super.onResume();
         refreshNavDrawer();
         syncHomeButtonViewAndFunctionality();
-        getFragmentManager().addOnBackStackChangedListener(onBackStackChangedListener);
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        getFragmentManager().removeOnBackStackChangedListener(onBackStackChangedListener);
-        EventBus.getDefault().unregister(this);
     }
 
 
@@ -138,6 +146,14 @@ public class MainActivity extends AbstractActivity implements
         return super.onPrepareOptionsMenu(menu);
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.hasExtra(EXTRA_GPS_PERMISSION_REQUEST_RETRY)) {
+            checkGpsPermission();
+        }
+    }
+
     // End of activity lifecycle management
     //
     // ---------------------------------------------------------------------------------------------
@@ -151,7 +167,6 @@ public class MainActivity extends AbstractActivity implements
     private void startServices() {
         this.startService(new Intent(this, LocationTrackerService.class));
     }
-
 
     private void stopServices() {
         this.stopService(new Intent(this, LocationTrackerService.class));
@@ -350,6 +365,45 @@ public class MainActivity extends AbstractActivity implements
 
 
     // End of LoaderCallback methods
+    //
+    // ---------------------------------------------------------------------------------------------
+
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Permissions management
+
+
+
+    private void checkPermissions() {
+        checkGpsPermission();
+    }
+
+    private void checkGpsPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSION_REQUEST_GPS);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissionsArray,
+                                           @NonNull int[] grantResultsArray) {
+        List<String> permissions = Arrays.asList(permissionsArray);
+        if (requestCode == PERMISSION_REQUEST_GPS) {
+            int gpsPermissionIndex = permissions.indexOf(Manifest.permission.ACCESS_FINE_LOCATION);
+            if (gpsPermissionIndex != -1
+                    && grantResultsArray[gpsPermissionIndex] == PackageManager.PERMISSION_GRANTED) {
+                // no-op: LocationTrackerService will account for GPS permission being granted
+            }
+        }
+    }
+
+
+    // End of permissions management
     //
     // ---------------------------------------------------------------------------------------------
 

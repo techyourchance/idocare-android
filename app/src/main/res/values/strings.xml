@@ -29,6 +29,17 @@
     <string name="txt_has_account_question">Already have an account?</string>
     <string name="txt_log_in_link">" Login."</string>
 
+
+    <!--
+    Notifications
+    -->
+    <string name="notification_gps_permission_request_title">IDoCare requires "location" permission</string>
+    <string name="notification_gps_permission_request_body">Tap this notification and allow IDoCare access
+        to location data in order to expose its full functionality</string>
+
+
+
+
     <!--
     Screen titles
     -->

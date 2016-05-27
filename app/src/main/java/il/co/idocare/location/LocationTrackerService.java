@@ -1,6 +1,8 @@
 package il.co.idocare.location;
 
 import android.Manifest;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -9,13 +11,18 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import il.co.idocare.R;
+import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.eventbusevents.LocationEvents;
 
 /**
@@ -34,6 +41,10 @@ public class LocationTrackerService extends Service {
     private static final int STATE_DISABLED = 0;
     private static final int STATE_HIGHEST_ACCURACY = 1;
     private static final int STATE_PASSIVE = 2;
+
+    private static final int GPS_PERMISSION_RECHECK_INTERVAL = 2000; // in ms
+
+    private static final int NOTIFICATION_ID_GPS_PERMISSION_REQUEST = 0;
 
 
     // This listener should be registered with LocationManager in order to handle location updates
@@ -65,28 +76,45 @@ public class LocationTrackerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand called with intent: " + intent);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "no ACCESS_FINE_LOCATION permission - terminating");
+        if (!checkGpsPermission()) {
             EventBus.getDefault().removeStickyEvent(LocationEvents.BestLocationEstimateEvent.class);
-            stopSelf();
-            return Service.START_NOT_STICKY;
+            scheduleGpsPermissionRecheck();
+        } else {
+            init();
         }
 
+        return Service.START_STICKY;
+    }
+
+    private void scheduleGpsPermissionRecheck() {
+        Log.d(TAG, "scheduling ACCESS_FINE_LOCATION permission recheck in " +
+                GPS_PERMISSION_RECHECK_INTERVAL + " ms");
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+        mainHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (checkGpsPermission()) {
+                    init();
+                } else {
+                    scheduleGpsPermissionRecheck();
+                }
+            }
+        }, GPS_PERMISSION_RECHECK_INTERVAL);
+    }
+
+    private void init() {
         // Use the latest best estimate as a starting point (if exists)
         if (mCurrentBestEstimate == null) {
-                LocationEvents.BestLocationEstimateEvent pastBestEstimate = EventBus.getDefault()
-                        .getStickyEvent(LocationEvents.BestLocationEstimateEvent.class);
+            LocationEvents.BestLocationEstimateEvent pastBestEstimate = EventBus.getDefault()
+                    .getStickyEvent(LocationEvents.BestLocationEstimateEvent.class);
             if (pastBestEstimate != null) {
                 mCurrentBestEstimate = pastBestEstimate.location;
             }
         }
 
         gotoState(STATE_HIGHEST_ACCURACY);
-
-
-        return Service.START_STICKY;
     }
+
 
     @Override
     public void onCreate() {
@@ -210,6 +238,45 @@ public class LocationTrackerService extends Service {
         }
 
         return true;
+    }
+
+    private boolean checkGpsPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED) {
+            hidePermissionRequestNotification();
+            return true;
+        } else {
+            showPermissionRequestNotification();
+            return false;
+        }
+    }
+
+
+    private void showPermissionRequestNotification() {
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder
+                .setSmallIcon(R.drawable.ic_logo_grayscale)
+                .setContentTitle(getString(R.string.notification_gps_permission_request_title))
+                .setContentText(getString(R.string.notification_gps_permission_request_body));
+
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.putExtra(MainActivity.EXTRA_GPS_PERMISSION_REQUEST_RETRY, true);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        builder.setContentIntent(pendingIntent);
+
+        notificationManager.notify(NOTIFICATION_ID_GPS_PERMISSION_REQUEST, builder.build());
+    }
+
+    private void hidePermissionRequestNotification() {
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(NOTIFICATION_ID_GPS_PERMISSION_REQUEST);
     }
 
 }
