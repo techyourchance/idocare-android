@@ -16,11 +16,10 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/request_details_picture_height">
 
-            <ImageView
-                android:id="@+id/imgTopPictures"
+            <il.co.idocare.widgets.SwipeImageGalleryView
+                android:id="@+id/swipeImageGalleryTop"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"/>
+                android:layout_height="match_parent"/>
 
             <TextView
                 android:id="@+id/txt_request_status"
@@ -87,11 +86,10 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/fragment_tiny_padding" />
 
-        <ImageView
-            android:id="@+id/imgBottomPictures"
+        <il.co.idocare.widgets.SwipeImageGalleryView
+            android:id="@+id/swipeImageGalleryBottom"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/request_details_picture_height"
-            android:scaleType="centerCrop"/>
+            android:layout_height="@dimen/request_details_picture_height"/>
 
         <Space
             android:layout_width="match_parent"

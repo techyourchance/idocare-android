@@ -41,6 +41,8 @@
 
     <dimen name="home_list_view_padding">@dimen/fragment_default_padding</dimen>
 
+    <dimen name="swipe_image_gallery_indicators_margin">5dp</dimen>
+
 
 
     <!-- Text sizes -->

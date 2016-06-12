@@ -1,6 +1,5 @@
 package il.co.idocare.mvcviews.requestdetails;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -16,12 +15,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.datamodels.functional.RequestItem;
@@ -31,6 +24,7 @@ import il.co.idocare.mvcviews.location.LocationInfoViewMvcImpl;
 import il.co.idocare.mvcviews.location.LocationInfoViewMvc;
 import il.co.idocare.mvcviews.userinfo.RequestRelatedUserInfoViewMvc;
 import il.co.idocare.pictures.ImageViewPictureLoader;
+import il.co.idocare.widgets.SwipeImageGalleryView;
 
 /**
  * MVC View for New Request screen.
@@ -58,9 +52,9 @@ public class RequestDetailsViewMvcImpl
 
     private TextView mTxtStatus;
     private TextView mTxtTopUserTitle;
-    private ImageView mImgTopPictures;
+    private SwipeImageGalleryView mSwipeImageGalleryTop;
     private TextView mTxtBottomUserTitle;
-    private ImageView mImgBottomPictures;
+    private SwipeImageGalleryView mSwipeImageGalleryBottom;
 
     private Button mBtnPickUpRequest;
     private Button mBtnCloseRequest;
@@ -113,10 +107,10 @@ public class RequestDetailsViewMvcImpl
         mFrameUserInfoBottom = (FrameLayout) getRootView().findViewById(R.id.frame_user_info_bottom);
 
         // "Top pictures" views
-        mImgTopPictures = (ImageView) getRootView().findViewById(R.id.imgTopPictures);
+        mSwipeImageGalleryTop = (SwipeImageGalleryView) getRootView().findViewById(R.id.swipeImageGalleryTop);
 
         // "Closed pictures" views
-        mImgBottomPictures = (ImageView) getRootView().findViewById(R.id.imgBottomPictures);
+        mSwipeImageGalleryBottom = (SwipeImageGalleryView) getRootView().findViewById(R.id.swipeImageGalleryBottom);
 
         mBtnPickUpRequest = (Button) getRootView().findViewById(R.id.btn_pickup_request);
 
@@ -266,12 +260,13 @@ public class RequestDetailsViewMvcImpl
                 mUserInfoTopViewMvc.bindComment(getTopUserComment());
             }
 
+            mSwipeImageGalleryTop.clear();
             String[] mTopPictures = getTopPictures();
             if (mTopPictures == null || mTopPictures.length == 0) {
-                mImgTopPictures.setVisibility(View.GONE);
+                mSwipeImageGalleryTop.setVisibility(View.GONE);
             } else {
-                mImageViewPictureLoader.loadFromWebOrFile(mImgTopPictures, mTopPictures[0],
-                        R.drawable.ic_default_user_picture);
+                mSwipeImageGalleryTop.setVisibility(View.VISIBLE);
+                mSwipeImageGalleryTop.addPictures(mTopPictures);
             }
 
             if (showCloseRequestButton()) {
@@ -298,12 +293,13 @@ public class RequestDetailsViewMvcImpl
                 mUserInfoBottomViewMvc.bindComment(getBottomUserComment());
             }
 
+            mSwipeImageGalleryBottom.clear();
             String[] mBottomPictures = getBottomPictures();
             if (mBottomPictures == null || mBottomPictures.length == 0) {
-                mImgBottomPictures.setVisibility(View.GONE);
+                mSwipeImageGalleryBottom.setVisibility(View.GONE);
             } else {
-                mImageViewPictureLoader.loadFromWebOrFile(mImgBottomPictures, mBottomPictures[0],
-                        R.drawable.ic_default_user_picture);
+                mSwipeImageGalleryBottom.setVisibility(View.VISIBLE);
+                mSwipeImageGalleryBottom.addPictures(mBottomPictures);
             }
 
             bindLocationFields(request);
