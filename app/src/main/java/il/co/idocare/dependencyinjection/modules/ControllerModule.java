@@ -11,9 +11,11 @@ import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.authentication.MyAccountManager;
 import il.co.idocare.dependencyinjection.ControllerScope;
 import il.co.idocare.deviceinfo.GooglePlayServicesChecker;
+import il.co.idocare.helpers.LocationHelper;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.nonstaticproxies.ContentResolverProxy;
 import il.co.idocare.nonstaticproxies.TextUtilsProxy;
+import il.co.idocare.pictures.CameraAdapter;
 import il.co.idocare.pictures.ImageViewPictureLoader;
 import il.co.idocare.utils.Logger;
 
@@ -70,6 +72,16 @@ public class ControllerModule {
     @ControllerScope
     ImageViewPictureLoader provideImageViewPictureLoader() {
         return new ImageViewPictureLoader();
+    }
+
+    @Provides
+    CameraAdapter cameraAdapter(Activity activity) {
+        return new CameraAdapter(activity);
+    }
+
+    @Provides
+    LocationHelper locationHelper() {
+        return new LocationHelper();
     }
 
 }

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,82 +31,49 @@ import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.eventbusevents.LocationEvents;
+import il.co.idocare.helpers.LocationHelper;
 import il.co.idocare.mvcviews.closerequest.CloseRequestViewMvc;
 import il.co.idocare.mvcviews.closerequest.CloseRequestViewMvcImpl;
 import il.co.idocare.pictures.CameraAdapter;
 import il.co.idocare.utils.UtilMethods;
 
 
-public class CloseRequestFragment extends AbstractFragment implements CloseRequestViewMvc.CloseRequestViewMvcListener {
+public class CloseRequestFragment extends NewAndCloseRequestBaseFragment
+        implements CloseRequestViewMvc.CloseRequestViewMvcListener {
 
-    private final static String TAG = CloseRequestFragment.class.getSimpleName();
-
-
+    private final static String TAG = "CloseRequestFragment";
 
     private CloseRequestViewMvc mCloseRequestViewMvc;
-
-    @Inject LoginStateManager mLoginStateManager;
 
     private long mRequestId;
     private Location mRequestLocation;
 
-    private String mLastCameraPicturePath;
-    private List<String> mCameraPicturesPaths = new ArrayList<String>(3);
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        getControllerComponent().inject(this);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mCloseRequestViewMvc = new CloseRequestViewMvcImpl(inflater, container);
         mCloseRequestViewMvc.registerListener(this);
 
-        getControllerComponent().inject(this);
-
         Bundle args = getArguments();
         if (args != null) {
             mRequestId = args.getLong(Constants.FIELD_NAME_REQUEST_ID);
+            // TODO: the only argument should be request ID - use loader in order to load request's info!
             mRequestLocation = new Location("none");
             mRequestLocation.setLongitude(args.getDouble(Constants.FIELD_NAME_LONGITUDE));
             mRequestLocation.setLatitude(args.getDouble(Constants.FIELD_NAME_LATITUDE));
         } else {
             Log.e(TAG, "no arguments set for CloseRequestFragment");
-            // TODO: add error case here
+            navigateUp();
         }
-
-        // Restore state from bundle (if required)
-        restoreSavedStateIfNeeded(savedInstanceState);
-
-        setActionBarTitle(getTitle());
 
         return mCloseRequestViewMvc.getRootView();
     }
-
-
-    private void restoreSavedStateIfNeeded(Bundle savedInstanceState) {
-
-        if (savedInstanceState == null) return;
-
-        mLastCameraPicturePath = savedInstanceState.getString("lastCameraPicturePath");
-
-        // Get the list of pictures from saved state and pass them to adapter
-        String[] cameraPicturesPaths = savedInstanceState.getStringArray("cameraPicturesPaths");
-
-        for (int i=0; i<cameraPicturesPaths.length; i++) {
-            if (cameraPicturesPaths[i] != null) {
-                showPicture(i, cameraPicturesPaths[i]);
-            }
-        }
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (!mLoginStateManager.isLoggedIn()) {
-            // The user logged out while this fragment was paused
-            userLoggedOut();
-        }
-    }
-
 
 
     @Override
@@ -122,22 +90,6 @@ public class CloseRequestFragment extends AbstractFragment implements CloseReque
     public String getTitle() {
         return getResources().getString(R.string.close_request_fragment_title);
     }
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // EventBus events handling
-
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(LoginStateManager.UserLoggedOutEvent event) {
-        userLoggedOut();
-    }
-
-
-    // End of EventBus events handling
-    //
-    // ---------------------------------------------------------------------------------------------
-
 
     // ---------------------------------------------------------------------------------------------
     //
@@ -160,62 +112,16 @@ public class CloseRequestFragment extends AbstractFragment implements CloseReque
 
 
 
-
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        String[] cameraPicturesPaths = new String[mCameraPicturesPaths.size()];
-        mCameraPicturesPaths.toArray(cameraPicturesPaths);
-
-        // Save pictures' paths
-        outState.putStringArray("cameraPicturesPaths", cameraPicturesPaths);
-
-        // If not saved, the path will be lost when Camera activity starts
-        outState.putString("lastCameraPicturePath", mLastCameraPicturePath);
+    protected void onNewPictureAdded(int index, @NonNull String pathToPicture) {
+        mCloseRequestViewMvc.showPicture(index, pathToPicture);
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.REQUEST_CODE_TAKE_PICTURE) {
-            if (resultCode == Activity.RESULT_OK) {
-                UtilMethods.adjustCameraPicture(mLastCameraPicturePath);
-                showPicture(mLastCameraPicturePath);
-            } else {
-                // TODO: do we need anything here?
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
+    protected int getMaxPictures() {
+        return CloseRequestViewMvc.MAX_PICTURES;
     }
 
-    private void showPicture(String cameraPicturePath) {
-        showPicture(mCameraPicturesPaths.size(), cameraPicturePath);
-    }
-
-
-    private void showPicture(int position, String cameraPicturePath) {
-        if (position >= 3) {
-            Log.e(TAG, "maximal number of pictures exceeded!");
-            return;
-        }
-        if (mCameraPicturesPaths.size() > position) {
-            mCameraPicturesPaths.remove(position);
-        }
-        mCameraPicturesPaths.add(position, cameraPicturePath);
-        mCloseRequestViewMvc.showPicture(position, cameraPicturePath);
-    }
-
-
-
-    /**
-     * Take a new picture with camera
-     */
-    private void takePictureWithCamera() {
-        CameraAdapter cameraAdapter = new CameraAdapter(getActivity());
-        mLastCameraPicturePath = cameraAdapter.takePicture(Constants.REQUEST_CODE_TAKE_PICTURE,
-                "close_request");
-    }
 
     /**
      * Store information about request closure in a local database
@@ -229,10 +135,11 @@ public class CloseRequestFragment extends AbstractFragment implements CloseReque
             return;
         }
 
+        List<String> picturesPaths = getPicturesPaths();
         StringBuilder sb = new StringBuilder("");
-        for (int i=0; i<mCameraPicturesPaths.size(); i++) {
-            sb.append(mCameraPicturesPaths.get(i));
-            if (i < mCameraPicturesPaths.size()-1) sb.append(", ");
+        for (int i=0; i < picturesPaths.size(); i++) {
+            sb.append(picturesPaths.get(i));
+            if (i < picturesPaths.size()-1) sb.append(", ");
         }
         String closedPictures = sb.toString();
 
@@ -305,23 +212,19 @@ public class CloseRequestFragment extends AbstractFragment implements CloseReque
 
 
     private boolean isValidLocation() {
+
         LocationEvents.BestLocationEstimateEvent bestLocationEstimateEvent =
                 EventBus.getDefault().getStickyEvent(LocationEvents.BestLocationEstimateEvent.class);
-        if (bestLocationEstimateEvent == null) {
-            Log.d(TAG, "no best location estimate found");
+        if (bestLocationEstimateEvent == null
+                || !mLocationHelper.isAccurateLocation(bestLocationEstimateEvent.location)) {
+            Toast.makeText(getActivity(), getString(R.string.msg_insufficient_location_accuracy),
+                    Toast.LENGTH_LONG).show();
             return false;
         }
 
         Location location = bestLocationEstimateEvent.location;
 
-        if (location == null || !location.hasAccuracy()
-                || location.getAccuracy() > Constants.MINIMUM_ACCEPTABLE_LOCATION_ACCURACY_METERS) {
-            Log.d(TAG, "location accuracy isn't high enough");
-            return false;
-        }
-
-        if (location.distanceTo(mRequestLocation)
-                > Constants.MINIMUM_ACCEPTABLE_LOCATION_ACCURACY_METERS) {
+        if (mLocationHelper.areSameLocations(location, mRequestLocation)) {
             Log.d(TAG, "location is too far from request's location");
             Toast.makeText(getActivity(), getString(R.string.msg_too_far_from_original_location),
                     Toast.LENGTH_LONG).show();
@@ -333,7 +236,7 @@ public class CloseRequestFragment extends AbstractFragment implements CloseReque
     private boolean validRequestParameters(String userId, String pictures) {
 
         if (TextUtils.isEmpty(userId)) {
-            userLoggedOut();
+            onUserLoggedOut();
             return false;
         }
 
@@ -345,16 +248,5 @@ public class CloseRequestFragment extends AbstractFragment implements CloseReque
 
         return true;
     }
-
-    private void userLoggedOut() {
-        // This is a very simplified handling of user's logout
-        // TODO: think of a better handling and possible corner cases
-        if (getFragmentManager().getBackStackEntryCount() > 0) {
-            getFragmentManager().popBackStack();
-        } else {
-            replaceFragment(getNavHierParentFragment(), false, false, null);
-        }
-    }
-
 
 }

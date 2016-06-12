@@ -22,7 +22,7 @@ public class CameraControlViewMvcImpl
 
     private static final String TAG = "CameraControlViewMvc";
 
-    private ImageView[] mImgPictures = new ImageView[3];
+    private ImageView[] mImgPictures = new ImageView[CameraControlViewMvc.MAX_PICTURES];
 
     public CameraControlViewMvcImpl(LayoutInflater inflater, ViewGroup container) {
         setRootView(inflater.inflate(R.layout.element_camera_control, container, false));
@@ -45,9 +45,8 @@ public class CameraControlViewMvcImpl
 
     @Override
     public void showPicture(int position, String cameraPicturePath) {
-        if (position >= 3) {
-            Log.e(TAG, "maximal number of pictures exceeded!");
-            return;
+        if (position >= CameraControlViewMvc.MAX_PICTURES) {
+            throw new IllegalArgumentException("maximal number of pictures exceeded!");
         }
 
         ImageLoader.getInstance().displayImage(

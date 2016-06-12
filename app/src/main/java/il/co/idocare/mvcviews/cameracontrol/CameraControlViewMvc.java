@@ -8,12 +8,16 @@ import il.co.idocare.mvcviews.ObservableViewMVC;
 public interface CameraControlViewMvc
         extends ObservableViewMVC<CameraControlViewMvc.CameraControlViewMvcListener> {
 
+
     interface CameraControlViewMvcListener {
         /**
          * Will be invoked when the user clicks on "take picture" button
          */
         void onTakePictureClicked();
     }
+
+
+    public int MAX_PICTURES = 3;
 
     /**
      * Show picture at position

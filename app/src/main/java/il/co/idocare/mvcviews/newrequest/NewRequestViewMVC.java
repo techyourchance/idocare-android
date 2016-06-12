@@ -10,6 +10,7 @@ import il.co.idocare.mvcviews.ViewMVC;
 public interface NewRequestViewMvc
         extends ObservableViewMVC<NewRequestViewMvc.NewRequestViewMvcListener> {
 
+
     interface NewRequestViewMvcListener {
         /**
          * Will be invoked when the user clicks on "create request" button
@@ -23,6 +24,9 @@ public interface NewRequestViewMvc
     }
 
     String KEY_CREATED_COMMENT = Constants.FIELD_NAME_CREATED_COMMENT;
+
+
+    int MAX_PICTURES = 3;
 
     /**
      * Show picture at position

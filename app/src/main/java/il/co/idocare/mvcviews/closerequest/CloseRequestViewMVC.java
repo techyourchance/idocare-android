@@ -11,6 +11,7 @@ public interface CloseRequestViewMvc
         extends ObservableViewMVC<CloseRequestViewMvc.CloseRequestViewMvcListener> {
 
 
+
     interface CloseRequestViewMvcListener {
         /**
          * Will be invoked when the user clicks on "create request" button
@@ -24,6 +25,8 @@ public interface CloseRequestViewMvc
     }
 
     String KEY_CLOSED_COMMENT = Constants.FIELD_NAME_CLOSED_COMMENT;
+
+    int MAX_PICTURES = 3;
 
     /**
      * Show picture at position

@@ -39,15 +39,13 @@ public abstract class AbstractFragment extends Fragment implements
                     + " must implement IDoCareFragmentCallback");
         }
 
-    }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         mControllerComponent = ((MyApplication)getActivity().getApplication())
                 .getApplicationComponent()
                 .newControllerComponent(new ControllerModule((AppCompatActivity) getActivity()));
+
     }
+
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -56,7 +54,7 @@ public abstract class AbstractFragment extends Fragment implements
         mCallback.setTitle(getTitle());
     }
 
-// ---------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     //
     // Dependency injection
 
@@ -114,6 +112,18 @@ public abstract class AbstractFragment extends Fragment implements
         if (mProgressDialog != null) {
             mProgressDialog.dismiss();
             mProgressDialog = null;
+        }
+    }
+
+    /**
+     * Call to this method will either pop a previous fragment from the back-stack, or navigate
+     * to Fragment's hierarchical parent
+     */
+    protected void navigateUp() {
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+        } else {
+            replaceFragment(getNavHierParentFragment(), false, false, null);
         }
     }
 

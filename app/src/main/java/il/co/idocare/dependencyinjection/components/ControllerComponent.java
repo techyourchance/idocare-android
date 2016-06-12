@@ -7,6 +7,7 @@ import il.co.idocare.controllers.fragments.CloseRequestFragment;
 import il.co.idocare.controllers.fragments.HomeFragment;
 import il.co.idocare.controllers.fragments.LoginChooserFragment;
 import il.co.idocare.controllers.fragments.LoginNativeFragment;
+import il.co.idocare.controllers.fragments.NewAndCloseRequestBaseFragment;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
 import il.co.idocare.controllers.fragments.RequestDetailsFragment;
 import il.co.idocare.controllers.fragments.SignupNativeFragment;
@@ -20,6 +21,7 @@ public interface ControllerComponent {
     void inject(MainActivity activity);
     void inject(StartupActivity activity);
 
+    void inject(NewAndCloseRequestBaseFragment fragment);
     void inject(LoginChooserFragment fragment);
     void inject(CloseRequestFragment fragment);
     void inject(HomeFragment fragment);
