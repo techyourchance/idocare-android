@@ -205,7 +205,7 @@ public class MainNavDrawerViewMVC
     }
 
 
-    public void bindUserData(UserItem user) {
+    public void bindUserData(@Nullable UserItem user) {
         mNavDrawerHeaderViewMvc.bindUserData(user);
     }
 

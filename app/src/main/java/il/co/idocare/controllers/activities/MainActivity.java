@@ -208,7 +208,20 @@ public class MainActivity extends AbstractActivity implements
 
 
     private void refreshNavDrawer() {
-        mMainNavDrawerViewMVC.refreshDrawer(mLoginStateManager.isLoggedIn());
+        Log.d(TAG, "refreshNavDrawer()");
+
+        boolean isLoggedInUser = mLoginStateManager.isLoggedIn();
+
+        mMainNavDrawerViewMVC.refreshDrawer(isLoggedInUser);
+
+        if (isLoggedInUser) {
+            Log.d(TAG, "restarting user info loader");
+            getLoaderManager().restartLoader(USER_LOADER, null, this);
+        } else {
+            Log.d(TAG, "no logged in user - clearing user info from nav drawer");
+            getLoaderManager().destroyLoader(USER_LOADER);
+            mMainNavDrawerViewMVC.bindUserData(null);
+        }
     }
 
     @Override
@@ -333,19 +346,25 @@ public class MainActivity extends AbstractActivity implements
 
     @Override
     public Loader<UserItem> onCreateLoader(int id, Bundle args) {
+        mLogger.d(TAG, "onCreateLoader()");
+
         if (id == USER_LOADER) {
             if (mLoginStateManager.isLoggedIn()) {
-                mLogger.d(TAG, "instantiating UserInfoLoader; user ID: " + mLoginStateManager.getActiveAccountUserId());
+
+                String activeAccountId = mLoginStateManager.getActiveAccountUserId();
+
+                mLogger.d(TAG, "instantiating new UserInfoLoader for; account ID: " + activeAccountId);
+
                 return new UserInfoLoader(
                         this,
                         getContentResolver(),
                         mServerSyncController,
-                        Long.valueOf(mLoginStateManager.getActiveAccountUserId()));
+                        Long.valueOf(activeAccountId));
             } else {
                 return null;
             }
         } else {
-            mLogger.e(TAG, "onCreateLoader() called with unrecognized id: " + id);
+            mLogger.e(TAG, "onCreateLoader() called with unrecognized loader id: " + id);
             return null;
         }
     }

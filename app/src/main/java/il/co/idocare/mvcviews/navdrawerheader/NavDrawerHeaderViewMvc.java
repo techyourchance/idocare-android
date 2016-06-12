@@ -1,5 +1,7 @@
 package il.co.idocare.mvcviews.navdrawerheader;
 
+import android.support.annotation.Nullable;
+
 import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.mvcviews.ObservableViewMVC;
 
@@ -14,8 +16,8 @@ public interface NavDrawerHeaderViewMvc
     }
 
     /**
-     * Show user's data in navigarion drawer's header
-     * @param user data of the user
+     * Show user's data in navigation drawer's header
+     * @param user data of the user; pass null in order to clear user's data
      */
-    void bindUserData(UserItem user);
+    void bindUserData(@Nullable UserItem user);
 }
