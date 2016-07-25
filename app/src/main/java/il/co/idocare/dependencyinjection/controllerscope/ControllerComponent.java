@@ -1,4 +1,4 @@
-package il.co.idocare.dependencyinjection.components;
+package il.co.idocare.dependencyinjection.controllerscope;
 
 import dagger.Subcomponent;
 import il.co.idocare.controllers.activities.MainActivity;
@@ -11,8 +11,6 @@ import il.co.idocare.controllers.fragments.NewAndCloseRequestBaseFragment;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
 import il.co.idocare.controllers.fragments.RequestDetailsFragment;
 import il.co.idocare.controllers.fragments.SignupNativeFragment;
-import il.co.idocare.dependencyinjection.ControllerScope;
-import il.co.idocare.dependencyinjection.modules.ControllerModule;
 
 @ControllerScope
 @Subcomponent(modules = ControllerModule.class)

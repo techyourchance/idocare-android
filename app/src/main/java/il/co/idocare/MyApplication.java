@@ -2,9 +2,9 @@ package il.co.idocare;
 
 import android.app.Application;
 
-import il.co.idocare.dependencyinjection.components.ApplicationComponent;
-import il.co.idocare.dependencyinjection.components.DaggerApplicationComponent;
-import il.co.idocare.dependencyinjection.modules.ApplicationModule;
+import il.co.idocare.dependencyinjection.applicationscope.ApplicationComponent;
+import il.co.idocare.dependencyinjection.applicationscope.ApplicationModule;
+import il.co.idocare.dependencyinjection.applicationscope.DaggerApplicationComponent;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 /**

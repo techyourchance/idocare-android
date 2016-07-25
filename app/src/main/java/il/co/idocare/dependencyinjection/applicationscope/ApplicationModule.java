@@ -1,4 +1,4 @@
-package il.co.idocare.dependencyinjection.modules;
+package il.co.idocare.dependencyinjection.applicationscope;
 
 import android.accounts.AccountManager;
 import android.app.Application;
@@ -8,7 +8,7 @@ import android.content.SharedPreferences;
 import dagger.Module;
 import dagger.Provides;
 import il.co.idocare.Constants;
-import il.co.idocare.dependencyinjection.ApplicationScope;
+import il.co.idocare.dependencyinjection.applicationscope.ApplicationScope;
 import il.co.idocare.settings.AppSettings;
 import il.co.idocare.nonstaticproxies.ContentResolverProxy;
 import il.co.idocare.nonstaticproxies.TextUtilsProxy;
