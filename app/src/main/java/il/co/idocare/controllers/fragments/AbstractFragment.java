@@ -1,9 +1,9 @@
 package il.co.idocare.controllers.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
@@ -44,7 +44,7 @@ public abstract class AbstractFragment extends Fragment implements
         mControllerComponent = ((MyApplication)getActivity().getApplication())
                 .getApplicationComponent()
                 .newContextComponent(new ContextModule(getActivity()))
-                .newControllerComponent(new ControllerModule((AppCompatActivity) getActivity()));
+                .newControllerComponent(new ControllerModule((AppCompatActivity) getActivity(), getChildFragmentManager()));
 
     }
 

@@ -2,14 +2,14 @@ package il.co.idocare.controllers.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -50,7 +50,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements
 
         mControllerComponent = ((MyApplication)getApplication()).getApplicationComponent()
                 .newContextComponent(new ContextModule(this))
-                .newControllerComponent(new ControllerModule(this));
+                .newControllerComponent(new ControllerModule(this, getSupportFragmentManager()));
 
         mPostLoginRunnable = null;
 
@@ -132,7 +132,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements
             return;
         }
 
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
         if (addToBackStack) {
             ft.addToBackStack(null);
@@ -149,7 +149,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements
      * @return true if fragment of the same class (or a superclass) is currently shown
      */
     private boolean isFragmentShown(Class<? extends Fragment> claz) {
-        Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
+        Fragment currFragment = getSupportFragmentManager().findFragmentById(R.id.frame_contents);
 
 
         return (currFragment == null && claz == null) || (
@@ -164,7 +164,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements
             getFragmentManager().popBackStack();
             return true;
         } else {
-            Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
+            Fragment currFragment = getSupportFragmentManager().findFragmentById(R.id.frame_contents);
             // Check if currently shown fragment is of type IDoCareFragmentInterface
             if (currFragment != null &&
                     IDoCareFragmentInterface.class.isAssignableFrom(currFragment.getClass())) {
@@ -266,7 +266,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements
         NOTE: this code is based on the assumption that all subclasses will have FrameLayout
               named "frame_contents"
          */
-        Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
+        Fragment currFragment = getSupportFragmentManager().findFragmentById(R.id.frame_contents);
         if (currFragment != null)
             currFragment.onActivityResult(requestCode, resultCode, data);
 

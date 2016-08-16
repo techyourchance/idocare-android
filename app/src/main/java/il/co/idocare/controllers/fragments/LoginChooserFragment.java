@@ -2,11 +2,11 @@ package il.co.idocare.controllers.fragments;
 
 import android.animation.ValueAnimator;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,9 +30,12 @@ import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
+import il.co.idocare.dialogs.DialogsManager;
+import il.co.idocare.dialogs.InfoDialog;
 import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.mvcviews.loginchooser.LoginChooserViewMvc;
 import il.co.idocare.mvcviews.loginchooser.LoginChooserViewMvcImpl;
+import il.co.idocare.utils.Logger;
 
 /**
  * This fragment allows the user to choose between multiple signup/login options, or skip login
@@ -40,21 +43,23 @@ import il.co.idocare.mvcviews.loginchooser.LoginChooserViewMvcImpl;
 public class LoginChooserFragment extends AbstractFragment
         implements LoginChooserViewMvc.LoginChooserViewMvcListener {
 
+    private static final String TAG = "LoginChooserFragment";
+
     /**
      * When LoginChooserFragment is started with this key in arguments, a slide in animation
      * will be played
      */
     public static final String ARG_PLAY_ANIMATION = "arg_play_animation";
 
-    private static final String LOG_TAG = LoginChooserFragment.class.getSimpleName();
+    private static final String MULTIPLE_ACCOUNTS_NOT_SUPPORTED_DIALOG_TAG = "MULTIPLE_ACCOUNTS_NOT_SUPPORTED_DIALOG_TAG";
 
     private LoginChooserViewMvcImpl mLoginChooserViewMVC;
 
     private CallbackManager mFacebookCallbackManager;
 
     @Inject LoginStateManager mLoginStateManager;
-
-    private AlertDialog mAlertDialog;
+    @Inject DialogsManager mDialogsManager;
+    @Inject Logger mLogger;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -158,21 +163,11 @@ public class LoginChooserFragment extends AbstractFragment
 
     private void forbidMultiuserLogin() {
         // Disallow multiple accounts by showing a dialog which finishes the activity
-        if (mAlertDialog == null) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage(getResources().getString(R.string.msg_no_support_for_multiple_accounts))
-                    .setCancelable(false)
-                    .setPositiveButton(getResources().getString(R.string.btn_dialog_close),
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    ((LoginActivity) getActivity()).finish();
-                                }
-                            });
-            mAlertDialog = builder.create();
-            mAlertDialog.show();
-        } else {
-            mAlertDialog.show();
-        }
+        mDialogsManager.showInfoDialog(
+                null,
+                getResources().getString(R.string.no_support_for_multiple_accounts_message),
+                getResources().getString(R.string.btn_dialog_close),
+                MULTIPLE_ACCOUNTS_NOT_SUPPORTED_DIALOG_TAG);
     }
 
     private void finishActivity() {
@@ -203,6 +198,15 @@ public class LoginChooserFragment extends AbstractFragment
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginStateEvents.LoginFailedEvent event) {
         LoginChooserFragment.this.dismissProgressDialog();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onInfoDialogDismissed(InfoDialog.InfoDialogDismissedEvent event) {
+        if (mDialogsManager.getCurrentlyShownDialogTag().equals(MULTIPLE_ACCOUNTS_NOT_SUPPORTED_DIALOG_TAG)) {
+            finishActivity();
+        } else {
+            mLogger.e(TAG, "received unrecognized InfoDialogDismissedEvent");
+        }
     }
 
     // End of EventBus events handling

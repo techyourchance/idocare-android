@@ -3,7 +3,6 @@ package il.co.idocare.controllers.fragments;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -11,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -276,7 +276,7 @@ public class SignupNativeFragment extends AbstractFragment implements SignupNati
             mAlertDialog.dismiss();
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(getResources().getString(R.string.msg_no_support_for_multiple_accounts))
+        builder.setMessage(getResources().getString(R.string.no_support_for_multiple_accounts_message))
                 .setCancelable(false)
                 .setPositiveButton(getResources().getString(R.string.btn_dialog_close),
                         new DialogInterface.OnClickListener() {

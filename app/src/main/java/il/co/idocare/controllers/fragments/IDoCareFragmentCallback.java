@@ -1,7 +1,8 @@
 package il.co.idocare.controllers.fragments;
 
-import android.app.Fragment;
+
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
 /**
  * The enclosing activity must implement this interface
