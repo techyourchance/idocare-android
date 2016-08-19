@@ -21,20 +21,29 @@ import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
+import il.co.idocare.dialogs.DialogsManager;
+import il.co.idocare.dialogs.InfoDialog;
 import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.mvcviews.loginnative.LoginNativeViewMvc;
 import il.co.idocare.mvcviews.loginnative.LoginNativeViewMvcImpl;
+import il.co.idocare.utils.Logger;
 
 /**
  * This fragment handles native login flow
  */
 public class LoginNativeFragment extends AbstractFragment implements LoginNativeViewMvc.LoginNativeViewMvcListener {
 
+    private static final String TAG = "LoginNativeFragment";
+
+    private static final String MULTIPLE_ACCOUNTS_NOT_SUPPORTED_DIALOG_TAG = "MULTIPLE_ACCOUNTS_NOT_SUPPORTED_DIALOG_TAG";
+
 
     @Inject LoginStateManager mLoginStateManager;
+    @Inject DialogsManager mDialogsManager;
+    @Inject Logger mLogger;
+
 
     private LoginNativeViewMvc mLoginNativeViewMvc;
-    private AlertDialog mAlertDialog;
 
 
     @Nullable
@@ -68,22 +77,11 @@ public class LoginNativeFragment extends AbstractFragment implements LoginNative
     public void onResume() {
         super.onResume();
         if (mLoginStateManager.isLoggedIn()) {
-            // Disallow multiple accounts by showing a dialog which finishes the activity
-            if (mAlertDialog == null) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage(getResources().getString(R.string.no_support_for_multiple_accounts_message))
-                        .setCancelable(false)
-                        .setPositiveButton(getResources().getString(R.string.btn_dialog_close),
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        ((LoginActivity) getActivity()).finish();
-                                    }
-                                });
-                mAlertDialog = builder.create();
-                mAlertDialog.show();
-            } else {
-                mAlertDialog.show();
-            }
+            mDialogsManager.showInfoDialog(
+                    null,
+                    getResources().getString(R.string.no_support_for_multiple_accounts_message),
+                    getResources().getString(R.string.btn_dialog_close),
+                    MULTIPLE_ACCOUNTS_NOT_SUPPORTED_DIALOG_TAG);
         }
     }
 
@@ -125,6 +123,15 @@ public class LoginNativeFragment extends AbstractFragment implements LoginNative
     public void onEvent(LoginStateEvents.LoginFailedEvent event) {
         // "unfreeze" UI
         mLoginNativeViewMvc.enableUserInput();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onInfoDialogDismissed(InfoDialog.InfoDialogDismissedEvent event) {
+        if (mDialogsManager.getCurrentlyShownDialogTag().equals(MULTIPLE_ACCOUNTS_NOT_SUPPORTED_DIALOG_TAG)) {
+            getActivity().finish();
+        } else {
+            mLogger.e(TAG, "received unrecognized InfoDialogDismissedEvent");
+        }
     }
 
     // End of EventBus events handling
