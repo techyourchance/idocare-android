@@ -17,6 +17,10 @@ import com.facebook.FacebookSdk;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+import org.greenrobot.eventbus.Subscribe;
+
+import javax.inject.Inject;
+
 import il.co.idocare.Constants;
 import il.co.idocare.MyApplication;
 import il.co.idocare.R;
@@ -25,6 +29,8 @@ import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
 import il.co.idocare.dependencyinjection.contextscope.ContextModule;
 import il.co.idocare.dependencyinjection.controllerscope.ControllerComponent;
 import il.co.idocare.dependencyinjection.controllerscope.ControllerModule;
+import il.co.idocare.dialogs.DialogsManager;
+import il.co.idocare.eventbusevents.DialogEvents;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
@@ -33,7 +39,11 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public abstract class AbstractActivity extends AppCompatActivity implements
         IDoCareFragmentCallback {
 
-    private static final String LOG_TAG = AbstractActivity.class.getSimpleName();
+    private static final String TAG = "AbstractActivity";
+
+    private static final String USER_LOGIN_DIALOG_TAG = "USER_LOGIN_DIALOG_TAG";
+
+    @Inject DialogsManager mDialogsManager;
 
     private ControllerComponent mControllerComponent;
 
@@ -114,7 +124,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements
 
         if (isFragmentShown(claz)) {
             // The requested fragment is already shown - nothing to do
-            // Log.v(LOG_TAG, "the fragment " + claz.getSimpleName() + " is already shown");
+            // Log.v(TAG, "the fragment " + claz.getSimpleName() + " is already shown");
             return;
         }
 
@@ -197,52 +207,39 @@ public abstract class AbstractActivity extends AppCompatActivity implements
 
     @Override
     public void askUserToLogIn(String message, final Runnable runnable) {
-        // This listener will handle dialog button clicks
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which){
-                    case DialogInterface.BUTTON_POSITIVE:
-                        initiateLoginFlow(runnable);
-                        break;
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        //Do nothing
-                        break;
-                }
-            }
-        };
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(AbstractActivity.this);
-        builder.setMessage(message)
-                .setPositiveButton(getResources().getString(R.string.btn_dialog_positive),
-                        dialogClickListener)
-                .setNegativeButton(getResources().getString(R.string.btn_dialog_negative),
-                        dialogClickListener)
-                .show();
+        mDialogsManager.showPromptDialog(
+                null,
+                message,
+                getResources().getString(R.string.btn_dialog_positive),
+                getResources().getString(R.string.btn_dialog_negative),
+                USER_LOGIN_DIALOG_TAG);
+
+        mPostLoginRunnable = runnable;
+
+    }
+
+    @Subscribe
+    public void onPromptDialogDismissed(DialogEvents.PromptDialogDismissedEvent event) {
+        if (event.getTag().equals(USER_LOGIN_DIALOG_TAG)) {
+            if (event.getClickedButtonIndex() == DialogEvents.PromptDialogDismissedEvent.BUTTON_POSITIVE) {
+                initiateLoginFlow();
+            } else {
+                mPostLoginRunnable = null;
+            }
+        }
     }
 
     /**
      * Initiate a flow that will take the user through login process
      */
-    public void initiateLoginFlow(@Nullable final Runnable runnable) {
-        if (runnable != null) {
-            // Ensure that we do not overwrite runnables
-            if (mPostLoginRunnable != null)
-                Log.e(LOG_TAG, "tried to set a new Runnable " +
-                        "for post login execution while the previous one " +
-                        "hasn't been consumed yet!");
-
-            mPostLoginRunnable = runnable;
-        }
+    public void initiateLoginFlow() {
         Intent intent = new Intent(AbstractActivity.this, LoginActivity.class);
         startActivityForResult(intent, Constants.REQUEST_CODE_LOGIN);
     }
 
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
 
         switch (requestCode) {
             case Constants.REQUEST_CODE_LOGIN:

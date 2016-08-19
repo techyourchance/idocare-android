@@ -11,6 +11,7 @@ import il.co.idocare.controllers.fragments.NewAndCloseRequestBaseFragment;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
 import il.co.idocare.controllers.fragments.RequestDetailsFragment;
 import il.co.idocare.controllers.fragments.SignupNativeFragment;
+import il.co.idocare.dialogs.PromptDialog;
 
 @ControllerScope
 @Subcomponent(modules = ControllerModule.class)
@@ -27,5 +28,8 @@ public interface ControllerComponent {
     void inject(NewRequestFragment fragment);
     void inject(SignupNativeFragment fragment);
     void inject(RequestDetailsFragment fragment);
+
+
+    void inject(PromptDialog promptDialog);
 
 }

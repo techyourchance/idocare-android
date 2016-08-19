@@ -10,20 +10,15 @@ import android.text.TextUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
+import il.co.idocare.eventbusevents.DialogEvents;
 
-public class InfoDialog extends DialogFragment {
 
+public class InfoDialog extends BaseDialog {
 
-    /**
-     * This event will be posted to EventBus when InfoDialog is dismissed
-     */
-    public static class InfoDialogDismissedEvent {}
 
     public static final String ARG_TITLE = "ARG_TITLE";
     public static final String ARG_MESSAGE = "ARG_MESSAGE";
-    public static final String ARG_BUTTON_CAPTION = "ARG_BUTTON_CAPTION";
-
-
+    public static final String ARG_BUTTON_CAPTION = "ARG_POSITIVE_BUTTON_CAPTION";
 
     @Override
     public @NonNull Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -44,6 +39,6 @@ public class InfoDialog extends DialogFragment {
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
-        EventBus.getDefault().post(new InfoDialogDismissedEvent());
+        EventBus.getDefault().post(new DialogEvents.InfoDialogDismissedEvent(getDialogTag()));
     }
 }

@@ -5,6 +5,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import org.greenrobot.eventbus.EventBus;
+
 import dagger.Module;
 import dagger.Provides;
 import il.co.idocare.Constants;
@@ -64,5 +66,10 @@ public class ApplicationModule {
     @ApplicationScope
     TextUtilsProxy  provideTextUtilsProxy() {
         return new TextUtilsProxy();
+    }
+
+    @Provides
+    EventBus eventBus() {
+        return EventBus.getDefault();
     }
 }

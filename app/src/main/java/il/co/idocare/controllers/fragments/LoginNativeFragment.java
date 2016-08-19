@@ -23,6 +23,7 @@ import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.dialogs.InfoDialog;
+import il.co.idocare.eventbusevents.DialogEvents;
 import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.mvcviews.loginnative.LoginNativeViewMvc;
 import il.co.idocare.mvcviews.loginnative.LoginNativeViewMvcImpl;
@@ -126,7 +127,7 @@ public class LoginNativeFragment extends AbstractFragment implements LoginNative
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onInfoDialogDismissed(InfoDialog.InfoDialogDismissedEvent event) {
+    public void onInfoDialogDismissed(DialogEvents.InfoDialogDismissedEvent event) {
         if (mDialogsManager.getCurrentlyShownDialogTag().equals(MULTIPLE_ACCOUNTS_NOT_SUPPORTED_DIALOG_TAG)) {
             getActivity().finish();
         } else {

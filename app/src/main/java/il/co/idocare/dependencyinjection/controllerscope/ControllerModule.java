@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentManager;
 import dagger.Module;
 import dagger.Provides;
 import il.co.idocare.deviceinfo.GooglePlayServicesChecker;
-import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.pictures.CameraAdapter;
 
@@ -54,7 +53,7 @@ public class ControllerModule {
     @Provides
     @ControllerScope
     DialogsManager dialogsManager(FragmentManager fragmentManager) {
-        return new DialogsManager(fragmentManager, new DialogsFactory());
+        return new DialogsManager(fragmentManager);
     }
 
 }

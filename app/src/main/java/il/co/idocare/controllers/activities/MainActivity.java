@@ -252,7 +252,7 @@ public class MainActivity extends AbstractActivity implements
                             }
                         });
         } else if (chosenEntry.equals(getString(R.string.nav_drawer_entry_login))) {
-            initiateLoginFlow(null);
+            initiateLoginFlow();
         }
         else if (chosenEntry.equals(getString(R.string.nav_drawer_entry_logout))) {
             initiateLogoutFlow(null);

@@ -3,7 +3,7 @@ package il.co.idocare.dialogs;
 
 import android.os.Bundle;
 
-public class DialogsFactory {
+/* package */ class DialogsFactory {
 
     /**
      * Instantiate new InfoDialog
@@ -20,5 +20,22 @@ public class DialogsFactory {
         return infoDialog;
     }
 
+
+    /**
+     * Instantiate new PromptDialog
+     */
+    public PromptDialog newPromptDialog(String title, String message, String positiveButtonCaption,
+                                        String negativeButtonCaption) {
+        Bundle args = new Bundle(4);
+        args.putString(PromptDialog.ARG_TITLE, title);
+        args.putString(PromptDialog.ARG_MESSAGE, message);
+        args.putString(PromptDialog.ARG_POSITIVE_BUTTON_CAPTION, positiveButtonCaption);
+        args.putString(PromptDialog.ARG_NEGATIVE_BUTTON_CAPTION, negativeButtonCaption);
+
+        PromptDialog promptDialog = new PromptDialog();
+        promptDialog.setArguments(args);
+
+        return promptDialog;
+    }
 
 }

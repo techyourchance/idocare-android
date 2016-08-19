@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 
+import static il.co.idocare.eventbusevents.DialogEvents.*;
+
 /**
  * This object should be used in activities and fragments in order to manage dialogs. Its
  * functionality includes:<br>
@@ -15,11 +17,12 @@ import android.text.TextUtils;
  */
 public class DialogsManager {
 
+
     /**
      * Whenever a dialog is shown with non-empty "tag", the provided tag will be stored in
      * arguments Bundle under this key.
      */
-    private static final String ARGUMENT_KEY_TAG = "ARGUMENT_KEY_TAG";
+    private static final String ARGUMENT_KEY_TAG = BaseDialog.ARGUMENT_KEY_TAG;
 
     /**
      * In case Activity or Fragment that instantiated this DialogsManager are re-created (e.g.
@@ -35,9 +38,9 @@ public class DialogsManager {
 
     private DialogFragment currentlyShownDialog;
 
-    public DialogsManager(FragmentManager fragmentManager, DialogsFactory dialogsFactory) {
+    public DialogsManager(FragmentManager fragmentManager) {
         mFragmentManager = fragmentManager;
-        mDialogsFactory = dialogsFactory;
+        mDialogsFactory = newDialogsFactory();
 
         // there might be some dialog already shown
         Fragment fragmentWithDialogTag = fragmentManager.findFragmentByTag(DIALOG_FRAGMENT_TAG);
@@ -45,6 +48,13 @@ public class DialogsManager {
                 && DialogFragment.class.isAssignableFrom(fragmentWithDialogTag.getClass())) {
             currentlyShownDialog = (DialogFragment) fragmentWithDialogTag;
         }
+    }
+
+    /**
+     * Factory method (in case we will need to unit test DialogsManager)
+     */
+    protected DialogsFactory newDialogsFactory() {
+        return new DialogsFactory();
     }
 
 
@@ -94,7 +104,9 @@ public class DialogsManager {
 
 
     /**
-     * Show InfoDialog. The shown dialog will be retained across parent activity re-creation,
+     * Show InfoDialog. Notifications from the dialog will be posted as
+     * {@link InfoDialogDismissedEvent} events on EventBus.<br>
+     * The shown dialog will be retained across parent activity re-creation,
      * unless you explicitly invoke {@link DialogFragment#setRetainInstance(boolean)} and set it to
      * false.
      * @param title dialog's title
@@ -113,6 +125,34 @@ public class DialogsManager {
         showDialog(infoDialog);
 
         return infoDialog;
+    }
+
+
+    /**
+     * Show PromptDialog. Notifications from the dialog will be posted as
+     * {@link PromptDialogDismissedEvent} events on EventBus.<br>
+     * The shown dialog will be retained across parent activity re-creation,
+     * unless you explicitly invoke {@link DialogFragment#setRetainInstance(boolean)} and set it to
+     * false.
+     * @param title dialog's title
+     * @param message dialog's message
+     * @param positiveButtonCaption dialog's positive button caption
+     * @param negativeButtonCaption dialog's negative button caption
+     * @param tag string that designates the dialog (note that this is NOT the tag referenced by
+     *            {@link DialogFragment#getTag()}); can be null
+     * @return reference to the shown dialog
+     */
+    public DialogFragment showPromptDialog(String title, String message, String positiveButtonCaption,
+                                           String negativeButtonCaption, String tag) {
+
+        PromptDialog promptDialog =
+                mDialogsFactory.newPromptDialog(title, message, positiveButtonCaption, negativeButtonCaption);
+
+        addTag(promptDialog, tag);
+
+        showDialog(promptDialog);
+
+        return promptDialog;
     }
 
     private void addTag(DialogFragment dialog, String tag) {
