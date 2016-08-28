@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.localcachedata.LocalCacheDataChangeListener;
@@ -22,18 +23,18 @@ public class UserInfoLoader extends AsyncTaskLoader<UserItem> implements LocalCa
     private final ServerSyncController mServerSyncController;
     private LocalCacheUserData mLocalCacheUserData;
     private UserItem mUserItem;
-    private long mUserId;
+    private String mUserId;
 
     public UserInfoLoader(@NonNull Context context,
                           @NonNull ContentResolver contentResolver,
                           @NonNull ServerSyncController serverSyncController,
-                          long userId) {
+                          @NonNull String userId) {
         super(context);
-        if (userId == 0)
-            throw new IllegalArgumentException("0 is not a valid user ID");
+        if (TextUtils.isEmpty(userId))
+            throw new IllegalArgumentException("user ID must not be empty");
         mServerSyncController = serverSyncController;
         mUserId = userId;
-        mLocalCacheUserData = new LocalCacheUserData(contentResolver, userId);
+        mLocalCacheUserData = new LocalCacheUserData(contentResolver, Long.valueOf(userId));
     }
 
     @Override

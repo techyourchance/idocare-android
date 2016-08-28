@@ -17,8 +17,10 @@ public class VoteManager {
 
     private static final String TAG = "VoteManager";
 
-    public static final int VOTE_UP = 1;
-    public static final int VOTE_DOWN = 2;
+    public static final int VOTE_UP_CREATED = 1;
+    public static final int VOTE_DOWN_CREATED = 2;
+    public static final int VOTE_UP_CLOSED = 3;
+    public static final int VOTE_DOWN_CLOSED = 4;
 
     private final BackgroundThreadPoster mBackgroundThreadPoster;
     private final LoginStateManager mLoginStateManager;
@@ -38,21 +40,39 @@ public class VoteManager {
         mServerSyncController = serverSyncController;
     }
 
-    public void voteForRequest(final long requestId, final int voteType, final boolean voteForClosed) {
+    /**
+     * Vote for request
+     * @param requestId ID of the request to vote for
+     * @param voteType either one of: {@link #VOTE_UP_CREATED}, {@link #VOTE_DOWN_CREATED},
+     *                 {@link #VOTE_UP_CLOSED}, {@link #VOTE_DOWN_CLOSED}
+     */
+    public void voteForRequest(final long requestId, final int voteType) {
 
-        mLogger.d(TAG, "voteForRequest(); request ID: " + requestId + "; vote type: " + voteType
-                + "; vote for closed: " + voteForClosed);
+        mLogger.d(TAG, "voteForRequest(); request ID: " + requestId + "; vote type: " + voteType);
 
-        final String voteActionParam;
+        final String actionType = IDoCareContract.UserActions.ACTION_TYPE_VOTE_FOR_REQUEST;
+        final String actionParam;
+        final String entityParam;
+
         switch (voteType) {
-            case VOTE_UP:
-                voteActionParam = "1";
+            case VOTE_UP_CREATED:
+                entityParam = IDoCareContract.UserActions.ENTITY_PARAM_REQUEST_CREATED;
+                actionParam = "1";
                 break;
-            case VOTE_DOWN:
-                voteActionParam = "-1";
+            case VOTE_DOWN_CREATED:
+                entityParam = IDoCareContract.UserActions.ENTITY_PARAM_REQUEST_CREATED;
+                actionParam = "-1";
+                break;
+            case VOTE_UP_CLOSED:
+                entityParam = IDoCareContract.UserActions.ENTITY_PARAM_REQUEST_CLOSED;
+                actionParam = "1";
+                break;
+            case VOTE_DOWN_CLOSED:
+                entityParam = IDoCareContract.UserActions.ENTITY_PARAM_REQUEST_CLOSED;
+                actionParam = "-1";
                 break;
             default:
-                throw new IllegalArgumentException("vote type must be either VOTE_UP or VOTE_DOWN");
+                throw new IllegalArgumentException("vote type must be either VOTE_UP_CREATED or VOTE_DOWN_CREATED");
         }
 
         final String activeUserId = mLoginStateManager.getActiveAccountUserId();
@@ -66,11 +86,9 @@ public class VoteManager {
                 System.currentTimeMillis(),
                 IDoCareContract.UserActions.ENTITY_TYPE_REQUEST,
                 requestId,
-                voteForClosed ?
-                        IDoCareContract.UserActions.ENTITY_PARAM_REQUEST_CLOSED :
-                        IDoCareContract.UserActions.ENTITY_PARAM_REQUEST_CREATED,
-                IDoCareContract.UserActions.ACTION_TYPE_VOTE_FOR_REQUEST,
-                voteActionParam
+                entityParam,
+                actionType,
+                actionParam
         );
 
         mBackgroundThreadPoster.post(new Runnable() {

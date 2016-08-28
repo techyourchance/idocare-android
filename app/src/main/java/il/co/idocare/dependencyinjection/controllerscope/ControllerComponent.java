@@ -11,10 +11,11 @@ import il.co.idocare.controllers.fragments.NewAndCloseRequestBaseFragment;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
 import il.co.idocare.controllers.fragments.RequestDetailsFragment;
 import il.co.idocare.controllers.fragments.SignupNativeFragment;
+import il.co.idocare.dependencyinjection.datacache.CachersModule;
 import il.co.idocare.dialogs.PromptDialog;
 
 @ControllerScope
-@Subcomponent(modules = ControllerModule.class)
+@Subcomponent(modules = {ControllerModule.class, CachersModule.class})
 public interface ControllerComponent {
 
     void inject(MainActivity activity);

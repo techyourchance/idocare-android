@@ -159,22 +159,22 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
     @Override
     public void onClosedVoteUpClicked() {
-        voteForRequest(true, true);
+        voteForRequest(VoteManager.VOTE_UP_CLOSED);
     }
 
     @Override
     public void onClosedVoteDownClicked() {
-        voteForRequest(false, true);
+        voteForRequest(VoteManager.VOTE_DOWN_CLOSED);
     }
 
     @Override
     public void onCreatedVoteUpClicked() {
-        voteForRequest(true, false);
+        voteForRequest(VoteManager.VOTE_UP_CREATED);
     }
 
     @Override
     public void onCreatedVoteDownClicked() {
-        voteForRequest(false, false);
+        voteForRequest(VoteManager.VOTE_DOWN_CREATED);
     }
 
     // End of callbacks from MVC view(s)
@@ -280,21 +280,24 @@ public class RequestDetailsFragment extends AbstractFragment implements
     }
 
 
-    private void voteForRequest(boolean voteUp, boolean voteForClosed) {
+    private void voteForRequest(final int voteType) {
 
-        // TODO: popup login dialog if the user is not logged in
-//        String activeUserId = mLoginStateManager.getActiveAccountUserId();
-//
-//        // If no logged in user - ask him to log in
-//        if (TextUtils.isEmpty(activeUserId)) {
-//            askUserToLogIn(getResources().getString(R.string.msg_ask_to_log_in_before_vote), null);
-//            return;
-//        }
+        String activeUserId = mLoginStateManager.getActiveAccountUserId();
 
-        mVoteManager.voteForRequest(
-                mRequestId,
-                voteUp ? VoteManager.VOTE_UP : VoteManager.VOTE_DOWN,
-                voteForClosed);
+        // If no logged in user - ask him to log in
+        if (TextUtils.isEmpty(activeUserId)) {
+            askUserToLogIn(
+                    getResources().getString(R.string.msg_ask_to_log_in_before_vote),
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            voteForRequest(voteType);
+                        }
+                    });
+            return;
+        }
+
+        mVoteManager.voteForRequest(mRequestId, voteType);
 
     }
 

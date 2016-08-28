@@ -359,7 +359,7 @@ public class MainActivity extends AbstractActivity implements
                         this,
                         getContentResolver(),
                         mServerSyncController,
-                        Long.valueOf(activeAccountId));
+                        activeAccountId);
             } else {
                 return null;
             }

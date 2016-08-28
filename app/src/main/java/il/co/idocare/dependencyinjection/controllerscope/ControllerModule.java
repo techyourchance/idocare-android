@@ -1,6 +1,7 @@
 package il.co.idocare.dependencyinjection.controllerscope;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
@@ -41,6 +42,7 @@ public class ControllerModule {
     }
 
     @Provides
+    @ControllerScope
     FragmentManager fragmentManager() {
         return mFragmentManager;
     }
@@ -49,6 +51,11 @@ public class ControllerModule {
     @ControllerScope
     GooglePlayServicesChecker googlePlayServicesChecker(Activity activity) {
         return new GooglePlayServicesChecker(activity);
+    }
+
+    @Provides
+    ContentResolver contentResolver(Context context) {
+        return context.getContentResolver();
     }
 
     @Provides
