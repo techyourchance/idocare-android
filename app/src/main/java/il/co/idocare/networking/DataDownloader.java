@@ -72,7 +72,7 @@ public class DataDownloader implements LegacyServerHttpRequest.OnServerResponseC
         List<Long> uniqueUserIds = getUniqueUserIds();
 
         for (long userId : uniqueUserIds) {
-            downloadUserData(userId);
+            downloadUserData(String.valueOf(userId));
         }
 
         performCleanup(uniqueUserIds);
@@ -126,7 +126,7 @@ public class DataDownloader implements LegacyServerHttpRequest.OnServerResponseC
 
 
 
-    public void downloadUserData(long userId) {
+    public void downloadUserData(String userId) {
             LegacyServerHttpRequest serverRequest = createUserServerRequest(userId);
             mExecutor.execute(serverRequest);
     }
@@ -209,11 +209,11 @@ public class DataDownloader implements LegacyServerHttpRequest.OnServerResponseC
         return idsForQuery.toString();
     }
 
-    private LegacyServerHttpRequest createUserServerRequest(long userId) {
+    private LegacyServerHttpRequest createUserServerRequest(String userId) {
         LegacyServerHttpRequest serverRequest = new LegacyServerHttpRequest(
                 URLs.getUrl(URLs.RESOURCE_USERS_DATA),
                 mActiveUserId, mAuthToken, this, URLs.getUrl(URLs.RESOURCE_USERS_DATA));
-        serverRequest.addTextField(Constants.FIELD_NAME_USER_ID, String.valueOf(userId));
+        serverRequest.addTextField(Constants.FIELD_NAME_USER_ID, userId);
 
         return serverRequest;
     }

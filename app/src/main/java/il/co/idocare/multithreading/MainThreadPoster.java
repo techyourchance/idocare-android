@@ -8,7 +8,7 @@ import android.os.Looper;
  */
 public class MainThreadPoster {
 
-    private Handler mMainHandler;
+    private final Handler mMainHandler;
 
     public MainThreadPoster() {
         mMainHandler = new Handler(Looper.getMainLooper());

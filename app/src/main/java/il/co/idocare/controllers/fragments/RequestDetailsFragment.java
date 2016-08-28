@@ -33,6 +33,7 @@ import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
 import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.datamodels.functional.UserActionItem;
 import il.co.idocare.datamodels.functional.UserItem;
+import il.co.idocare.managers.VoteManager;
 import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvc;
 import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvcImpl;
 import il.co.idocare.networking.ServerSyncController;
@@ -50,14 +51,10 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
     private RequestDetailsViewMvc mRequestDetailsViewMvc;
 
-    @Inject
-    LoginStateManager mLoginStateManager;
-
-    @Inject
-    ServerSyncController mServerSyncController;
-
-    @Inject
-    ImageViewPictureLoader mImageViewPictureLoader;
+    @Inject LoginStateManager mLoginStateManager;
+    @Inject ServerSyncController mServerSyncController;
+    @Inject ImageViewPictureLoader mImageViewPictureLoader;
+    @Inject VoteManager mVoteManager;
 
     private long mRequestId;
     private RequestItem mRawRequestItem;
@@ -162,22 +159,22 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
     @Override
     public void onClosedVoteUpClicked() {
-        voteForRequest(1, true);
+        voteForRequest(true, true);
     }
 
     @Override
     public void onClosedVoteDownClicked() {
-        voteForRequest(-1, true);
+        voteForRequest(false, true);
     }
 
     @Override
     public void onCreatedVoteUpClicked() {
-        voteForRequest(1, false);
+        voteForRequest(true, false);
     }
 
     @Override
     public void onCreatedVoteDownClicked() {
-        voteForRequest(-1, false);
+        voteForRequest(false, false);
     }
 
     // End of callbacks from MVC view(s)
@@ -283,67 +280,21 @@ public class RequestDetailsFragment extends AbstractFragment implements
     }
 
 
-    private void voteForRequest(final int amount, final boolean voteForClosed) {
+    private void voteForRequest(boolean voteUp, boolean voteForClosed) {
 
-        String activeUserId = mLoginStateManager.getActiveAccountUserId();
+        // TODO: popup login dialog if the user is not logged in
+//        String activeUserId = mLoginStateManager.getActiveAccountUserId();
+//
+//        // If no logged in user - ask him to log in
+//        if (TextUtils.isEmpty(activeUserId)) {
+//            askUserToLogIn(getResources().getString(R.string.msg_ask_to_log_in_before_vote), null);
+//            return;
+//        }
 
-        // If no logged in user - ask him to log in
-        if (TextUtils.isEmpty(activeUserId)) {
-            askUserToLogIn(getResources().getString(R.string.msg_ask_to_log_in_before_vote), null);
-            return;
-        }
-
-        new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                showProgressDialog("Please wait...", "Updating the request...");
-            }
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-
-                ContentValues userActionCV = new ContentValues(6);
-                userActionCV.put(IDoCareContract.UserActions.COL_TIMESTAMP, System.currentTimeMillis());
-                userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_TYPE,
-                        IDoCareContract.UserActions.ENTITY_TYPE_REQUEST);
-                userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_ID, mRequestId);
-                userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_PARAM, voteForClosed ?
-                        IDoCareContract.UserActions.ENTITY_PARAM_REQUEST_CLOSED :
-                        IDoCareContract.UserActions.ENTITY_PARAM_REQUEST_CREATED);
-                userActionCV.put(IDoCareContract.UserActions.COL_ACTION_TYPE,
-                        IDoCareContract.UserActions.ACTION_TYPE_VOTE_FOR_REQUEST);
-                userActionCV.put(IDoCareContract.UserActions.COL_ACTION_PARAM, String.valueOf(amount));
-
-                Uri newUri = getActivity().getContentResolver().insert(
-                        IDoCareContract.UserActions.CONTENT_URI,
-                        userActionCV
-                );
-
-                if (newUri != null) {
-                    ContentValues requestCV = new ContentValues(1);
-                    requestCV.put(IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG, 1);
-                    int updated = getActivity().getContentResolver().update(
-                            ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI,
-                                    mRequestId),
-                            requestCV,
-                            null,
-                            null
-                    );
-                    if (updated != 1)
-                        Log.e(LOG_TAG, "failed to set 'LOCALLY_MODIFIED' flag on request entry" +
-                                "after a vote");
-                }
-                return (Void) null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                dismissProgressDialog();
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        mVoteManager.voteForRequest(
+                mRequestId,
+                voteUp ? VoteManager.VOTE_UP : VoteManager.VOTE_DOWN,
+                voteForClosed);
 
     }
 

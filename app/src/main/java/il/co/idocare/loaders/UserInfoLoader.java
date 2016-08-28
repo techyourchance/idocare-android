@@ -42,7 +42,7 @@ public class UserInfoLoader extends AsyncTaskLoader<UserItem> implements LocalCa
 
         if (mUserItem != null) return mUserItem;
 
-        mServerSyncController.syncUserDataImeediate(mUserId);
+        mServerSyncController.syncUserDataImmediate(mUserId);
 
         /*
         Return null because we assume that when user's data will be synced to local cache,

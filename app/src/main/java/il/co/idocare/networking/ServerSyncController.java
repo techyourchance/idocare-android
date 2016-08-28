@@ -67,9 +67,9 @@ public class ServerSyncController {
         return syncImmediateBundle;
     }
 
-    public void syncUserDataImeediate(long userId) {
+    public void syncUserDataImmediate(String userId) {
         Bundle syncExtras = getSyncImmediateBundle();
-        syncExtras.putLong(SyncAdapter.SYNC_EXTRAS_USER_ID, userId);
+        syncExtras.putString(SyncAdapter.SYNC_EXTRAS_USER_ID, userId);
         requestSync(syncExtras);
     }
 

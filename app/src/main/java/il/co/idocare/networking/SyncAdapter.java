@@ -87,7 +87,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         if (extras.containsKey(SYNC_EXTRAS_USER_ID)) {
             // perform partial sync of users' data
-            dataDownloader.downloadUserData(extras.getLong(SYNC_EXTRAS_USER_ID));
+            dataDownloader.downloadUserData(extras.getString(SYNC_EXTRAS_USER_ID));
 
         } else {
             // This call will block until all relevant data will be synchronized from the server

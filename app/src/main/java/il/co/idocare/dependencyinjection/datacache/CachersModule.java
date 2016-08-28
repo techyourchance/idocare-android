@@ -1,4 +1,4 @@
-package il.co.idocare.dependencyinjection.controllerscope;
+package il.co.idocare.dependencyinjection.datacache;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import dagger.Module;
 import dagger.Provides;
 import il.co.idocare.authentication.LoginStateManager;
+import il.co.idocare.dependencyinjection.controllerscope.ControllerScope;
 import il.co.idocare.deviceinfo.GooglePlayServicesChecker;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.entities.cachers.UserActionCacher;
@@ -18,12 +19,12 @@ import il.co.idocare.pictures.CameraAdapter;
 import il.co.idocare.utils.Logger;
 
 @Module
-public class ControllerModule {
+public class CachersModule {
 
     private Activity mActivity;
     private FragmentManager mFragmentManager;
 
-    public ControllerModule(@NonNull Activity activity, FragmentManager fragmentManager) {
+    public CachersModule(@NonNull Activity activity, FragmentManager fragmentManager) {
         mActivity = activity;
         mFragmentManager = fragmentManager;
     }

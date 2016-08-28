@@ -80,7 +80,7 @@ public class ApplicationModule {
     MainThreadPoster mainThreadPoster() {
         return new MainThreadPoster();
     }
-    
+
     @Provides
     @ApplicationScope
     BackgroundThreadPoster backgroundThreadPoster() {
