@@ -33,7 +33,7 @@ import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
 import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.datamodels.functional.UserActionItem;
 import il.co.idocare.datamodels.functional.UserItem;
-import il.co.idocare.managers.VoteManager;
+import il.co.idocare.managers.RequestsManager;
 import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvc;
 import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvcImpl;
 import il.co.idocare.networking.ServerSyncController;
@@ -43,7 +43,7 @@ import il.co.idocare.pictures.ImageViewPictureLoader;
 public class RequestDetailsFragment extends AbstractFragment implements
         LoaderManager.LoaderCallbacks<Cursor>,RequestDetailsViewMvc.RequestDetailsViewMvcListener {
 
-    private final static String LOG_TAG = RequestDetailsFragment.class.getSimpleName();
+    private final static String TAG = "RequestDetailsFragment";
 
     private final static int REQUEST_LOADER = 0;
     private final static int USERS_LOADER = 1;
@@ -54,7 +54,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
     @Inject LoginStateManager mLoginStateManager;
     @Inject ServerSyncController mServerSyncController;
     @Inject ImageViewPictureLoader mImageViewPictureLoader;
-    @Inject VoteManager mVoteManager;
+    @Inject RequestsManager mRequestsManager;
 
     private long mRequestId;
     private RequestItem mRawRequestItem;
@@ -77,7 +77,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
         Bundle args = getArguments();
         if (args == null) {
-            Log.e(LOG_TAG, "RequestDetailsFragment was started with no arguments. Switching" +
+            Log.e(TAG, "RequestDetailsFragment was started with no arguments. Switching" +
                     "to HomeFragment.");
             replaceFragment(HomeFragment.class, false, true, null);
         } else {
@@ -159,22 +159,22 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
     @Override
     public void onClosedVoteUpClicked() {
-        voteForRequest(VoteManager.VOTE_UP_CLOSED);
+        voteForRequest(RequestsManager.VOTE_UP_CLOSED);
     }
 
     @Override
     public void onClosedVoteDownClicked() {
-        voteForRequest(VoteManager.VOTE_DOWN_CLOSED);
+        voteForRequest(RequestsManager.VOTE_DOWN_CLOSED);
     }
 
     @Override
     public void onCreatedVoteUpClicked() {
-        voteForRequest(VoteManager.VOTE_UP_CREATED);
+        voteForRequest(RequestsManager.VOTE_UP_CREATED);
     }
 
     @Override
     public void onCreatedVoteDownClicked() {
-        voteForRequest(VoteManager.VOTE_DOWN_CREATED);
+        voteForRequest(RequestsManager.VOTE_DOWN_CREATED);
     }
 
     // End of callbacks from MVC view(s)
@@ -192,7 +192,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
         // TODO: request pickup should be allowed only when there is a network connection
 
         if (mRequestItem.getPickedUpBy() != 0) {
-            Log.e(LOG_TAG, "tried to pickup an already picked up request");
+            Log.e(TAG, "tried to pickup an already picked up request");
             return;
         }
 
@@ -246,7 +246,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
                             null
                     );
                     if (updated != 1)
-                        Log.e(LOG_TAG, "failed to set 'LOCALLY_MODIFIED' flag on request entry" +
+                        Log.e(TAG, "failed to set 'LOCALLY_MODIFIED' flag on request entry" +
                                 "after a vote");
                 }
 
@@ -268,7 +268,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
     private void closeRequest() {
 
         if (mRequestItem == null) {
-            Log.e(LOG_TAG, "closeRequest() was called, but there is no data about the request");
+            Log.e(TAG, "closeRequest() was called, but there is no data about the request");
             return;
         }
 
@@ -297,7 +297,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
             return;
         }
 
-        mVoteManager.voteForRequest(mRequestId, voteType);
+        mRequestsManager.voteForRequest(mRequestId, voteType);
 
     }
 
@@ -334,7 +334,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
         } else if (id == USERS_LOADER) {
 
             if (mRequestItem == null) {
-                Log.e(LOG_TAG, "can't initialize users CursorLoader without request data!");
+                Log.e(TAG, "can't initialize users CursorLoader without request data!");
                 return null;
             }
 
@@ -374,7 +374,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
         } else if (id == USER_ACTIONS_LOADER) {
 
             if (mRequestItem == null) {
-                Log.e(LOG_TAG, "can't initialize user actions CursorLoader without request data!");
+                Log.e(TAG, "can't initialize user actions CursorLoader without request data!");
                 return null;
             }
 
@@ -398,7 +398,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
                     sortOrder);
         }
         else {
-            Log.e(LOG_TAG, "onCreateLoader() called with unrecognized id: " + id);
+            Log.e(TAG, "onCreateLoader() called with unrecognized id: " + id);
             return null;
         }
 
@@ -461,7 +461,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
             getLoaderManager().restartLoader(USERS_LOADER, null, this);
 
         } else {
-            Log.e(LOG_TAG, "onLoadFinished() called with unrecognized loader id: " + loader.getId());
+            Log.e(TAG, "onLoadFinished() called with unrecognized loader id: " + loader.getId());
         }
     }
 
@@ -474,7 +474,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
         } else if (loader.getId() == USER_ACTIONS_LOADER) {
             // TODO: should do anything here?
         } else {
-            Log.e(LOG_TAG, "onLoaderReset() called with unrecognized loader id: " + loader.getId());
+            Log.e(TAG, "onLoaderReset() called with unrecognized loader id: " + loader.getId());
         }
 
     }
@@ -533,7 +533,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
                 }
 
                 if (!used)
-                    Log.e(LOG_TAG, "user's data returned in the mUsersCursor does not correspond to" +
+                    Log.e(TAG, "user's data returned in the mUsersCursor does not correspond to" +
                             "either of creating, picking up or closing user IDs in the request.");
 
 

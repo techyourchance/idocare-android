@@ -1,9 +1,9 @@
-package il.co.idocare.entities;
+package il.co.idocare.entities.useractions;
 
 /**
- * This object encapsulates information about user's action
+ * This is a base class for objects that encapsulates information about user's action
  */
-public class UserActionEntity {
+public abstract class UserActionEntity {
 
     private final long mTimestamp;
     private final String mEntityType;

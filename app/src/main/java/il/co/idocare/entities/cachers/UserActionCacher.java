@@ -6,7 +6,7 @@ import android.content.ContentValues;
 import android.net.Uri;
 
 import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.entities.UserActionEntity;
+import il.co.idocare.entities.useractions.UserActionEntity;
 import il.co.idocare.utils.Logger;
 
 /**
@@ -36,7 +36,7 @@ public class UserActionCacher {
 
         userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_PARAM, userActionEntity.getEntityParam());
 
-        userActionCV.put(IDoCareContract.UserActions.COL_ACTION_TYPE, userActionEntity.getEntityType());
+        userActionCV.put(IDoCareContract.UserActions.COL_ACTION_TYPE, userActionEntity.getActionType());
 
         userActionCV.put(IDoCareContract.UserActions.COL_ACTION_PARAM, userActionEntity.getActionParam());
 
