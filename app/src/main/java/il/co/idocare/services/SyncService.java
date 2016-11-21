@@ -4,6 +4,10 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+import il.co.idocare.MyApplication;
+import il.co.idocare.dependencyinjection.contextscope.ContextModule;
+import il.co.idocare.dependencyinjection.serversync.ServerSyncComponent;
+import il.co.idocare.dependencyinjection.serversync.ServerSyncModule;
 import il.co.idocare.networking.SyncAdapter;
 import il.co.idocare.utils.Logger;
 
@@ -17,8 +21,6 @@ public class SyncService extends Service {
     // Object to use as a thread-safe lock
     private static final Object sSyncAdapterLock = new Object();
 
-    Logger mLogger = new Logger();
-
     /*
      * Instantiate the sync adapter object.
      */
@@ -31,7 +33,12 @@ public class SyncService extends Service {
          */
         synchronized (sSyncAdapterLock) {
             if (sSyncAdapter == null) {
-                sSyncAdapter = new SyncAdapter(getApplicationContext(), true, mLogger);
+                ServerSyncComponent serverSyncComponent = ((MyApplication)getApplication())
+                        .getApplicationComponent()
+                        .newContextComponent(new ContextModule(this))
+                        .newServerSyncComponent(new ServerSyncModule());
+                sSyncAdapter = new SyncAdapter(getApplicationContext(), true);
+                serverSyncComponent.inject(sSyncAdapter);
             }
         }
     }
@@ -48,7 +55,9 @@ public class SyncService extends Service {
          * in the base class code when the SyncAdapter
          * constructors call super()
          */
-        return sSyncAdapter.getSyncAdapterBinder();
+        synchronized (sSyncAdapterLock) {
+            return sSyncAdapter.getSyncAdapterBinder();
+        }
     }
 
 }

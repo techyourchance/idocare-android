@@ -7,7 +7,6 @@ import dagger.Module;
 import dagger.Provides;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.authentication.MyAccountManager;
-import il.co.idocare.dependencyinjection.controllerscope.ControllerScope;
 import il.co.idocare.helpers.LocationHelper;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.nonstaticproxies.ContentResolverProxy;

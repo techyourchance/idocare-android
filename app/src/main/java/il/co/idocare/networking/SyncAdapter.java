@@ -15,8 +15,11 @@ import android.util.Log;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+
 import il.co.idocare.Constants;
 import il.co.idocare.authentication.AccountAuthenticator;
+import il.co.idocare.dependencyinjection.serversync.ServerSyncComponent;
 import il.co.idocare.location.OpenStreetMapsReverseGeocoderFactory;
 import il.co.idocare.location.ReverseGeocoderFactory;
 import il.co.idocare.networking.interfaces.LegacyServerResponseHandlerFactory;
@@ -37,17 +40,15 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     public static final String SYNC_EXTRAS_USER_ID = "SYNC_EXTRAS_USER_ID";
 
 
-    private final Logger mLogger;
+    @Inject Logger mLogger;
 
 
     /**
      * Set up the sync adapter
      */
     public SyncAdapter(@NonNull Context context,
-                       boolean autoInitialize,
-                       @NonNull Logger logger) {
+                       boolean autoInitialize) {
         super(context, autoInitialize);
-        mLogger = logger;
     }
 
 
