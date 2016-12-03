@@ -1,17 +1,19 @@
 package il.co.idocare.datamodels.functional;
 
 /**
- * Created by Vasiliy on 3/23/2015.
+ * This class encapsulates information about a single entry shown in navigation drawer
  */
 public class NavigationDrawerEntry {
 
 
     private final int mTitleStringId;
     private final int mIconDrawableId;
+    private final String mTag;
 
-    public NavigationDrawerEntry(int titleStringId, int iconDrawableId) {
+    public NavigationDrawerEntry(int titleStringId, int iconDrawableId, String tag) {
         mTitleStringId = titleStringId;
         mIconDrawableId = iconDrawableId;
+        mTag = tag;
     }
 
     public int getIconResId() {
@@ -20,5 +22,9 @@ public class NavigationDrawerEntry {
 
     public int getTitleResId() {
         return mTitleStringId;
+    }
+
+    public String getTag() {
+        return mTag;
     }
 }

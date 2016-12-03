@@ -6,7 +6,6 @@
     <string name="nav_drawer_entry_new_request">New request</string>
     <string name="nav_drawer_entry_map">Map</string>
     <string name="nav_drawer_entry_requests_list">Requests list</string>
-    <string name="nav_drawer_entry_settings">Settings</string>
     <string name="nav_drawer_entry_logout">Log out</string>
     <string name="nav_drawer_entry_login">Log in</string>
 

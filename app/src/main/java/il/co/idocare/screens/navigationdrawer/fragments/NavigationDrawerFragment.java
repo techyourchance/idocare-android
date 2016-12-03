@@ -34,6 +34,7 @@ import il.co.idocare.helpers.FrameHelper;
 import il.co.idocare.loaders.UserInfoLoader;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.screens.common.FrameContainer;
+import il.co.idocare.screens.navigationdrawer.mvcviews.NavigationDrawerViewMvc;
 import il.co.idocare.screens.navigationdrawer.mvcviews.NavigationDrawerViewMvcImpl;
 import il.co.idocare.utils.Logger;
 
@@ -42,7 +43,7 @@ import il.co.idocare.utils.Logger;
  */
 
 public class NavigationDrawerFragment extends Fragment implements
-        NavigationDrawerViewMvcImpl.NavigationDrawerViewMvcListener,
+        NavigationDrawerViewMvc.NavigationDrawerViewMvcListener,
         LoaderManager.LoaderCallbacks<UserItem> {
 
     private static final String TAG = "NavigationDrawerFragment";
@@ -105,29 +106,50 @@ public class NavigationDrawerFragment extends Fragment implements
     }
 
     @Override
-    public void onDrawerEntryChosen(String chosenEntry) {
-        if (chosenEntry.equals(getString(R.string.nav_drawer_entry_requests_list))) {
-            mMainFrameHelper.replaceFragment(HomeFragment.class, false, true, null);
+    public void onRequestsListClicked() {
+        mMainFrameHelper.replaceFragment(HomeFragment.class, false, true, null);
+    }
+
+    @Override
+    public void onMyRequestsClicked() {
+        // currently no-op
+    }
+
+    @Override
+    public void onNewRequestClicked() {
+        if (mLoginStateManager.isLoggedIn())
+            mMainFrameHelper.replaceFragment(NewRequestFragment.class, true, false, null);
+        else
+            mDialogsManager.showPromptDialog(
+                    null,
+                    getString(R.string.msg_ask_to_log_in_before_new_request),
+                    getResources().getString(R.string.btn_dialog_positive),
+                    getResources().getString(R.string.btn_dialog_negative),
+                    USER_LOGIN_DIALOG_TAG);
+    }
+
+    @Subscribe
+    public void onPromptDialogDismissed(DialogEvents.PromptDialogDismissedEvent event) {
+        if (event.getTag().equals(USER_LOGIN_DIALOG_TAG)) {
+            if (event.getClickedButtonIndex() == DialogEvents.PromptDialogDismissedEvent.BUTTON_POSITIVE) {
+                initiateLoginFlow();
+            }
         }
-        else if (chosenEntry.equals(getString(R.string.nav_drawer_entry_new_request))) {
-            if (mLoginStateManager.isLoggedIn())
-                mMainFrameHelper.replaceFragment(NewRequestFragment.class, true, false, null);
-            else
-                mDialogsManager.showPromptDialog(
-                        null,
-                        getString(R.string.msg_ask_to_log_in_before_new_request),
-                        getResources().getString(R.string.btn_dialog_positive),
-                        getResources().getString(R.string.btn_dialog_negative),
-                        USER_LOGIN_DIALOG_TAG);
-        } else if (chosenEntry.equals(getString(R.string.nav_drawer_entry_login))) {
-            initiateLoginFlow();
-        }
-        else if (chosenEntry.equals(getString(R.string.nav_drawer_entry_logout))) {
-            initiateLogoutFlow();
-        }
-        else {
-            mLogger.e(TAG, "drawer entry '" + chosenEntry + "' has no functionality");
-        }
+    }
+    
+    @Override
+    public void onLogInClicked() {
+        initiateLoginFlow();
+    }
+
+    @Override
+    public void onLogOutClicked() {
+        initiateLogoutFlow();
+    }
+
+    @Override
+    public void onShowMapClicked() {
+        // currently no op
     }
 
     private void initiateLogoutFlow() {
@@ -139,14 +161,6 @@ public class NavigationDrawerFragment extends Fragment implements
         startActivityForResult(intent, Constants.REQUEST_CODE_LOGIN);
     }
 
-    @Subscribe
-    public void onPromptDialogDismissed(DialogEvents.PromptDialogDismissedEvent event) {
-        if (event.getTag().equals(USER_LOGIN_DIALOG_TAG)) {
-            if (event.getClickedButtonIndex() == DialogEvents.PromptDialogDismissedEvent.BUTTON_POSITIVE) {
-                initiateLoginFlow();
-            }
-        }
-    }
 
     // ---------------------------------------------------------------------------------------------
     //

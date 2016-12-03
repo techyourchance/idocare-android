@@ -23,20 +23,17 @@ import il.co.idocare.datamodels.functional.NavigationDrawerEntry;
 import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.mvcviews.AbstractViewMVC;
 
-/**
- * This mvc view represents navigation drawer's UI
- */
 
 public class NavigationDrawerViewMvcImpl extends
-        AbstractViewMVC<NavigationDrawerViewMvcImpl.NavigationDrawerViewMvcListener> {
+        AbstractViewMVC<NavigationDrawerViewMvc.NavigationDrawerViewMvcListener>
+        implements NavigationDrawerViewMvc, AdapterView.OnItemClickListener {
 
-    public interface NavigationDrawerViewMvcListener {
-
-        /**
-         * Will be called when entry from nav drawer is being chosen
-         */
-        void onDrawerEntryChosen(String entryName);
-    }
+    private static final String ENTRY_NEW_REQUEST = "ENTRY_NEW_REQUEST";
+    private static final String ENTRY_REQUESTS_LIST = "ENTRY_REQUESTS_LIST";
+    private static final String ENTRY_MY_REQUESTS = "ENTRY_MY_REQUESTS";
+    private static final String ENTRY_SHOW_MAP = "ENTRY_SHOW_MAP";
+    private static final String ENTRY_LOG_IN = "ENTRY_LOG_IN";
+    private static final String ENTRY_LOG_OUT = "ENTRY_LOG_OUT";
 
 
     private ImageView mImgUserPicture;
@@ -45,6 +42,7 @@ public class NavigationDrawerViewMvcImpl extends
     private TextView mTxtUserNickname;
 
     private NavigationDrawerListAdapter mNavDrawerAdapter;
+    private ListView mDrawerList;
 
     public NavigationDrawerViewMvcImpl(LayoutInflater inflater, ViewGroup container) {
         setRootView(inflater.inflate(R.layout.layout_navigation_drawer, container, false));
@@ -63,6 +61,7 @@ public class NavigationDrawerViewMvcImpl extends
         return null;
     }
 
+    @Override
     public void bindUserData(UserItem user) {
 
         if (user != null && user.getId() > 0) {
@@ -108,44 +107,72 @@ public class NavigationDrawerViewMvcImpl extends
 
     private void initDrawerListView() {
 
-        final ListView drawerList = (ListView) getRootView().findViewById(R.id.drawer_list);
+        mDrawerList = (ListView) getRootView().findViewById(R.id.drawer_list);
 
         mNavDrawerAdapter = new NavigationDrawerListAdapter(getRootView().getContext(), 0);
-        drawerList.setAdapter(mNavDrawerAdapter);
+        mDrawerList.setAdapter(mNavDrawerAdapter);
 
-        drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        mDrawerList.setOnItemClickListener(this);
+    }
 
-                drawerList.setItemChecked(position, true);
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
 
-                String chosenEntry = getRootView().getResources().getString(
-                        mNavDrawerAdapter.getItem(position).getTitleResId());
+        mDrawerList.setItemChecked(position, true);
 
-                for (NavigationDrawerViewMvcListener listener : getListeners()) {
-                    listener.onDrawerEntryChosen(chosenEntry);
+        NavigationDrawerEntry clickedEntry = mNavDrawerAdapter.getItem(position);
+
+        if (clickedEntry != null) {
+            for (NavigationDrawerViewMvcListener listener : getListeners()) {
+                switch (clickedEntry.getTag()){
+                    case ENTRY_REQUESTS_LIST:
+                        listener.onRequestsListClicked();
+                        break;
+                    case ENTRY_MY_REQUESTS:
+                        listener.onMyRequestsClicked();
+                        break;
+                    case ENTRY_NEW_REQUEST:
+                        listener.onNewRequestClicked();
+                        break;
+                    case ENTRY_SHOW_MAP:
+                        listener.onShowMapClicked();
+                        break;
+                    case ENTRY_LOG_IN:
+                        listener.onLogInClicked();
+                        break;
+                    case ENTRY_LOG_OUT:
+                        listener.onLogOutClicked();
+                        break;
+                    default:
+                        throw new IllegalStateException("unrecognized entry tag:" + clickedEntry.getTag());
                 }
             }
-        });
+        }
     }
 
     /**
      * Refresh drawer's entries
      */
+    @Override
     public void refreshDrawer(boolean isUserLoggedIn) {
 
         List<NavigationDrawerEntry> entries = new ArrayList<>(8);
-        entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_my, R.drawable.ic_drawer_assigned_to_me));
-        entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_new_request, R.drawable.ic_drawer_add_new_request));
-        entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_map, R.drawable.ic_drawer_location));
-        entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_requests_list, R.drawable.ic_drawer_requests_list));
-        entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_settings, R.drawable.ic_drawer_settings));
+        entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_my,
+                R.drawable.ic_drawer_assigned_to_me, ENTRY_MY_REQUESTS));
+        entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_new_request,
+                R.drawable.ic_drawer_add_new_request, ENTRY_NEW_REQUEST));
+        entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_map,
+                R.drawable.ic_drawer_location, ENTRY_SHOW_MAP));
+        entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_requests_list,
+                R.drawable.ic_drawer_requests_list, ENTRY_REQUESTS_LIST));
 
         // No need for both login/logout options at once
         if (isUserLoggedIn)
-            entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_logout, R.drawable.ic_drawer_logout));
+            entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_logout,
+                    R.drawable.ic_drawer_logout, ENTRY_LOG_OUT));
         else
-            entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_login, 0));
+            entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_login,
+                    0, ENTRY_LOG_IN));
 
         mNavDrawerAdapter.clear();
         mNavDrawerAdapter.addAll(entries);
