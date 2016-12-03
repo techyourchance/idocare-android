@@ -4,7 +4,7 @@ import dagger.Subcomponent;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.controllers.activities.StartupActivity;
 import il.co.idocare.controllers.fragments.CloseRequestFragment;
-import il.co.idocare.controllers.fragments.HomeFragment;
+import il.co.idocare.screens.requestsall.fragments.RequestsAllFragment;
 import il.co.idocare.controllers.fragments.LoginChooserFragment;
 import il.co.idocare.controllers.fragments.LoginNativeFragment;
 import il.co.idocare.controllers.fragments.NewAndCloseRequestBaseFragment;
@@ -25,7 +25,7 @@ public interface ControllerComponent {
     void inject(NewAndCloseRequestBaseFragment fragment);
     void inject(LoginChooserFragment fragment);
     void inject(CloseRequestFragment fragment);
-    void inject(HomeFragment fragment);
+    void inject(RequestsAllFragment fragment);
     void inject(LoginNativeFragment fragment);
     void inject(NewRequestFragment fragment);
     void inject(SignupNativeFragment fragment);

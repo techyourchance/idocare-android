@@ -38,6 +38,7 @@ import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvc;
 import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvcImpl;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.pictures.ImageViewPictureLoader;
+import il.co.idocare.screens.requestsall.fragments.RequestsAllFragment;
 
 
 public class RequestDetailsFragment extends AbstractFragment implements
@@ -78,8 +79,8 @@ public class RequestDetailsFragment extends AbstractFragment implements
         Bundle args = getArguments();
         if (args == null) {
             Log.e(TAG, "RequestDetailsFragment was started with no arguments. Switching" +
-                    "to HomeFragment.");
-            replaceFragment(HomeFragment.class, false, true, null);
+                    "to RequestsAllFragment.");
+            replaceFragment(RequestsAllFragment.class, false, true, null);
         } else {
             mRequestId = args.getLong(Constants.FIELD_NAME_REQUEST_ID);
         }
@@ -116,7 +117,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
     @Override
     public Class<? extends AbstractFragment> getNavHierParentFragment() {
-        return HomeFragment.class;
+        return RequestsAllFragment.class;
     }
 
     @Override

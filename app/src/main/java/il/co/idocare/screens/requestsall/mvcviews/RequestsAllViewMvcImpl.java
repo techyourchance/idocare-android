@@ -1,4 +1,4 @@
-package il.co.idocare.mvcviews.home;
+package il.co.idocare.screens.requestsall.mvcviews;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,23 +13,23 @@ import il.co.idocare.R;
 import il.co.idocare.mvcviews.AbstractViewMVC;
 
 /**
- * Implementation of HomeViewMvc
+ * Implementation of RequestsAllViewMvc
  */
-public class HomeViewMvcImpl
-        extends AbstractViewMVC<HomeViewMvc.HomeViewMvcListener>
-        implements HomeViewMvc {
+public class RequestsAllViewMvcImpl
+        extends AbstractViewMVC<RequestsAllViewMvc.RequestsAllViewMvcListener>
+        implements RequestsAllViewMvc {
 
     private ListView mListView;
     private FloatingActionButton mBtnCreateRequest;
 
-    public HomeViewMvcImpl(LayoutInflater inflater, ViewGroup container) {
+    public RequestsAllViewMvcImpl(LayoutInflater inflater, ViewGroup container) {
         setRootView(inflater.inflate(R.layout.layout_home, container, false));
 
         mListView = (ListView) getRootView().findViewById(R.id.list_requests_thumbnails);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                for (HomeViewMvcListener listener : getListeners()) {
+                for (RequestsAllViewMvcListener listener : getListeners()) {
                     listener.onListItemClick(position, id);
                 }
             }
@@ -39,7 +39,7 @@ public class HomeViewMvcImpl
         mBtnCreateRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (HomeViewMvcListener listener : getListeners()) {
+                for (RequestsAllViewMvcListener listener : getListeners()) {
                     listener.onCreateNewRequestClick();
                 }
             }

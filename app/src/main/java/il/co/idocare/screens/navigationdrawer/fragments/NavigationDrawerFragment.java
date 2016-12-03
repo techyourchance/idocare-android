@@ -22,7 +22,7 @@ import il.co.idocare.MyApplication;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
-import il.co.idocare.controllers.fragments.HomeFragment;
+import il.co.idocare.screens.requestsall.fragments.RequestsAllFragment;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
 import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.dependencyinjection.contextscope.ContextModule;
@@ -107,7 +107,7 @@ public class NavigationDrawerFragment extends Fragment implements
 
     @Override
     public void onRequestsListClicked() {
-        mMainFrameHelper.replaceFragment(HomeFragment.class, false, true, null);
+        mMainFrameHelper.replaceFragment(RequestsAllFragment.class, false, true, null);
     }
 
     @Override
@@ -136,7 +136,7 @@ public class NavigationDrawerFragment extends Fragment implements
             }
         }
     }
-    
+
     @Override
     public void onLogInClicked() {
         initiateLoginFlow();

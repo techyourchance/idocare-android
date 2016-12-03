@@ -1,4 +1,4 @@
-package il.co.idocare.controllers.fragments;
+package il.co.idocare.screens.requestsall.fragments;
 
 
 import android.database.Cursor;
@@ -20,35 +20,38 @@ import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
+import il.co.idocare.controllers.fragments.AbstractFragment;
+import il.co.idocare.controllers.fragments.NewRequestFragment;
+import il.co.idocare.controllers.fragments.RequestDetailsFragment;
 import il.co.idocare.controllers.interfaces.RequestsCombinedCursorAdapter;
 import il.co.idocare.controllers.listadapters.HomeListAdapter;
 import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
 import il.co.idocare.controllers.listadapters.UserActionsOnUserApplierImpl;
 import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.eventbusevents.LoginStateEvents;
-import il.co.idocare.mvcviews.home.HomeViewMvc;
-import il.co.idocare.mvcviews.home.HomeViewMvcImpl;
+import il.co.idocare.screens.requestsall.mvcviews.RequestsAllViewMvc;
+import il.co.idocare.screens.requestsall.mvcviews.RequestsAllViewMvcImpl;
 
 
-public class HomeFragment extends AbstractFragment implements
-        LoaderManager.LoaderCallbacks<Cursor>,HomeViewMvc.HomeViewMvcListener {
+public class RequestsAllFragment extends AbstractFragment implements
+        LoaderManager.LoaderCallbacks<Cursor>,RequestsAllViewMvc.RequestsAllViewMvcListener {
 
-    private final static String LOG_TAG = HomeFragment.class.getSimpleName();
+    private final static String LOG_TAG = RequestsAllFragment.class.getSimpleName();
 
     private final static int REQUESTS_LOADER_ID = 0;
     private final static int USERS_LOADER_ID = 1;
     private final static int USER_ACTIONS_LOADER_ID = 2;
 
     RequestsCombinedCursorAdapter mAdapter;
-    HomeViewMvc mHomeViewMvc;
+    RequestsAllViewMvc mRequestsAllViewMvc;
 
     @Inject LoginStateManager mLoginStateManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        mHomeViewMvc = new HomeViewMvcImpl(inflater, container);
-        mHomeViewMvc.registerListener(this);
+        mRequestsAllViewMvc = new RequestsAllViewMvcImpl(inflater, container);
+        mRequestsAllViewMvc.registerListener(this);
 
         getControllerComponent().inject(this);
 
@@ -61,14 +64,14 @@ public class HomeFragment extends AbstractFragment implements
         mAdapter = new HomeListAdapter(getActivity(), null, 0,
                 new UserActionsOnRequestApplierImpl(), new UserActionsOnUserApplierImpl(),
                 mLoginStateManager);
-        mHomeViewMvc.setListAdapter(mAdapter);
+        mRequestsAllViewMvc.setListAdapter(mAdapter);
 
         // Initiate loaders
         getLoaderManager().initLoader(REQUESTS_LOADER_ID, null, this);
         getLoaderManager().initLoader(USERS_LOADER_ID, null, this);
         getLoaderManager().initLoader(USER_ACTIONS_LOADER_ID, null, this);
 
-        return mHomeViewMvc.getRootView();
+        return mRequestsAllViewMvc.getRootView();
     }
 
 

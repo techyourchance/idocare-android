@@ -157,8 +157,13 @@ public class NavigationDrawerViewMvcImpl extends
     public void refreshDrawer(boolean isUserLoggedIn) {
 
         List<NavigationDrawerEntry> entries = new ArrayList<>(8);
-        entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_my,
-                R.drawable.ic_drawer_assigned_to_me, ENTRY_MY_REQUESTS));
+
+        // "My requests" only exposed for logged in users
+        if (isUserLoggedIn) {
+            entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_my,
+                    R.drawable.ic_drawer_assigned_to_me, ENTRY_MY_REQUESTS));
+        }
+
         entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_new_request,
                 R.drawable.ic_drawer_add_new_request, ENTRY_NEW_REQUEST));
         entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_map,

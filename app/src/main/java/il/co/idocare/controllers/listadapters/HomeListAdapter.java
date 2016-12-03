@@ -27,7 +27,7 @@ import il.co.idocare.mvcviews.requestthumbnail.RequestThumbnailViewMvc;
 import il.co.idocare.mvcviews.requestthumbnail.RequestThumbnailViewMvcImpl;
 
 /**
- * Customized CursorAdapter that is used for displaying the list of requests on HomeFragment.
+ * Customized CursorAdapter that is used for displaying the list of requests on RequestsAllFragment.
  */
 public class HomeListAdapter extends CursorAdapter implements
         RequestsCombinedCursorAdapter {

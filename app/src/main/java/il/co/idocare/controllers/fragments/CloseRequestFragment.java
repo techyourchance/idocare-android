@@ -3,7 +3,6 @@ package il.co.idocare.controllers.fragments;
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,26 +15,18 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.inject.Inject;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.eventbusevents.LocationEvents;
-import il.co.idocare.helpers.LocationHelper;
 import il.co.idocare.mvcviews.closerequest.CloseRequestViewMvc;
 import il.co.idocare.mvcviews.closerequest.CloseRequestViewMvcImpl;
-import il.co.idocare.pictures.CameraAdapter;
-import il.co.idocare.utils.UtilMethods;
+import il.co.idocare.screens.requestsall.fragments.RequestsAllFragment;
 
 
 public class CloseRequestFragment extends NewAndCloseRequestBaseFragment
@@ -83,7 +74,7 @@ public class CloseRequestFragment extends NewAndCloseRequestBaseFragment
 
     @Override
     public Class<? extends AbstractFragment> getNavHierParentFragment() {
-        return HomeFragment.class;
+        return RequestsAllFragment.class;
     }
 
     @Override

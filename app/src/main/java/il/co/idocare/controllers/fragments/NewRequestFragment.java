@@ -15,21 +15,16 @@ import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.inject.Inject;
-
 import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.eventbusevents.LocationEvents;
-import il.co.idocare.helpers.LocationHelper;
 import il.co.idocare.mvcviews.newrequest.NewRequestViewMvc;
 import il.co.idocare.mvcviews.newrequest.NewRequestViewMvcImpl;
-import il.co.idocare.networking.ServerSyncController;
+import il.co.idocare.screens.requestsall.fragments.RequestsAllFragment;
 
 
 public class NewRequestFragment extends NewAndCloseRequestBaseFragment
@@ -63,7 +58,7 @@ public class NewRequestFragment extends NewAndCloseRequestBaseFragment
 
     @Override
     public Class<? extends AbstractFragment> getNavHierParentFragment() {
-        return HomeFragment.class;
+        return RequestsAllFragment.class;
     }
 
     @Override
@@ -184,7 +179,7 @@ public class NewRequestFragment extends NewAndCloseRequestBaseFragment
             protected void onPostExecute(Void aVoid) {
                 dismissProgressDialog();
                 mServerSyncController.requestImmediateSync(); // TODO: remove this after geocoder and names appear without sync
-                replaceFragment(HomeFragment.class, false, true, null);
+                replaceFragment(RequestsAllFragment.class, false, true, null);
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[] {null});
 

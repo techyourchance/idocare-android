@@ -22,7 +22,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import il.co.idocare.R;
-import il.co.idocare.controllers.fragments.HomeFragment;
+import il.co.idocare.screens.requestsall.fragments.RequestsAllFragment;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
 import il.co.idocare.helpers.FrameHelper;
 import il.co.idocare.location.LocationTrackerService;
@@ -75,7 +75,7 @@ public class MainActivity extends AbstractActivity implements
 
         // Show Home fragment if the app is not restored
         if (savedInstanceState == null) {
-            replaceFragment(HomeFragment.class, false, true, null);
+            replaceFragment(RequestsAllFragment.class, false, true, null);
         }
 
         startServices();
