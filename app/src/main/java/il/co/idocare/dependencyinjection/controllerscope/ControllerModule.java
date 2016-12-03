@@ -12,6 +12,7 @@ import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.deviceinfo.GooglePlayServicesChecker;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.entities.cachers.UserActionCacher;
+import il.co.idocare.helpers.FrameHelper;
 import il.co.idocare.managers.RequestsManager;
 import il.co.idocare.multithreading.BackgroundThreadPoster;
 import il.co.idocare.networking.ServerSyncController;
@@ -61,6 +62,12 @@ public class ControllerModule {
     @Provides
     CameraAdapter cameraAdapter(Activity activity) {
         return new CameraAdapter(activity);
+    }
+
+    @Provides
+    @ControllerScope
+    FrameHelper frameHelper(FragmentManager fragmentManager) {
+        return new FrameHelper(fragmentManager);
     }
 
     @Provides

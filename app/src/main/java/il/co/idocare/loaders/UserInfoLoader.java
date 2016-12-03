@@ -1,11 +1,11 @@
 package il.co.idocare.loaders;
 
-import android.content.AsyncTaskLoader;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.v4.content.AsyncTaskLoader;
 import android.text.TextUtils;
 
 import il.co.idocare.datamodels.functional.UserItem;

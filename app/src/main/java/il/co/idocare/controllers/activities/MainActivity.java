@@ -3,24 +3,18 @@ package il.co.idocare.controllers.activities;
 import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.LoaderManager;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,25 +22,20 @@ import java.util.List;
 import javax.inject.Inject;
 
 import il.co.idocare.R;
-import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.fragments.HomeFragment;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
-import il.co.idocare.controllers.fragments.NewRequestFragment;
-import il.co.idocare.datamodels.functional.UserItem;
-import il.co.idocare.eventbusevents.LoginStateEvents;
-import il.co.idocare.loaders.UserInfoLoader;
+import il.co.idocare.helpers.FrameHelper;
 import il.co.idocare.location.LocationTrackerService;
-import il.co.idocare.mvcviews.mainnavdrawer.MainNavDrawerViewMVC;
+import il.co.idocare.mvcviews.mainnavdrawer.MainViewMVC;
 import il.co.idocare.networking.ServerSyncController;
+import il.co.idocare.screens.common.FrameContainer;
 import il.co.idocare.utils.Logger;
 
 
 public class MainActivity extends AbstractActivity implements
-        MainNavDrawerViewMVC.MainNavDrawerViewMVCListener, LoaderManager.LoaderCallbacks<UserItem> {
+        MainViewMVC.MainNavDrawerViewMVCListener, FrameContainer {
 
     private static final String TAG = "MainActivity";
-
-    private static final int USER_LOADER = 0;
 
     private static final int PERMISSION_REQUEST_GPS = 1;
 
@@ -60,14 +49,12 @@ public class MainActivity extends AbstractActivity implements
                 }
             };
 
-
-    @Inject LoginStateManager mLoginStateManager;
     @Inject ServerSyncController mServerSyncController;
+    @Inject FrameHelper mFrameHelper;
     @Inject Logger mLogger;
 
 
-    private MainNavDrawerViewMVC mMainNavDrawerViewMVC;
-
+    private MainViewMVC mMainViewMVC;
 
 
     // ---------------------------------------------------------------------------------------------
@@ -80,16 +67,16 @@ public class MainActivity extends AbstractActivity implements
 
         getControllerComponent().inject(this);
 
-        mMainNavDrawerViewMVC = new MainNavDrawerViewMVC(LayoutInflater.from(this), null, this);
-        mMainNavDrawerViewMVC.setListener(this);
-        setContentView(mMainNavDrawerViewMVC.getRootView());
+        mMainViewMVC = new MainViewMVC(LayoutInflater.from(this), null, this);
+        mMainViewMVC.setListener(this);
+        setContentView(mMainViewMVC.getRootView());
+
+        mFrameHelper.setFrameLayoutId(R.id.frame_contents); // init frame helper
 
         // Show Home fragment if the app is not restored
         if (savedInstanceState == null) {
             replaceFragment(HomeFragment.class, false, true, null);
         }
-
-        getLoaderManager().initLoader(USER_LOADER, null, this);
 
         startServices();
     }
@@ -122,7 +109,6 @@ public class MainActivity extends AbstractActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        refreshNavDrawer();
         syncHomeButtonViewAndFunctionality();
     }
 
@@ -130,7 +116,7 @@ public class MainActivity extends AbstractActivity implements
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mMainNavDrawerViewMVC.syncDrawerToggleState();
+        mMainViewMVC.syncDrawerToggleState();
     }
 
     @Override
@@ -160,6 +146,24 @@ public class MainActivity extends AbstractActivity implements
 
 
 
+
+    @Override
+    public void onDrawerVisibilityStateChanged(boolean isVisible) {
+        if (isVisible) {
+            mMainViewMVC.setTitle("");
+        } else {
+            Fragment currFragment =
+                    MainActivity.this.getFragmentManager().findFragmentById(R.id.frame_contents);
+            if (currFragment != null &&
+                    IDoCareFragmentInterface.class.isAssignableFrom(currFragment.getClass())) {
+                mMainViewMVC.setTitle(((IDoCareFragmentInterface) currFragment).getTitle());
+            }
+        }
+
+        MainActivity.this.invalidateOptionsMenu();
+    }
+
+
     // ---------------------------------------------------------------------------------------------
     //
     // Services management
@@ -180,26 +184,6 @@ public class MainActivity extends AbstractActivity implements
 
 
 
-    // ---------------------------------------------------------------------------------------------
-    //
-    // EventBus events handling
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(LoginStateEvents.LoginSucceededEvent event) {
-        refreshNavDrawer();
-    }
-
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(LoginStateManager.UserLoggedOutEvent event) {
-        refreshNavDrawer();
-    }
-
-
-    // End of EventBus events handling
-    //
-    // ---------------------------------------------------------------------------------------------
-
 
 
     // ---------------------------------------------------------------------------------------------
@@ -207,81 +191,11 @@ public class MainActivity extends AbstractActivity implements
     // Navigation drawer management
 
 
-    private void refreshNavDrawer() {
-        Log.d(TAG, "refreshNavDrawer()");
-
-        boolean isLoggedInUser = mLoginStateManager.isLoggedIn();
-
-        mMainNavDrawerViewMVC.refreshDrawer(isLoggedInUser);
-
-        if (isLoggedInUser) {
-            Log.d(TAG, "restarting user info loader");
-            getLoaderManager().restartLoader(USER_LOADER, null, this);
-        } else {
-            Log.d(TAG, "no logged in user - clearing user info from nav drawer");
-            getLoaderManager().destroyLoader(USER_LOADER);
-            mMainNavDrawerViewMVC.bindUserData(null);
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (mMainNavDrawerViewMVC.isDrawerVisible()) {
-            mMainNavDrawerViewMVC.closeDrawer();
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-
-    @Override
-    public void onDrawerEntryChosen(String chosenEntry) {
-        if (chosenEntry.equals(getString(R.string.nav_drawer_entry_requests_list))) {
-            replaceFragment(HomeFragment.class, false, true, null);
-        }
-        else if (chosenEntry.equals(getString(R.string.nav_drawer_entry_new_request))) {
-            if (mLoginStateManager.isLoggedIn()) // user logged in - go to new request fragment
-                replaceFragment(NewRequestFragment.class, true, false, null);
-            else // user isn't logged in - ask him to log in and go to new request fragment if successful
-                askUserToLogIn(
-                        getString(R.string.msg_ask_to_log_in_before_new_request),
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                replaceFragment(NewRequestFragment.class, true, false, null);
-                            }
-                        });
-        } else if (chosenEntry.equals(getString(R.string.nav_drawer_entry_login))) {
-            initiateLoginFlow();
-        }
-        else if (chosenEntry.equals(getString(R.string.nav_drawer_entry_logout))) {
-            initiateLogoutFlow(null);
-        }
-        else {
-            Log.e(TAG, "drawer entry \"" + chosenEntry + "\" has no functionality");
-        }
-    }
 
     public void setTitle(String title) {
-        mMainNavDrawerViewMVC.setTitle(title);
+        mMainViewMVC.setTitle(title);
     }
 
-
-    @Override
-    public void onDrawerVisibilityStateChanged(boolean isVisible) {
-        if (isVisible) {
-            mMainNavDrawerViewMVC.setTitle("");
-        } else {
-            Fragment currFragment =
-                    MainActivity.this.getFragmentManager().findFragmentById(R.id.frame_contents);
-            if (currFragment != null &&
-                    IDoCareFragmentInterface.class.isAssignableFrom(currFragment.getClass())) {
-                mMainNavDrawerViewMVC.setTitle(((IDoCareFragmentInterface) currFragment).getTitle());
-            }
-        }
-
-        MainActivity.this.invalidateOptionsMenu();
-    }
 
     @Override
     public void onNavigationClick() {
@@ -319,7 +233,7 @@ public class MainActivity extends AbstractActivity implements
             boolean showHomeAsUp = hasBackstackEntries || hasHierParent;
 
 
-            mMainNavDrawerViewMVC.setDrawerIndicatorEnabled(!showHomeAsUp);
+            mMainViewMVC.setDrawerIndicatorEnabled(!showHomeAsUp);
         }
     }
 
@@ -330,62 +244,7 @@ public class MainActivity extends AbstractActivity implements
 
 
 
-    /**
-     * Initiate a flow that will take the user through logout process
-     */
-    private void initiateLogoutFlow(@Nullable Runnable runnable) {
-        mLoginStateManager.logOut();
-        if (runnable != null)
-            runOnUiThread(runnable);
-    }
 
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // LoaderCallback methods
-
-    @Override
-    public Loader<UserItem> onCreateLoader(int id, Bundle args) {
-        mLogger.d(TAG, "onCreateLoader()");
-
-        if (id == USER_LOADER) {
-            if (mLoginStateManager.isLoggedIn()) {
-
-                String activeAccountId = mLoginStateManager.getActiveAccountUserId();
-
-                mLogger.d(TAG, "instantiating new UserInfoLoader for; account ID: " + activeAccountId);
-
-                return new UserInfoLoader(
-                        this,
-                        getContentResolver(),
-                        mServerSyncController,
-                        activeAccountId);
-            } else {
-                return null;
-            }
-        } else {
-            mLogger.e(TAG, "onCreateLoader() called with unrecognized loader id: " + id);
-            return null;
-        }
-    }
-
-    @Override
-    public void onLoadFinished(Loader<UserItem> loader, UserItem data) {
-        if (loader.getId() == USER_LOADER) {
-            mMainNavDrawerViewMVC.bindUserData(data);
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<UserItem> loader) {
-
-    }
-
-
-
-    // End of LoaderCallback methods
-    //
-    // ---------------------------------------------------------------------------------------------
 
     // ---------------------------------------------------------------------------------------------
     //
@@ -425,5 +284,12 @@ public class MainActivity extends AbstractActivity implements
     // End of permissions management
     //
     // ---------------------------------------------------------------------------------------------
+
+
+    @NonNull
+    @Override
+    public FrameHelper getFrameHelper() {
+        return mFrameHelper;
+    }
 
 }

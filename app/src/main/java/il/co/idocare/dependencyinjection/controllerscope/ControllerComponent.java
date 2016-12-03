@@ -13,6 +13,7 @@ import il.co.idocare.controllers.fragments.RequestDetailsFragment;
 import il.co.idocare.controllers.fragments.SignupNativeFragment;
 import il.co.idocare.dependencyinjection.datacache.CachersModule;
 import il.co.idocare.dialogs.PromptDialog;
+import il.co.idocare.screens.navigationdrawer.fragments.NavigationDrawerFragment;
 
 @ControllerScope
 @Subcomponent(modules = {ControllerModule.class, CachersModule.class})
@@ -29,6 +30,7 @@ public interface ControllerComponent {
     void inject(NewRequestFragment fragment);
     void inject(SignupNativeFragment fragment);
     void inject(RequestDetailsFragment fragment);
+    void inject(NavigationDrawerFragment navigationDrawerFragment);
 
 
     void inject(PromptDialog promptDialog);
