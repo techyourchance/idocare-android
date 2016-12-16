@@ -1,20 +1,22 @@
-package il.co.idocare.entities.useractions;
+package il.co.idocare.useractions.entities;
+
+import il.co.idocare.contentproviders.IDoCareContract;
 
 /**
  * This is a base class for objects that encapsulates information about user's action
  */
-public abstract class UserActionEntity {
+public class UserActionEntity {
 
     private final long mTimestamp;
     private final String mEntityType;
-    private final long mEntityId;
+    private final String mEntityId;
     private final String mEntityParam;
     private final String mActionType;
     private final String mActionParam;
 
     public UserActionEntity(long timestamp,
                             String entityType,
-                            long entityId,
+                            String entityId,
                             String entityParam,
                             String actionType,
                             String actionParam) {
@@ -26,6 +28,7 @@ public abstract class UserActionEntity {
         mActionParam = actionParam;
     }
 
+    // Getters
 
     public long getTimestamp() {
         return mTimestamp;
@@ -35,7 +38,7 @@ public abstract class UserActionEntity {
         return mEntityType;
     }
 
-    public long getEntityId() {
+    public String getEntityId() {
         return mEntityId;
     }
 

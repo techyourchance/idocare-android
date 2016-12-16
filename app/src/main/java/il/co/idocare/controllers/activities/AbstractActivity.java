@@ -29,6 +29,8 @@ import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
 import il.co.idocare.dependencyinjection.contextscope.ContextModule;
 import il.co.idocare.dependencyinjection.controllerscope.ControllerComponent;
 import il.co.idocare.dependencyinjection.controllerscope.ControllerModule;
+import il.co.idocare.dependencyinjection.datacache.CachersModule;
+import il.co.idocare.dependencyinjection.datacache.RetrieversModule;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.eventbusevents.DialogEvents;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -60,7 +62,10 @@ public abstract class AbstractActivity extends AppCompatActivity implements
 
         mControllerComponent = ((MyApplication)getApplication()).getApplicationComponent()
                 .newContextComponent(new ContextModule(this))
-                .newControllerComponent(new ControllerModule(this, getSupportFragmentManager()));
+                .newControllerComponent(
+                        new ControllerModule(this, getSupportFragmentManager()),
+                        new CachersModule(),
+                        new RetrieversModule());
 
         mPostLoginRunnable = null;
 

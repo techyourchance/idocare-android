@@ -276,8 +276,8 @@ public class SQLiteWrapper {
                 + IDoCareContract.Requests.COL_CLOSED_PICTURES + " TEXT, "
                 + IDoCareContract.Requests.COL_POLLUTION_LEVEL + " INTEGER, "
                 + IDoCareContract.Requests.COL_CLOSED_BY + " INTEGER, "
-                + IDoCareContract.Requests.COL_CREATED_REPUTATION + " INTEGER DEFAULT 0, "
-                + IDoCareContract.Requests.COL_CLOSED_REPUTATION + " INTEGER DEFAULT 0, "
+                + IDoCareContract.Requests.COL_CREATED_VOTES + " INTEGER DEFAULT 0, "
+                + IDoCareContract.Requests.COL_CLOSED_VOTES + " INTEGER DEFAULT 0, "
                 + IDoCareContract.Requests.COL_LOCATION + " TEXT, "
                 + IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG + " INTEGER DEFAULT 0);";
 

@@ -9,11 +9,11 @@ import il.co.idocare.helpers.FrameHelper;
  * other components to manage the content of this frame.
  */
 
-public interface FrameContainer {
+public interface MainFrameContainer {
 
     /**
      * @return FrameHelper object that can be used in order to manager the contents of the
-     *         FrameLayout which is contained within the implementation of {@link FrameContainer}
+     *         FrameLayout which is contained within the implementation of {@link MainFrameContainer}
      */
     public @NonNull FrameHelper getFrameHelper();
 }

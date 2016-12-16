@@ -4,7 +4,7 @@ import android.content.ContentResolver;
 
 import dagger.Module;
 import dagger.Provides;
-import il.co.idocare.entities.cachers.UserActionCacher;
+import il.co.idocare.useractions.cachers.UserActionCacher;
 import il.co.idocare.utils.Logger;
 
 @Module

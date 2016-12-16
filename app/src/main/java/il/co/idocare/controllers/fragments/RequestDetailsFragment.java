@@ -33,12 +33,12 @@ import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
 import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.datamodels.functional.UserActionItem;
 import il.co.idocare.datamodels.functional.UserItem;
-import il.co.idocare.managers.RequestsManager;
+import il.co.idocare.requests.RequestsManager;
 import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvc;
 import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvcImpl;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.pictures.ImageViewPictureLoader;
-import il.co.idocare.screens.requestsall.fragments.RequestsAllFragment;
+import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
 
 
 public class RequestDetailsFragment extends AbstractFragment implements
@@ -298,7 +298,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
             return;
         }
 
-        mRequestsManager.voteForRequest(mRequestId, voteType);
+        mRequestsManager.voteForRequest(String.valueOf(mRequestId), mLoginStateManager.getActiveAccountUserId(), voteType);
 
     }
 

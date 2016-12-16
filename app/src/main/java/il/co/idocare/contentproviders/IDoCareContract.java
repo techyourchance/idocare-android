@@ -46,8 +46,8 @@ public class IDoCareContract {
         public static final String COL_CREATED_PICTURES = Constants.FIELD_NAME_CREATED_PICTURES;
         public static final String COL_CLOSED_PICTURES = Constants.FIELD_NAME_CLOSED_PICTURES;
         public static final String COL_POLLUTION_LEVEL = Constants.FIELD_NAME_CREATED_POLLUTION_LEVEL;
-        public static final String COL_CREATED_REPUTATION = Constants.FIELD_NAME_CREATED_REPUTATION;
-        public static final String COL_CLOSED_REPUTATION = Constants.FIELD_NAME_CLOSED_REPUTATION;
+        public static final String COL_CREATED_VOTES = Constants.FIELD_NAME_CREATED_REPUTATION;
+        public static final String COL_CLOSED_VOTES = Constants.FIELD_NAME_CLOSED_REPUTATION;
         public static final String COL_CLOSED_BY = Constants.FIELD_NAME_CLOSED_BY;
         /**
          * This column contains a description of the location specified by LATITUDE and
@@ -94,8 +94,8 @@ public class IDoCareContract {
                 COL_CREATED_PICTURES,
                 COL_CLOSED_PICTURES,
                 COL_POLLUTION_LEVEL,
-                COL_CREATED_REPUTATION,
-                COL_CLOSED_REPUTATION,
+                COL_CREATED_VOTES,
+                COL_CLOSED_VOTES,
                 COL_CLOSED_BY,
                 COL_LOCATION};
 

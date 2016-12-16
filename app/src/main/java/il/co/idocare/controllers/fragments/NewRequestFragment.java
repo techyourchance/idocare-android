@@ -24,7 +24,7 @@ import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.eventbusevents.LocationEvents;
 import il.co.idocare.mvcviews.newrequest.NewRequestViewMvc;
 import il.co.idocare.mvcviews.newrequest.NewRequestViewMvcImpl;
-import il.co.idocare.screens.requestsall.fragments.RequestsAllFragment;
+import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
 
 
 public class NewRequestFragment extends NewAndCloseRequestBaseFragment

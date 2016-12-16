@@ -1,4 +1,4 @@
-package il.co.idocare.screens.requestsall.fragments;
+package il.co.idocare.screens.requests.fragments;
 
 
 import android.database.Cursor;
@@ -29,8 +29,8 @@ import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
 import il.co.idocare.controllers.listadapters.UserActionsOnUserApplierImpl;
 import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.eventbusevents.LoginStateEvents;
-import il.co.idocare.screens.requestsall.mvcviews.RequestsAllViewMvc;
-import il.co.idocare.screens.requestsall.mvcviews.RequestsAllViewMvcImpl;
+import il.co.idocare.screens.requests.mvcviews.RequestsAllViewMvc;
+import il.co.idocare.screens.requests.mvcviews.RequestsAllViewMvcImpl;
 
 
 public class RequestsAllFragment extends AbstractFragment implements

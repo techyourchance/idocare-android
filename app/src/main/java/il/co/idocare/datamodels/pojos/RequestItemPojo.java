@@ -110,7 +110,7 @@ public class RequestItemPojo {
         values.put(Requests.COL_CREATED_AT, getCreatedAt());
         values.put(Requests.COL_CREATED_COMMENT, getCreatedComment());
         values.put(Requests.COL_CREATED_PICTURES, getCreatedPictures());
-        values.put(Requests.COL_CREATED_REPUTATION, getCreatedVotes());
+        values.put(Requests.COL_CREATED_VOTES, getCreatedVotes());
         values.put(Requests.COL_LATITUDE, getLatitude());
         values.put(Requests.COL_LONGITUDE, getLongitude());
         values.put(Requests.COL_POLLUTION_LEVEL, getCreatedPollutionLevel());
@@ -120,7 +120,7 @@ public class RequestItemPojo {
         values.put(Requests.COL_CLOSED_AT, getClosedAt());
         values.put(Requests.COL_CLOSED_COMMENT, getClosedComment());
         values.put(Requests.COL_CLOSED_PICTURES, getClosedPictures());
-        values.put(Requests.COL_CLOSED_REPUTATION, getClosedVotes());
+        values.put(Requests.COL_CLOSED_VOTES, getClosedVotes());
         values.put(Requests.COL_LOCATION, getLocation());
 
         return values;

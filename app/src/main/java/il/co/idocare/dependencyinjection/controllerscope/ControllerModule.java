@@ -8,12 +8,13 @@ import android.support.v4.app.FragmentManager;
 
 import dagger.Module;
 import dagger.Provides;
-import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.deviceinfo.GooglePlayServicesChecker;
 import il.co.idocare.dialogs.DialogsManager;
-import il.co.idocare.entities.cachers.UserActionCacher;
+import il.co.idocare.multithreading.MainThreadPoster;
+import il.co.idocare.requests.retrievers.RequestsRetriever;
+import il.co.idocare.useractions.cachers.UserActionCacher;
 import il.co.idocare.helpers.FrameHelper;
-import il.co.idocare.managers.RequestsManager;
+import il.co.idocare.requests.RequestsManager;
 import il.co.idocare.multithreading.BackgroundThreadPoster;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.pictures.CameraAdapter;
@@ -78,12 +79,14 @@ public class ControllerModule {
 
     @Provides
     @ControllerScope
-    RequestsManager requestsManager(BackgroundThreadPoster backgroundThreadPoster,
-                                LoginStateManager loginStateManager,
-                                UserActionCacher userActionCacher,
-                                Logger logger,
-                                ServerSyncController serverSyncController) {
-        return new RequestsManager(backgroundThreadPoster, loginStateManager, userActionCacher, logger,
-                serverSyncController);
+    RequestsManager requestsManager(
+            BackgroundThreadPoster backgroundThreadPoster,
+            MainThreadPoster mainThreadPoster,
+            UserActionCacher userActionCacher,
+            RequestsRetriever requestsRetriever,
+            Logger logger,
+            ServerSyncController serverSyncController) {
+        return new RequestsManager(backgroundThreadPoster, mainThreadPoster, userActionCacher,
+                requestsRetriever, logger, serverSyncController);
     }
 }

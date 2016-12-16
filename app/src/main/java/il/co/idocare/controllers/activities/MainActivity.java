@@ -22,18 +22,18 @@ import java.util.List;
 import javax.inject.Inject;
 
 import il.co.idocare.R;
-import il.co.idocare.screens.requestsall.fragments.RequestsAllFragment;
+import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
 import il.co.idocare.helpers.FrameHelper;
 import il.co.idocare.location.LocationTrackerService;
 import il.co.idocare.mvcviews.mainnavdrawer.MainViewMVC;
 import il.co.idocare.networking.ServerSyncController;
-import il.co.idocare.screens.common.FrameContainer;
+import il.co.idocare.screens.common.MainFrameContainer;
 import il.co.idocare.utils.Logger;
 
 
 public class MainActivity extends AbstractActivity implements
-        MainViewMVC.MainNavDrawerViewMVCListener, FrameContainer {
+        MainViewMVC.MainNavDrawerViewMVCListener, MainFrameContainer {
 
     private static final String TAG = "MainActivity";
 

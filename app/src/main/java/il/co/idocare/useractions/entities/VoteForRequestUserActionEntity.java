@@ -1,6 +1,7 @@
-package il.co.idocare.entities.useractions;
+package il.co.idocare.useractions.entities;
 
 import il.co.idocare.contentproviders.IDoCareContract;
+import il.co.idocare.useractions.entities.UserActionEntity;
 
 /**
  * This object represent user's vote for specific request
@@ -13,8 +14,10 @@ public class VoteForRequestUserActionEntity extends UserActionEntity {
     public static final int VOTE_UP_CLOSED = 3;
     public static final int VOTE_DOWN_CLOSED = 4;
 
+    private final int mVoteType;
+
     public VoteForRequestUserActionEntity(long timestamp,
-                                          long requestId,
+                                          String requestId,
                                           int voteType) {
         super(timestamp,
                 IDoCareContract.UserActions.ENTITY_TYPE_REQUEST,
@@ -23,6 +26,14 @@ public class VoteForRequestUserActionEntity extends UserActionEntity {
                 IDoCareContract.UserActions.ACTION_TYPE_VOTE_FOR_REQUEST,
                 getActionParam(voteType)
         );
+        mVoteType = voteType;
+    }
+
+    /**
+     * @return value corresponding to one of the VOTE_ constants defined in this class
+     */
+    public int getVoteType() {
+        return mVoteType;
     }
 
     private static String getEntityParam(int voteType) {

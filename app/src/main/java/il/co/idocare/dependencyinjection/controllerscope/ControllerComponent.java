@@ -4,7 +4,8 @@ import dagger.Subcomponent;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.controllers.activities.StartupActivity;
 import il.co.idocare.controllers.fragments.CloseRequestFragment;
-import il.co.idocare.screens.requestsall.fragments.RequestsAllFragment;
+import il.co.idocare.dependencyinjection.datacache.RetrieversModule;
+import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
 import il.co.idocare.controllers.fragments.LoginChooserFragment;
 import il.co.idocare.controllers.fragments.LoginNativeFragment;
 import il.co.idocare.controllers.fragments.NewAndCloseRequestBaseFragment;
@@ -16,7 +17,7 @@ import il.co.idocare.dialogs.PromptDialog;
 import il.co.idocare.screens.navigationdrawer.fragments.NavigationDrawerFragment;
 
 @ControllerScope
-@Subcomponent(modules = {ControllerModule.class, CachersModule.class})
+@Subcomponent(modules = {ControllerModule.class, CachersModule.class, RetrieversModule.class})
 public interface ControllerComponent {
 
     void inject(MainActivity activity);

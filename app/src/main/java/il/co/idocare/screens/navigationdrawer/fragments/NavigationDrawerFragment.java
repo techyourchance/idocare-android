@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
@@ -18,22 +17,20 @@ import org.greenrobot.eventbus.ThreadMode;
 import javax.inject.Inject;
 
 import il.co.idocare.Constants;
-import il.co.idocare.MyApplication;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
-import il.co.idocare.screens.requestsall.fragments.RequestsAllFragment;
+import il.co.idocare.screens.common.fragments.BaseFragment;
+import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
 import il.co.idocare.datamodels.functional.UserItem;
-import il.co.idocare.dependencyinjection.contextscope.ContextModule;
-import il.co.idocare.dependencyinjection.controllerscope.ControllerModule;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.eventbusevents.DialogEvents;
 import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.helpers.FrameHelper;
 import il.co.idocare.loaders.UserInfoLoader;
 import il.co.idocare.networking.ServerSyncController;
-import il.co.idocare.screens.common.FrameContainer;
+import il.co.idocare.screens.common.MainFrameContainer;
 import il.co.idocare.screens.navigationdrawer.mvcviews.NavigationDrawerViewMvc;
 import il.co.idocare.screens.navigationdrawer.mvcviews.NavigationDrawerViewMvcImpl;
 import il.co.idocare.utils.Logger;
@@ -42,7 +39,7 @@ import il.co.idocare.utils.Logger;
  * This fragment will be shown in navigation drawer
  */
 
-public class NavigationDrawerFragment extends Fragment implements
+public class NavigationDrawerFragment extends BaseFragment implements
         NavigationDrawerViewMvc.NavigationDrawerViewMvcListener,
         LoaderManager.LoaderCallbacks<UserItem> {
 
@@ -67,13 +64,9 @@ public class NavigationDrawerFragment extends Fragment implements
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        ((MyApplication)getActivity().getApplication())
-                .getApplicationComponent()
-                .newContextComponent(new ContextModule(getActivity()))
-                .newControllerComponent(new ControllerModule(getActivity(), getChildFragmentManager()))
-        .inject(this);
+        getControllerComponent().inject(this);
 
-        mMainFrameHelper = ((FrameContainer)activity).getFrameHelper();
+        mMainFrameHelper = ((MainFrameContainer)activity).getFrameHelper();
     }
 
     @Nullable
@@ -91,18 +84,6 @@ public class NavigationDrawerFragment extends Fragment implements
     public void onResume() {
         super.onResume();
         refreshNavDrawer();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mEventBus.register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mEventBus.unregister(this);
     }
 
     @Override

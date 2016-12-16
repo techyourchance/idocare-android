@@ -1,13 +1,19 @@
-package il.co.idocare.managers;
+package il.co.idocare.requests;
 
 import android.support.annotation.NonNull;
 
-import il.co.idocare.authentication.LoginStateManager;
-import il.co.idocare.entities.cachers.UserActionCacher;
-import il.co.idocare.entities.useractions.UserActionEntity;
-import il.co.idocare.entities.useractions.VoteForRequestUserActionEntity;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 import il.co.idocare.multithreading.BackgroundThreadPoster;
+import il.co.idocare.multithreading.MainThreadPoster;
 import il.co.idocare.networking.ServerSyncController;
+import il.co.idocare.requests.retrievers.RequestsRetriever;
+import il.co.idocare.useractions.entities.UserActionEntity;
+import il.co.idocare.useractions.entities.VoteForRequestUserActionEntity;
+import il.co.idocare.useractions.cachers.UserActionCacher;
 import il.co.idocare.utils.Logger;
 
 /**
@@ -17,25 +23,35 @@ public class RequestsManager {
 
     private static final String TAG = "RequestsManager";
 
+    public interface RequestsManagerListener {
+        public void onRequestsFetched(@NonNull List<RequestEntity> requests);
+    }
+
     public static final int VOTE_UP_CREATED = VoteForRequestUserActionEntity.VOTE_UP_CREATED;
     public static final int VOTE_DOWN_CREATED = VoteForRequestUserActionEntity.VOTE_DOWN_CREATED;
     public static final int VOTE_UP_CLOSED = VoteForRequestUserActionEntity.VOTE_UP_CLOSED;
     public static final int VOTE_DOWN_CLOSED = VoteForRequestUserActionEntity.VOTE_DOWN_CLOSED;
 
     private final BackgroundThreadPoster mBackgroundThreadPoster;
-    private final LoginStateManager mLoginStateManager;
+    private final MainThreadPoster mMainThreadPoster;
     private final UserActionCacher mUserActionCacher;
+    private final RequestsRetriever mRequestsRetriever;
     private final Logger mLogger;
     private final ServerSyncController mServerSyncController;
 
+    private final Set<RequestsManagerListener> mListeners = Collections.newSetFromMap(
+            new ConcurrentHashMap<RequestsManagerListener, Boolean>(1));
+
     public RequestsManager(@NonNull BackgroundThreadPoster backgroundThreadPoster,
-                           @NonNull LoginStateManager loginStateManager,
+                           @NonNull MainThreadPoster mainThreadPoster,
                            @NonNull UserActionCacher userActionCacher,
+                           @NonNull RequestsRetriever requestsRetriever,
                            @NonNull Logger logger,
                            @NonNull ServerSyncController serverSyncController) {
         mBackgroundThreadPoster = backgroundThreadPoster;
-        mLoginStateManager = loginStateManager;
+        mMainThreadPoster = mainThreadPoster;
         mUserActionCacher = userActionCacher;
+        mRequestsRetriever = requestsRetriever;
         mLogger = logger;
         mServerSyncController = serverSyncController;
     }
@@ -43,14 +59,14 @@ public class RequestsManager {
     /**
      * Vote for request
      * @param requestId ID of the request to vote for
+     * @param activeUserId ID of the current user
      * @param voteType either one of: {@link #VOTE_UP_CREATED}, {@link #VOTE_DOWN_CREATED},
      *                 {@link #VOTE_UP_CLOSED}, {@link #VOTE_DOWN_CLOSED}
      */
-    public void voteForRequest(final long requestId, final int voteType) {
+    public void voteForRequest(final String requestId, final String activeUserId, final int voteType) {
 
         mLogger.d(TAG, "voteForRequest(); request ID: " + requestId + "; vote type: " + voteType);
 
-        final String activeUserId = mLoginStateManager.getActiveAccountUserId();
 
         if (activeUserId == null || activeUserId.isEmpty()) {
             mLogger.e(TAG, "no logged in user - vote ignored");
@@ -70,4 +86,35 @@ public class RequestsManager {
             }
         });
     }
+
+    public void fetchRequestsAssignedToUser(final String userId) {
+        mLogger.d(TAG, "getRequestsAssignedToUser() called; user ID: " + userId);
+
+        mBackgroundThreadPoster.post(new Runnable() {
+            @Override
+            public void run() {
+                final List<RequestEntity> requests = mRequestsRetriever.getRequestsAssignedToUser(userId);
+
+                mMainThreadPoster.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (RequestsManagerListener listener : mListeners) {
+                            listener.onRequestsFetched(requests);
+                        }
+                    }
+                });
+            }
+        });
+
+    }
+
+    public void registerListener(@NonNull RequestsManagerListener listener) {
+        mListeners.add(listener);
+    }
+
+    public void unregisterListener(@NonNull RequestsManagerListener listener) {
+        mListeners.remove(listener);
+    }
+
+
 }

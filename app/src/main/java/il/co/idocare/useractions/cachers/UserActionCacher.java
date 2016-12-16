@@ -1,12 +1,11 @@
-package il.co.idocare.entities.cachers;
+package il.co.idocare.useractions.cachers;
 
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.net.Uri;
 
 import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.entities.useractions.UserActionEntity;
+import il.co.idocare.useractions.entities.UserActionEntity;
 import il.co.idocare.utils.Logger;
 
 /**
@@ -50,10 +49,10 @@ public class UserActionCacher {
             ContentValues requestCV = new ContentValues(1);
             requestCV.put(IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG, 1);
             int updated = mContentResolver.update(
-                    ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI, userActionEntity.getEntityId()),
+                    IDoCareContract.Requests.CONTENT_URI,
                     requestCV,
-                    null,
-                    null
+                    IDoCareContract.UserActions.COL_ENTITY_ID + "= ?",
+                    new String[] {userActionEntity.getEntityId()}
             );
             if (updated != 1) {
                 mLogger.e(TAG, "couldn't set 'modified' flag on request after vote");
