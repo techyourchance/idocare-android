@@ -19,6 +19,10 @@ public class UserActionsRetriever {
 
     private ContentResolver mContentResolver;
 
+    public UserActionsRetriever(ContentResolver contentResolver) {
+        mContentResolver = contentResolver;
+    }
+
     public @NonNull List<UserActionEntity> getAllUserActions() {
 
         String[] projection = UserActions.PROJECTION_ALL;

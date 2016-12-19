@@ -23,7 +23,7 @@ public class UserActionEntityFactory {
         return System.currentTimeMillis();
     }
 
-    public UserActionEntity newVoteUpForRequestCreated(String requestId) {
+    public VoteForRequestUserActionEntity newVoteUpForRequestCreated(String requestId) {
         return new VoteForRequestUserActionEntity(
                 getTimestamp(),
                 requestId,
@@ -31,28 +31,28 @@ public class UserActionEntityFactory {
     }
 
 
-    public UserActionEntity newVoteDownForRequestCreated(String requestId) {
+    public VoteForRequestUserActionEntity newVoteDownForRequestCreated(String requestId) {
         return new VoteForRequestUserActionEntity(
                 getTimestamp(),
                 requestId,
                 VoteForRequestUserActionEntity.VOTE_DOWN_CREATED);
     }
 
-    public UserActionEntity newVoteUpForRequestClosed(String requestId) {
+    public VoteForRequestUserActionEntity newVoteUpForRequestClosed(String requestId) {
         return new VoteForRequestUserActionEntity(
                 getTimestamp(),
                 requestId,
                 VoteForRequestUserActionEntity.VOTE_UP_CLOSED);
     }
 
-    public UserActionEntity newVoteDownForRequestClosed(String requestId) {
+    public VoteForRequestUserActionEntity newVoteDownForRequestClosed(String requestId) {
         return new VoteForRequestUserActionEntity(
                 getTimestamp(),
                 requestId,
                 VoteForRequestUserActionEntity.VOTE_DOWN_CLOSED);
     }
 
-    public UserActionEntity newPickUpRequest(String requestId, String pickedUpByUserId) {
+    public PickUpRequestUserActionEntity newPickUpRequest(String requestId, String pickedUpByUserId) {
         return new PickUpRequestUserActionEntity(
                 getTimestamp(),
                 requestId,

@@ -56,11 +56,6 @@ public class ControllerModule {
     }
 
     @Provides
-    ContentResolver contentResolver(Context context) {
-        return context.getContentResolver();
-    }
-
-    @Provides
     CameraAdapter cameraAdapter(Activity activity) {
         return new CameraAdapter(activity);
     }

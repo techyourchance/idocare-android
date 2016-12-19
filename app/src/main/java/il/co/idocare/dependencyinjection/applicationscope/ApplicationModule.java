@@ -2,6 +2,7 @@ package il.co.idocare.dependencyinjection.applicationscope;
 
 import android.accounts.AccountManager;
 import android.app.Application;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -56,13 +57,16 @@ public class ApplicationModule {
         return new Logger();
     }
 
+    @Provides
+    ContentResolver contentResolver() {
+        return mApplication.getContentResolver();
+    }
 
     @Provides
     @ApplicationScope
     ContentResolverProxy provideContentResolverProxy() {
         return new ContentResolverProxy();
     }
-
 
     @Provides
     @ApplicationScope

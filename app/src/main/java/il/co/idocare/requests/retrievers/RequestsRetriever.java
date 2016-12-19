@@ -3,6 +3,7 @@ package il.co.idocare.requests.retrievers;
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,6 +27,14 @@ public class RequestsRetriever {
 
     private RequestsByIdComparator mComparator = new RequestsByIdComparator();
 
+    public RequestsRetriever(@NonNull RawRequestRetriever rawRequestsRetriever,
+                             @NonNull UserActionsRetriever userActionsRetriever,
+                             @NonNull UserActionsToRequestsApplier userActionsToRequestsApplier) {
+        mRawRequestsRetriever = rawRequestsRetriever;
+        mUserActionsRetriever = userActionsRetriever;
+        mUserActionsToRequestsApplier = userActionsToRequestsApplier;
+    }
+
     /**
      * Get information about requests assigned to the user.
      * @param userId ID of the user
@@ -36,18 +45,20 @@ public class RequestsRetriever {
         List<RequestEntity> rawRequests = mRawRequestsRetriever.getRequestsAssignedToUser(userId);
         List<UserActionEntity> userActions = mUserActionsRetriever.getAllUserActions();
 
-        applyUserActionsToRequests(rawRequests, userActions);
-
-        return rawRequests;
+        return applyUserActionsToRequests(rawRequests, userActions);
     }
 
-    private void applyUserActionsToRequests(@NonNull List<RequestEntity> requests,
-                                            @NonNull List<UserActionEntity> userActions) {
+    private List<RequestEntity> applyUserActionsToRequests(@NonNull List<RequestEntity> requests,
+                                                           @NonNull List<UserActionEntity> userActions) {
 
-        if (userActions.isEmpty() || requests.isEmpty()) return;
+        if (userActions.isEmpty() || requests.isEmpty()) return requests;
 
 
         Collections.sort(requests, mComparator); // sort in order to be able to use binary search
+
+        List<RequestEntity> updatedRequests = new ArrayList<>(requests);
+
+        RequestEntity updatedRequest;
 
         for (UserActionEntity userAction : userActions) {
             if (mUserActionsToRequestsApplier.isUserActionAffectingRequest(userAction)) {
@@ -60,12 +71,15 @@ public class RequestsRetriever {
                                 mComparator);
 
                 if (affectedEntityPos >= 0) {
-                    mUserActionsToRequestsApplier.applyUserActionToRequest(
+                    updatedRequest = mUserActionsToRequestsApplier.applyUserActionToRequest(
                             userAction, requests.get(affectedEntityPos));
+                    updatedRequests.set(affectedEntityPos, updatedRequest);
                 }
 
             }
         }
+
+        return updatedRequests;
 
     }
 

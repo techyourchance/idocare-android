@@ -26,4 +26,8 @@ public class PickUpRequestUserActionEntity extends UserActionEntity {
         return getActionParam();
     }
 
+    public String getPickedUpAt() {
+        return String.valueOf(getTimestamp());
+    }
+
 }

@@ -36,6 +36,10 @@ public class CloseRequestUserActionEntity extends UserActionEntity {
         mClosedPictures = new ArrayList<>(closedPictures);
     }
 
+    public String getClosedAt() {
+        return String.valueOf(getTimestamp());
+    }
+
     public String getClosedByUserId() {
         return mClosedByUserId;
     }
@@ -47,6 +51,7 @@ public class CloseRequestUserActionEntity extends UserActionEntity {
     public List<String> getClosedPictures() {
         return Collections.unmodifiableList(mClosedPictures);
     }
+
 
     /**
      * Create JSON object containing user ID, comment and pictures

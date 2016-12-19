@@ -11,7 +11,11 @@ import il.co.idocare.requests.RequestEntity;
 
 public class RequestEntityProvider {
 
-    public static final String REQUEST_ENTITY_ID = "10";
+    public static final String NEW_REQUEST_ENTITY_ID = "10";
+    public static final String PICKED_UP_REQUEST_ENTITY_ID = "50";
+    public static final String CLOSED_REQUEST_ENTITY_ID = "80";
+
+
     public static final String REQUEST_CREATED_BY = "4";
     public static final String REQUEST_CREATED_AT = "2016-12-10T16:15:54Z";
     public static final String REQUEST_CREATED_COMMENT = "created comment";
@@ -31,7 +35,7 @@ public class RequestEntityProvider {
 
     public static RequestEntity getNewRequestEntity() {
         RequestEntity request = new RequestEntity(
-                REQUEST_ENTITY_ID,
+                NEW_REQUEST_ENTITY_ID,
                 REQUEST_CREATED_BY,
                 REQUEST_CREATED_AT,
                 REQUEST_CREATED_COMMENT,
@@ -52,7 +56,7 @@ public class RequestEntityProvider {
 
     public static RequestEntity getPickedUpRequestEntity() {
         RequestEntity request = new RequestEntity(
-                REQUEST_ENTITY_ID,
+                PICKED_UP_REQUEST_ENTITY_ID,
                 REQUEST_CREATED_BY,
                 REQUEST_CREATED_AT,
                 REQUEST_CREATED_COMMENT,
@@ -73,7 +77,7 @@ public class RequestEntityProvider {
 
     public static RequestEntity getClosedRequestEntity() {
         RequestEntity request = new RequestEntity(
-                REQUEST_ENTITY_ID,
+                CLOSED_REQUEST_ENTITY_ID,
                 REQUEST_CREATED_BY,
                 REQUEST_CREATED_AT,
                 REQUEST_CREATED_COMMENT,

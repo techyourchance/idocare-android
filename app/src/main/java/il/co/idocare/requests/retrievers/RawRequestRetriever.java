@@ -21,6 +21,10 @@ public class RawRequestRetriever {
 
     private ContentResolver mContentResolver;
 
+    public RawRequestRetriever(ContentResolver contentResolver) {
+        mContentResolver = contentResolver;
+    }
+
     /**
      * Get "raw" info of requests assigned to user. "Raw" means that the returned information
      * does not take into account the locally cached user's actions on the requests.
