@@ -1,7 +1,6 @@
 package il.co.idocare.dependencyinjection.controllerscope;
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
@@ -10,12 +9,12 @@ import dagger.Module;
 import dagger.Provides;
 import il.co.idocare.deviceinfo.GooglePlayServicesChecker;
 import il.co.idocare.dialogs.DialogsManager;
-import il.co.idocare.multithreading.MainThreadPoster;
+import il.co.idocare.utils.multithreading.MainThreadPoster;
 import il.co.idocare.requests.retrievers.RequestsRetriever;
 import il.co.idocare.useractions.cachers.UserActionCacher;
 import il.co.idocare.helpers.FrameHelper;
 import il.co.idocare.requests.RequestsManager;
-import il.co.idocare.multithreading.BackgroundThreadPoster;
+import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.pictures.CameraAdapter;
 import il.co.idocare.utils.Logger;

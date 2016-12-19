@@ -7,8 +7,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import il.co.idocare.multithreading.BackgroundThreadPoster;
-import il.co.idocare.multithreading.MainThreadPoster;
+import il.co.idocare.common.BaseManager;
+import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
+import il.co.idocare.utils.multithreading.MainThreadPoster;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.requests.retrievers.RequestsRetriever;
 import il.co.idocare.useractions.entities.UserActionEntity;
@@ -19,7 +20,7 @@ import il.co.idocare.utils.Logger;
 /**
  * This manager encapsulates functionality related to "requests"
  */
-public class RequestsManager {
+public class RequestsManager extends BaseManager<RequestsManager.RequestsManagerListener> {
 
     private static final String TAG = "RequestsManager";
 
@@ -38,9 +39,6 @@ public class RequestsManager {
     private final RequestsRetriever mRequestsRetriever;
     private final Logger mLogger;
     private final ServerSyncController mServerSyncController;
-
-    private final Set<RequestsManagerListener> mListeners = Collections.newSetFromMap(
-            new ConcurrentHashMap<RequestsManagerListener, Boolean>(1));
 
     public RequestsManager(@NonNull BackgroundThreadPoster backgroundThreadPoster,
                            @NonNull MainThreadPoster mainThreadPoster,
@@ -98,7 +96,7 @@ public class RequestsManager {
                 mMainThreadPoster.post(new Runnable() {
                     @Override
                     public void run() {
-                        for (RequestsManagerListener listener : mListeners) {
+                        for (RequestsManagerListener listener : getListeners()) {
                             listener.onRequestsFetched(requests);
                         }
                     }
@@ -107,14 +105,5 @@ public class RequestsManager {
         });
 
     }
-
-    public void registerListener(@NonNull RequestsManagerListener listener) {
-        mListeners.add(listener);
-    }
-
-    public void unregisterListener(@NonNull RequestsManagerListener listener) {
-        mListeners.remove(listener);
-    }
-
 
 }
