@@ -5,10 +5,13 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 
+import org.greenrobot.eventbus.EventBus;
+
 import dagger.Module;
 import dagger.Provides;
 import il.co.idocare.deviceinfo.GooglePlayServicesChecker;
 import il.co.idocare.dialogs.DialogsManager;
+import il.co.idocare.utils.eventbusregistrator.EventBusRegistrator;
 import il.co.idocare.utils.multithreading.MainThreadPoster;
 import il.co.idocare.requests.retrievers.RequestsRetriever;
 import il.co.idocare.useractions.cachers.UserActionCacher;
@@ -82,5 +85,10 @@ public class ControllerModule {
             ServerSyncController serverSyncController) {
         return new RequestsManager(backgroundThreadPoster, mainThreadPoster, userActionCacher,
                 requestsRetriever, logger, serverSyncController);
+    }
+
+    @Provides
+    EventBusRegistrator eventBusRegistrator(EventBus eventBus, Logger logger) {
+        return new EventBusRegistrator(eventBus, logger);
     }
 }
