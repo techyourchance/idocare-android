@@ -132,7 +132,7 @@ public class LoginChooserFragment extends AbstractFragment
     @Override
     public void onResume() {
         super.onResume();
-        if (getArguments().containsKey(ARG_PLAY_ANIMATION)) {
+        if (getArguments() != null && getArguments().containsKey(ARG_PLAY_ANIMATION)) {
             animateButtonsSlideIn();
             getArguments().remove(ARG_PLAY_ANIMATION);
         }
