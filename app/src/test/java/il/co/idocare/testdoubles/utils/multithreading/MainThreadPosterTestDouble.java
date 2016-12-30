@@ -15,7 +15,7 @@ import il.co.idocare.utils.multithreading.MainThreadPoster;
  * background thread is allowed to run at a time, thus simulating a serial execution of Runnables.
  */
 
-public class MainThreadPosterTestDouble extends MainThreadPoster {
+/* package */ class MainThreadPosterTestDouble extends MainThreadPoster {
 
     private final Object MONITOR = new Object();
 
@@ -46,7 +46,7 @@ public class MainThreadPosterTestDouble extends MainThreadPoster {
      * Call to this method will block until all Runnables posted to this "test double" UNTIL THE
      * MOMENT OF A CALL will be completed.
      */
-    public void join() {
+    /* package */ void join() {
         Queue<Thread> threadsCopy;
         synchronized (MONITOR) {
             threadsCopy = new LinkedBlockingQueue<>(mThreads);

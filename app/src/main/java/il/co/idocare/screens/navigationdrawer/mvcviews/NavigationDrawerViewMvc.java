@@ -2,6 +2,7 @@ package il.co.idocare.screens.navigationdrawer.mvcviews;
 
 import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.mvcviews.ObservableViewMVC;
+import il.co.idocare.users.UserEntity;
 
 /**
  * This mvc view represents navigation drawer's UI
@@ -18,8 +19,6 @@ public interface NavigationDrawerViewMvc extends
         void onShowMapClicked();
     }
 
-    void bindUserData(UserItem user);
-
-    void refreshDrawer(boolean isUserLoggedIn);
+    void bindUserData(UserEntity user);
 
 }

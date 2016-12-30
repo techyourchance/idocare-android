@@ -11,7 +11,7 @@ import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
  * sends each Runnable to a new background thread.
  */
 
-public class BackgroundThreadPosterTestDouble extends BackgroundThreadPoster {
+/* package */ class BackgroundThreadPosterTestDouble extends BackgroundThreadPoster {
 
     private final Object MONITOR = new Object();
 

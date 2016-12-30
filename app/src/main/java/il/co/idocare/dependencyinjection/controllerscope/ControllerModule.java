@@ -12,6 +12,8 @@ import dagger.Provides;
 import il.co.idocare.deviceinfo.GooglePlayServicesChecker;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.screens.navigationdrawer.NavigationDrawerController;
+import il.co.idocare.users.UsersManager;
+import il.co.idocare.users.UsersRetriever;
 import il.co.idocare.utils.eventbusregistrator.EventBusRegistrator;
 import il.co.idocare.utils.multithreading.MainThreadPoster;
 import il.co.idocare.requests.retrievers.RequestsRetriever;
@@ -87,6 +89,14 @@ public class ControllerModule {
         return new RequestsManager(backgroundThreadPoster, mainThreadPoster, userActionCacher,
                 requestsRetriever, logger, serverSyncController);
     }
+
+    @Provides
+    UsersManager usersManager(UsersRetriever usersRetriever,
+                              BackgroundThreadPoster backgroundThreadPoster,
+                              MainThreadPoster mainThreadPoster) {
+        return new UsersManager(usersRetriever, backgroundThreadPoster, mainThreadPoster);
+    }
+
 
     @Provides
     EventBusRegistrator eventBusRegistrator(EventBus eventBus, Logger logger) {

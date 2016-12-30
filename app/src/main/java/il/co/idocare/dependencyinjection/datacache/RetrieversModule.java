@@ -8,6 +8,7 @@ import il.co.idocare.requests.retrievers.RawRequestRetriever;
 import il.co.idocare.requests.retrievers.RequestsRetriever;
 import il.co.idocare.useractions.UserActionsToRequestsApplier;
 import il.co.idocare.useractions.retrievers.UserActionsRetriever;
+import il.co.idocare.users.UsersRetriever;
 
 @Module
 public class RetrieversModule {
@@ -32,6 +33,11 @@ public class RetrieversModule {
                                                UserActionsRetriever userActionsRetriever,
                                                UserActionsToRequestsApplier userActionsToRequestsApplier) {
         return new RequestsRetriever(rawRequestRetriever, userActionsRetriever, userActionsToRequestsApplier);
+    }
+
+    @Provides
+    UsersRetriever usersRetriever(ContentResolver contentResolver) {
+        return new UsersRetriever(contentResolver);
     }
 
 }

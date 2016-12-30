@@ -15,8 +15,7 @@ import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.requests.retrievers.RequestsRetriever;
 import il.co.idocare.testdoubles.entities.RequestEntityProvider;
 import il.co.idocare.testdoubles.utils.NullLogger;
-import il.co.idocare.testdoubles.utils.multithreading.BackgroundThreadPosterTestDouble;
-import il.co.idocare.testdoubles.utils.multithreading.MainThreadPosterTestDouble;
+import il.co.idocare.testdoubles.utils.multithreading.ThreadPostersTestController;
 import il.co.idocare.useractions.cachers.UserActionCacher;
 import il.co.idocare.utils.Logger;
 
@@ -30,16 +29,16 @@ public class RequestsManagerTest {
 
     private static final String TEST_USER_ID = "test_user_id";
 
-
-    private MainThreadPosterTestDouble mMainThreadPosterTestDouble = new MainThreadPosterTestDouble();
-    private BackgroundThreadPosterTestDouble mBackgroundThreadPosterTestDouble = new BackgroundThreadPosterTestDouble();
     @Mock UserActionCacher mUserActionCacherMock;
     @Mock RequestsRetriever mRequestsRetrieverMock;
-    private Logger mLogger = new NullLogger();
     @Mock ServerSyncController mServerSyncControllerMock;
 
     @Mock RequestsManager.RequestsManagerListener mRequestsManagerListenerMock1;
     @Mock RequestsManager.RequestsManagerListener mRequestsManagerListenerMock2;
+
+
+    private Logger mLogger = new NullLogger();
+    private ThreadPostersTestController mThreadPostersTestController = new ThreadPostersTestController();
 
     @Captor
     private ArgumentCaptor<List<RequestEntity>> captor;
@@ -49,8 +48,8 @@ public class RequestsManagerTest {
     @Before
     public void setup() throws Exception {
         SUT = new RequestsManager(
-                mBackgroundThreadPosterTestDouble,
-                mMainThreadPosterTestDouble,
+                mThreadPostersTestController.getBackgroundThreadPoster(),
+                mThreadPostersTestController.getMainThreadPoster(),
                 mUserActionCacherMock,
                 mRequestsRetrieverMock,
                 mLogger,
@@ -82,8 +81,7 @@ public class RequestsManagerTest {
         SUT.fetchRequestsAssignedToUser(TEST_USER_ID);
 
         // Assert
-        mBackgroundThreadPosterTestDouble.join();
-        mMainThreadPosterTestDouble.join();
+        mThreadPostersTestController.waitUntilAllActionsCompleted();
 
         verify(mRequestsManagerListenerMock1, times(1)).onRequestsFetched(captor.capture());
         verify(mRequestsManagerListenerMock2, times(1)).onRequestsFetched(captor.capture());

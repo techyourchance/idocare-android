@@ -1,6 +1,7 @@
 package il.co.idocare.screens.navigationdrawer.mvcviews;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +21,8 @@ import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.controllers.listadapters.NavigationDrawerListAdapter;
 import il.co.idocare.datamodels.functional.NavigationDrawerEntry;
-import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.mvcviews.AbstractViewMVC;
+import il.co.idocare.users.UserEntity;
 
 
 public class NavigationDrawerViewMvcImpl extends
@@ -44,6 +45,8 @@ public class NavigationDrawerViewMvcImpl extends
     private NavigationDrawerListAdapter mNavDrawerAdapter;
     private ListView mDrawerList;
 
+    private UserEntity mCurrentUser;
+
     public NavigationDrawerViewMvcImpl(LayoutInflater inflater, ViewGroup container) {
         setRootView(inflater.inflate(R.layout.layout_navigation_drawer, container, false));
 
@@ -62,48 +65,10 @@ public class NavigationDrawerViewMvcImpl extends
     }
 
     @Override
-    public void bindUserData(UserItem user) {
-
-        if (user != null && user.getId() > 0) {
-            mImgUserPicture.setVisibility(View.VISIBLE);
-            mImgReputationStar.setVisibility(View.VISIBLE);
-            mTxtUserReputation.setVisibility(View.VISIBLE);
-            mTxtUserNickname.setVisibility(View.VISIBLE);
-
-            mTxtUserNickname.setText(user.getNickname());
-            mTxtUserReputation.setText(String.valueOf(user.getReputation()));
-
-            if (user.getPictureUrl() != null && user.getPictureUrl().length() > 0) {
-                showUserPicture(user.getPictureUrl());
-            } else {
-                mImgUserPicture.setImageResource(R.drawable.ic_default_user_picture);
-            }
-        } else {
-            mImgUserPicture.setVisibility(View.GONE);
-            mImgReputationStar.setVisibility(View.GONE);
-            mTxtUserReputation.setVisibility(View.GONE);
-            mTxtUserNickname.setVisibility(View.GONE);
-        }
+    public void bindUserData(UserEntity user) {
+        mCurrentUser = user;
+        refreshDrawer();
     }
-
-
-    private void showUserPicture(String pictureUrl) {
-        String universalImageLoaderUri = pictureUrl;
-        try {
-            new URL(universalImageLoaderUri);
-        } catch (MalformedURLException e) {
-            // The exception means that the current Uri is not a valid URL - it is local
-            // uri and we need to adjust it to the scheme recognized by UIL
-            universalImageLoaderUri = "file://" + universalImageLoaderUri;
-        }
-
-        ImageLoader.getInstance().displayImage(
-                universalImageLoaderUri,
-                mImgUserPicture,
-                Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
-
-    }
-
 
     private void initDrawerListView() {
 
@@ -150,16 +115,16 @@ public class NavigationDrawerViewMvcImpl extends
         }
     }
 
-    /**
-     * Refresh drawer's entries
-     */
-    @Override
-    public void refreshDrawer(boolean isUserLoggedIn) {
+    private void refreshDrawer() {
+        refreshDrawerHeader();
+        refreshDrawerBody();
+    }
 
+    private void refreshDrawerBody() {
         List<NavigationDrawerEntry> entries = new ArrayList<>(8);
 
         // "My requests" only exposed for logged in users
-        if (isUserLoggedIn) {
+        if (isUserLoggedIn()) {
             entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_my,
                     R.drawable.ic_drawer_assigned_to_me, ENTRY_MY_REQUESTS));
         }
@@ -172,7 +137,7 @@ public class NavigationDrawerViewMvcImpl extends
                 R.drawable.ic_drawer_requests_list, ENTRY_REQUESTS_LIST));
 
         // No need for both login/logout options at once
-        if (isUserLoggedIn)
+        if (isUserLoggedIn())
             entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_logout,
                     R.drawable.ic_drawer_logout, ENTRY_LOG_OUT));
         else
@@ -182,6 +147,50 @@ public class NavigationDrawerViewMvcImpl extends
         mNavDrawerAdapter.clear();
         mNavDrawerAdapter.addAll(entries);
         mNavDrawerAdapter.notifyDataSetChanged();
+    }
+
+    private void refreshDrawerHeader() {
+        if (isUserLoggedIn()) {
+            mImgUserPicture.setVisibility(View.VISIBLE);
+            mImgReputationStar.setVisibility(View.VISIBLE);
+            mTxtUserReputation.setVisibility(View.VISIBLE);
+            mTxtUserNickname.setVisibility(View.VISIBLE);
+
+            mTxtUserNickname.setText(mCurrentUser.getNickname());
+            mTxtUserReputation.setText(String.valueOf(mCurrentUser.getReputation()));
+
+            if (!TextUtils.isEmpty(mCurrentUser.getPictureUrl())) {
+                showUserPicture(mCurrentUser.getPictureUrl());
+            } else {
+                mImgUserPicture.setImageResource(R.drawable.ic_default_user_picture);
+            }
+        } else {
+            mImgUserPicture.setVisibility(View.GONE);
+            mImgReputationStar.setVisibility(View.GONE);
+            mTxtUserReputation.setVisibility(View.GONE);
+            mTxtUserNickname.setVisibility(View.GONE);
+        }
+    }
+
+    private void showUserPicture(String pictureUrl) {
+        String universalImageLoaderUri = pictureUrl;
+        try {
+            new URL(universalImageLoaderUri);
+        } catch (MalformedURLException e) {
+            // The exception means that the current Uri is not a valid URL - it is local
+            // uri and we need to adjust it to the scheme recognized by UIL
+            universalImageLoaderUri = "file://" + universalImageLoaderUri;
+        }
+
+        ImageLoader.getInstance().displayImage(
+                universalImageLoaderUri,
+                mImgUserPicture,
+                Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
+
+    }
+
+    private boolean isUserLoggedIn() {
+        return mCurrentUser != null;
     }
 
 }
