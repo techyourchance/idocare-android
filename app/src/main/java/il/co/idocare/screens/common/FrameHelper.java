@@ -25,6 +25,11 @@ public class FrameHelper {
     public void replaceFragment(Class<? extends Fragment> claz, boolean addToBackStack,
                                 boolean clearBackStack, Bundle args) {
 
+        // TODO: this is not a very good approach... Come up with a "single top" alternative for fragments
+        if (isFragmentShown(claz)) {
+            return;
+        }
+
         if (clearBackStack) {
             // Remove all entries from back stack
             mFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
