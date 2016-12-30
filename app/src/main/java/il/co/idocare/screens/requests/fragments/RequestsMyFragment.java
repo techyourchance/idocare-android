@@ -11,44 +11,37 @@ import javax.inject.Inject;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.fragments.AbstractFragment;
+import il.co.idocare.requests.RequestEntity;
 import il.co.idocare.requests.RequestsManager;
+import il.co.idocare.screens.common.fragments.BaseFragment;
+import il.co.idocare.screens.requests.mvcviews.RequestsMyViewMvcImpl;
 
 
-public class RequestsMyFragment extends AbstractFragment {
+public class RequestsMyFragment extends BaseFragment implements RequestsMyViewMvcImpl.RequestsMyViewMvcListener {
 
-    private final static String LOG_TAG = "RequestsMyFragment";
+    private final static String TAG = "RequestsMyFragment";
 
     @Inject LoginStateManager mLoginStateManager;
     @Inject RequestsManager mRequestsManager;
 
+    private RequestsMyViewMvcImpl mViewMvc;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mViewMvc = new RequestsMyViewMvcImpl(inflater, container);
+        mViewMvc.registerListener(this);
 
-
-        // This is required for automatic refresh of action bar options upon fragment's loading
-        setHasOptionsMenu(true);
-
-        setActionBarTitle(getTitle());
-
-        return null;
+        return mViewMvc.getRootView();
     }
 
 
     @Override
-    public boolean isTopLevelFragment() {
-        return false;
+    public void onRequestClicked(RequestEntity request) {
+        // TODO
     }
 
     @Override
-    public Class<? extends AbstractFragment> getNavHierParentFragment() {
-        return RequestsAllFragment.class;
+    public void onCreateNewRequestClicked() {
+        // TODO
     }
-
-    @Override
-    public String getTitle() {
-        return getResources().getString(R.string.requests_my_fragment_title);
-    }
-
-
-
 }

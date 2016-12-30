@@ -469,7 +469,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         if (loader.getId() == REQUEST_LOADER) {
-            // TODO: should we do s.t. here? Maybe mRequestDetailsViewMvc.bindRequestItem(null)?
+            // TODO: should we do s.t. here? Maybe mRequestDetailsViewMvc.bindRequest(null)?
         } else if (loader.getId() == USERS_LOADER) {
             // TODO: should do anything here?
         } else if (loader.getId() == USER_ACTIONS_LOADER) {

@@ -27,12 +27,13 @@ import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.eventbusevents.DialogEvents;
 import il.co.idocare.eventbusevents.LoginStateEvents;
-import il.co.idocare.helpers.FrameHelper;
+import il.co.idocare.screens.common.FrameHelper;
 import il.co.idocare.loaders.UserInfoLoader;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.screens.common.MainFrameContainer;
 import il.co.idocare.screens.navigationdrawer.mvcviews.NavigationDrawerViewMvc;
 import il.co.idocare.screens.navigationdrawer.mvcviews.NavigationDrawerViewMvcImpl;
+import il.co.idocare.screens.requests.fragments.RequestsMyFragment;
 import il.co.idocare.utils.Logger;
 
 /**
@@ -93,7 +94,7 @@ public class NavigationDrawerFragment extends BaseFragment implements
 
     @Override
     public void onMyRequestsClicked() {
-        // currently no-op
+        mMainFrameHelper.replaceFragment(RequestsMyFragment.class, true, false, null);
     }
 
     @Override

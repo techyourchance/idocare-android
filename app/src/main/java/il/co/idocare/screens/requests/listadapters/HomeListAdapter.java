@@ -1,4 +1,4 @@
-package il.co.idocare.controllers.listadapters;
+package il.co.idocare.screens.requests.listadapters;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -23,8 +23,8 @@ import il.co.idocare.controllers.interfaces.UserUserActionApplier;
 import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.datamodels.functional.UserActionItem;
 import il.co.idocare.datamodels.functional.UserItem;
-import il.co.idocare.mvcviews.requestthumbnail.RequestThumbnailViewMvc;
-import il.co.idocare.mvcviews.requestthumbnail.RequestThumbnailViewMvcImpl;
+import il.co.idocare.screens.requests.mvcviews.RequestThumbnailViewMvc;
+import il.co.idocare.screens.requests.mvcviews.RequestThumbnailViewMvcImpl;
 
 /**
  * Customized CursorAdapter that is used for displaying the list of requests on RequestsAllFragment.

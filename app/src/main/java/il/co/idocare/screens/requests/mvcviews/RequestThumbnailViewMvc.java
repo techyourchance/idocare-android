@@ -1,4 +1,4 @@
-package il.co.idocare.mvcviews.requestthumbnail;
+package il.co.idocare.screens.requests.mvcviews;
 
 import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.datamodels.functional.UserItem;

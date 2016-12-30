@@ -24,7 +24,7 @@ import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
 import il.co.idocare.controllers.fragments.RequestDetailsFragment;
 import il.co.idocare.controllers.interfaces.RequestsCombinedCursorAdapter;
-import il.co.idocare.controllers.listadapters.HomeListAdapter;
+import il.co.idocare.screens.requests.listadapters.HomeListAdapter;
 import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
 import il.co.idocare.controllers.listadapters.UserActionsOnUserApplierImpl;
 import il.co.idocare.datamodels.functional.RequestItem;

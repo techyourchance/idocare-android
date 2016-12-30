@@ -2,8 +2,6 @@ package il.co.idocare.screens.common;
 
 import android.support.annotation.NonNull;
 
-import il.co.idocare.helpers.FrameHelper;
-
 /**
  * This interface can be implemented by components that contain FrameLayout in order to allow
  * other components to manage the content of this frame.

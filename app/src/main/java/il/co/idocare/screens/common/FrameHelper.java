@@ -1,4 +1,4 @@
-package il.co.idocare.helpers;
+package il.co.idocare.screens.common;
 
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -16,20 +16,14 @@ public class FrameHelper {
 
 
     private FragmentManager mFragmentManager;
-    private @IdRes int mFrameLayoutId;
 
     public FrameHelper(FragmentManager fragmentManager) {
         mFragmentManager = fragmentManager;
     }
 
-    public void setFrameLayoutId(@IdRes int id) {
-        mFrameLayoutId = id;
-    }
 
     public void replaceFragment(Class<? extends Fragment> claz, boolean addToBackStack,
                                 boolean clearBackStack, Bundle args) {
-
-        verifyInitialized();
 
         if (clearBackStack) {
             // Remove all entries from back stack
@@ -81,10 +75,6 @@ public class FrameHelper {
                 currFragment != null && claz.isInstance(currFragment));
     }
 
-    private void verifyInitialized() {
-        if (mFrameLayoutId == 0)
-            throw new IllegalStateException("FrameHelper hasn't been initialized yet");
-    }
 
 
 }

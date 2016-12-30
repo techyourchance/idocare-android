@@ -15,7 +15,7 @@ import il.co.idocare.utils.eventbusregistrator.EventBusRegistrator;
 import il.co.idocare.utils.multithreading.MainThreadPoster;
 import il.co.idocare.requests.retrievers.RequestsRetriever;
 import il.co.idocare.useractions.cachers.UserActionCacher;
-import il.co.idocare.helpers.FrameHelper;
+import il.co.idocare.screens.common.FrameHelper;
 import il.co.idocare.requests.RequestsManager;
 import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
 import il.co.idocare.networking.ServerSyncController;

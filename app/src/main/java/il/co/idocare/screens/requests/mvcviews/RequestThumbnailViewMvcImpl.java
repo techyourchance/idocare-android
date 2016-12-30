@@ -1,4 +1,4 @@
-package il.co.idocare.mvcviews.requestthumbnail;
+package il.co.idocare.screens.requests.mvcviews;
 
 import android.os.Bundle;
 import android.text.TextUtils;

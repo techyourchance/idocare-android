@@ -9,6 +9,8 @@ import android.view.View;
 
 import org.greenrobot.eventbus.EventBus;
 
+import javax.inject.Inject;
+
 import il.co.idocare.MyApplication;
 import il.co.idocare.controllers.fragments.IDoCareFragmentCallback;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
@@ -17,6 +19,7 @@ import il.co.idocare.dependencyinjection.controllerscope.ControllerComponent;
 import il.co.idocare.dependencyinjection.controllerscope.ControllerModule;
 import il.co.idocare.dependencyinjection.datacache.CachersModule;
 import il.co.idocare.dependencyinjection.datacache.RetrieversModule;
+import il.co.idocare.utils.eventbusregistrator.EventBusRegistrator;
 
 
 /**
@@ -25,6 +28,8 @@ import il.co.idocare.dependencyinjection.datacache.RetrieversModule;
 public abstract class BaseFragment extends Fragment {
 
     private ControllerComponent mControllerComponent;
+
+    @Inject EventBusRegistrator mEventBusRegistrator;
 
     @Override
     public void onAttach(Activity activity) {
@@ -38,6 +43,8 @@ public abstract class BaseFragment extends Fragment {
                         new CachersModule(),
                         new RetrieversModule());
 
+        mControllerComponent.inject(this);
+
     }
 
     protected ControllerComponent getControllerComponent() {
@@ -47,13 +54,13 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+        mEventBusRegistrator.registerMembersOfAnnotatedType(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
+        mEventBusRegistrator.unregisterMembersOfAnnotatedType(this);
     }
 
 }

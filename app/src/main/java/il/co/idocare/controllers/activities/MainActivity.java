@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import il.co.idocare.R;
 import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
-import il.co.idocare.helpers.FrameHelper;
+import il.co.idocare.screens.common.FrameHelper;
 import il.co.idocare.location.LocationTrackerService;
 import il.co.idocare.mvcviews.mainnavdrawer.MainViewMVC;
 import il.co.idocare.networking.ServerSyncController;
@@ -70,8 +70,6 @@ public class MainActivity extends AbstractActivity implements
         mMainViewMVC = new MainViewMVC(LayoutInflater.from(this), null, this);
         mMainViewMVC.setListener(this);
         setContentView(mMainViewMVC.getRootView());
-
-        mFrameHelper.setFrameLayoutId(R.id.frame_contents); // init frame helper
 
         // Show Home fragment if the app is not restored
         if (savedInstanceState == null) {

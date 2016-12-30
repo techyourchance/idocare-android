@@ -1,5 +1,7 @@
 package il.co.idocare.mvcviews;
 
+import android.content.Context;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.view.View;
 
@@ -46,5 +48,13 @@ public abstract class AbstractViewMVC<ListenerType> implements ObservableViewMVC
     @Override
     public View getRootView() {
         return mRootView;
+    }
+
+    protected <T extends View> T findViewById(@IdRes int id) {
+        return (T) mRootView.findViewById(id);
+    }
+
+    protected Context getContext() {
+        return getRootView().getContext();
     }
 }
