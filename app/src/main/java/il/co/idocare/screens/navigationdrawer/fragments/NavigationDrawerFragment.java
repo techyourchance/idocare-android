@@ -21,6 +21,7 @@ import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.screens.common.fragments.BaseFragment;
+import il.co.idocare.screens.navigationdrawer.NavigationDrawerController;
 import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
 import il.co.idocare.datamodels.functional.UserItem;
@@ -35,11 +36,12 @@ import il.co.idocare.screens.navigationdrawer.mvcviews.NavigationDrawerViewMvc;
 import il.co.idocare.screens.navigationdrawer.mvcviews.NavigationDrawerViewMvcImpl;
 import il.co.idocare.screens.requests.fragments.RequestsMyFragment;
 import il.co.idocare.utils.Logger;
+import il.co.idocare.utils.eventbusregistrator.EventBusRegistrable;
 
 /**
  * This fragment will be shown in navigation drawer
  */
-
+@EventBusRegistrable
 public class NavigationDrawerFragment extends BaseFragment implements
         NavigationDrawerViewMvc.NavigationDrawerViewMvcListener,
         LoaderManager.LoaderCallbacks<UserItem> {
@@ -53,6 +55,7 @@ public class NavigationDrawerFragment extends BaseFragment implements
     @Inject LoginStateManager mLoginStateManager;
     @Inject ServerSyncController mServerSyncController;
     @Inject DialogsManager mDialogsManager;
+    @Inject NavigationDrawerController mNavigationDrawerController;
     @Inject EventBus mEventBus;
     @Inject Logger mLogger;
 
@@ -90,24 +93,28 @@ public class NavigationDrawerFragment extends BaseFragment implements
     @Override
     public void onRequestsListClicked() {
         mMainFrameHelper.replaceFragment(RequestsAllFragment.class, false, true, null);
+        closeNavDrawer();
     }
 
     @Override
     public void onMyRequestsClicked() {
         mMainFrameHelper.replaceFragment(RequestsMyFragment.class, true, false, null);
+        closeNavDrawer();
     }
 
     @Override
     public void onNewRequestClicked() {
-        if (mLoginStateManager.isLoggedIn())
+        if (mLoginStateManager.isLoggedIn()) {
             mMainFrameHelper.replaceFragment(NewRequestFragment.class, true, false, null);
-        else
+            closeNavDrawer();
+        } else {
             mDialogsManager.showPromptDialog(
                     null,
                     getString(R.string.msg_ask_to_log_in_before_new_request),
                     getResources().getString(R.string.btn_dialog_positive),
                     getResources().getString(R.string.btn_dialog_negative),
                     USER_LOGIN_DIALOG_TAG);
+        }
     }
 
     @Subscribe
@@ -115,6 +122,7 @@ public class NavigationDrawerFragment extends BaseFragment implements
         if (event.getTag().equals(USER_LOGIN_DIALOG_TAG)) {
             if (event.getClickedButtonIndex() == DialogEvents.PromptDialogDismissedEvent.BUTTON_POSITIVE) {
                 initiateLoginFlow();
+                closeNavDrawer();
             }
         }
     }
@@ -122,16 +130,19 @@ public class NavigationDrawerFragment extends BaseFragment implements
     @Override
     public void onLogInClicked() {
         initiateLoginFlow();
+        closeNavDrawer();
     }
 
     @Override
     public void onLogOutClicked() {
         initiateLogoutFlow();
+        closeNavDrawer();
     }
 
     @Override
     public void onShowMapClicked() {
         // currently no op
+        closeNavDrawer();
     }
 
     private void initiateLogoutFlow() {
@@ -185,12 +196,9 @@ public class NavigationDrawerFragment extends BaseFragment implements
 
     }
 
-
-
-    // End of LoaderCallback methods
-    //
-    // ---------------------------------------------------------------------------------------------
-
+    private void closeNavDrawer() {
+        mNavigationDrawerController.closeDrawer();
+    }
 
     private void refreshNavDrawer() {
         mLogger.d(TAG, "refreshNavDrawer()");

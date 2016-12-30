@@ -11,6 +11,7 @@ import dagger.Module;
 import dagger.Provides;
 import il.co.idocare.deviceinfo.GooglePlayServicesChecker;
 import il.co.idocare.dialogs.DialogsManager;
+import il.co.idocare.screens.navigationdrawer.NavigationDrawerController;
 import il.co.idocare.utils.eventbusregistrator.EventBusRegistrator;
 import il.co.idocare.utils.multithreading.MainThreadPoster;
 import il.co.idocare.requests.retrievers.RequestsRetriever;
@@ -90,5 +91,10 @@ public class ControllerModule {
     @Provides
     EventBusRegistrator eventBusRegistrator(EventBus eventBus, Logger logger) {
         return new EventBusRegistrator(eventBus, logger);
+    }
+
+    @Provides
+    NavigationDrawerController navigationDrawerController() {
+        return (NavigationDrawerController) mActivity;
     }
 }

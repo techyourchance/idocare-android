@@ -25,7 +25,6 @@ public class MainViewMVC
         implements ViewMVC {
 
 
-
     public interface MainNavDrawerViewMVCListener {
         /**
          * Will be called when Navigation Drawer's visibility state changes
@@ -46,9 +45,6 @@ public class MainViewMVC
     private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mActionBarDrawerToggle;
-
-
-    private MainNavDrawerViewMVCListener mListener;
 
 
     public MainViewMVC(@NonNull LayoutInflater inflater,
@@ -95,8 +91,9 @@ public class MainViewMVC
                 // Only update when drawer's visibility actually changed
                 if (mIsDrawerVisibleLast != isDrawerVisible()) {
                     mIsDrawerVisibleLast = !mIsDrawerVisibleLast;
-                    if (mListener != null)
-                        mListener.onDrawerVisibilityStateChanged(mIsDrawerVisibleLast);
+                    for (MainNavDrawerViewMVCListener listener : getListeners()) {
+                        listener.onDrawerVisibilityStateChanged(mIsDrawerVisibleLast);
+                    }
                 }
             }
         };
@@ -106,7 +103,9 @@ public class MainViewMVC
         mActionBarDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mListener != null) mListener.onNavigationClick();
+                for (MainNavDrawerViewMVCListener listener : getListeners()) {
+                    listener.onNavigationClick();
+                }
             }
         });
 
@@ -130,14 +129,6 @@ public class MainViewMVC
     }
 
     /**
-     * Register a listener that will be notified of events and interactions with this MVC view
-     * @param listener a listener to notify; null to clear
-     */
-    public void setListener(MainNavDrawerViewMVCListener listener) {
-        mListener = listener;
-    }
-
-    /**
      * See {@link ActionBarDrawerToggle#syncState()}
      */
     public void syncDrawerToggleState() {
@@ -155,6 +146,14 @@ public class MainViewMVC
 
     public boolean isDrawerVisible() {
         return mDrawerLayout.isDrawerVisible(GravityCompat.START);
+    }
+
+    public void openDrawer() {
+        mDrawerLayout.openDrawer(GravityCompat.START);
+    }
+
+    public void closeDrawer() {
+        mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
 }

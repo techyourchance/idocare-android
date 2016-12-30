@@ -22,6 +22,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import il.co.idocare.R;
+import il.co.idocare.screens.navigationdrawer.NavigationDrawerController;
 import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
 import il.co.idocare.screens.common.FrameHelper;
@@ -33,7 +34,7 @@ import il.co.idocare.utils.Logger;
 
 
 public class MainActivity extends AbstractActivity implements
-        MainViewMVC.MainNavDrawerViewMVCListener, MainFrameContainer {
+        MainViewMVC.MainNavDrawerViewMVCListener, MainFrameContainer, NavigationDrawerController {
 
     private static final String TAG = "MainActivity";
 
@@ -68,7 +69,7 @@ public class MainActivity extends AbstractActivity implements
         getControllerComponent().inject(this);
 
         mMainViewMVC = new MainViewMVC(LayoutInflater.from(this), null, this);
-        mMainViewMVC.setListener(this);
+        mMainViewMVC.registerListener(this);
         setContentView(mMainViewMVC.getRootView());
 
         // Show Home fragment if the app is not restored
@@ -179,16 +180,15 @@ public class MainActivity extends AbstractActivity implements
     // ---------------------------------------------------------------------------------------------
 
 
+    @Override
+    public void openDrawer() {
+        mMainViewMVC.openDrawer();
+    }
 
-
-
-
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // Navigation drawer management
-
-
+    @Override
+    public void closeDrawer() {
+        mMainViewMVC.closeDrawer();
+    }
 
     public void setTitle(String title) {
         mMainViewMVC.setTitle(title);
@@ -200,11 +200,14 @@ public class MainActivity extends AbstractActivity implements
         onNavigateUp();
     }
 
-
-    // End of navigation drawer management
-    //
-    // ---------------------------------------------------------------------------------------------
-
+    @Override
+    public void onBackPressed() {
+        if (mMainViewMVC.isDrawerVisible()) {
+            closeDrawer();
+        } else {
+            super.onBackPressed();
+        }
+    }
 
     // ---------------------------------------------------------------------------------------------
     //
