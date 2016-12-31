@@ -3,6 +3,7 @@ package il.co.idocare.users;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 
 import il.co.idocare.contentproviders.IDoCareContract;
 
@@ -21,6 +22,7 @@ public class UsersRetriever {
     /**
      * @return user's data, or null if no data for user ID was found in cache
      */
+    @WorkerThread
     public @Nullable UserEntity getUserById(String userId) {
         Cursor cursor = null;
         try {

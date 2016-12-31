@@ -32,7 +32,7 @@ import il.co.idocare.screens.navigationdrawer.mvcviews.NavigationDrawerViewMvcIm
 import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
 import il.co.idocare.screens.requests.fragments.RequestsMyFragment;
 import il.co.idocare.users.UserEntity;
-import il.co.idocare.users.UsersManager;
+import il.co.idocare.users.UsersDataMonitoringManager;
 import il.co.idocare.utils.Logger;
 import il.co.idocare.utils.eventbusregistrator.EventBusRegistrable;
 
@@ -42,7 +42,7 @@ import il.co.idocare.utils.eventbusregistrator.EventBusRegistrable;
 @EventBusRegistrable
 public class NavigationDrawerFragment extends BaseFragment implements
         NavigationDrawerViewMvc.NavigationDrawerViewMvcListener,
-        UsersManager.UsersManagerListener {
+        UsersDataMonitoringManager.UsersDataMonitorListener {
 
     private static final String TAG = "NavigationDrawerFragment";
 
@@ -52,7 +52,7 @@ public class NavigationDrawerFragment extends BaseFragment implements
     @Inject ServerSyncController mServerSyncController;
     @Inject DialogsManager mDialogsManager;
     @Inject NavigationDrawerController mNavigationDrawerController;
-    @Inject UsersManager mUsersManager;
+    @Inject UsersDataMonitoringManager mUsersDataMonitoringManager;
     @Inject EventBus mEventBus;
     @Inject Logger mLogger;
 
@@ -82,40 +82,28 @@ public class NavigationDrawerFragment extends BaseFragment implements
     @Override
     public void onStart() {
         super.onStart();
-        mUsersManager.registerListener(this);
+        mUsersDataMonitoringManager.registerListener(this);
+        fetchDataOfActiveUser();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mUsersManager.unregisterListener(this);
+        mUsersDataMonitoringManager.unregisterListener(this);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        fetchActiveUserData();
-    }
-
-    private void fetchActiveUserData() {
+    private void fetchDataOfActiveUser() {
         String activeUserId = mLoginStateManager.getActiveAccountUserId();
         if (activeUserId != null && !activeUserId.isEmpty()) {
-            mUsersManager.fetchUserByIdAndNotify(activeUserId);
-        } else {
-            mViewMvc.bindUserData(null);
+            mUsersDataMonitoringManager.fetchUserByIdAndNotifyIfExists(activeUserId);
         }
     }
 
     @Override
-    public void onUserDataFetched(UserEntity user) {
+    public void onUserDataChange(UserEntity user) {
         if (user.getUserId().equals(mLoginStateManager.getActiveAccountUserId())) {
             mViewMvc.bindUserData(user);
         }
-    }
-
-    @Override
-    public void onUserDataNotFound(String userId) {
-        mViewMvc.bindUserData(null);
     }
 
     @Override
@@ -193,13 +181,13 @@ public class NavigationDrawerFragment extends BaseFragment implements
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginStateEvents.LoginSucceededEvent event) {
-        fetchActiveUserData();
+        fetchDataOfActiveUser();
     }
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginStateManager.UserLoggedOutEvent event) {
-        fetchActiveUserData();
+        fetchDataOfActiveUser();
     }
 
 

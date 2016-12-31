@@ -57,6 +57,8 @@ public class NavigationDrawerViewMvcImpl extends
         mTxtUserNickname = (TextView) getRootView().findViewById(R.id.txt_user_nickname);
 
         initDrawerListView();
+
+        refreshDrawer();
     }
 
     @Override

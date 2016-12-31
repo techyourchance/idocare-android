@@ -12,7 +12,7 @@ import dagger.Provides;
 import il.co.idocare.deviceinfo.GooglePlayServicesChecker;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.screens.navigationdrawer.NavigationDrawerController;
-import il.co.idocare.users.UsersManager;
+import il.co.idocare.users.UsersDataMonitoringManager;
 import il.co.idocare.users.UsersRetriever;
 import il.co.idocare.utils.eventbusregistrator.EventBusRegistrator;
 import il.co.idocare.utils.multithreading.MainThreadPoster;
@@ -91,10 +91,10 @@ public class ControllerModule {
     }
 
     @Provides
-    UsersManager usersManager(UsersRetriever usersRetriever,
-                              BackgroundThreadPoster backgroundThreadPoster,
-                              MainThreadPoster mainThreadPoster) {
-        return new UsersManager(usersRetriever, backgroundThreadPoster, mainThreadPoster);
+    UsersDataMonitoringManager usersManager(UsersRetriever usersRetriever,
+                                            BackgroundThreadPoster backgroundThreadPoster,
+                                            MainThreadPoster mainThreadPoster) {
+        return new UsersDataMonitoringManager(usersRetriever, backgroundThreadPoster, mainThreadPoster);
     }
 
 
