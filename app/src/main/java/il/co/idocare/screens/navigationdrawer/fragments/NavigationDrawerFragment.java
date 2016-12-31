@@ -115,10 +115,7 @@ public class NavigationDrawerFragment extends BaseFragment implements
 
     @Override
     public void onUserDataNotFound(String userId) {
-
-        if (userId.equals(mLoginStateManager.getActiveAccountUserId())) {
-            throw new RuntimeException("coulnd't fetch user's data");
-        }
+        mViewMvc.bindUserData(null);
     }
 
     @Override
