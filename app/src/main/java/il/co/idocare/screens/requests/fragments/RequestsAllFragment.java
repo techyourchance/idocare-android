@@ -16,7 +16,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import javax.inject.Inject;
 
-import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
@@ -24,11 +23,11 @@ import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
 import il.co.idocare.controllers.fragments.RequestDetailsFragment;
 import il.co.idocare.controllers.interfaces.RequestsCombinedCursorAdapter;
-import il.co.idocare.screens.requests.listadapters.HomeListAdapter;
 import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
 import il.co.idocare.controllers.listadapters.UserActionsOnUserApplierImpl;
 import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.eventbusevents.LoginStateEvents;
+import il.co.idocare.screens.requests.listadapters.HomeListAdapter;
 import il.co.idocare.screens.requests.mvcviews.RequestsAllViewMvc;
 import il.co.idocare.screens.requests.mvcviews.RequestsAllViewMvcImpl;
 
@@ -103,7 +102,7 @@ public class RequestsAllFragment extends AbstractFragment implements
 
         // Create a bundle and put the id of the selected item there
         Bundle args = new Bundle();
-        args.putLong(Constants.FIELD_NAME_REQUEST_ID, requestId);
+        args.putString(RequestDetailsFragment.ARG_REQUEST_ID, String.valueOf(requestId));
         // Replace with RequestDetailsFragment and pass the bundle as argument
         replaceFragment(RequestDetailsFragment.class, true, false, args);
     }

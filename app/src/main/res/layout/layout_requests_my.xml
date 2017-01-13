@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_requests"
+    <ListView
+        android:id="@+id/lst_my_requests"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="none"
@@ -30,7 +30,7 @@
         android:src="@drawable/ic_add_white_24dp"
         android:clickable="true"
         app:backgroundTint="@color/orange"
-        app:layout_anchor="@id/recycler_requests"
+        app:layout_anchor="@id/lst_my_requests"
         app:layout_anchorGravity="bottom|right|end" />
 
 </android.support.design.widget.CoordinatorLayout>

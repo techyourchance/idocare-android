@@ -167,7 +167,7 @@ public class NavigationDrawerFragment extends BaseFragment implements
 
     private void initiateLoginFlow() {
         Intent intent = new Intent(getActivity(), LoginActivity.class);
-        startActivityForResult(intent, Constants.REQUEST_CODE_LOGIN);
+        startActivity(intent);
     }
 
 

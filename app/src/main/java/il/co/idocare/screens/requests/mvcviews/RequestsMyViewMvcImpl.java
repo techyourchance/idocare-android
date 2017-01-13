@@ -2,24 +2,24 @@ package il.co.idocare.screens.requests.mvcviews;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 import java.util.List;
 
 import il.co.idocare.R;
 import il.co.idocare.mvcviews.AbstractViewMVC;
 import il.co.idocare.requests.RequestEntity;
-import il.co.idocare.screens.requests.listadapters.RequestsPreviewRecyclerViewAdapter;
+import il.co.idocare.screens.requests.listadapters.RequestsListAdapter;
 
 /**
  * This MVC view shows a list of requests
  */
 public class RequestsMyViewMvcImpl
-        extends AbstractViewMVC<RequestsMyViewMvcImpl.RequestsMyViewMvcListener>
-        implements RequestsPreviewRecyclerViewAdapter.OnRequestClickListener {
+        extends AbstractViewMVC<RequestsMyViewMvcImpl.RequestsMyViewMvcListener> {
 
 
     public interface RequestsMyViewMvcListener {
@@ -27,19 +27,38 @@ public class RequestsMyViewMvcImpl
         public void onCreateNewRequestClicked();
     }
 
-    private RecyclerView mRecyclerView;
-    private RequestsPreviewRecyclerViewAdapter mRequestsPreviewRecyclerViewAdapter;
+    private ListView mLstMyRequests;
+    private RequestsListAdapter mRequestsListAdapter;
     private FloatingActionButton mFloatingActionButton;
 
     public RequestsMyViewMvcImpl(LayoutInflater inflater, ViewGroup container) {
         setRootView(inflater.inflate(R.layout.layout_requests_my, container, false));
 
-        mRecyclerView = findViewById(R.id.recycler_requests);
+        initList();
+        initFloatingActionButton();
+
+    }
+
+    private void initList() {
+        mLstMyRequests = findViewById(R.id.lst_my_requests);
+
+        mRequestsListAdapter = new RequestsListAdapter(getContext(), 0);
+        mLstMyRequests.setAdapter(mRequestsListAdapter);
+
+        mLstMyRequests.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                for (RequestsMyViewMvcListener listener : getListeners()) {
+                    listener.onRequestClicked(mRequestsListAdapter.getItem(position));
+                }
+            }
+        });
+    }
+
+    private void initFloatingActionButton() {
+
         mFloatingActionButton = findViewById(R.id.btn_create_new_request);
 
-        mRequestsPreviewRecyclerViewAdapter =
-                new RequestsPreviewRecyclerViewAdapter(getContext(), this);
-        mRecyclerView.setAdapter(mRequestsPreviewRecyclerViewAdapter);
 
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,14 +71,7 @@ public class RequestsMyViewMvcImpl
     }
 
     public void bindRequests(List<RequestEntity> requests) {
-        mRequestsPreviewRecyclerViewAdapter.bindRequests(requests);
-    }
-
-    @Override
-    public void onRequestClicked(RequestEntity request) {
-        for (RequestsMyViewMvcListener listener : getListeners()) {
-            listener.onRequestClicked(request);
-        }
+        mRequestsListAdapter.bindRequests(requests);
     }
 
     @Override

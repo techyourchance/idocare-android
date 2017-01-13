@@ -46,6 +46,8 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
     private final static String TAG = "RequestDetailsFragment";
 
+    public static final String ARG_REQUEST_ID = "ARG_REQUEST_ID";
+
     private final static int REQUEST_LOADER = 0;
     private final static int USERS_LOADER = 1;
     private final static int USER_ACTIONS_LOADER = 2;
@@ -57,7 +59,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
     @Inject ImageViewPictureLoader mImageViewPictureLoader;
     @Inject RequestsManager mRequestsManager;
 
-    private long mRequestId;
+    private String mRequestId;
     private RequestItem mRawRequestItem;
     private RequestItem mRequestItem;
 
@@ -76,14 +78,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
         setActionBarTitle(getTitle());
 
-        Bundle args = getArguments();
-        if (args == null) {
-            Log.e(TAG, "RequestDetailsFragment was started with no arguments. Switching" +
-                    "to RequestsAllFragment.");
-            replaceFragment(RequestsAllFragment.class, false, true, null);
-        } else {
-            mRequestId = args.getLong(Constants.FIELD_NAME_REQUEST_ID);
-        }
+        mRequestId = getArguments().getString(ARG_REQUEST_ID);
 
         // Initialize the MapView inside the MVC view
         ((MapView) mRequestDetailsViewMvc.getRootView().findViewById(R.id.map_preview))
@@ -92,22 +87,6 @@ public class RequestDetailsFragment extends AbstractFragment implements
         getLoaderManager().initLoader(REQUEST_LOADER, null, this);
 
         return mRequestDetailsViewMvc.getRootView();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (outState != null) {
-            outState.putLong(Constants.FIELD_NAME_REQUEST_ID, mRequestId);
-        }
-    }
-
-    @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        if (savedInstanceState != null) {
-            mRequestId = savedInstanceState.getLong(Constants.FIELD_NAME_REQUEST_ID);
-        }
     }
 
     @Override
@@ -241,7 +220,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
                     requestCV.put(IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG, 1);
                     int updated = getActivity().getContentResolver().update(
                             ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI,
-                                    mRequestId),
+                                    Long.valueOf(mRequestId)),
                             requestCV,
                             null,
                             null
@@ -274,7 +253,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
         }
 
         Bundle args = new Bundle();
-        args.putLong(Constants.FIELD_NAME_REQUEST_ID, mRequestId);
+        args.putString(Constants.FIELD_NAME_REQUEST_ID, mRequestId);
         args.putDouble(Constants.FIELD_NAME_LATITUDE, mRequestItem.getLatitude());
         args.putDouble(Constants.FIELD_NAME_LONGITUDE, mRequestItem.getLongitude());
         replaceFragment(CloseRequestFragment.class, true, false, args);
@@ -326,7 +305,8 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
             //noinspection ConstantConditions
             return new CursorLoader(getActivity(),
-                    ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI, mRequestId),
+                    ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI,
+                            Long.valueOf(mRequestId)),
                     projection,
                     selection,
                     selectionArgs,
@@ -430,15 +410,15 @@ public class RequestDetailsFragment extends AbstractFragment implements
                     Cursor idMappingCursor = null;
                     idMappingCursor = getActivity().getContentResolver().query(
                             ContentUris.withAppendedId(IDoCareContract.TempIdMappings.CONTENT_URI,
-                                    mRequestId),
+                                    Long.valueOf(mRequestId)),
                             IDoCareContract.TempIdMappings.PROJECTION_ALL,
                             null,
                             null,
                             null
                     );
                     if (idMappingCursor != null && idMappingCursor.moveToFirst()) {
-                        mRequestId = idMappingCursor.getLong(idMappingCursor.getColumnIndexOrThrow(
-                                IDoCareContract.TempIdMappings.COL_PERMANENT_ID));
+                        mRequestId = String.valueOf(idMappingCursor.getLong(idMappingCursor.getColumnIndexOrThrow(
+                                IDoCareContract.TempIdMappings.COL_PERMANENT_ID)));
 
                         getLoaderManager().restartLoader(REQUEST_LOADER, null, this);
                     }
