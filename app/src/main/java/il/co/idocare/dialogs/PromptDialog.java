@@ -12,7 +12,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import javax.inject.Inject;
 
-import il.co.idocare.eventbusevents.DialogEvents.PromptDialogDismissedEvent;
+import il.co.idocare.dialogs.events.PromptDialogDismissedEvent;
 import il.co.idocare.utils.Logger;
 
 

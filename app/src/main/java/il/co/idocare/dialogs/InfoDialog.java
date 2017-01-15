@@ -5,12 +5,11 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
-import il.co.idocare.eventbusevents.DialogEvents;
+import il.co.idocare.dialogs.events.InfoDialogDismissedEvent;
 
 
 public class InfoDialog extends BaseDialog {
@@ -39,6 +38,6 @@ public class InfoDialog extends BaseDialog {
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
-        EventBus.getDefault().post(new DialogEvents.InfoDialogDismissedEvent(getDialogTag()));
+        EventBus.getDefault().post(new InfoDialogDismissedEvent(getDialogTag()));
     }
 }

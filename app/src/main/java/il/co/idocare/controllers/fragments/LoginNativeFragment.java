@@ -2,8 +2,6 @@ package il.co.idocare.controllers.fragments;
 
 import android.accounts.AccountManager;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,8 +20,7 @@ import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.dialogs.DialogsManager;
-import il.co.idocare.dialogs.InfoDialog;
-import il.co.idocare.eventbusevents.DialogEvents;
+import il.co.idocare.dialogs.events.InfoDialogDismissedEvent;
 import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.mvcviews.loginnative.LoginNativeViewMvc;
 import il.co.idocare.mvcviews.loginnative.LoginNativeViewMvcImpl;
@@ -127,7 +124,7 @@ public class LoginNativeFragment extends AbstractFragment implements LoginNative
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onInfoDialogDismissed(DialogEvents.InfoDialogDismissedEvent event) {
+    public void onInfoDialogDismissed(InfoDialogDismissedEvent event) {
         if (mDialogsManager.getCurrentlyShownDialogTag().equals(MULTIPLE_ACCOUNTS_NOT_SUPPORTED_DIALOG_TAG)) {
             getActivity().finish();
         } else {

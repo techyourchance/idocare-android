@@ -14,13 +14,12 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import javax.inject.Inject;
 
-import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
 import il.co.idocare.dialogs.DialogsManager;
-import il.co.idocare.eventbusevents.DialogEvents;
+import il.co.idocare.dialogs.events.PromptDialogDismissedEvent;
 import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.screens.common.FrameHelper;
@@ -134,9 +133,9 @@ public class NavigationDrawerFragment extends BaseFragment implements
     }
 
     @Subscribe
-    public void onPromptDialogDismissed(DialogEvents.PromptDialogDismissedEvent event) {
+    public void onPromptDialogDismissed(PromptDialogDismissedEvent event) {
         if (event.getTag().equals(USER_LOGIN_DIALOG_TAG)) {
-            if (event.getClickedButtonIndex() == DialogEvents.PromptDialogDismissedEvent.BUTTON_POSITIVE) {
+            if (event.getClickedButtonIndex() == PromptDialogDismissedEvent.BUTTON_POSITIVE) {
                 initiateLoginFlow();
                 closeNavDrawer();
             }

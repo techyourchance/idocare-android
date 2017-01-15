@@ -6,7 +6,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 
-import static il.co.idocare.eventbusevents.DialogEvents.*;
+import il.co.idocare.dialogs.events.InfoDialogDismissedEvent;
+import il.co.idocare.dialogs.events.PromptDialogDismissedEvent;
 
 /**
  * This object should be used in activities and fragments in order to manage dialogs. Its
