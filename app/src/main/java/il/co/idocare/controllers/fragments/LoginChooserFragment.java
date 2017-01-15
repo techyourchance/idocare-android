@@ -30,6 +30,7 @@ import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
+import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.dialogs.events.InfoDialogDismissedEvent;
 import il.co.idocare.eventbusevents.LoginStateEvents;
@@ -59,6 +60,7 @@ public class LoginChooserFragment extends AbstractFragment
 
     @Inject LoginStateManager mLoginStateManager;
     @Inject DialogsManager mDialogsManager;
+    @Inject DialogsFactory mDialogsFactory;
     @Inject Logger mLogger;
 
     @Override
@@ -163,10 +165,11 @@ public class LoginChooserFragment extends AbstractFragment
 
     private void forbidMultiuserLogin() {
         // Disallow multiple accounts by showing a dialog which finishes the activity
-        mDialogsManager.showInfoDialog(
-                null,
-                getResources().getString(R.string.no_support_for_multiple_accounts_message),
-                getResources().getString(R.string.btn_dialog_close),
+        mDialogsManager.showRetainedDialogWithTag(
+                mDialogsFactory.newInfoDialog(
+                        null,
+                        getResources().getString(R.string.no_support_for_multiple_accounts_message),
+                        getResources().getString(R.string.btn_dialog_close)),
                 MULTIPLE_ACCOUNTS_NOT_SUPPORTED_DIALOG_TAG);
     }
 

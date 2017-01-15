@@ -15,16 +15,18 @@ import javax.inject.Inject;
 import il.co.idocare.dialogs.events.PromptDialogDismissedEvent;
 import il.co.idocare.utils.Logger;
 
-
+/**
+ * A dialog that can show title and message and has two buttons. User's actions performed
+ * in this dialog will be posted to {@link EventBus} as {@link PromptDialogDismissedEvent}.
+ */
 public class PromptDialog extends BaseDialog {
 
 
-    public static final String ARG_TITLE = "ARG_TITLE";
-    public static final String ARG_MESSAGE = "ARG_MESSAGE";
-    public static final String ARG_POSITIVE_BUTTON_CAPTION = "ARG_POSITIVE_BUTTON_CAPTION";
-    public static final String ARG_NEGATIVE_BUTTON_CAPTION = "ARG_NEGATIVE_BUTTON_CAPTION";
+    /* package */ static final String ARG_TITLE = "ARG_TITLE";
+    /* package */ static final String ARG_MESSAGE = "ARG_MESSAGE";
+    /* package */ static final String ARG_POSITIVE_BUTTON_CAPTION = "ARG_POSITIVE_BUTTON_CAPTION";
+    /* package */ static final String ARG_NEGATIVE_BUTTON_CAPTION = "ARG_NEGATIVE_BUTTON_CAPTION";
 
-    @Inject Logger mLogger;
     @Inject EventBus mEventBus;
 
     @Override

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -27,6 +28,7 @@ import il.co.idocare.dependencyinjection.controllerscope.ControllerComponent;
 import il.co.idocare.dependencyinjection.controllerscope.ControllerModule;
 import il.co.idocare.dependencyinjection.datacache.CachersModule;
 import il.co.idocare.dependencyinjection.datacache.RetrieversModule;
+import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.dialogs.events.PromptDialogDismissedEvent;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -42,6 +44,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements
     private static final String USER_LOGIN_DIALOG_TAG = "USER_LOGIN_DIALOG_TAG";
 
     @Inject DialogsManager mDialogsManager;
+    @Inject DialogsFactory mDialogsFactory;
 
     private ControllerComponent mControllerComponent;
 
@@ -208,13 +211,13 @@ public abstract class AbstractActivity extends AppCompatActivity implements
 
     @Override
     public void askUserToLogIn(String message, final Runnable runnable) {
-
-        mDialogsManager.showPromptDialog(
+        DialogFragment dialogFragment = mDialogsFactory.newPromptDialog(
                 null,
                 message,
                 getResources().getString(R.string.btn_dialog_positive),
-                getResources().getString(R.string.btn_dialog_negative),
-                USER_LOGIN_DIALOG_TAG);
+                getResources().getString(R.string.btn_dialog_negative));
+
+        mDialogsManager.showRetainedDialogWithTag(dialogFragment, USER_LOGIN_DIALOG_TAG);
 
         mPostLoginRunnable = runnable;
 

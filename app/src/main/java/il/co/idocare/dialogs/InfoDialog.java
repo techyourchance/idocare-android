@@ -9,15 +9,22 @@ import android.text.TextUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
+import javax.inject.Inject;
+
 import il.co.idocare.dialogs.events.InfoDialogDismissedEvent;
 
-
+/**
+ * A dialog that can show title and message and has a single button. User's actions performed
+ * in this dialog will be posted to {@link EventBus} as {@link InfoDialogDismissedEvent}.
+ */
 public class InfoDialog extends BaseDialog {
 
 
-    public static final String ARG_TITLE = "ARG_TITLE";
-    public static final String ARG_MESSAGE = "ARG_MESSAGE";
-    public static final String ARG_BUTTON_CAPTION = "ARG_POSITIVE_BUTTON_CAPTION";
+    /* package */ static final String ARG_TITLE = "ARG_TITLE";
+    /* package */ static final String ARG_MESSAGE = "ARG_MESSAGE";
+    /* package */ static final String ARG_BUTTON_CAPTION = "ARG_POSITIVE_BUTTON_CAPTION";
+
+    @Inject EventBus mEventBus;
 
     @Override
     public @NonNull Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -34,10 +41,9 @@ public class InfoDialog extends BaseDialog {
         return dialog;
     }
 
-
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
-        EventBus.getDefault().post(new InfoDialogDismissedEvent(getDialogTag()));
+        mEventBus.post(new InfoDialogDismissedEvent(getDialogTag()));
     }
 }

@@ -10,6 +10,7 @@ import org.greenrobot.eventbus.EventBus;
 import dagger.Module;
 import dagger.Provides;
 import il.co.idocare.deviceinfo.GooglePlayServicesChecker;
+import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.screens.navigationdrawer.NavigationDrawerController;
 import il.co.idocare.users.UsersDataMonitoringManager;
@@ -75,6 +76,12 @@ public class ControllerModule {
     @ControllerScope
     DialogsManager dialogsManager(FragmentManager fragmentManager) {
         return new DialogsManager(fragmentManager);
+    }
+
+    @Provides
+    @ControllerScope
+    DialogsFactory dialogsFactory() {
+        return new DialogsFactory();
     }
 
     @Provides

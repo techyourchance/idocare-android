@@ -3,10 +3,13 @@ package il.co.idocare.dialogs;
 
 import android.os.Bundle;
 
-/* package */ class DialogsFactory {
+public class DialogsFactory {
 
     /**
-     * Instantiate new InfoDialog
+     * Get a new instance of {@link InfoDialog}.
+     * @param title dialog's title
+     * @param message dialog's message
+     * @param buttonCaption dialog's button caption
      */
     public InfoDialog newInfoDialog(String title, String message, String buttonCaption) {
         Bundle args = new Bundle(3);
@@ -21,8 +24,13 @@ import android.os.Bundle;
     }
 
 
+
     /**
-     * Instantiate new PromptDialog
+     * Get a new instance of {@link PromptDialog}.
+     * @param title dialog's title
+     * @param message dialog's message
+     * @param positiveButtonCaption dialog's positive button caption
+     * @param negativeButtonCaption dialog's negative button caption
      */
     public PromptDialog newPromptDialog(String title, String message, String positiveButtonCaption,
                                         String negativeButtonCaption) {

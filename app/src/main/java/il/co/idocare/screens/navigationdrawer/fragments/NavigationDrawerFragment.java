@@ -18,6 +18,7 @@ import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.fragments.NewRequestFragment;
+import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.dialogs.events.PromptDialogDismissedEvent;
 import il.co.idocare.eventbusevents.LoginStateEvents;
@@ -50,6 +51,7 @@ public class NavigationDrawerFragment extends BaseFragment implements
     @Inject LoginStateManager mLoginStateManager;
     @Inject ServerSyncController mServerSyncController;
     @Inject DialogsManager mDialogsManager;
+    @Inject DialogsFactory mDialogsFactory;
     @Inject NavigationDrawerController mNavigationDrawerController;
     @Inject UsersDataMonitoringManager mUsersDataMonitoringManager;
     @Inject EventBus mEventBus;
@@ -123,11 +125,11 @@ public class NavigationDrawerFragment extends BaseFragment implements
             mMainFrameHelper.replaceFragment(NewRequestFragment.class, true, false, null);
             closeNavDrawer();
         } else {
-            mDialogsManager.showPromptDialog(
-                    null,
-                    getString(R.string.msg_ask_to_log_in_before_new_request),
-                    getResources().getString(R.string.btn_dialog_positive),
-                    getResources().getString(R.string.btn_dialog_negative),
+            mDialogsManager.showRetainedDialogWithTag(
+                    mDialogsFactory.newPromptDialog(null,
+                            getString(R.string.msg_ask_to_log_in_before_new_request),
+                            getResources().getString(R.string.btn_dialog_positive),
+                            getResources().getString(R.string.btn_dialog_negative)),
                     USER_LOGIN_DIALOG_TAG);
         }
     }
