@@ -64,7 +64,7 @@
                 android:layout_width="@dimen/medium_button_width"
                 android:layout_height="@dimen/button_height"
                 android:text="@string/btn_login"
-                style="@style/AppTheme.Widget.GreenButton"/>
+                style="@style/AppTheme.GreenButton"/>
 
             <Space
                 android:layout_width="@dimen/two_medium_buttons_horizontal_spacing"
@@ -75,7 +75,7 @@
                 android:layout_width="@dimen/medium_button_width"
                 android:layout_height="@dimen/button_height"
                 android:text="@string/btn_sign_up"
-                style="@style/AppTheme.Widget.RedButton"/>
+                style="@style/AppTheme.RedButton"/>
 
         </LinearLayout>
 

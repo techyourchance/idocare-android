@@ -3,15 +3,16 @@
     <!-- Application's styles-->
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="buttonStyle">@style/AppTheme.Widget.Button</item>
-        <item name="buttonBarStyle">@style/AppTheme.Widget.Button</item>
-        <item name="buttonBarButtonStyle">@style/AppTheme.Widget.Button</item>
+        <item name="buttonStyle">@style/AppTheme.Button</item>
+        <item name="buttonBarStyle">@style/AppTheme.Button</item>
+        <item name="buttonBarButtonStyle">@style/AppTheme.Button</item>
         <item name="android:textViewStyle">@style/DefaultTextViewStyle</item>
     </style>
 
-    <style name="AppTheme.Widget"/>
 
-    <style name="AppTheme.Widget.Button">
+    <!-- BUTTON STYLES -->
+
+    <style name="AppTheme.Button">
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Button</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:focusable">true</item>
@@ -19,16 +20,48 @@
         <item name="android:gravity">center_vertical|center_horizontal</item>
     </style>
 
-    <style name="AppTheme.Widget.RedButton" parent="AppTheme.Widget.Button">
+    <style name="AppTheme.RedButton" parent="AppTheme.Button">
         <item name="android:background">@drawable/red_button_background</item>
         <item name="android:textColor">@drawable/red_button_text</item>
     </style>
 
-    <style name="AppTheme.Widget.GreenButton" parent="AppTheme.Widget.Button">
+    <style name="AppTheme.GreenButton" parent="AppTheme.Button">
         <item name="android:background">@drawable/green_button_background</item>
         <item name="android:textColor">@drawable/green_button_text</item>
     </style>
-    
+
+    <style name="AppTheme.GrayButton" parent="AppTheme.Button">
+        <item name="android:background">@drawable/gray_button_background</item>
+        <item name="android:textColor">@drawable/gray_button_text</item>
+    </style>
+
+
+    <!-- EDIT TEXT STYLES -->
+
+    <style name="AppTheme.EditText" parent="Widget.AppCompat.EditText">
+        <item name="android:textSize">@dimen/edit_text_text_size</item>
+        <item name="android:textColorHint">@color/edit_text_hint_color</item>
+    </style>
+
+
+    <!-- TEXT VIEW STYLES -->
+
+    <style name="AppTheme.TextView" parent="android:Widget.TextView">
+        <item name="android:textColor">@color/text_color_primary</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
+    </style>
+
+    <style name="AppTheme.TextView.DialogTitle">
+        <item name="android:textColor">@color/green</item>
+    </style>
+
+    <style name="AppTheme.TextView.DialogMessage">
+
+    </style>
+
+
+
     <!-- TODO: the below should be removed/replaced - they belong to old design -->
 
 

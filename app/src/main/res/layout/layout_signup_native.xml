@@ -104,7 +104,7 @@
             android:layout_width="@dimen/large_button_width"
             android:layout_height="@dimen/button_height"
             android:text="@string/btn_sign_up"
-            style="@style/AppTheme.Widget.RedButton"/>
+            style="@style/AppTheme.RedButton"/>
 
 
         <Space

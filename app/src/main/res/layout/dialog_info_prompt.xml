@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/txt_dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_gravity="center_horizontal"
+        style="@style/AppTheme.TextView.DialogTitle"
+        tools:text="Dialog title"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/gray"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/fragment_default_padding">
+
+        <TextView
+            android:id="@+id/txt_dialog_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            style="@style/AppTheme.TextView.DialogMessage"
+            tools:text="Dialog message very very very very very very very very very very very very long"/>
+
+        <Button
+            android:id="@+id/btn_dialog_positive"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="15dp"
+            android:layout_below="@id/txt_dialog_message"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            style="@style/AppTheme.GreenButton"
+            tools:text="Positive"/>
+
+        <Button
+            android:id="@+id/btn_dialog_negative"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="15dp"
+            android:layout_below="@id/txt_dialog_message"
+            android:layout_toStartOf="@+id/btn_dialog_positive"
+            android:layout_toLeftOf="@id/btn_dialog_positive"
+            android:layout_marginEnd="15dp"
+            android:layout_marginRight="15dp"
+            style="@style/AppTheme.GrayButton"
+            tools:text="Negative"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

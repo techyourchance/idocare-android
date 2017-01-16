@@ -33,6 +33,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="25dp"
         android:text="@string/btn_create_new_request"
-        style="@style/AppTheme.Widget.RedButton"/>
+        style="@style/AppTheme.RedButton"/>
 
 </RelativeLayout>
