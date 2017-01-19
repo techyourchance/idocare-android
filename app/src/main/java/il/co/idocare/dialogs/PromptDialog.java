@@ -46,18 +46,38 @@ public class PromptDialog extends BaseDialog {
         getControllerComponent().inject(this);
     }
 
-    @Nullable
+    // THIS CODE MAKES THE SCREEN DIM, BUT THE ACTUAL LAYOUT IS NOT SHOWN
+
+//    @Nullable
+//    @Override
+//    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+//
+//        View rootView = inflater.inflate(R.layout.dialog_info_prompt, container, false);
+//
+//        initSubViews(rootView);
+//
+//        populateSubViews();
+//
+//        return rootView;
+//
+//    }
+
+    // This is a workaround for the strange behavior of onCreateView (which doesn't show dialog's layout)
+    @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        View dialogView = inflater.inflate(R.layout.dialog_info_prompt, null);
+        dialogBuilder.setView(dialogView);
 
-        View rootView = inflater.inflate(R.layout.dialog_info_prompt, container, false);
-
-        initSubViews(rootView);
+        initSubViews(dialogView);
 
         populateSubViews();
 
-        return rootView;
+        setCancelable(false);
 
+        return dialogBuilder.create();
     }
 
     private void initSubViews(View rootView) {
@@ -69,6 +89,7 @@ public class PromptDialog extends BaseDialog {
         mBtnPositive.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dismiss();
                 mEventBus.post(new PromptDialogDismissedEvent(getDialogTag(), PromptDialogDismissedEvent.BUTTON_POSITIVE));
             }
         });
@@ -76,6 +97,7 @@ public class PromptDialog extends BaseDialog {
         mBtnNegative.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dismiss();
                 mEventBus.post(new PromptDialogDismissedEvent(getDialogTag(), PromptDialogDismissedEvent.BUTTON_NEGATIVE));
             }
         });

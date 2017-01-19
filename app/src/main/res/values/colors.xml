@@ -46,6 +46,14 @@
     <color name="nav_drawer_header_bg">@color/green</color>
     <color name="nav_drawer_line_separator">@color/gray_light_3</color>
 
+    <!-- BUTTONS -->
+    <color name="button_green">@color/green</color>
+    <color name="button_gray">@color/gray_light_1</color>
+
+
+    <!-- DIALOGS -->
+    <color name="dialog_title">@color/green</color>
+    <color name="dialog_separator">@color/button_gray</color>
 
 
     <!-- TODO: these entries should be removed/replaced - they belong to old design -->

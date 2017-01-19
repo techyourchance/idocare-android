@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
-              android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:layout_gravity="center"
+              android:orientation="vertical">
 
     <TextView
         android:id="@+id/txt_dialog_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
+        android:layout_marginStart="@dimen/dialog_padding"
+        android:layout_marginLeft="@dimen/dialog_padding"
+        android:layout_marginEnd="@dimen/dialog_padding"
+        android:layout_marginRight="@dimen/dialog_padding"
         android:layout_gravity="center_horizontal"
         style="@style/AppTheme.TextView.DialogTitle"
         tools:text="Dialog title"/>
@@ -18,12 +23,12 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="10dp"
-        android:background="@color/gray"/>
+        android:background="@color/dialog_separator"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/fragment_default_padding">
+        android:padding="@dimen/dialog_padding">
 
         <TextView
             android:id="@+id/txt_dialog_message"
@@ -38,6 +43,10 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/button_height"
             android:layout_marginTop="15dp"
+            android:paddingStart="@dimen/dialog_button_horizontal_padding"
+            android:paddingLeft="@dimen/dialog_button_horizontal_padding"
+            android:paddingEnd="@dimen/dialog_button_horizontal_padding"
+            android:paddingRight="@dimen/dialog_button_horizontal_padding"
             android:layout_below="@id/txt_dialog_message"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
@@ -49,6 +58,10 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/button_height"
             android:layout_marginTop="15dp"
+            android:paddingStart="@dimen/dialog_button_horizontal_padding"
+            android:paddingLeft="@dimen/dialog_button_horizontal_padding"
+            android:paddingEnd="@dimen/dialog_button_horizontal_padding"
+            android:paddingRight="@dimen/dialog_button_horizontal_padding"
             android:layout_below="@id/txt_dialog_message"
             android:layout_toStartOf="@+id/btn_dialog_positive"
             android:layout_toLeftOf="@id/btn_dialog_positive"

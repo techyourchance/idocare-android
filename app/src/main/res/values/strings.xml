@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!--
+    Facebook app ID - must be defined in strings under this particular name!
+    -->
+    <string name="facebook_app_id">534844050003392</string>
+
     <string name="app_name">IDoCare</string>
     <string name="img_login_accessibility">IDoCare logo</string>
     <string name="img_request_thumbnail_accessibility">Request thumbnail picture</string>
@@ -88,6 +93,8 @@
 
     <string name="no_support_for_multiple_accounts_message">Multiple accounts not supported</string>
 
+    <string name="dialog_title_login_required">Login required</string>
+
     <string name="msg_ask_to_log_in_before_new_request">In order to create new requests you need
         to be logged in. Would you like to log in now?</string>
 
@@ -114,14 +121,11 @@
 
     <string name="msg_too_far_from_original_location">You are too far from the original location</string>
 
-    <!--
-    Facebook app ID - must be defined in strings under this particular name!
-    -->
-    <string name="facebook_app_id">534844050003392</string>
 
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
+
 
 
 </resources>

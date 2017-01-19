@@ -126,7 +126,8 @@ public class NavigationDrawerFragment extends BaseFragment implements
             closeNavDrawer();
         } else {
             mDialogsManager.showRetainedDialogWithTag(
-                    mDialogsFactory.newPromptDialog(null,
+                    mDialogsFactory.newPromptDialog(
+                            getString(R.string.dialog_title_login_required),
                             getString(R.string.msg_ask_to_log_in_before_new_request),
                             getResources().getString(R.string.btn_dialog_positive),
                             getResources().getString(R.string.btn_dialog_negative)),

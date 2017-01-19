@@ -79,4 +79,11 @@
 
     <!-- This is the initial offset that the "sliding buttons" will be slided for -->
     <item name="initial_buttons_layout_offset" format="float" type="dimen">300.0</item>
+
+
+    <!-- DIALOGS -->
+    <dimen name="dialog_padding">20dp</dimen>
+    <dimen name="dialog_button_horizontal_padding">30dp</dimen>
+
+
 </resources>

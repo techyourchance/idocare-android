@@ -3,8 +3,8 @@
 
     <item android:state_pressed="true" android:color="@color/button_pressed_text_color"/>
 
-    <item android:state_enabled="false" android:alpha="0.5" android:color="@color/green"/>
+    <item android:state_enabled="false" android:alpha="0.5" android:color="@color/button_green"/>
 
-    <item android:state_enabled="true" android:color="@color/green"/>
+    <item android:state_enabled="true" android:color="@color/button_green"/>
 
 </selector>

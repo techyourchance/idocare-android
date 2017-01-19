@@ -53,7 +53,7 @@
     </style>
 
     <style name="AppTheme.TextView.DialogTitle">
-        <item name="android:textColor">@color/green</item>
+        <item name="android:textColor">@color/dialog_title</item>
     </style>
 
     <style name="AppTheme.TextView.DialogMessage">
