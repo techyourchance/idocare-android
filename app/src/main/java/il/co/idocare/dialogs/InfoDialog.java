@@ -6,11 +6,16 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
 
 import javax.inject.Inject;
 
+import il.co.idocare.R;
 import il.co.idocare.dialogs.events.InfoDialogDismissedEvent;
 
 /**
@@ -19,26 +24,58 @@ import il.co.idocare.dialogs.events.InfoDialogDismissedEvent;
  */
 public class InfoDialog extends BaseDialog {
 
-
     /* package */ static final String ARG_TITLE = "ARG_TITLE";
     /* package */ static final String ARG_MESSAGE = "ARG_MESSAGE";
     /* package */ static final String ARG_BUTTON_CAPTION = "ARG_POSITIVE_BUTTON_CAPTION";
 
     @Inject EventBus mEventBus;
 
+    private TextView mTxtTitle;
+    private TextView mTxtMessage;
+    private Button mBtnPositive;
+
+    @NonNull
     @Override
-    public @NonNull Dialog onCreateDialog(Bundle savedInstanceState) {
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        View dialogView = inflater.inflate(R.layout.dialog_info_prompt, null);
+        dialogBuilder.setView(dialogView);
+
+        initSubViews(dialogView);
+
+        populateSubViews();
+
+        setCancelable(true);
+
+        return dialogBuilder.create();
+    }
+
+    private void initSubViews(View rootView) {
+        mTxtTitle = (TextView) rootView.findViewById(R.id.txt_dialog_title);
+        mTxtMessage = (TextView) rootView.findViewById(R.id.txt_dialog_message);
+        mBtnPositive = (Button) rootView.findViewById(R.id.btn_dialog_positive);
+
+        // Hide "negative" button - it is used only in PromptDialog
+        rootView.findViewById(R.id.btn_dialog_negative).setVisibility(View.GONE);
+
+        mBtnPositive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
+
+    }
+
+    private void populateSubViews() {
         String title = getArguments().getString(ARG_TITLE);
         String message = getArguments().getString(ARG_MESSAGE);
-        String buttonCaption = getArguments().getString(ARG_BUTTON_CAPTION);
+        String positiveButtonCaption = getArguments().getString(ARG_BUTTON_CAPTION);
 
-        Dialog dialog = new AlertDialog.Builder(getActivity())
-                .setTitle(TextUtils.isEmpty(title) ? "" : title)
-                .setMessage(TextUtils.isEmpty(message) ? "" : message)
-                .setPositiveButton(TextUtils.isEmpty(buttonCaption) ? "" : buttonCaption, null)
-                .create();
-
-        return dialog;
+        mTxtTitle.setText(TextUtils.isEmpty(title) ? "" : title);
+        mTxtMessage.setText(TextUtils.isEmpty(message) ? "" : message);
+        mBtnPositive.setText(positiveButtonCaption);
     }
 
     @Override
