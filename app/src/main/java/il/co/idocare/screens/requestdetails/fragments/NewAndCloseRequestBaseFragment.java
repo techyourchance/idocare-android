@@ -1,4 +1,4 @@
-package il.co.idocare.controllers.fragments;
+package il.co.idocare.screens.requestdetails.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,6 +16,7 @@ import javax.inject.Inject;
 
 import il.co.idocare.Constants;
 import il.co.idocare.authentication.LoginStateManager;
+import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.helpers.LocationHelper;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.pictures.CameraAdapter;

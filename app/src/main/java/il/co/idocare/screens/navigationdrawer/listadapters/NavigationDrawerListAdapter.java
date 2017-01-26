@@ -1,4 +1,4 @@
-package il.co.idocare.controllers.listadapters;
+package il.co.idocare.screens.navigationdrawer.listadapters;
 
 import android.content.Context;
 import android.view.View;

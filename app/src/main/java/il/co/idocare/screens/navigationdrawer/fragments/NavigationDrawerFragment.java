@@ -17,7 +17,7 @@ import javax.inject.Inject;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
-import il.co.idocare.controllers.fragments.NewRequestFragment;
+import il.co.idocare.screens.requestdetails.fragments.NewRequestFragment;
 import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.dialogs.events.PromptDialogDismissedEvent;

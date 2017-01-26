@@ -19,7 +19,7 @@ import java.util.List;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.controllers.listadapters.NavigationDrawerListAdapter;
+import il.co.idocare.screens.navigationdrawer.listadapters.NavigationDrawerListAdapter;
 import il.co.idocare.datamodels.functional.NavigationDrawerEntry;
 import il.co.idocare.mvcviews.AbstractViewMVC;
 import il.co.idocare.users.UserEntity;

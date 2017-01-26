@@ -1,4 +1,4 @@
-package il.co.idocare.controllers.fragments;
+package il.co.idocare.screens.requestdetails.fragments;
 
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -28,6 +28,7 @@ import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
+import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.controllers.interfaces.RequestUserActionApplier;
 import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
 import il.co.idocare.datamodels.functional.RequestItem;
@@ -38,7 +39,6 @@ import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvc;
 import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvcImpl;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.pictures.ImageViewPictureLoader;
-import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
 
 
 public class RequestDetailsFragment extends AbstractFragment implements

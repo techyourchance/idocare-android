@@ -1,4 +1,4 @@
-package il.co.idocare.controllers.fragments;
+package il.co.idocare.screens.requestdetails.fragments;
 
 import android.app.Activity;
 import android.content.ContentUris;
@@ -23,10 +23,10 @@ import java.util.List;
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.contentproviders.IDoCareContract;
+import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.eventbusevents.LocationEvents;
 import il.co.idocare.mvcviews.closerequest.CloseRequestViewMvc;
 import il.co.idocare.mvcviews.closerequest.CloseRequestViewMvcImpl;
-import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
 
 
 public class CloseRequestFragment extends NewAndCloseRequestBaseFragment

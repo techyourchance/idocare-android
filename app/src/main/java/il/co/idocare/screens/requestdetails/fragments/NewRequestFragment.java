@@ -1,4 +1,4 @@
-package il.co.idocare.controllers.fragments;
+package il.co.idocare.screens.requestdetails.fragments;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -21,6 +21,7 @@ import java.util.UUID;
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.contentproviders.IDoCareContract;
+import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.eventbusevents.LocationEvents;
 import il.co.idocare.mvcviews.newrequest.NewRequestViewMvc;
 import il.co.idocare.mvcviews.newrequest.NewRequestViewMvcImpl;
