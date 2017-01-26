@@ -66,19 +66,8 @@ public class RequestPreviewViewMvcImpl
         setTexts();
         setPreviewPicture();
 
-        setListener();
     }
 
-    private void setListener() {
-        getRootView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for (RequestPreviewViewMvcListener listener : getListeners()) {
-                    listener.onRequestClicked(mRequest);
-                }
-            }
-        });
-    }
 
     private void setColors() {
         int statusColor;
