@@ -74,7 +74,7 @@ public class CloseRequestFragment extends NewAndCloseRequestBaseFragment
 
     @Override
     public Class<? extends AbstractFragment> getNavHierParentFragment() {
-        return RequestsAllFragment.class;
+        return null;
     }
 
     @Override

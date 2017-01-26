@@ -96,7 +96,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
     @Override
     public Class<? extends AbstractFragment> getNavHierParentFragment() {
-        return RequestsAllFragment.class;
+        return null;
     }
 
     @Override

@@ -24,6 +24,7 @@ public class RequestsManager extends BaseManager<RequestsManager.RequestsManager
 
     private static final String TAG = "RequestsManager";
 
+
     public interface RequestsManagerListener {
         public void onRequestsFetched(@NonNull List<RequestEntity> requests);
     }
@@ -85,6 +86,19 @@ public class RequestsManager extends BaseManager<RequestsManager.RequestsManager
         });
     }
 
+    public void fetchAllRequests() {
+        mLogger.d(TAG, "fetchAllRequests() called");
+
+        mBackgroundThreadPoster.post(new Runnable() {
+            @Override
+            public void run() {
+                final List<RequestEntity> requests = mRequestsRetriever.getAllRequests();
+
+                notifyListenersWithRequests(requests);
+            }
+        });
+    }
+
     public void fetchRequestsAssignedToUser(final String userId) {
         mLogger.d(TAG, "getRequestsAssignedToUser() called; user ID: " + userId);
 
@@ -92,18 +106,24 @@ public class RequestsManager extends BaseManager<RequestsManager.RequestsManager
             @Override
             public void run() {
                 final List<RequestEntity> requests = mRequestsRetriever.getRequestsAssignedToUser(userId);
+                notifyListenersWithRequests(requests);
 
-                mMainThreadPoster.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        for (RequestsManagerListener listener : getListeners()) {
-                            listener.onRequestsFetched(requests);
-                        }
-                    }
-                });
             }
         });
 
     }
+
+    private void notifyListenersWithRequests(final List<RequestEntity> requests) {
+        mMainThreadPoster.post(new Runnable() {
+            @Override
+            public void run() {
+                for (RequestsManagerListener listener : getListeners()) {
+                    listener.onRequestsFetched(requests);
+                }
+            }
+        });
+    }
+
+
 
 }

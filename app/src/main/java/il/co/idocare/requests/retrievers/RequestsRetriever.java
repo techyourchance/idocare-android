@@ -35,6 +35,13 @@ public class RequestsRetriever {
         mUserActionsToRequestsApplier = userActionsToRequestsApplier;
     }
 
+    public List<RequestEntity> getAllRequests() {
+        List<RequestEntity> rawRequests = mRawRequestsRetriever.getAllRequests();
+        List<UserActionEntity> userActions = mUserActionsRetriever.getAllUserActions();
+
+        return applyUserActionsToRequests(rawRequests, userActions);
+    }
+
     /**
      * Get information about requests assigned to the user.
      * @param userId ID of the user
@@ -82,5 +89,4 @@ public class RequestsRetriever {
         return updatedRequests;
 
     }
-
 }

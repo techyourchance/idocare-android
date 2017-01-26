@@ -111,8 +111,6 @@ public class RequestsRetrieverTest {
                 .setClosedVotes(initiallyClosedRequest.getClosedVotes() + 1)
                 .build());
 
-        
-        
     }
 
     private void assertRequestsEqual(RequestEntity request1, RequestEntity request2) {

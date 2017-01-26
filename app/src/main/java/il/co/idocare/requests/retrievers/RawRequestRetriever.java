@@ -25,6 +25,12 @@ public class RawRequestRetriever {
         mContentResolver = contentResolver;
     }
 
+    @WorkerThread
+    public List<RequestEntity> getAllRequests() {
+        String selection = null;
+        String[] selectionArgs = null;
+        return getRequestsForSelection(selection, selectionArgs);
+    }
     /**
      * Get "raw" info of requests assigned to user. "Raw" means that the returned information
      * does not take into account the locally cached user's actions on the requests.
@@ -32,12 +38,18 @@ public class RawRequestRetriever {
      * @return a list of "raw" requests assigned to the user
      */
     @WorkerThread
-    public @NonNull List<RequestEntity> getRequestsAssignedToUser(@NonNull String userId) {
-
-        String[] projection = Requests.PROJECTION_ALL;
-
+    public List<RequestEntity> getRequestsAssignedToUser(String userId) {
         String selection = Requests.COL_PICKED_UP_BY + " = ?";
         String[] selectionArgs = new String[] {userId};
+
+        return getRequestsForSelection(selection, selectionArgs);
+
+    }
+
+
+
+    private List<RequestEntity> getRequestsForSelection(String selection, String[] selectionArgs) {
+        String[] projection = Requests.PROJECTION_ALL;
         String sortOrder = Requests.COL_PICKED_UP_AT + " ASC";
 
         Cursor cursor = null;
@@ -64,7 +76,9 @@ public class RawRequestRetriever {
         } finally {
             if (cursor != null) cursor.close();
         }
+
     }
+
 
     private static RequestEntity createRequestFromCurrentCursorPosisition(Cursor cursor) throws IllegalArgumentException {
 
@@ -91,4 +105,5 @@ public class RawRequestRetriever {
                 createdVotes, latitude, longitude, pickedUpBy, pickedUpAt, closedBy, closedAt,
                 closedComment, closedPictures, closedVotes, location);
     }
+
 }
