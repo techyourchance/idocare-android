@@ -22,7 +22,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import il.co.idocare.R;
-import il.co.idocare.screens.navigationdrawer.NavigationDrawerController;
+import il.co.idocare.screens.common.toolbar.ToolbarDelegate;
+import il.co.idocare.screens.navigationdrawer.NavigationDrawerDelegate;
+import il.co.idocare.screens.navigationdrawer.events.NavigationDrawerStateChangeEvent;
 import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
 import il.co.idocare.screens.common.FrameHelper;
@@ -34,7 +36,10 @@ import il.co.idocare.utils.Logger;
 
 
 public class MainActivity extends AbstractActivity implements
-        MainViewMVC.MainNavDrawerViewMVCListener, MainFrameContainer, NavigationDrawerController {
+        MainViewMVC.MainNavDrawerViewMVCListener,
+        MainFrameContainer,
+        NavigationDrawerDelegate,
+        ToolbarDelegate {
 
     private static final String TAG = "MainActivity";
 
@@ -53,9 +58,11 @@ public class MainActivity extends AbstractActivity implements
     @Inject ServerSyncController mServerSyncController;
     @Inject FrameHelper mFrameHelper;
     @Inject Logger mLogger;
+    @Inject EventBus mEventBus;
 
 
     private MainViewMVC mMainViewMVC;
+
 
 
     // ---------------------------------------------------------------------------------------------
@@ -148,18 +155,9 @@ public class MainActivity extends AbstractActivity implements
 
     @Override
     public void onDrawerVisibilityStateChanged(boolean isVisible) {
-        if (isVisible) {
-            mMainViewMVC.setTitle("");
-        } else {
-            Fragment currFragment =
-                    MainActivity.this.getFragmentManager().findFragmentById(R.id.frame_contents);
-            if (currFragment != null &&
-                    IDoCareFragmentInterface.class.isAssignableFrom(currFragment.getClass())) {
-                mMainViewMVC.setTitle(((IDoCareFragmentInterface) currFragment).getTitle());
-            }
-        }
-
-        MainActivity.this.invalidateOptionsMenu();
+        mEventBus.post(new NavigationDrawerStateChangeEvent(isVisible ?
+                NavigationDrawerStateChangeEvent.STATE_OPENED :
+                NavigationDrawerStateChangeEvent.STATE_CLOSED));
     }
 
 
@@ -293,4 +291,23 @@ public class MainActivity extends AbstractActivity implements
         return mFrameHelper;
     }
 
+    @Override
+    public void showNavigateUpButton() {
+        mMainViewMVC.setDrawerIndicatorEnabled(false);
+    }
+
+    @Override
+    public void showNavDrawerButton() {
+        mMainViewMVC.setDrawerIndicatorEnabled(true);
+    }
+
+    @Override
+    public void hideToolbar() {
+        mMainViewMVC.hideToolbar();
+    }
+
+    @Override
+    public void showToolbar() {
+        mMainViewMVC.showToolbar();
+    }
 }

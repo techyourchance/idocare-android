@@ -6,6 +6,7 @@ import il.co.idocare.controllers.activities.StartupActivity;
 import il.co.idocare.controllers.fragments.CloseRequestFragment;
 import il.co.idocare.dependencyinjection.datacache.RetrieversModule;
 import il.co.idocare.screens.common.fragments.BaseFragment;
+import il.co.idocare.screens.common.fragments.BaseScreenFragment;
 import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
 import il.co.idocare.controllers.fragments.LoginChooserFragment;
 import il.co.idocare.controllers.fragments.LoginNativeFragment;
@@ -26,6 +27,7 @@ public interface ControllerComponent {
     void inject(StartupActivity activity);
 
     void inject(BaseFragment baseFragment);
+    void inject(BaseScreenFragment baseScreenFragment);
     void inject(NewAndCloseRequestBaseFragment fragment);
     void inject(LoginChooserFragment fragment);
     void inject(CloseRequestFragment fragment);

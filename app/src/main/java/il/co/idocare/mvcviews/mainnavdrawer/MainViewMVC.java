@@ -156,4 +156,11 @@ public class MainViewMVC
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
+    public void hideToolbar() {
+        mToolbar.setVisibility(View.GONE);
+    }
+
+    public void showToolbar() {
+        mToolbar.setVisibility(View.VISIBLE);
+    }
 }

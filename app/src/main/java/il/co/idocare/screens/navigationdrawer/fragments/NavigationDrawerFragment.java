@@ -26,7 +26,7 @@ import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.screens.common.FrameHelper;
 import il.co.idocare.screens.common.MainFrameContainer;
 import il.co.idocare.screens.common.fragments.BaseFragment;
-import il.co.idocare.screens.navigationdrawer.NavigationDrawerController;
+import il.co.idocare.screens.navigationdrawer.NavigationDrawerManager;
 import il.co.idocare.screens.navigationdrawer.mvcviews.NavigationDrawerViewMvc;
 import il.co.idocare.screens.navigationdrawer.mvcviews.NavigationDrawerViewMvcImpl;
 import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
@@ -52,7 +52,7 @@ public class NavigationDrawerFragment extends BaseFragment implements
     @Inject ServerSyncController mServerSyncController;
     @Inject DialogsManager mDialogsManager;
     @Inject DialogsFactory mDialogsFactory;
-    @Inject NavigationDrawerController mNavigationDrawerController;
+    @Inject NavigationDrawerManager mNavigationDrawerManager;
     @Inject UsersDataMonitoringManager mUsersDataMonitoringManager;
     @Inject EventBus mEventBus;
     @Inject Logger mLogger;
@@ -174,7 +174,7 @@ public class NavigationDrawerFragment extends BaseFragment implements
 
 
     private void closeNavDrawer() {
-        mNavigationDrawerController.closeDrawer();
+        mNavigationDrawerManager.closeDrawer();
     }
 
     // ---------------------------------------------------------------------------------------------

@@ -12,7 +12,10 @@ import dagger.Provides;
 import il.co.idocare.deviceinfo.GooglePlayServicesChecker;
 import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
-import il.co.idocare.screens.navigationdrawer.NavigationDrawerController;
+import il.co.idocare.screens.common.toolbar.ToolbarManager;
+import il.co.idocare.screens.common.toolbar.ToolbarDelegate;
+import il.co.idocare.screens.navigationdrawer.NavigationDrawerDelegate;
+import il.co.idocare.screens.navigationdrawer.NavigationDrawerManager;
 import il.co.idocare.users.UsersDataMonitoringManager;
 import il.co.idocare.users.UsersRetriever;
 import il.co.idocare.utils.eventbusregistrator.EventBusRegistrator;
@@ -111,7 +114,12 @@ public class ControllerModule {
     }
 
     @Provides
-    NavigationDrawerController navigationDrawerController() {
-        return (NavigationDrawerController) mActivity;
+    NavigationDrawerManager navigationDrawerManager(Logger logger) {
+        return new NavigationDrawerManager((NavigationDrawerDelegate) mActivity, logger);
+    }
+
+    @Provides
+    ToolbarManager toolbarManager(Logger logger) {
+        return new ToolbarManager((ToolbarDelegate) mActivity, logger);
     }
 }

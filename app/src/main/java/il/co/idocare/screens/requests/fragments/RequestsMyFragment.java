@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,16 +28,14 @@ import il.co.idocare.requests.RequestEntity;
 import il.co.idocare.requests.RequestsManager;
 import il.co.idocare.screens.common.FrameHelper;
 import il.co.idocare.screens.common.MainFrameContainer;
-import il.co.idocare.screens.common.fragments.BaseFragment;
+import il.co.idocare.screens.common.fragments.BaseScreenFragment;
 import il.co.idocare.screens.requests.mvcviews.RequestsMyViewMvcImpl;
 import il.co.idocare.utils.eventbusregistrator.EventBusRegistrable;
 
 @EventBusRegistrable
-public class RequestsMyFragment extends BaseFragment implements
+public class RequestsMyFragment extends BaseScreenFragment implements
         RequestsMyViewMvcImpl.RequestsMyViewMvcListener,
         RequestsManager.RequestsManagerListener {
-
-    private final static String TAG = "RequestsMyFragment";
 
     private static final String USER_LOGIN_DIALOG_TAG = "USER_LOGIN_DIALOG_TAG";
 
@@ -120,5 +119,15 @@ public class RequestsMyFragment extends BaseFragment implements
     @Override
     public void onRequestsFetched(@NonNull List<RequestEntity> requests) {
         mViewMvc.bindRequests(requests);
+    }
+
+    @Override
+    public String getTitle() {
+        return getString(R.string.requests_my_fragment_title);
+    }
+
+    @Override
+    public Class<? extends Fragment> getHierarchicalParentFragment() {
+        return null;
     }
 }
