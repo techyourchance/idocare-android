@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
+import il.co.idocare.screens.common.MainFrameHelper;
 import il.co.idocare.screens.requestdetails.fragments.NewRequestFragment;
 import il.co.idocare.screens.requestdetails.fragments.RequestDetailsFragment;
 import il.co.idocare.dialogs.DialogsFactory;
@@ -25,8 +26,6 @@ import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.dialogs.events.PromptDialogDismissedEvent;
 import il.co.idocare.requests.RequestEntity;
 import il.co.idocare.requests.RequestsManager;
-import il.co.idocare.screens.common.FrameHelper;
-import il.co.idocare.screens.common.MainFrameContainer;
 import il.co.idocare.screens.common.fragments.BaseScreenFragment;
 import il.co.idocare.screens.requests.mvcviews.RequestsMyViewMvcImpl;
 import il.co.idocare.utils.eventbusregistrator.EventBusRegistrable;
@@ -42,10 +41,11 @@ public abstract class RequestsListBaseFragment extends BaseScreenFragment implem
     @Inject RequestsManager mRequestsManager;
     @Inject DialogsManager mDialogsManager;
     @Inject DialogsFactory mDialogsFactory;
+    @Inject MainFrameHelper mMainMainFrameHelper;
 
     private RequestsMyViewMvcImpl mViewMvc;
 
-    private FrameHelper mMainFrameHelper;
+
 
     /**
      * This method will be called whenever requests need to be loaded. Call one of the methods
@@ -58,8 +58,6 @@ public abstract class RequestsListBaseFragment extends BaseScreenFragment implem
         super.onAttach(activity);
 
         getControllerComponent().inject(this);
-
-        mMainFrameHelper = ((MainFrameContainer)activity).getFrameHelper();
     }
 
     @Override
@@ -89,13 +87,13 @@ public abstract class RequestsListBaseFragment extends BaseScreenFragment implem
         Bundle args = new Bundle();
         args.putString(RequestDetailsFragment.ARG_REQUEST_ID, request.getId());
         // Replace with RequestDetailsFragment and pass the bundle as argument
-        mMainFrameHelper.replaceFragment(RequestDetailsFragment.class, true, false, args);
+        mMainMainFrameHelper.replaceFragment(RequestDetailsFragment.class, true, false, args);
     }
 
     @Override
     public void onCreateNewRequestClicked() {
         if (mLoginStateManager.isLoggedIn()) {
-            mMainFrameHelper.replaceFragment(NewRequestFragment.class, true, false, null);
+            mMainMainFrameHelper.replaceFragment(NewRequestFragment.class, true, false, null);
         } else {
             mDialogsManager.showRetainedDialogWithTag(
                     mDialogsFactory.newPromptDialog(

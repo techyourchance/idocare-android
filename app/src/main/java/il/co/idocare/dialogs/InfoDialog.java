@@ -1,5 +1,6 @@
 package il.co.idocare.dialogs;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -33,6 +34,12 @@ public class InfoDialog extends BaseDialog {
     private TextView mTxtTitle;
     private TextView mTxtMessage;
     private Button mBtnPositive;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        getControllerComponent().inject(this);
+    }
 
     @NonNull
     @Override

@@ -16,21 +16,21 @@ import javax.inject.Inject;
 
 import il.co.idocare.Constants;
 import il.co.idocare.authentication.LoginStateManager;
-import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.helpers.LocationHelper;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.pictures.CameraAdapter;
+import il.co.idocare.screens.common.MainFrameHelper;
+import il.co.idocare.screens.common.fragments.BaseScreenFragment;
 import il.co.idocare.utils.UtilMethods;
 
 
-public abstract class NewAndCloseRequestBaseFragment extends
-        AbstractFragment {
-
+public abstract class NewAndCloseRequestBaseFragment extends BaseScreenFragment {
 
     @Inject LoginStateManager mLoginStateManager;
     @Inject CameraAdapter mCameraAdapter;
     @Inject LocationHelper mLocationHelper;
     @Inject ServerSyncController mServerSyncController;
+    @Inject MainFrameHelper mMainFrameHelper;
 
     private String mLastCameraPicturePath;
     private List<String> mCameraPicturesPaths = new ArrayList<String>(3);
@@ -131,9 +131,7 @@ public abstract class NewAndCloseRequestBaseFragment extends
      * This method should be called if user logs out when this fragment is shown
      */
     protected void onUserLoggedOut() {
-        // This is a very simplified handling of user's logout
-        // TODO: think of a better handling and possible corner cases
-        navigateUp();
+        // TODO: navigate up!
     }
 
     /**

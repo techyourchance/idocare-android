@@ -23,8 +23,7 @@ import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.dialogs.events.PromptDialogDismissedEvent;
 import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.networking.ServerSyncController;
-import il.co.idocare.screens.common.FrameHelper;
-import il.co.idocare.screens.common.MainFrameContainer;
+import il.co.idocare.screens.common.MainFrameHelper;
 import il.co.idocare.screens.common.fragments.BaseFragment;
 import il.co.idocare.screens.navigationdrawer.NavigationDrawerManager;
 import il.co.idocare.screens.navigationdrawer.mvcviews.NavigationDrawerViewMvc;
@@ -56,19 +55,16 @@ public class NavigationDrawerFragment extends BaseFragment implements
     @Inject UsersDataMonitoringManager mUsersDataMonitoringManager;
     @Inject EventBus mEventBus;
     @Inject Logger mLogger;
+    @Inject MainFrameHelper mMainMainFrameHelper;
 
 
     private NavigationDrawerViewMvcImpl mViewMvc;
-
-    private FrameHelper mMainFrameHelper;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
         getControllerComponent().inject(this);
-
-        mMainFrameHelper = ((MainFrameContainer)activity).getFrameHelper();
     }
 
     @Nullable
@@ -109,20 +105,20 @@ public class NavigationDrawerFragment extends BaseFragment implements
 
     @Override
     public void onRequestsListClicked() {
-        mMainFrameHelper.replaceFragment(RequestsAllFragment.class, false, true, null);
+        mMainMainFrameHelper.replaceFragment(RequestsAllFragment.class, false, true, null);
         closeNavDrawer();
     }
 
     @Override
     public void onMyRequestsClicked() {
-        mMainFrameHelper.replaceFragment(RequestsMyFragment.class, true, false, null);
+        mMainMainFrameHelper.replaceFragment(RequestsMyFragment.class, true, false, null);
         closeNavDrawer();
     }
 
     @Override
     public void onNewRequestClicked() {
         if (mLoginStateManager.isLoggedIn()) {
-            mMainFrameHelper.replaceFragment(NewRequestFragment.class, true, false, null);
+            mMainMainFrameHelper.replaceFragment(NewRequestFragment.class, true, false, null);
             closeNavDrawer();
         } else {
             mDialogsManager.showRetainedDialogWithTag(

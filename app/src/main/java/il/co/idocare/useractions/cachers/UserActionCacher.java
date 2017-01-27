@@ -51,7 +51,7 @@ public class UserActionCacher {
             int updated = mContentResolver.update(
                     IDoCareContract.Requests.CONTENT_URI,
                     requestCV,
-                    IDoCareContract.UserActions.COL_ENTITY_ID + "= ?",
+                    IDoCareContract.Requests.COL_REQUEST_ID + "= ?",
                     new String[] {userActionEntity.getEntityId()}
             );
             if (updated != 1) {

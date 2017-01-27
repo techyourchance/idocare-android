@@ -12,12 +12,12 @@ import il.co.idocare.R;
  * This helper can be used in order to manager the contents of a single FrameLayout
  */
 
-public class FrameHelper {
+public class MainFrameHelper {
 
 
     private FragmentManager mFragmentManager;
 
-    public FrameHelper(FragmentManager fragmentManager) {
+    public MainFrameHelper(FragmentManager fragmentManager) {
         mFragmentManager = fragmentManager;
     }
 

@@ -6,6 +6,8 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,15 +53,10 @@ public class NewRequestFragment extends NewAndCloseRequestBaseFragment
         return mNewRequestViewMvc.getRootView();
     }
 
-
+    @Nullable
     @Override
-    public boolean isTopLevelFragment() {
-        return false;
-    }
-
-    @Override
-    public Class<? extends AbstractFragment> getNavHierParentFragment() {
-        return null;
+    public Class<? extends Fragment> getHierarchicalParentFragment() {
+        return RequestsAllFragment.class;
     }
 
     @Override
@@ -166,7 +163,6 @@ public class NewRequestFragment extends NewAndCloseRequestBaseFragment
         userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_ID, tempId);
         userActionCV.put(IDoCareContract.UserActions.COL_ACTION_TYPE, IDoCareContract.UserActions.ACTION_TYPE_CREATE_REQUEST);
 
-        showProgressDialog("Please wait...", "Creating new request...");
 
         new AsyncTask<Void, Void, Void>() {
             @Override
@@ -178,9 +174,8 @@ public class NewRequestFragment extends NewAndCloseRequestBaseFragment
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                dismissProgressDialog();
                 mServerSyncController.requestImmediateSync(); // TODO: remove this after geocoder and names appear without sync
-                replaceFragment(RequestsAllFragment.class, false, true, null);
+                mMainFrameHelper.replaceFragment(RequestsAllFragment.class, false, true, null);
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[] {null});
 

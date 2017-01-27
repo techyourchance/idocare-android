@@ -39,7 +39,7 @@ public abstract class BaseFragment extends Fragment {
                 .getApplicationComponent()
                 .newContextComponent(new ContextModule(getActivity()))
                 .newControllerComponent(
-                        new ControllerModule(getActivity(), getFragmentManager()),
+                        new ControllerModule(getActivity(), getActivity().getSupportFragmentManager()),
                         new CachersModule(),
                         new RetrieversModule());
 

@@ -3,6 +3,7 @@ package il.co.idocare.dependencyinjection.controllerscope;
 import dagger.Subcomponent;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.controllers.activities.StartupActivity;
+import il.co.idocare.dialogs.InfoDialog;
 import il.co.idocare.screens.requestdetails.fragments.CloseRequestFragment;
 import il.co.idocare.dependencyinjection.datacache.RetrieversModule;
 import il.co.idocare.screens.common.fragments.BaseFragment;
@@ -43,5 +44,6 @@ public interface ControllerComponent {
 
 
     void inject(PromptDialog promptDialog);
+    void inject(InfoDialog infoDialog);
 
 }

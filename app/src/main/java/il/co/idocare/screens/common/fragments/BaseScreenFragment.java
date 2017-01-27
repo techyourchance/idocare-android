@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import il.co.idocare.screens.common.Screen;
 import il.co.idocare.screens.common.toolbar.ToolbarManager;
+import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
 
 /**
  * This is a base class for fragments that represent a full user visible screen
@@ -19,13 +20,6 @@ public abstract class BaseScreenFragment extends BaseFragment implements Screen 
     @Inject ToolbarManager mToolbarManager;
 
 
-    /**
-     * This method returns the hierarchical "parent" of the current fragment. This might be useful
-     * to support "up" navigation when back-stack is empty.
-     * @return the class of the navigation hierarchy parent of this fragment; null value means
-     *         that this fragment is a top level fragment
-     */
-    public abstract @Nullable Class<? extends Fragment> getHierarchicalParentFragment();
 
 
     @Override
@@ -60,4 +54,17 @@ public abstract class BaseScreenFragment extends BaseFragment implements Screen 
     public boolean shouldShowToolbar() {
         return true;
     }
+
+    /**
+     * This method returns the hierarchical "parent" of the current fragment. This might be useful
+     * to support "up" navigation when back-stack is empty. Default implementation points to
+     * {@link RequestsAllFragment}.
+     * @return the class of the navigation hierarchy parent of this fragment; null value means
+     *         that this fragment is a top level fragment
+     */
+    protected @Nullable Class<? extends Fragment> getHierarchicalParentFragment() {
+        return RequestsAllFragment.class;
+    }
+
+
 }

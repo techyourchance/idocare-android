@@ -7,6 +7,8 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,6 +29,7 @@ import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.eventbusevents.LocationEvents;
 import il.co.idocare.mvcviews.closerequest.CloseRequestViewMvc;
 import il.co.idocare.mvcviews.closerequest.CloseRequestViewMvcImpl;
+import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
 
 
 public class CloseRequestFragment extends NewAndCloseRequestBaseFragment
@@ -52,29 +55,21 @@ public class CloseRequestFragment extends NewAndCloseRequestBaseFragment
         mCloseRequestViewMvc.registerListener(this);
 
         Bundle args = getArguments();
-        if (args != null) {
-            mRequestId = args.getLong(Constants.FIELD_NAME_REQUEST_ID);
-            // TODO: the only argument should be request ID - use loader in order to load request's info!
-            mRequestLocation = new Location("none");
-            mRequestLocation.setLongitude(args.getDouble(Constants.FIELD_NAME_LONGITUDE));
-            mRequestLocation.setLatitude(args.getDouble(Constants.FIELD_NAME_LATITUDE));
-        } else {
-            Log.e(TAG, "no arguments set for CloseRequestFragment");
-            navigateUp();
-        }
+
+        mRequestId = args.getLong(Constants.FIELD_NAME_REQUEST_ID);
+        // TODO: the only argument should be request ID - use loader in order to load request's info!
+        mRequestLocation = new Location("none");
+        mRequestLocation.setLongitude(args.getDouble(Constants.FIELD_NAME_LONGITUDE));
+        mRequestLocation.setLatitude(args.getDouble(Constants.FIELD_NAME_LATITUDE));
 
         return mCloseRequestViewMvc.getRootView();
     }
 
 
+    @Nullable
     @Override
-    public boolean isTopLevelFragment() {
-        return false;
-    }
-
-    @Override
-    public Class<? extends AbstractFragment> getNavHierParentFragment() {
-        return null;
+    public Class<? extends Fragment> getHierarchicalParentFragment() {
+        return RequestsAllFragment.class;
     }
 
     @Override
@@ -153,7 +148,6 @@ public class CloseRequestFragment extends NewAndCloseRequestBaseFragment
             userActionParamJson.put(Constants.FIELD_NAME_CLOSED_PICTURES, closedPictures);
         } catch (JSONException e) {
             e.printStackTrace();
-            dismissProgressDialog();
             return;
         }
         String userActionParam = userActionParamJson.toString();
@@ -172,9 +166,6 @@ public class CloseRequestFragment extends NewAndCloseRequestBaseFragment
                 IDoCareContract.UserActions.ACTION_TYPE_CLOSE_REQUEST);
         userActionCV.put(IDoCareContract.UserActions.COL_ACTION_PARAM, userActionParam);
 
-
-        showProgressDialog("Please wait...", "Closing the request...");
-
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -189,13 +180,12 @@ public class CloseRequestFragment extends NewAndCloseRequestBaseFragment
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                dismissProgressDialog();
 
                 // Create a bundle and put the id there
                 Bundle args = new Bundle();
                 args.putLong(Constants.FIELD_NAME_REQUEST_ID, mRequestId);
 
-                replaceFragment(RequestDetailsFragment.class, false, true, args);
+                mMainFrameHelper.replaceFragment(RequestDetailsFragment.class, false, true, args);
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[] {null});
 

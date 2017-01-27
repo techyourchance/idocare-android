@@ -2,10 +2,13 @@ package il.co.idocare.screens.requestdetails.fragments;
 
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -28,25 +31,35 @@ import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
+import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.controllers.interfaces.RequestUserActionApplier;
 import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
 import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.datamodels.functional.UserActionItem;
 import il.co.idocare.datamodels.functional.UserItem;
+import il.co.idocare.dialogs.DialogsFactory;
+import il.co.idocare.dialogs.DialogsManager;
+import il.co.idocare.dialogs.events.PromptDialogDismissedEvent;
 import il.co.idocare.requests.RequestsManager;
 import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvc;
 import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvcImpl;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.pictures.ImageViewPictureLoader;
+import il.co.idocare.screens.common.MainFrameHelper;
+import il.co.idocare.screens.common.fragments.BaseScreenFragment;
+import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
+import il.co.idocare.utils.eventbusregistrator.EventBusRegistrable;
 
-
-public class RequestDetailsFragment extends AbstractFragment implements
+@EventBusRegistrable
+public class RequestDetailsFragment extends BaseScreenFragment implements
         LoaderManager.LoaderCallbacks<Cursor>,RequestDetailsViewMvc.RequestDetailsViewMvcListener {
 
     private final static String TAG = "RequestDetailsFragment";
 
     public static final String ARG_REQUEST_ID = "ARG_REQUEST_ID";
+
+    private static final String USER_LOGIN_DIALOG_TAG = "USER_LOGIN_DIALOG_TAG";
 
     private final static int REQUEST_LOADER = 0;
     private final static int USERS_LOADER = 1;
@@ -58,6 +71,9 @@ public class RequestDetailsFragment extends AbstractFragment implements
     @Inject ServerSyncController mServerSyncController;
     @Inject ImageViewPictureLoader mImageViewPictureLoader;
     @Inject RequestsManager mRequestsManager;
+    @Inject MainFrameHelper mMainFrameHelper;
+    @Inject DialogsManager mDialogsManager;
+    @Inject DialogsFactory mDialogsFactory;
 
     private String mRequestId;
     private RequestItem mRawRequestItem;
@@ -75,9 +91,6 @@ public class RequestDetailsFragment extends AbstractFragment implements
                 new RequestDetailsViewMvcImpl(inflater, container, mImageViewPictureLoader);
         mRequestDetailsViewMvc.registerListener(this);
 
-
-        setActionBarTitle(getTitle());
-
         mRequestId = getArguments().getString(ARG_REQUEST_ID);
 
         // Initialize the MapView inside the MVC view
@@ -87,16 +100,6 @@ public class RequestDetailsFragment extends AbstractFragment implements
         getLoaderManager().initLoader(REQUEST_LOADER, null, this);
 
         return mRequestDetailsViewMvc.getRootView();
-    }
-
-    @Override
-    public boolean isTopLevelFragment() {
-        return false;
-    }
-
-    @Override
-    public Class<? extends AbstractFragment> getNavHierParentFragment() {
-        return null;
     }
 
     @Override
@@ -180,13 +183,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
         // If no logged in user - ask him to log in and rerun this method in case he does
         if (TextUtils.isEmpty(pickedUpBy)) {
-            askUserToLogIn(getResources().getString(R.string.msg_ask_to_log_in_before_pickup),
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            pickupRequest();
-                        }
-                    });
+            askUserToLogIn();
             return;
         }
 
@@ -195,7 +192,6 @@ public class RequestDetailsFragment extends AbstractFragment implements
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                showProgressDialog("Please wait...", "Updating the request...");
             }
 
             @Override
@@ -239,10 +235,29 @@ public class RequestDetailsFragment extends AbstractFragment implements
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                dismissProgressDialog();
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
+    }
+
+    private void askUserToLogIn() {
+        mDialogsManager.showRetainedDialogWithTag(
+                mDialogsFactory.newPromptDialog(
+                        getString(R.string.dialog_title_login_required),
+                        getString(R.string.msg_ask_to_log_in_before_pickup),
+                        getResources().getString(R.string.btn_dialog_positive),
+                        getResources().getString(R.string.btn_dialog_negative)),
+                USER_LOGIN_DIALOG_TAG);
+    }
+
+    @Subscribe
+    public void onPromptDialogDismissed(PromptDialogDismissedEvent event) {
+        if (event.getTag().equals(USER_LOGIN_DIALOG_TAG)) {
+            if (event.getClickedButtonIndex() == PromptDialogDismissedEvent.BUTTON_POSITIVE) {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                startActivity(intent);
+            }
+        }
     }
 
     private void closeRequest() {
@@ -256,7 +271,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
         args.putString(Constants.FIELD_NAME_REQUEST_ID, mRequestId);
         args.putDouble(Constants.FIELD_NAME_LATITUDE, mRequestItem.getLatitude());
         args.putDouble(Constants.FIELD_NAME_LONGITUDE, mRequestItem.getLongitude());
-        replaceFragment(CloseRequestFragment.class, true, false, args);
+        mMainFrameHelper.replaceFragment(CloseRequestFragment.class, true, false, args);
     }
 
 
@@ -266,14 +281,7 @@ public class RequestDetailsFragment extends AbstractFragment implements
 
         // If no logged in user - ask him to log in
         if (TextUtils.isEmpty(activeUserId)) {
-            askUserToLogIn(
-                    getResources().getString(R.string.msg_ask_to_log_in_before_vote),
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            voteForRequest(voteType);
-                        }
-                    });
+            askUserToLogIn();
             return;
         }
 

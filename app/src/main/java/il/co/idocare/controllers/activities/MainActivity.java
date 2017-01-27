@@ -27,17 +27,14 @@ import il.co.idocare.screens.navigationdrawer.NavigationDrawerDelegate;
 import il.co.idocare.screens.navigationdrawer.events.NavigationDrawerStateChangeEvent;
 import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
-import il.co.idocare.screens.common.FrameHelper;
 import il.co.idocare.location.LocationTrackerService;
 import il.co.idocare.mvcviews.mainnavdrawer.MainViewMVC;
 import il.co.idocare.networking.ServerSyncController;
-import il.co.idocare.screens.common.MainFrameContainer;
 import il.co.idocare.utils.Logger;
 
 
 public class MainActivity extends AbstractActivity implements
         MainViewMVC.MainNavDrawerViewMVCListener,
-        MainFrameContainer,
         NavigationDrawerDelegate,
         ToolbarDelegate {
 
@@ -56,7 +53,6 @@ public class MainActivity extends AbstractActivity implements
             };
 
     @Inject ServerSyncController mServerSyncController;
-    @Inject FrameHelper mFrameHelper;
     @Inject Logger mLogger;
     @Inject EventBus mEventBus;
 
@@ -283,13 +279,6 @@ public class MainActivity extends AbstractActivity implements
     // End of permissions management
     //
     // ---------------------------------------------------------------------------------------------
-
-
-    @NonNull
-    @Override
-    public FrameHelper getFrameHelper() {
-        return mFrameHelper;
-    }
 
     @Override
     public void showNavigateUpButton() {

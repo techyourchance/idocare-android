@@ -12,6 +12,7 @@ import dagger.Provides;
 import il.co.idocare.deviceinfo.GooglePlayServicesChecker;
 import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
+import il.co.idocare.screens.common.MainFrameHelper;
 import il.co.idocare.screens.common.toolbar.ToolbarManager;
 import il.co.idocare.screens.common.toolbar.ToolbarDelegate;
 import il.co.idocare.screens.navigationdrawer.NavigationDrawerDelegate;
@@ -22,7 +23,6 @@ import il.co.idocare.utils.eventbusregistrator.EventBusRegistrator;
 import il.co.idocare.utils.multithreading.MainThreadPoster;
 import il.co.idocare.requests.retrievers.RequestsRetriever;
 import il.co.idocare.useractions.cachers.UserActionCacher;
-import il.co.idocare.screens.common.FrameHelper;
 import il.co.idocare.requests.RequestsManager;
 import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
 import il.co.idocare.networking.ServerSyncController;
@@ -71,8 +71,8 @@ public class ControllerModule {
 
     @Provides
     @ControllerScope
-    FrameHelper frameHelper(FragmentManager fragmentManager) {
-        return new FrameHelper(fragmentManager);
+    MainFrameHelper frameHelper(FragmentManager fragmentManager) {
+        return new MainFrameHelper(fragmentManager);
     }
 
     @Provides
