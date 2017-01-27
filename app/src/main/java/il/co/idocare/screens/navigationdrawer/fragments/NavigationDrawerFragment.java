@@ -111,7 +111,7 @@ public class NavigationDrawerFragment extends BaseFragment implements
 
     @Override
     public void onMyRequestsClicked() {
-        mMainMainFrameHelper.replaceFragment(RequestsMyFragment.class, true, false, null);
+        mMainMainFrameHelper.replaceFragment(RequestsMyFragment.class, false, true, null);
         closeNavDrawer();
     }
 

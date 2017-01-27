@@ -122,7 +122,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements
 
         if (clearBackStack) {
             // Remove all entries from back stack
-            getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
 
 
@@ -174,8 +174,8 @@ public abstract class AbstractActivity extends AppCompatActivity implements
     @Override
     public boolean onNavigateUp() {
 
-        if (getFragmentManager().getBackStackEntryCount() > 0) {
-            getFragmentManager().popBackStack();
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
             return true;
         } else {
             Fragment currFragment = getSupportFragmentManager().findFragmentById(R.id.frame_contents);

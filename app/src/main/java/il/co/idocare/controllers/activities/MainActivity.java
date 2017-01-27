@@ -1,13 +1,13 @@
 package il.co.idocare.controllers.activities;
 
 import android.Manifest;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -43,14 +43,6 @@ public class MainActivity extends AbstractActivity implements
     private static final int PERMISSION_REQUEST_GPS = 1;
 
     public static final String EXTRA_GPS_PERMISSION_REQUEST_RETRY = "EXTRA_GPS_PERMISSION_REQUEST_RETRY";
-
-    private FragmentManager.OnBackStackChangedListener onBackStackChangedListener =
-            new FragmentManager.OnBackStackChangedListener() {
-                @Override
-                public void onBackStackChanged() {
-                    syncHomeButtonViewAndFunctionality();
-                }
-            };
 
     @Inject ServerSyncController mServerSyncController;
     @Inject Logger mLogger;
@@ -93,7 +85,6 @@ public class MainActivity extends AbstractActivity implements
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
-        getFragmentManager().addOnBackStackChangedListener(onBackStackChangedListener);
         mServerSyncController.enableAutomaticSync();
         mServerSyncController.requestImmediateSync();
         checkPermissions();
@@ -103,17 +94,8 @@ public class MainActivity extends AbstractActivity implements
     protected void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
-        getFragmentManager().removeOnBackStackChangedListener(onBackStackChangedListener);
         mServerSyncController.disableAutomaticSync();
     }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        syncHomeButtonViewAndFunctionality();
-    }
-
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -202,44 +184,6 @@ public class MainActivity extends AbstractActivity implements
             super.onBackPressed();
         }
     }
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // Up navigation button management
-
-    private void syncHomeButtonViewAndFunctionality() {
-
-        /*
-         The "navigate up" button should be enabled if either there are entries in the
-         back stack, or the currently shown fragment has a hierarchical parent.
-         Only top level fragments will have the UP button switched for nav drawer's "hamburger"
-          */
-
-        if (getSupportActionBar() != null) {
-
-            boolean hasBackstackEntries = getFragmentManager().getBackStackEntryCount() > 0;
-
-            Fragment currFragment = getFragmentManager().findFragmentById(R.id.frame_contents);
-
-            boolean hasHierParent = currFragment != null
-                    && IDoCareFragmentInterface.class.isAssignableFrom(currFragment.getClass())
-                    && ((IDoCareFragmentInterface)currFragment).getNavHierParentFragment() != null;
-
-            boolean showHomeAsUp = hasBackstackEntries || hasHierParent;
-
-
-            mMainViewMVC.setDrawerIndicatorEnabled(!showHomeAsUp);
-        }
-    }
-
-
-    // End of up navigation button management
-    //
-    // ---------------------------------------------------------------------------------------------
-
-
-
-
 
     // ---------------------------------------------------------------------------------------------
     //

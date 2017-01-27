@@ -37,7 +37,7 @@ public abstract class BaseScreenFragment extends BaseFragment implements Screen 
     @Override
     public int getToolbarButtonState() {
 
-        boolean hasBackStackEntries = getActivity().getFragmentManager().getBackStackEntryCount() > 0;
+        boolean hasBackStackEntries = getActivity().getSupportFragmentManager().getBackStackEntryCount() > 0;
 
         boolean hasHierarchicalParent = getHierarchicalParentFragment() != null;
 
