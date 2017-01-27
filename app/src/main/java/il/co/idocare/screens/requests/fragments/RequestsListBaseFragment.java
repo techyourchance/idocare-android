@@ -45,8 +45,6 @@ public abstract class RequestsListBaseFragment extends BaseScreenFragment implem
 
     private RequestsMyViewMvcImpl mViewMvc;
 
-
-
     /**
      * This method will be called whenever requests need to be loaded. Call one of the methods
      * of RequestsManager in order to fetch appropriate requests.
@@ -83,10 +81,8 @@ public abstract class RequestsListBaseFragment extends BaseScreenFragment implem
 
     @Override
     public void onRequestClicked(RequestEntity request) {
-        // Create a bundle and put the id of the selected item there
         Bundle args = new Bundle();
         args.putString(RequestDetailsFragment.ARG_REQUEST_ID, request.getId());
-        // Replace with RequestDetailsFragment and pass the bundle as argument
         mMainMainFrameHelper.replaceFragment(RequestDetailsFragment.class, true, false, args);
     }
 

@@ -93,8 +93,8 @@ public class RequestsManager extends BaseManager<RequestsManager.RequestsManager
             @Override
             public void run() {
                 final List<RequestEntity> requests = mRequestsRetriever.getAllRequests();
-
                 notifyListenersWithRequests(requests);
+                mServerSyncController.requestImmediateSync();
             }
         });
     }
@@ -107,7 +107,7 @@ public class RequestsManager extends BaseManager<RequestsManager.RequestsManager
             public void run() {
                 final List<RequestEntity> requests = mRequestsRetriever.getRequestsAssignedToUser(userId);
                 notifyListenersWithRequests(requests);
-
+                mServerSyncController.requestImmediateSync();
             }
         });
 
