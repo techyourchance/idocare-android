@@ -12,6 +12,7 @@ import dagger.Provides;
 import il.co.idocare.deviceinfo.GooglePlayServicesChecker;
 import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
+import il.co.idocare.requests.cachers.RequestsCacher;
 import il.co.idocare.screens.common.MainFrameHelper;
 import il.co.idocare.screens.common.toolbar.ToolbarManager;
 import il.co.idocare.screens.common.toolbar.ToolbarDelegate;
@@ -94,10 +95,11 @@ public class ControllerModule {
             MainThreadPoster mainThreadPoster,
             UserActionCacher userActionCacher,
             RequestsRetriever requestsRetriever,
+            RequestsCacher requestsCacher,
             Logger logger,
             ServerSyncController serverSyncController) {
         return new RequestsManager(backgroundThreadPoster, mainThreadPoster, userActionCacher,
-                requestsRetriever, logger, serverSyncController);
+                requestsRetriever, requestsCacher, logger, serverSyncController);
     }
 
     @Provides

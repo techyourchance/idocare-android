@@ -9,9 +9,9 @@ import il.co.idocare.contentproviders.IDoCareContract;
  */
 public class CreateRequestUserActionEntity extends UserActionEntity {
 
-    public CreateRequestUserActionEntity(long timestamp,
-                                         @NonNull String requestId,
-                                         @NonNull String createdByUserId) {
+    public CreateRequestUserActionEntity(String timestamp,
+                                         String requestId,
+                                         String createdByUserId) {
         super(timestamp,
                 IDoCareContract.UserActions.ENTITY_TYPE_REQUEST,
                 requestId,

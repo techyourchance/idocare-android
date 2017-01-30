@@ -19,7 +19,7 @@ public class CloseRequestUserActionEntity extends UserActionEntity {
     private final String mClosedComment;
     private final List<String> mClosedPictures;
 
-    public CloseRequestUserActionEntity(long timestamp,
+    public CloseRequestUserActionEntity(String timestamp,
                                         @NonNull String requestId,
                                         @NonNull String closedByUserId,
                                         @NonNull String closedComment,

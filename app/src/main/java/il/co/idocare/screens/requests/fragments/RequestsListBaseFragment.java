@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
+import il.co.idocare.requests.RequestsChangedEvent;
 import il.co.idocare.screens.common.MainFrameHelper;
 import il.co.idocare.screens.requestdetails.fragments.NewRequestFragment;
 import il.co.idocare.screens.requestdetails.fragments.RequestDetailsFragment;
@@ -120,6 +121,11 @@ public abstract class RequestsListBaseFragment extends BaseScreenFragment implem
     @Override
     public void onRequestsFetched(@NonNull List<RequestEntity> requests) {
         mViewMvc.bindRequests(requests);
+    }
+
+    @Subscribe
+    public void onRequestsChanged(RequestsChangedEvent event) {
+        fetchRequests();
     }
 
 }

@@ -1,19 +1,52 @@
 package il.co.idocare.requests.cachers;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.support.annotation.NonNull;
 
+import org.greenrobot.eventbus.EventBus;
+
 import il.co.idocare.requests.RequestEntity;
 import il.co.idocare.contentproviders.IDoCareContract.Requests;
+import il.co.idocare.requests.RequestsChangedEvent;
 import il.co.idocare.utils.StringUtils;
 
 /**
  * This class handles request related info storage into the cache
  */
-public class RequestCacher {
+public class RequestsCacher {
 
+    private final ContentResolver mContentResolver;
+    private EventBus mEventBus;
 
-    private ContentValues requestEntityToContentValues(@NonNull RequestEntity requestEntity) {
+    public RequestsCacher(ContentResolver contentResolver, EventBus eventBus) {
+        mContentResolver = contentResolver;
+        mEventBus = eventBus;
+    }
+
+    public void updateOrInsert(RequestEntity request) {
+
+        // TODO: make operations atomic
+        ContentValues cv = requestEntityToContentValues(request);
+
+        int updateCount = mContentResolver.update(
+                Requests.CONTENT_URI,
+                cv,
+                Requests.COL_REQUEST_ID + " = ?",
+                new String[] {request.getId()}
+        );
+
+        if (updateCount <= 0) {
+            mContentResolver.insert(
+                    Requests.CONTENT_URI,
+                    cv
+            );
+        }
+
+        notifyRequestsUpdated();
+    }
+
+    private ContentValues requestEntityToContentValues(RequestEntity requestEntity) {
 
         ContentValues values = new ContentValues();
 
@@ -33,7 +66,13 @@ public class RequestCacher {
         values.put(Requests.COL_CLOSED_PICTURES, StringUtils.listToCommaSeparatedString(requestEntity.getClosedPictures()));
         values.put(Requests.COL_CLOSED_VOTES, requestEntity.getClosedVotes());
         values.put(Requests.COL_LOCATION, requestEntity.getLocation());
+        values.put(Requests.COL_MODIFIED_LOCALLY_FLAG, requestEntity.isModifiedLocally());
 
         return values;
     }
+
+    private void notifyRequestsUpdated() {
+        mEventBus.post(new RequestsChangedEvent());
+    }
+
 }

@@ -19,8 +19,8 @@ import il.co.idocare.useractions.entities.VoteForRequestUserActionEntity;
 public class UserActionEntityFactory {
 
 
-    protected long getTimestamp() {
-        return System.currentTimeMillis();
+    protected String getTimestamp() {
+        return String.valueOf(System.currentTimeMillis());
     }
 
     public VoteForRequestUserActionEntity newVoteUpForRequestCreated(String requestId) {
@@ -73,7 +73,7 @@ public class UserActionEntityFactory {
 
     public UserActionEntity newCreateRequest(String requestId, String createdByUserId) {
         return new CreateRequestUserActionEntity(
-                getTimestamp(),
+                String.valueOf(getTimestamp()),
                 requestId,
                 createdByUserId);
     }

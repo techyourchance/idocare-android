@@ -6,9 +6,7 @@ import android.support.v4.app.Fragment;
 
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoggedInUserEntity;
-import il.co.idocare.utils.eventbusregistrator.EventBusRegistrable;
 
-@EventBusRegistrable
 public class RequestsMyFragment extends RequestsListBaseFragment {
 
     private static final String TAG = "RequestsMyFragment";
@@ -22,7 +20,7 @@ public class RequestsMyFragment extends RequestsListBaseFragment {
             mLogger.e(TAG, "no logged in user");
             return;
         }
-        mRequestsManager.fetchRequestsAssignedToUser(user.getUserId());
+        mRequestsManager.fetchRequestsAssignedToUserAndNotify(user.getUserId());
     }
 
     @Nullable
@@ -35,4 +33,5 @@ public class RequestsMyFragment extends RequestsListBaseFragment {
     public String getTitle() {
         return getString(R.string.requests_my_fragment_title);
     }
+
 }

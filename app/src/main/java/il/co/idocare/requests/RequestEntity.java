@@ -24,9 +24,9 @@ public class RequestEntity {
 
     private final int mCreatedVotes;
     
-    private final double mLat;
+    private final double mLatitude;
     
-    private final double mLong;
+    private final double mLongitude;
     
     private final String mPickedUpBy;
     
@@ -44,19 +44,22 @@ public class RequestEntity {
     
     private final String mLocation;
 
+    private final boolean mModifiedLocally;
+
     public RequestEntity(String id, String createdBy, String createdAt, String createdComment,
                          List<String> createdPictures, int createdVotes,
                          double latitude, double longitude, String pickedUpBy, String pickedUpAt,
                          String closedBy, String closedAt, String closedComment,
-                         List<String> closedPictures, int closedVotes, String location) {
+                         List<String> closedPictures, int closedVotes, String location,
+                         boolean modifiedLocally) {
         mId = id;
         mCreatedBy = createdBy;
         mCreatedAt = createdAt;
         mCreatedComment = createdComment;
         mCreatedPictures = createdPictures != null ? new ArrayList<>(createdPictures) : new ArrayList<String>(0);
         mCreatedVotes = createdVotes;
-        mLat = latitude;
-        mLong = longitude;
+        mLatitude = latitude;
+        mLongitude = longitude;
         mPickedUpBy = pickedUpBy;
         mPickedUpAt = pickedUpAt;
         mClosedBy = closedBy;
@@ -65,6 +68,7 @@ public class RequestEntity {
         mClosedPictures = closedPictures != null ? new ArrayList<>(closedPictures) : new ArrayList<String>(0);
         mClosedVotes = closedVotes;
         mLocation = location;
+        mModifiedLocally = modifiedLocally;
     }
 
 
@@ -131,11 +135,11 @@ public class RequestEntity {
     }
 
     public double getLatitude() {
-        return mLat;
+        return mLatitude;
     }
 
     public double getLongitude() {
-        return mLong;
+        return mLongitude;
     }
 
     public String getPickedUpBy() {
@@ -170,6 +174,9 @@ public class RequestEntity {
         return mLocation;
     }
 
+    public boolean isModifiedLocally() {
+        return mModifiedLocally;
+    }
 
     // ---------------------------------------------------------------------------------------------
     // Builder
@@ -194,6 +201,7 @@ public class RequestEntity {
         private List<String> mClosedPictures = null;
         private int mClosedVotes = 0;
         private String mLocation = null;
+        private boolean mModifiedLocally = false;
 
         private RequestEntityBuilder() {}
 
@@ -204,8 +212,8 @@ public class RequestEntity {
             mCreatedComment = requestEntity.mCreatedComment;
             mCreatedPictures = requestEntity.mCreatedPictures;
             mCreatedVotes = requestEntity.mCreatedVotes;
-            mLatitude = requestEntity.mLat;
-            mLongitude = requestEntity.mLong;
+            mLatitude = requestEntity.mLatitude;
+            mLongitude = requestEntity.mLongitude;
             mPickedUpBy = requestEntity.mPickedUpBy;
             mPickedUpAt = requestEntity.mPickedUpAt;
             mClosedBy = requestEntity.mClosedBy;
@@ -214,6 +222,7 @@ public class RequestEntity {
             mClosedPictures = requestEntity.mClosedPictures;
             mClosedVotes = requestEntity.mClosedVotes;
             mLocation = requestEntity.mLocation;
+            mModifiedLocally = requestEntity.mModifiedLocally;
         }
 
         public RequestEntityBuilder setId(String id) {
@@ -296,10 +305,15 @@ public class RequestEntity {
             return this;
         }
 
+        public RequestEntityBuilder setModifiedLocally(boolean modifiedLocally) {
+            mModifiedLocally = modifiedLocally;
+            return this;
+        }
+
         public RequestEntity build() {
             return new RequestEntity(mId, mCreatedBy, mCreatedAt, mCreatedComment, mCreatedPictures,
                     mCreatedVotes, mLatitude, mLongitude, mPickedUpBy, mPickedUpAt, mClosedBy,
-                    mClosedAt, mClosedComment, mClosedPictures, mClosedVotes, mLocation);
+                    mClosedAt, mClosedComment, mClosedPictures, mClosedVotes, mLocation, mModifiedLocally);
         }
     }
 }

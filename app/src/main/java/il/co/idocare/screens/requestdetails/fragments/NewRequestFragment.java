@@ -30,6 +30,8 @@ import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.eventbusevents.LocationEvents;
 import il.co.idocare.mvcviews.newrequest.NewRequestViewMvc;
 import il.co.idocare.mvcviews.newrequest.NewRequestViewMvcImpl;
+import il.co.idocare.requests.RequestEntity;
+import il.co.idocare.requests.RequestsManager;
 import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
 import il.co.idocare.utils.Logger;
 
@@ -39,6 +41,7 @@ public class NewRequestFragment extends NewAndCloseRequestBaseFragment
 
     private static final String TAG = "NewRequestFragment";
 
+    @Inject RequestsManager mRequestsManager;
     @Inject Logger mLogger;
 
     NewRequestViewMvc mNewRequestViewMvc;
@@ -109,16 +112,11 @@ public class NewRequestFragment extends NewAndCloseRequestBaseFragment
     private void createRequest() {
         mLogger.d(TAG, "createRequest()");
 
-        LoggedInUserEntity user = mLoginStateManager.getLoggedInUser();
-        if (user == null) {
-            mLogger.e(TAG, "no logged in user - aborting");
-            return;
-        }
-
-        String createdBy = user.getUserId();
+        String createdBy = mLoginStateManager.getLoggedInUser().getUserId();
 
         LocationEvents.BestLocationEstimateEvent bestLocationEstimateEvent =
                 EventBus.getDefault().getStickyEvent(LocationEvents.BestLocationEstimateEvent.class);
+
         if (bestLocationEstimateEvent == null
                 || !mLocationHelper.isAccurateLocation(bestLocationEstimateEvent.location)) {
             Log.d(TAG, "aborting request creation due to lack of, or insufficiently accurate " +
@@ -130,18 +128,18 @@ public class NewRequestFragment extends NewAndCloseRequestBaseFragment
 
         Location location = bestLocationEstimateEvent.location;
 
-        String latitude = "", longitude = "";
+        double latitude = 0, longitude = 0;
         if (location != null) {
-            latitude = String.valueOf(location.getLatitude());
-            longitude = String.valueOf(location.getLongitude());
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
         }
-        List<String> picturesPahts = getPicturesPaths();
-        StringBuilder sb = new StringBuilder("");
-        for (int i=0; i < picturesPahts.size(); i++) {
-            sb.append(picturesPahts.get(i));
-            if (i < picturesPahts.size()-1) sb.append(Constants.PICTURES_LIST_SEPARATOR);
-        }
-        String createdPictures = sb.toString();
+        List<String> createdPictures = getPicturesPaths();
+//        StringBuilder sb = new StringBuilder("");
+//        for (int i=0; i < picturesPahts.size(); i++) {
+//            sb.append(picturesPahts.get(i));
+//            if (i < picturesPahts.size()-1) sb.append(Constants.PICTURES_LIST_SEPARATOR);
+//        }
+//        String createdPictures = sb.toString();
 
         Bundle bundleNewRequest = mNewRequestViewMvc.getViewState();
         String createdComment =
@@ -158,51 +156,54 @@ public class NewRequestFragment extends NewAndCloseRequestBaseFragment
             return;
         }
 
-        // Create entries for a newly created request
-        final ContentValues requestCV = new ContentValues();
-        requestCV.put(IDoCareContract.Requests.COL_REQUEST_ID, tempId);
-        requestCV.put(IDoCareContract.Requests.COL_CREATED_BY, createdBy);
-        requestCV.put(IDoCareContract.Requests.COL_CREATED_AT, timestamp);
-        requestCV.put(IDoCareContract.Requests.COL_CREATED_COMMENT, createdComment);
-        requestCV.put(IDoCareContract.Requests.COL_CREATED_PICTURES, createdPictures);
-        requestCV.put(IDoCareContract.Requests.COL_LONGITUDE, longitude);
-        requestCV.put(IDoCareContract.Requests.COL_LATITUDE, latitude);
-        requestCV.put(IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG, "1");
+        RequestEntity newRequest = RequestEntity.getBuilder()
+                .setId(String.valueOf(tempId))
+                .setCreatedBy(createdBy)
+                .setClosedAt(String.valueOf(timestamp))
+                .setCreatedComment(createdComment)
+                .setClosedPictures(createdPictures)
+                .setLongitude(longitude)
+                .setLatitude(latitude)
+                .setModifiedLocally(true)
+                .build();
 
-        // Create entries for user action corresponding to request's creation
-        final ContentValues userActionCV = new ContentValues();
-        userActionCV.put(IDoCareContract.UserActions.COL_TIMESTAMP, timestamp);
-        userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_TYPE,
-                IDoCareContract.UserActions.ENTITY_TYPE_REQUEST);
-        userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_ID, tempId);
-        userActionCV.put(IDoCareContract.UserActions.COL_ACTION_TYPE, IDoCareContract.UserActions.ACTION_TYPE_CREATE_REQUEST);
+        mRequestsManager.addNewRequest(newRequest);
 
+        mServerSyncController.requestImmediateSync(); // TODO: remove this after geocoder and names appear without sync
+        mMainFrameHelper.replaceFragment(RequestsAllFragment.class, false, true, null);
 
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                getActivity().getContentResolver().insert(IDoCareContract.Requests.CONTENT_URI, requestCV);
-                getActivity().getContentResolver().insert(IDoCareContract.UserActions.CONTENT_URI, userActionCV);
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                mServerSyncController.requestImmediateSync(); // TODO: remove this after geocoder and names appear without sync
-                mMainFrameHelper.replaceFragment(RequestsAllFragment.class, false, true, null);
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[] {null});
+//        // Create entries for user action corresponding to request's creation
+//        final ContentValues userActionCV = new ContentValues();
+//        userActionCV.put(IDoCareContract.UserActions.COL_TIMESTAMP, timestamp);
+//        userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_TYPE,
+//                IDoCareContract.UserActions.ENTITY_TYPE_REQUEST);
+//        userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_ID, tempId);
+//        userActionCV.put(IDoCareContract.UserActions.COL_ACTION_TYPE, IDoCareContract.UserActions.ACTION_TYPE_CREATE_REQUEST);
+//
+//
+//        new AsyncTask<Void, Void, Void>() {
+//            @Override
+//            protected Void doInBackground(Void... voids) {
+//                getActivity().getContentResolver().insert(IDoCareContract.Requests.CONTENT_URI, requestCV);
+//                getActivity().getContentResolver().insert(IDoCareContract.UserActions.CONTENT_URI, userActionCV);
+//                return null;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(Void aVoid) {
+//            }
+//        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[] {null});
 
     }
 
-    private boolean validRequestParameters(String userId, String pictures) {
+    private boolean validRequestParameters(String userId, List<String> pictures) {
 
         if (TextUtils.isEmpty(userId)) {
             onUserLoggedOut();
             return false;
         }
 
-        if (TextUtils.isEmpty(pictures)) {
+        if (pictures == null || pictures.isEmpty()) {
             Toast.makeText(getActivity(), getString(R.string.msg_pictures_required),
                     Toast.LENGTH_LONG).show();
             return false;

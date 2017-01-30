@@ -97,7 +97,8 @@ public class IDoCareContract {
                 COL_CREATED_VOTES,
                 COL_CLOSED_VOTES,
                 COL_CLOSED_BY,
-                COL_LOCATION};
+                COL_LOCATION,
+                COL_MODIFIED_LOCALLY_FLAG};
 
         // TODO: add column containing "timestamp" (latest activity time) and make default sort by this column
 		/**

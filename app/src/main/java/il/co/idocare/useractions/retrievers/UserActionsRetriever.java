@@ -56,7 +56,7 @@ public class UserActionsRetriever {
     }
 
     private UserActionEntity createUserActionEntityFromCurrentCursorPosition(Cursor cursor) {
-        long timestamp;
+        String timestamp;
         String entityType;
         String entityId;
         String entityParam;
@@ -64,7 +64,7 @@ public class UserActionsRetriever {
         String actionParam;
 
         // mandatory fields
-        timestamp = cursor.getLong(cursor.getColumnIndexOrThrow(UserActions.COL_TIMESTAMP));
+        timestamp = cursor.getString(cursor.getColumnIndexOrThrow(UserActions.COL_TIMESTAMP));
         entityType = cursor.getString(cursor.getColumnIndexOrThrow(UserActions.COL_ENTITY_TYPE));
         entityId = cursor.getString(cursor.getColumnIndexOrThrow(UserActions.COL_ENTITY_ID));
         entityParam = cursor.getString(cursor.getColumnIndexOrThrow(UserActions.COL_ENTITY_PARAM));

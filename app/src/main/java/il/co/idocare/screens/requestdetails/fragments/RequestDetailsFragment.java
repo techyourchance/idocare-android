@@ -46,6 +46,8 @@ import il.co.idocare.pictures.ImageViewPictureLoader;
 import il.co.idocare.requests.RequestsManager;
 import il.co.idocare.screens.common.MainFrameHelper;
 import il.co.idocare.screens.common.fragments.BaseScreenFragment;
+import il.co.idocare.useractions.UserActionEntityFactory;
+import il.co.idocare.useractions.entities.VoteForRequestUserActionEntity;
 import il.co.idocare.utils.eventbusregistrator.EventBusRegistrable;
 
 @EventBusRegistrable
@@ -68,6 +70,7 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
     @Inject ServerSyncController mServerSyncController;
     @Inject ImageViewPictureLoader mImageViewPictureLoader;
     @Inject RequestsManager mRequestsManager;
+    @Inject UserActionEntityFactory mUserActionEntityFactory;
     @Inject MainFrameHelper mMainFrameHelper;
     @Inject DialogsManager mDialogsManager;
     @Inject DialogsFactory mDialogsFactory;
@@ -139,22 +142,22 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
 
     @Override
     public void onClosedVoteUpClicked() {
-        voteForRequest(RequestsManager.VOTE_UP_CLOSED);
+        voteForRequest(mUserActionEntityFactory.newVoteUpForRequestClosed(mRequestId));
     }
 
     @Override
     public void onClosedVoteDownClicked() {
-        voteForRequest(RequestsManager.VOTE_DOWN_CLOSED);
+        voteForRequest(mUserActionEntityFactory.newVoteDownForRequestClosed(mRequestId));
     }
 
     @Override
     public void onCreatedVoteUpClicked() {
-        voteForRequest(RequestsManager.VOTE_UP_CREATED);
+        voteForRequest(mUserActionEntityFactory.newVoteUpForRequestCreated(mRequestId));
     }
 
     @Override
     public void onCreatedVoteDownClicked() {
-        voteForRequest(RequestsManager.VOTE_DOWN_CREATED);
+        voteForRequest(mUserActionEntityFactory.newVoteDownForRequestCreated(mRequestId));
     }
 
     // End of callbacks from MVC view(s)
@@ -272,11 +275,8 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
     }
 
 
-    private void voteForRequest(final int voteType) {
-
-        LoggedInUserEntity user = mLoginStateManager.getLoggedInUser();
-
-        String activeUserId = user.getUserId();
+    private void voteForRequest(VoteForRequestUserActionEntity entity) {
+        String activeUserId = mLoginStateManager.getLoggedInUser().getUserId();
 
         // If no logged in user - ask him to log in
         if (TextUtils.isEmpty(activeUserId)) {
@@ -284,7 +284,7 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
             return;
         }
 
-        mRequestsManager.voteForRequest(String.valueOf(mRequestId), activeUserId, voteType);
+        mRequestsManager.voteForRequest(entity);
 
     }
 

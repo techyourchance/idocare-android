@@ -16,7 +16,7 @@ public class VoteForRequestUserActionEntity extends UserActionEntity {
 
     private final int mVoteType;
 
-    public VoteForRequestUserActionEntity(long timestamp,
+    public VoteForRequestUserActionEntity(String timestamp,
                                           String requestId,
                                           int voteType) {
         super(timestamp,

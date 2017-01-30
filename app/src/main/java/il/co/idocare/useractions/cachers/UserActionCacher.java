@@ -23,7 +23,7 @@ public class UserActionCacher {
         mLogger = logger;
     }
 
-    public boolean cacheUserAction(UserActionEntity userActionEntity) {
+    public void cacheUserAction(UserActionEntity userActionEntity) {
 
         ContentValues userActionCV = new ContentValues(6);
 
@@ -39,29 +39,9 @@ public class UserActionCacher {
 
         userActionCV.put(IDoCareContract.UserActions.COL_ACTION_PARAM, userActionEntity.getActionParam());
 
-        Uri newUri = mContentResolver.insert(
+        mContentResolver.insert(
                 IDoCareContract.UserActions.CONTENT_URI,
                 userActionCV
         );
-
-        if (newUri != null) {
-            mLogger.d(TAG, "vote cached successfully");
-            ContentValues requestCV = new ContentValues(1);
-            requestCV.put(IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG, 1);
-            int updated = mContentResolver.update(
-                    IDoCareContract.Requests.CONTENT_URI,
-                    requestCV,
-                    IDoCareContract.Requests.COL_REQUEST_ID + "= ?",
-                    new String[] {userActionEntity.getEntityId()}
-            );
-            if (updated != 1) {
-                mLogger.e(TAG, "couldn't set 'modified' flag on request after vote");
-            }
-        } else {
-            mLogger.e(TAG, "vote caching failed");
-            return false;
-        }
-
-        return true;
     }
 }

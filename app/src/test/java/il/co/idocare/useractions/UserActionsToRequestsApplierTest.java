@@ -23,8 +23,8 @@ public class UserActionsToRequestsApplierTest {
 
     private UserActionEntityFactory mUserActionEntityFactory = new UserActionEntityFactory() {
         @Override
-        protected long getTimestamp() {
-            return Long.valueOf(DEFAULT_TIMESTAMP);
+        protected String getTimestamp() {
+            return DEFAULT_TIMESTAMP;
         }
     };
 
@@ -108,7 +108,7 @@ public class UserActionsToRequestsApplierTest {
     public void applyUserActionToRequest_userActionDoesNotAffectRequestsInGeneral_exceptionThrown() {
         // Arrange
         RequestEntity requestEntity = RequestEntityProvider.getClosedRequestEntity();
-        UserActionEntity dummyUserAction = new UserActionEntity(0, "bla", "1", "blabla", "bla", "bla");
+        UserActionEntity dummyUserAction = new UserActionEntity("1000", "bla", "1", "blabla", "bla", "bla");
         // Act
         SUT.applyUserActionToRequest(dummyUserAction, requestEntity);
         // Assert

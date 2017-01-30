@@ -10,7 +10,7 @@ import il.co.idocare.contentproviders.IDoCareContract;
 
 public class PickUpRequestUserActionEntity extends UserActionEntity {
 
-    public PickUpRequestUserActionEntity(long timestamp,
+    public PickUpRequestUserActionEntity(String timestamp,
                                          @NonNull String requestId,
                                          @NonNull String pickedUpByUserId) {
 

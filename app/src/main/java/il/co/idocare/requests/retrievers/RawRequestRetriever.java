@@ -2,7 +2,7 @@ package il.co.idocare.requests.retrievers;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
 import java.util.ArrayList;
@@ -31,22 +31,28 @@ public class RawRequestRetriever {
         String[] selectionArgs = null;
         return getRequestsForSelection(selection, selectionArgs);
     }
-    /**
-     * Get "raw" info of requests assigned to user. "Raw" means that the returned information
-     * does not take into account the locally cached user's actions on the requests.
-     * @param userId ID of the user
-     * @return a list of "raw" requests assigned to the user
-     */
+
     @WorkerThread
     public List<RequestEntity> getRequestsAssignedToUser(String userId) {
         String selection = Requests.COL_PICKED_UP_BY + " = ?";
         String[] selectionArgs = new String[] {userId};
 
         return getRequestsForSelection(selection, selectionArgs);
-
     }
 
 
+    public @Nullable RequestEntity getRequestById(String requestId) {
+        String selection = Requests.COL_REQUEST_ID + " = ?";
+        String[] selectionArgs = new String[] {requestId};
+
+        List<RequestEntity> requests = getRequestsForSelection(selection, selectionArgs);
+
+        if (requestId.isEmpty()) {
+            return null;
+        } else {
+            return requests.get(0);
+        }
+    }
 
     private List<RequestEntity> getRequestsForSelection(String selection, String[] selectionArgs) {
         String[] projection = Requests.PROJECTION_ALL;
@@ -100,10 +106,11 @@ public class RawRequestRetriever {
                 cursor.getString(cursor.getColumnIndexOrThrow(Requests.COL_CLOSED_PICTURES)));
         int closedVotes = cursor.getInt(cursor.getColumnIndexOrThrow(Requests.COL_CLOSED_VOTES));
         String location = cursor.getString(cursor.getColumnIndexOrThrow(Requests.COL_LOCATION));
+        boolean modifiedLocally = cursor.getInt(cursor.getColumnIndexOrThrow(Requests.COL_MODIFIED_LOCALLY_FLAG)) > 0;
 
         return new RequestEntity(requestId, createdBy, createdAt, createdComment, createdPictures,
                 createdVotes, latitude, longitude, pickedUpBy, pickedUpAt, closedBy, closedAt,
-                closedComment, closedPictures, closedVotes, location);
+                closedComment, closedPictures, closedVotes, location, modifiedLocally);
     }
 
 }

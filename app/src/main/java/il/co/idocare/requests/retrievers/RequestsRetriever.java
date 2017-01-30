@@ -1,6 +1,7 @@
 package il.co.idocare.requests.retrievers;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
 import java.util.ArrayList;
@@ -35,11 +36,18 @@ public class RequestsRetriever {
         mUserActionsToRequestsApplier = userActionsToRequestsApplier;
     }
 
+    public @Nullable RequestEntity getRequestById(String requestId) {
+        RequestEntity rawRequest = mRawRequestsRetriever.getRequestById(requestId);
+
+        if (rawRequest == null) return null;
+
+        return applyUserActionsToRequests(Collections.singletonList(rawRequest)).get(0);
+    }
+
     public List<RequestEntity> getAllRequests() {
         List<RequestEntity> rawRequests = mRawRequestsRetriever.getAllRequests();
-        List<UserActionEntity> userActions = mUserActionsRetriever.getAllUserActions();
 
-        return applyUserActionsToRequests(rawRequests, userActions);
+        return applyUserActionsToRequests(rawRequests);
     }
 
     /**
@@ -48,18 +56,17 @@ public class RequestsRetriever {
      * @return a list of requests assigned to the user
      */
     @WorkerThread
-    public @NonNull List<RequestEntity> getRequestsAssignedToUser(@NonNull String userId) {
+    public List<RequestEntity> getRequestsAssignedToUser(String userId) {
         List<RequestEntity> rawRequests = mRawRequestsRetriever.getRequestsAssignedToUser(userId);
-        List<UserActionEntity> userActions = mUserActionsRetriever.getAllUserActions();
 
-        return applyUserActionsToRequests(rawRequests, userActions);
+        return applyUserActionsToRequests(rawRequests);
     }
 
-    private List<RequestEntity> applyUserActionsToRequests(@NonNull List<RequestEntity> requests,
-                                                           @NonNull List<UserActionEntity> userActions) {
+    private List<RequestEntity> applyUserActionsToRequests(List<RequestEntity> requests) {
+
+        List<UserActionEntity> userActions = mUserActionsRetriever.getAllUserActions();
 
         if (userActions.isEmpty() || requests.isEmpty()) return requests;
-
 
         Collections.sort(requests, mComparator); // sort in order to be able to use binary search
 
@@ -89,4 +96,5 @@ public class RequestsRetriever {
         return updatedRequests;
 
     }
+
 }

@@ -13,7 +13,7 @@ public class RequestsAllFragment extends RequestsListBaseFragment {
 
     @Override
     protected void fetchRequests() {
-        mRequestsManager.fetchAllRequests();
+        mRequestsManager.fetchAllRequestsAndNotify();
     }
 
     @Override

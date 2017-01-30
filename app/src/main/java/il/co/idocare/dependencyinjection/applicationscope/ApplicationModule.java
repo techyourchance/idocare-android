@@ -17,6 +17,7 @@ import il.co.idocare.common.settings.SettingsManager;
 import il.co.idocare.nonstaticproxies.ContentResolverProxy;
 import il.co.idocare.nonstaticproxies.TextUtilsProxy;
 import il.co.idocare.pictures.ImageViewPictureLoader;
+import il.co.idocare.useractions.UserActionEntityFactory;
 import il.co.idocare.utils.Logger;
 import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
 import il.co.idocare.utils.multithreading.MainThreadPoster;
@@ -106,5 +107,10 @@ public class ApplicationModule {
     @ApplicationScope
     ImageViewPictureLoader provideImageViewPictureLoader() {
         return new ImageViewPictureLoader();
+    }
+
+    @Provides
+    UserActionEntityFactory userActionEntityFactory() {
+        return new UserActionEntityFactory();
     }
 }

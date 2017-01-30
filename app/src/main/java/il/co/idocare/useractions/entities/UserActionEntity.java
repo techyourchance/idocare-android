@@ -5,14 +5,14 @@ package il.co.idocare.useractions.entities;
  */
 public class UserActionEntity {
 
-    private final long mTimestamp;
+    private final String mTimestamp;
     private final String mEntityType;
     private final String mEntityId;
     private final String mEntityParam;
     private final String mActionType;
     private final String mActionParam;
 
-    public UserActionEntity(long timestamp,
+    public UserActionEntity(String timestamp,
                             String entityType,
                             String entityId,
                             String entityParam,
@@ -28,7 +28,7 @@ public class UserActionEntity {
 
     // Getters
 
-    public long getTimestamp() {
+    public String getTimestamp() {
         return mTimestamp;
     }
 
