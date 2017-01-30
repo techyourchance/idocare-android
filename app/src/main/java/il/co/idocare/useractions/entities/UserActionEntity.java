@@ -1,7 +1,5 @@
 package il.co.idocare.useractions.entities;
 
-import il.co.idocare.contentproviders.IDoCareContract;
-
 /**
  * This is a base class for objects that encapsulates information about user's action
  */

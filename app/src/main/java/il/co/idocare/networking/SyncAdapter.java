@@ -10,6 +10,8 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.greenrobot.eventbus.EventBus;
+
 import javax.inject.Inject;
 
 import il.co.idocare.authentication.LoggedInUserEntity;
@@ -33,9 +35,16 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
      */
     public static final String SYNC_EXTRAS_USER_ID = "SYNC_EXTRAS_USER_ID";
 
+    /**
+     * This constant should be used as a key to a long in syncExtras Bundle object - it will be
+     * posted to EventBus as async completion token when sync completes.
+     */
+    public static final String SYNC_EXTRAS_MANUAL_SYNC_ID = "SYNC_EXTRAS_MANUAL_SYNC_ID";
+
 
     @Inject Logger mLogger;
     @Inject LoginStateManager mLoginStateManager;
+    @Inject EventBus mEventBus;
 
 
     /**
@@ -83,16 +92,22 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         if (extras.containsKey(SYNC_EXTRAS_USER_ID)) {
             // perform partial sync of users' data
             dataDownloader.downloadUserData(extras.getString(SYNC_EXTRAS_USER_ID));
-
         } else {
             // This call will block until all relevant data will be synchronized from the server
             // and the respective ContentProvider will be updated
             dataDownloader.downloadAll();
         }
 
+        if (extras.containsKey(SYNC_EXTRAS_MANUAL_SYNC_ID)) {
+            notifyManualSyncCompleted(extras.getLong(SYNC_EXTRAS_MANUAL_SYNC_ID));
+        }
 
         Log.d(LOG_TAG, "onPerformSync() returned");
 
+    }
+
+    private void notifyManualSyncCompleted(long manualSyncId) {
+        mEventBus.post(new ManualSyncCompletedEvent(manualSyncId));
     }
 
 

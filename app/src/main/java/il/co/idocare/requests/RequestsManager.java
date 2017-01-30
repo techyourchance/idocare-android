@@ -2,12 +2,16 @@ package il.co.idocare.requests;
 
 import android.support.annotation.NonNull;
 
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import il.co.idocare.common.BaseManager;
+import il.co.idocare.networking.ManualSyncCompletedEvent;
+import il.co.idocare.utils.eventbusregistrator.EventBusRegistrable;
 import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
 import il.co.idocare.utils.multithreading.MainThreadPoster;
 import il.co.idocare.networking.ServerSyncController;
@@ -20,6 +24,7 @@ import il.co.idocare.utils.Logger;
 /**
  * This manager encapsulates functionality related to "requests"
  */
+@EventBusRegistrable
 public class RequestsManager extends BaseManager<RequestsManager.RequestsManagerListener> {
 
     private static final String TAG = "RequestsManager";
