@@ -35,9 +35,7 @@ public abstract class BaseDialog extends DialogFragment {
                 .getApplicationComponent()
                 .newContextComponent(new ContextModule(getActivity()))
                 .newControllerComponent(
-                        new ControllerModule((AppCompatActivity) getActivity(), getChildFragmentManager()),
-                        new CachersModule(),
-                        new RetrieversModule());
+                        new ControllerModule((AppCompatActivity) getActivity(), getChildFragmentManager()));
     }
 
     /**

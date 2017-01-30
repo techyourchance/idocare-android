@@ -32,7 +32,6 @@ import il.co.idocare.screens.requests.mvcviews.RequestsMyViewMvcImpl;
 import il.co.idocare.utils.Logger;
 import il.co.idocare.utils.eventbusregistrator.EventBusRegistrable;
 
-@EventBusRegistrable
 public abstract class RequestsListBaseFragment extends BaseScreenFragment implements
         RequestsMyViewMvcImpl.RequestsMyViewMvcListener,
         RequestsManager.RequestsManagerListener {
@@ -123,9 +122,5 @@ public abstract class RequestsListBaseFragment extends BaseScreenFragment implem
         mViewMvc.bindRequests(requests);
     }
 
-    @Subscribe
-    public void onRequestsChanged(RequestsChangedEvent event) {
-        fetchRequests();
-    }
 
 }

@@ -12,9 +12,7 @@ import il.co.idocare.dependencyinjection.serversync.ServerSyncModule;
 @Subcomponent(modules = ContextModule.class)
 public interface ContextComponent {
 
-    ControllerComponent newControllerComponent(ControllerModule controllerModule,
-                                               CachersModule cachersModule,
-                                               RetrieversModule retrieversModule);
+    ControllerComponent newControllerComponent(ControllerModule controllerModule);
 
     ServerSyncComponent newServerSyncComponent(ServerSyncModule serverSyncModule);
 

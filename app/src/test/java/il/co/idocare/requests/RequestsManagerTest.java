@@ -175,7 +175,7 @@ public class RequestsManagerTest {
         // Assert
         mThreadPostersTestController.waitUntilAllActionsCompleted();
 
-        verify(mRequestsCacherMock).updateOrInsert(mRequestsCaptor.capture());
+        verify(mRequestsCacherMock).updateOrInsertAndNotify(mRequestsCaptor.capture());
 
         RequestEntity capturedRequest = mRequestsCaptor.getValue();
         RequestEntity expectedRequest =
@@ -195,7 +195,7 @@ public class RequestsManagerTest {
         // Assert
         mThreadPostersTestController.waitUntilAllActionsCompleted();
 
-        verify(mRequestsCacherMock).updateOrInsert(mRequestsCaptor.capture());
+        verify(mRequestsCacherMock).updateOrInsertAndNotify(mRequestsCaptor.capture());
         RequestEntity cachedRequest = mRequestsCaptor.getValue();
         assertRequestsEqual(cachedRequest, newRequest);
     }

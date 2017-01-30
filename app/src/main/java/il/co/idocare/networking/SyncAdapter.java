@@ -19,6 +19,7 @@ import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.location.OpenStreetMapsReverseGeocoderFactory;
 import il.co.idocare.location.ReverseGeocoderFactory;
 import il.co.idocare.networking.interfaces.LegacyServerResponseHandlerFactory;
+import il.co.idocare.serversync.syncers.RequestsSyncer;
 import il.co.idocare.utils.Logger;
 
 /**
@@ -41,11 +42,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
      */
     public static final String SYNC_EXTRAS_MANUAL_SYNC_ID = "SYNC_EXTRAS_MANUAL_SYNC_ID";
 
+    @Inject RequestsSyncer mRequestsSyncer;
 
-    @Inject Logger mLogger;
     @Inject LoginStateManager mLoginStateManager;
     @Inject EventBus mEventBus;
-
+    @Inject Logger mLogger;
 
     /**
      * Set up the sync adapter
@@ -55,48 +56,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         super(context, autoInitialize);
     }
 
-
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority,
                               ContentProviderClient provider, SyncResult syncResult) {
 
-        mLogger.d(LOG_TAG, "onPerformSync() called; \"sync extras\" bundle:\n" + extras);
+        mLogger.d(LOG_TAG, "onPerformSync() called; sync extras bundle:" + extras);
 
-        LoggedInUserEntity user = mLoginStateManager.getLoggedInUser();
-        String authToken = user != null ? user.getAuthToken() : null;
-        String userId = user != null ? user.getUserId() : null;
-
-        if (!TextUtils.isEmpty(userId) && !TextUtils.isEmpty(authToken)) {
-            DataUploader dataUploader =
-                    new DataUploader(userId, authToken, provider);
-
-            // This call will block until all local actions will be synchronized to the server
-            // and the respective ContentProvider will be updated
-            dataUploader.uploadAll();
-        } else {
-            mLogger.d(LOG_TAG, "no user ID or auth token - skipping data upload and using an open API."
-                    + "\nUser ID: " + userId + "\nAuth token: " + authToken);
-        }
-
-
-        ReverseGeocoderFactory reverseGeocoderFactory =
-                new OpenStreetMapsReverseGeocoderFactory();
-
-        LegacyServerResponseHandlerFactory serverResponseHandlerFactory =
-                new LegacySimpleServerResponseHandlerFactory(reverseGeocoderFactory);
-
-        DataDownloader dataDownloader =
-                new DataDownloader(userId, authToken, provider, serverResponseHandlerFactory);
-
-
-        if (extras.containsKey(SYNC_EXTRAS_USER_ID)) {
-            // perform partial sync of users' data
-            dataDownloader.downloadUserData(extras.getString(SYNC_EXTRAS_USER_ID));
-        } else {
-            // This call will block until all relevant data will be synchronized from the server
-            // and the respective ContentProvider will be updated
-            dataDownloader.downloadAll();
-        }
+        mRequestsSyncer.syncAllRequests();
 
         if (extras.containsKey(SYNC_EXTRAS_MANUAL_SYNC_ID)) {
             notifyManualSyncCompleted(extras.getLong(SYNC_EXTRAS_MANUAL_SYNC_ID));
@@ -105,6 +71,57 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         Log.d(LOG_TAG, "onPerformSync() returned");
 
     }
+
+
+//    @Override
+//    public void onPerformSync(Account account, Bundle extras, String authority,
+//                              ContentProviderClient provider, SyncResult syncResult) {
+//
+//        mLogger.d(LOG_TAG, "onPerformSync() called; \"sync extras\" bundle:\n" + extras);
+//
+//        LoggedInUserEntity user = mLoginStateManager.getLoggedInUser();
+//        String authToken = user != null ? user.getAuthToken() : null;
+//        String userId = user != null ? user.getUserId() : null;
+//
+//        if (!TextUtils.isEmpty(userId) && !TextUtils.isEmpty(authToken)) {
+//            DataUploader dataUploader =
+//                    new DataUploader(userId, authToken, provider);
+//
+//            // This call will block until all local actions will be synchronized to the server
+//            // and the respective ContentProvider will be updated
+//            dataUploader.uploadAll();
+//        } else {
+//            mLogger.d(LOG_TAG, "no user ID or auth token - skipping data upload and using an open API."
+//                    + "\nUser ID: " + userId + "\nAuth token: " + authToken);
+//        }
+//
+//
+//        ReverseGeocoderFactory reverseGeocoderFactory =
+//                new OpenStreetMapsReverseGeocoderFactory();
+//
+//        LegacyServerResponseHandlerFactory serverResponseHandlerFactory =
+//                new LegacySimpleServerResponseHandlerFactory(reverseGeocoderFactory);
+//
+//        DataDownloader dataDownloader =
+//                new DataDownloader(userId, authToken, provider, serverResponseHandlerFactory);
+//
+//
+//        if (extras.containsKey(SYNC_EXTRAS_USER_ID)) {
+//            // perform partial sync of users' data
+//            dataDownloader.downloadUserData(extras.getString(SYNC_EXTRAS_USER_ID));
+//        } else {
+//            // This call will block until all relevant data will be synchronized from the server
+//            // and the respective ContentProvider will be updated
+//            dataDownloader.downloadAll();
+//        }
+//
+//        if (extras.containsKey(SYNC_EXTRAS_MANUAL_SYNC_ID)) {
+//            notifyManualSyncCompleted(extras.getLong(SYNC_EXTRAS_MANUAL_SYNC_ID));
+//        }
+//
+//        Log.d(LOG_TAG, "onPerformSync() returned");
+//
+//    }
 
     private void notifyManualSyncCompleted(long manualSyncId) {
         mEventBus.post(new ManualSyncCompletedEvent(manualSyncId));

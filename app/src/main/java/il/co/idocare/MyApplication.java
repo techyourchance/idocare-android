@@ -5,6 +5,8 @@ import android.app.Application;
 import il.co.idocare.dependencyinjection.applicationscope.ApplicationComponent;
 import il.co.idocare.dependencyinjection.applicationscope.ApplicationModule;
 import il.co.idocare.dependencyinjection.applicationscope.DaggerApplicationComponent;
+import il.co.idocare.dependencyinjection.datacache.CachersModule;
+import il.co.idocare.dependencyinjection.datacache.RetrieversModule;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 /**
@@ -27,6 +29,8 @@ public class MyApplication extends Application {
 
         mApplicationComponent = DaggerApplicationComponent.builder()
                 .applicationModule(new ApplicationModule(this))
+                .cachersModule(new CachersModule())
+                .retrieversModule(new RetrieversModule())
                 .build();
     }
 

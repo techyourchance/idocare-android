@@ -10,10 +10,13 @@ import org.greenrobot.eventbus.EventBus;
 
 import dagger.Module;
 import dagger.Provides;
+import il.co.idocare.BuildConfig;
 import il.co.idocare.Constants;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.common.settings.PreferenceSettingsEntryFactoryImpl;
 import il.co.idocare.common.settings.SettingsManager;
+import il.co.idocare.networking.newimplementation.ServerApi;
+import il.co.idocare.networking.newimplementation.StdHeadersInterceptor;
 import il.co.idocare.nonstaticproxies.ContentResolverProxy;
 import il.co.idocare.nonstaticproxies.TextUtilsProxy;
 import il.co.idocare.pictures.ImageViewPictureLoader;
@@ -21,6 +24,9 @@ import il.co.idocare.useractions.UserActionEntityFactory;
 import il.co.idocare.utils.Logger;
 import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
 import il.co.idocare.utils.multithreading.MainThreadPoster;
+import okhttp3.OkHttpClient;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 @Module
 public class ApplicationModule {
@@ -112,5 +118,33 @@ public class ApplicationModule {
     @Provides
     UserActionEntityFactory userActionEntityFactory() {
         return new UserActionEntityFactory();
+    }
+
+    @Provides
+    StdHeadersInterceptor stdHeadersInterceptor(LoginStateManager loginStateManager, Logger logger) {
+        return new StdHeadersInterceptor(loginStateManager, logger);
+    }
+
+    @Provides
+    @ApplicationScope
+    Retrofit retrofit(StdHeadersInterceptor stdHeadersInterceptor) {
+        // Add the interceptor to OkHttpClient
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.interceptors().add(stdHeadersInterceptor);
+        OkHttpClient client = builder.build();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BuildConfig.ROOT_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+
+        return retrofit;
+    }
+
+    @Provides
+    @ApplicationScope
+    ServerApi serverApi(Retrofit retrofit) {
+        return retrofit.create(ServerApi.class);
     }
 }

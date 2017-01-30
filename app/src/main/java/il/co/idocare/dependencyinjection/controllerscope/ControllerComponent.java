@@ -22,7 +22,7 @@ import il.co.idocare.screens.requests.fragments.RequestsListBaseFragment;
 import il.co.idocare.screens.requests.fragments.RequestsMyFragment;
 
 @ControllerScope
-@Subcomponent(modules = {ControllerModule.class, CachersModule.class, RetrieversModule.class})
+@Subcomponent(modules = {ControllerModule.class})
 public interface ControllerComponent {
 
     void inject(MainActivity activity);

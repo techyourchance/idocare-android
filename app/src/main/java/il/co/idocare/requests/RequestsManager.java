@@ -64,7 +64,7 @@ public class RequestsManager extends BaseManager<RequestsManager.RequestsManager
             public void run() {
                 // TODO: ensure atomicity of below actions using TransactionController
                 mUserActionCacher.cacheUserAction(createRequestUserAction);
-                mRequestsCacher.updateOrInsert(newRequest);
+                mRequestsCacher.updateOrInsertAndNotify(newRequest);
             }
         });
     }
@@ -81,7 +81,7 @@ public class RequestsManager extends BaseManager<RequestsManager.RequestsManager
                 RequestEntity request = mRequestsRetriever.getRequestById(voteAction.getEntityId());
                 RequestEntity modifiedRequest = 
                         RequestEntity.getBuilder(request).setModifiedLocally(true).build();
-                mRequestsCacher.updateOrInsert(modifiedRequest);
+                mRequestsCacher.updateOrInsertAndNotify(modifiedRequest);
             }
         });
     }

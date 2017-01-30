@@ -47,9 +47,7 @@ public abstract class AbstractFragment extends Fragment implements
                 .getApplicationComponent()
                 .newContextComponent(new ContextModule(getActivity()))
                 .newControllerComponent(
-                        new ControllerModule((AppCompatActivity) getActivity(), getChildFragmentManager()),
-                        new CachersModule(),
-                        new RetrieversModule());
+                        new ControllerModule((AppCompatActivity) getActivity(), getChildFragmentManager()));
 
     }
 

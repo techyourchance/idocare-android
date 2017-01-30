@@ -2,7 +2,6 @@ package il.co.idocare.requests.cachers;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.support.annotation.NonNull;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -24,8 +23,21 @@ public class RequestsCacher {
         mEventBus = eventBus;
     }
 
-    public void updateOrInsert(RequestEntity request) {
 
+    public void delete(RequestEntity request) {
+        mContentResolver.delete(
+                Requests.CONTENT_URI,
+                Requests.COL_REQUEST_ID + " = ?",
+                new String[] {request.getId()}
+        );
+    }
+
+    public void updateOrInsertAndNotify(RequestEntity request) {
+        updateOrInsert(request);
+        notifyRequestsChanged();
+    }
+
+    public void updateOrInsert(RequestEntity request) {
         // TODO: make operations atomic
         ContentValues cv = requestEntityToContentValues(request);
 
@@ -42,8 +54,6 @@ public class RequestsCacher {
                     cv
             );
         }
-
-        notifyRequestsUpdated();
     }
 
     private ContentValues requestEntityToContentValues(RequestEntity requestEntity) {
@@ -71,7 +81,7 @@ public class RequestsCacher {
         return values;
     }
 
-    private void notifyRequestsUpdated() {
+    private void notifyRequestsChanged() {
         mEventBus.post(new RequestsChangedEvent());
     }
 

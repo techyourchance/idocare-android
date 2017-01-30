@@ -62,9 +62,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements
         mControllerComponent = ((MyApplication)getApplication()).getApplicationComponent()
                 .newContextComponent(new ContextModule(this))
                 .newControllerComponent(
-                        new ControllerModule(this, getSupportFragmentManager()),
-                        new CachersModule(),
-                        new RetrieversModule());
+                        new ControllerModule(this, getSupportFragmentManager()));
 
         mPostLoginRunnable = null;
 
