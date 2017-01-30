@@ -39,11 +39,16 @@ dependencies {
     compile 'com.google.android.gms:play-services-location:7.8.0'
     compile 'com.google.android.gms:play-services-maps:7.8.0'
     compile "com.android.support:appcompat-v7:25.1.0"
-    compile 'com.google.code.gson:gson:2.4'
     compile "com.android.support:design:25.1.0"
     compile 'com.makeramen:roundedimageview:2.2.1'
     compile 'uk.co.chrisjenx:calligraphy:2.2.0'
 
+    // JSON
+    compile 'com.google.code.gson:gson:2.7'
+
+    // Networking
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
 
     // Dependency injection
@@ -51,7 +56,7 @@ dependencies {
     compile 'com.google.dagger:dagger:2.0'
     provided 'javax.annotation:jsr250-api:1.0'
 
-    // testing
+    // Testing
     testCompile 'junit:junit:4.12'
     testCompile "org.mockito:mockito-core:1.10.19"
 
