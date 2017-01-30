@@ -1,7 +1,5 @@
 package il.co.idocare.screens.requests.listadapters;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.view.LayoutInflater;
@@ -14,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import il.co.idocare.authentication.AccountAuthenticator;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.interfaces.RequestUserActionApplier;
@@ -90,7 +87,7 @@ public class HomeListAdapter extends CursorAdapter implements
         }
 
         // Set request's status
-        request.setStatus(mLoginStateManager.getActiveAccountUserId());
+        request.setStatus(mLoginStateManager.getLoggedInUser().getUserId());
 
         RequestThumbnailViewMvc requestThumbnailViewMvc = (RequestThumbnailViewMvc) view.getTag();
 
@@ -178,13 +175,4 @@ public class HomeListAdapter extends CursorAdapter implements
         return RequestItem.create((Cursor) this.getItem(position));
     }
 
-    // TODO: remove this in favor of an external dependency (Asana #47055190657814)
-    public Account getActiveAccount(Context context) {
-        Account[] accounts = AccountManager.get(context).getAccountsByType(AccountAuthenticator.ACCOUNT_TYPE_DEFAULT);
-        if (accounts.length > 0) {
-            return accounts[0];
-        } else {
-            return null;
-        }
-    }
 }

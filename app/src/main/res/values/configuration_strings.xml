@@ -7,5 +7,4 @@ none of these strings should be localized.
 <resources>
     <string name="content_provider_authority" translatable="false">il.co.idocare.provider.IDoCareContentProvider</string>
     <string name="idocare_account_type" translatable="false">il.co.idocare.account</string>
-
 </resources>

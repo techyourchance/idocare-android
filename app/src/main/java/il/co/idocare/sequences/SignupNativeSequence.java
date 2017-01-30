@@ -10,7 +10,6 @@ import ch.boye.httpclientandroidlib.client.methods.CloseableHttpResponse;
 import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
 import il.co.idocare.Constants;
 import il.co.idocare.URLs;
-import il.co.idocare.authentication.MyAccountManager;
 import il.co.idocare.datamodels.pojos.UserSignupNativeData;
 import il.co.idocare.networking.ServerHttpRequest;
 import il.co.idocare.networking.responseparsers.HttpResponseParseException;
@@ -27,14 +26,11 @@ public class SignupNativeSequence extends AbstractSequence {
     private static final String TAG = "SignupNativeSequence";
 
     private UserSignupNativeData mUserData;
-    private MyAccountManager mMyAccountManager;
 
     private SignupNativeResult mSignupNativeResult;
 
-    public SignupNativeSequence(UserSignupNativeData userData,
-                                MyAccountManager myAccountManager) {
+    public SignupNativeSequence(UserSignupNativeData userData) {
         mUserData = userData;
-        mMyAccountManager = myAccountManager;
     }
 
     @Override
@@ -101,12 +97,7 @@ public class SignupNativeSequence extends AbstractSequence {
         String userId = parsedResponse.getString(ServerHttpResponseParser.KEY_USER_ID);
         String authToken = parsedResponse.getString(ServerHttpResponseParser.KEY_PUBLIC_KEY);
 
-
-        if (mMyAccountManager.addAccount(mUserData.getEmail(), userId, authToken)) {
-            signupSucceeded(mUserData.getEmail(), authToken);
-        } else {
-            signupFailed();
-        }
+        signupSucceeded(mUserData.getEmail(), userId, authToken);
     }
 
     /**
@@ -144,13 +135,13 @@ public class SignupNativeSequence extends AbstractSequence {
     }
 
 
-    private void signupSucceeded(String username, String authToken) {
-        setSequenceResult(new SignupNativeResult(true, username, authToken));
+    private void signupSucceeded(String username, String userId, String authToken) {
+        setSequenceResult(new SignupNativeResult(true, username, userId, authToken));
         setState(Sequence.STATE_EXECUTED_SUCCEEDED);
     }
 
     private void signupFailed() {
-        setSequenceResult(new SignupNativeResult(false, null, null));
+        setSequenceResult(new SignupNativeResult(false, null, null, null));
         setState(Sequence.STATE_EXECUTED_FAILED);
     }
 
@@ -162,11 +153,13 @@ public class SignupNativeSequence extends AbstractSequence {
 
         private final boolean mSucceeded;
         private final String mUsername;
+        private final String mUserId;
         private final String mAuthToken;
 
-        public SignupNativeResult(boolean succeeded, String username, String authToken) {
+        public SignupNativeResult(boolean succeeded, String username, String userId, String authToken) {
             mSucceeded = succeeded;
             mUsername = username;
+            mUserId = userId;
             mAuthToken = authToken;
         }
 
@@ -180,6 +173,10 @@ public class SignupNativeSequence extends AbstractSequence {
 
         public String getAuthToken() {
             return mAuthToken;
+        }
+
+        public String getUserId() {
+            return mUserId;
         }
     }
 

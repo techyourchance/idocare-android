@@ -9,8 +9,6 @@ import com.facebook.GraphResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import il.co.idocare.Constants;
-import il.co.idocare.authentication.MyAccountManager;
 import il.co.idocare.datamodels.pojos.UserSignupNativeData;
 import il.co.idocare.utils.Logger;
 
@@ -23,15 +21,12 @@ public class LoginFacebookSequence extends AbstractSequence {
     private static final String TAG = "LoginFacebookSequence";
 
     private AccessToken mAccessToken;
-    private MyAccountManager mMyAccountManager;
     private Logger mLogger;
 
     private LoginFacebookResult mLoginFacebookResult;
 
-    public LoginFacebookSequence(AccessToken accessToken, MyAccountManager myAccountManager,
-                                 Logger logger) {
+    public LoginFacebookSequence(AccessToken accessToken, Logger logger) {
         mAccessToken = accessToken;
-        mMyAccountManager = myAccountManager;
         mLogger = logger;
     }
 
@@ -105,7 +100,7 @@ public class LoginFacebookSequence extends AbstractSequence {
 
     private String attemptLoginNative(String email, String password) {
         final LoginNativeSequence loginNativeSequence =
-                new LoginNativeSequence(email, password, mMyAccountManager);
+                new LoginNativeSequence(email, password);
 
         loginNativeSequence.execute();
 
@@ -119,7 +114,7 @@ public class LoginFacebookSequence extends AbstractSequence {
 
     private String attemptSignupNative(UserSignupNativeData userData) {
         final SignupNativeSequence signupNativeSequence =
-                new SignupNativeSequence(userData, mMyAccountManager);
+                new SignupNativeSequence(userData);
 
         signupNativeSequence.execute();
 
@@ -143,20 +138,12 @@ public class LoginFacebookSequence extends AbstractSequence {
     private void loginSucceeded(String username, String authToken, String facebookId) {
         mLogger.d(TAG, "loginSucceeded called");
 
-        // We need to designate the newly created native account as FB account
-        if (!mMyAccountManager
-                .setActiveAccountUserData(Constants.FIELD_NAME_USER_FACEBOOK_ID, facebookId)) {
-            mLogger.e(TAG, "active account couldn't be designated as FB - login failed");
-            loginFailed();
-            return;
-        }
-
-        setSequenceResult(new LoginFacebookResult(true, username, authToken));
+        setSequenceResult(new LoginFacebookResult(true, username, authToken, facebookId));
         setState(Sequence.STATE_EXECUTED_SUCCEEDED);
     }
 
     private void loginFailed() {
-        setSequenceResult(new LoginFacebookResult(false, null, null));
+        setSequenceResult(new LoginFacebookResult(false, null, null, null));
         setState(Sequence.STATE_EXECUTED_FAILED);
     }
 
@@ -168,11 +155,13 @@ public class LoginFacebookSequence extends AbstractSequence {
         private final boolean mSucceeded;
         private final String mUsername;
         private final String mAuthToken;
+        private String mFacebookId;
 
-        public LoginFacebookResult(boolean succeeded, String username, String authToken) {
+        public LoginFacebookResult(boolean succeeded, String username, String authToken, String facebookId) {
             mSucceeded = succeeded;
             mUsername = username;
             mAuthToken = authToken;
+            mFacebookId = facebookId;
         }
 
         public boolean isSucceeded() {
@@ -185,6 +174,10 @@ public class LoginFacebookSequence extends AbstractSequence {
 
         public String getAuthToken() {
             return mAuthToken;
+        }
+
+        public String getFacebookId() {
+            return mFacebookId;
         }
     }
 

@@ -9,22 +9,6 @@ public final class LoginStateEvents {
 
     public static class LoginSucceededEvent {
 
-        private final String mUsername;
-        private final String mAuthToken;
-
-        public LoginSucceededEvent(String username, String authToken) {
-            mUsername = username;
-            mAuthToken = authToken;
-        }
-
-        public String getUsername() {
-            return mUsername;
-        }
-
-        public String getAuthToken() {
-            return mAuthToken;
-        }
-
     }
 
     public static class LoginFailedEvent {

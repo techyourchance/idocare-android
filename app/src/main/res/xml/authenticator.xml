@@ -4,4 +4,3 @@
     android:icon="@drawable/ic_logo_large"
     android:smallIcon="@drawable/ic_launcher"
     android:label="@string/app_name"/>
-    <!--android:accountPreferences="@xml/prefs"-->

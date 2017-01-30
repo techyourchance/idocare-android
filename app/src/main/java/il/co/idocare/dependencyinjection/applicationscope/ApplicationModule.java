@@ -11,12 +11,15 @@ import org.greenrobot.eventbus.EventBus;
 import dagger.Module;
 import dagger.Provides;
 import il.co.idocare.Constants;
-import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
-import il.co.idocare.utils.multithreading.MainThreadPoster;
-import il.co.idocare.settings.AppSettings;
+import il.co.idocare.authentication.LoginStateManager;
+import il.co.idocare.common.settings.PreferenceSettingsEntryFactoryImpl;
+import il.co.idocare.common.settings.SettingsManager;
 import il.co.idocare.nonstaticproxies.ContentResolverProxy;
 import il.co.idocare.nonstaticproxies.TextUtilsProxy;
+import il.co.idocare.pictures.ImageViewPictureLoader;
 import il.co.idocare.utils.Logger;
+import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
+import il.co.idocare.utils.multithreading.MainThreadPoster;
 
 @Module
 public class ApplicationModule {
@@ -41,13 +44,22 @@ public class ApplicationModule {
 
     @Provides
     @ApplicationScope
+    LoginStateManager provideLoginStateManager(AccountManager accountManager,
+                                               SettingsManager settingsManager,
+                                               Logger logger) {
+        return new LoginStateManager(accountManager, settingsManager, logger);
+    }
+
+    @Provides
+    @ApplicationScope
     SharedPreferences provideSharedPreferences() {
         return mApplication.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
     }
 
     @Provides
-    AppSettings provideSettingsManager(SharedPreferences sharedPreferences) {
-        return new AppSettings(sharedPreferences);
+    @ApplicationScope
+    SettingsManager settingsManager(SharedPreferences sharedPreferences) {
+        return new SettingsManager(new PreferenceSettingsEntryFactoryImpl(sharedPreferences));
     }
 
     @Provides
@@ -88,5 +100,11 @@ public class ApplicationModule {
     @ApplicationScope
     BackgroundThreadPoster backgroundThreadPoster() {
         return new BackgroundThreadPoster();
+    }
+
+    @Provides
+    @ApplicationScope
+    ImageViewPictureLoader provideImageViewPictureLoader() {
+        return new ImageViewPictureLoader();
     }
 }

@@ -2,21 +2,13 @@ package il.co.idocare.authentication;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.IOException;
-
-import il.co.idocare.Constants;
+import il.co.idocare.common.settings.SettingsManager;
 import il.co.idocare.datamodels.pojos.UserSignupNativeData;
 import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.sequences.LoginFacebookSequence;
@@ -33,18 +25,19 @@ public class LoginStateManager {
 
     private static final String TAG = "LoginStateManager";
 
+    private static final String DUMMY_ACCOUNT_NAME = "dummy_account";
+    private static final String DUMMY_ACCOUNT_TYPE = "il.co.idocare.account";
 
-    private Context mContext;
-    private Logger mLogger;
     private AccountManager mAccountManager;
-    private MyAccountManager mMyAccountManager;
+    private SettingsManager mSettingsManager;
+    private Logger mLogger;
 
-    public LoginStateManager(Context context, AccountManager accountManager /*TODO: need to be removed*/,
-                             MyAccountManager myAccountManager, Logger logger) {
-        mContext = context;
-        mLogger = logger;
+    public LoginStateManager(AccountManager accountManager,
+                             SettingsManager settingsManager,
+                             Logger logger) {
         mAccountManager = accountManager;
-        mMyAccountManager = myAccountManager;
+        mSettingsManager = settingsManager;
+        mLogger = logger;
     }
 
     /**
@@ -52,56 +45,21 @@ public class LoginStateManager {
      * @return true if the user is logged in by ANY mean (Facebook, native, etc.)
      */
     public boolean isLoggedIn() {
-        return isLoggedInWithFacebook() || isLoggedInNative();
+        String authToken = mSettingsManager.authToken().getValue();
+        return authToken != null && !authToken.isEmpty();
     }
 
-
-    public boolean isLoggedInWithFacebook() {
-        /*
-        accessToken in this situation can be null even when there is a logged in user - this can
-        happen if getCurrentAccessToken() is called when onCurrentAccessTokenChanged() is in
-        progress.
-        Additional info:
-        http://stackoverflow.com/questions/29294015/how-to-check-if-user-is-logged-in-with-fb-sdk-4-0-for-android
-        http://stackoverflow.com/questions/30379616/how-to-get-current-facebook-access-token-on-app-start
-
-        TODO: RESOLVE THIS BUG!!!!!!!!
-         */
-
-        Account activeAccount = mMyAccountManager.getActiveAccount();
-
-        if (activeAccount == null || activeAccount.equals(mMyAccountManager.getDummyAccount())) {
-            // There is a shitty scenario when there is no native account, but the user is
-            // logged in with facebook account - we need to account for this by logging out of FB.
-            // The optimal solution would be async request to logInFacebook(), but this will
-            // require too major code refactoring
-            // TODO: remove this shitty code once proper FB login flow established
-            if (AccessToken.getCurrentAccessToken() != null) {
-                LoginManager.getInstance().logOut();
-            }
-            return false;
-        } else {
-            return isFacebookAccount(activeAccount);
-        }
+    private boolean isLoggedInWithFacebook() {
+        String facebookId = mSettingsManager.facebookId().getValue();
+        return facebookId != null && !facebookId.isEmpty();
     }
-
-    public boolean isLoggedInNative() {
-        Account activeAccount = mMyAccountManager.getActiveAccount();
-
-        if (activeAccount == null || activeAccount.equals(mMyAccountManager.getDummyAccount())) {
-            return false;
-        } else {
-            return !isFacebookAccount(activeAccount);
-        }
-    }
-
 
     /**
      * Perform native signup
      */
     public void signUpNative(UserSignupNativeData userData) {
         final SignupNativeSequence signupNativeSequence =
-                new SignupNativeSequence(userData, mMyAccountManager);
+                new SignupNativeSequence(userData);
 
         signupNativeSequence.registerStateChangeListener(new Sequence.StateChangeListener() {
             @Override
@@ -109,8 +67,10 @@ public class LoginStateManager {
                 if (newState == Sequence.STATE_EXECUTED_SUCCEEDED) {
                     String username = signupNativeSequence.getSequenceResult().getUsername();
                     String authToken = signupNativeSequence.getSequenceResult().getAuthToken();
+                    String userId = signupNativeSequence.getSequenceResult().getUserId();
+                    LoginStateManager.this.userLoggedInNative(username, authToken, userId);
                     EventBus.getDefault()
-                            .post(new LoginStateEvents.LoginSucceededEvent(username, authToken));
+                            .post(new LoginStateEvents.LoginSucceededEvent());
                 } else if (newState == Sequence.STATE_EXECUTED_FAILED) {
                     EventBus.getDefault().post(new LoginStateEvents.LoginFailedEvent());
                 }
@@ -127,7 +87,7 @@ public class LoginStateManager {
     public void logInNative(String username, String password) {
 
         final LoginNativeSequence loginNativeSequence =
-                new LoginNativeSequence(username, password, mMyAccountManager);
+                new LoginNativeSequence(username, password);
 
         loginNativeSequence.registerStateChangeListener(new Sequence.StateChangeListener() {
             @Override
@@ -135,8 +95,10 @@ public class LoginStateManager {
                 if (newState == Sequence.STATE_EXECUTED_SUCCEEDED) {
                     String username = loginNativeSequence.getSequenceResult().getUsername();
                     String authToken = loginNativeSequence.getSequenceResult().getAuthToken();
+                    String userId = loginNativeSequence.getSequenceResult().getUserId();
+                    LoginStateManager.this.userLoggedInNative(username, authToken, userId);
                     EventBus.getDefault()
-                            .post(new LoginStateEvents.LoginSucceededEvent(username, authToken));
+                            .post(new LoginStateEvents.LoginSucceededEvent());
                 } else if (newState == Sequence.STATE_EXECUTED_FAILED) {
                     EventBus.getDefault().post(new LoginStateEvents.LoginFailedEvent());
                 }
@@ -145,7 +107,10 @@ public class LoginStateManager {
         loginNativeSequence.executeInBackground();
     }
 
-
+    private void userLoggedInNative(String username, String authToken, String userId) {
+        clearUserSettings();
+        setUserSettings(username, authToken, userId, null);
+    }
 
     /**
      * TODO: write javadoc
@@ -153,7 +118,7 @@ public class LoginStateManager {
     public void logInFacebook(AccessToken accessToken) {
 
         final LoginFacebookSequence loginFacebookSequence =
-                new LoginFacebookSequence(accessToken, mMyAccountManager, mLogger);
+                new LoginFacebookSequence(accessToken, mLogger);
 
         loginFacebookSequence.registerStateChangeListener(new Sequence.StateChangeListener() {
             @Override
@@ -161,8 +126,10 @@ public class LoginStateManager {
                 if (newState == Sequence.STATE_EXECUTED_SUCCEEDED) {
                     String username = loginFacebookSequence.getSequenceResult().getUsername();
                     String authToken = loginFacebookSequence.getSequenceResult().getAuthToken();
+                    String facebookId = loginFacebookSequence.getSequenceResult().getFacebookId();
+                    LoginStateManager.this.userLoggedInFacebook(username, authToken, facebookId);
                     EventBus.getDefault()
-                            .post(new LoginStateEvents.LoginSucceededEvent(username, authToken));
+                            .post(new LoginStateEvents.LoginSucceededEvent());
                 } else if (newState == Sequence.STATE_EXECUTED_FAILED) {
                     EventBus.getDefault().post(new LoginStateEvents.LoginFailedEvent());
                 }
@@ -172,57 +139,41 @@ public class LoginStateManager {
 
     }
 
-    private boolean isFacebookAccount(Account account) {
-        return  mAccountManager.getUserData(account, Constants.FIELD_NAME_USER_FACEBOOK_ID) != null;
+    private void userLoggedInFacebook(String username, String authToken, String facebookId) {
+        clearUserSettings();
+        setUserSettings(username, authToken, facebookId, facebookId);
     }
 
+    private void clearUserSettings() {
+        mSettingsManager.userEmail().remove();
+        mSettingsManager.userId().remove();
+        mSettingsManager.authToken().remove();
+        mSettingsManager.facebookId().remove();
+    }
 
+    private void setUserSettings(String username, String authToken, String userId, String facebookId) {
+        mSettingsManager.userEmail().setValue(username);
+        mSettingsManager.userId().setValue(userId);
+        mSettingsManager.authToken().setValue(authToken);
+        mSettingsManager.facebookId().setValue(facebookId);
+    }
 
     /**
      * Log out the active user
-     * TODO: this method should be rewritten once proper FB authentication implemented
      */
     public void logOut() {
-        final Account account = mMyAccountManager.getActiveAccount();
 
-        if (account == null) return; // Not logged in user
+        if (isLoggedInWithFacebook()) {
+            LoginManager.getInstance().logOut();
+        }
 
-        final boolean isFacebookAccount =
-                mAccountManager.getUserData(account, Constants.FIELD_NAME_USER_FACEBOOK_ID) != null;
+        clearUserSettings();
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                AccountManagerFuture<Boolean> future = mAccountManager.removeAccount(account,
-                        null, null);
-                try {
-                    boolean accountRemoved = future.getResult();
-                } catch (OperationCanceledException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (AuthenticatorException e) {
-                    e.printStackTrace();
-                }
+        // Show login screen the next time the app starts
+        setLoginSkipped(false);
 
-                if (isLoggedInNative()) {
-                    Log.e(TAG, "logout process failed");
-                    return;
-                }
-
-                if (isFacebookAccount) {
-                    LoginManager.getInstance().logOut();
-                }
-
-                // Show login screen the next time the app starts
-                setLoginSkipped(false);
-
-                EventBus.getDefault().post(new UserLoggedOutEvent());
-
-            }
-        }).start();
+        EventBus.getDefault().post(new UserLoggedOutEvent());
     }
-
 
 
     /**
@@ -230,35 +181,34 @@ public class LoginStateManager {
      * @param loginSkipped true in order to set the flag, false to clear it
      */
     public void setLoginSkipped(boolean loginSkipped) {
-        // Write to SharedPreferences an indicator of user willing to skip login
-        SharedPreferences prefs = mContext.getSharedPreferences(Constants.PREFERENCES_FILE,
-                Context.MODE_PRIVATE);
-        if (loginSkipped)
-            prefs.edit().putInt(Constants.LOGIN_SKIPPED_KEY, 1).apply();
-        else
-            prefs.edit().remove(Constants.LOGIN_SKIPPED_KEY).apply();
+        mSettingsManager.loginSkipped().setValue(loginSkipped);
     }
-
 
     public boolean isLoginSkipped() {
-        SharedPreferences prefs = mContext.getSharedPreferences(Constants.PREFERENCES_FILE,
-                Context.MODE_PRIVATE);
-        return prefs.contains(Constants.LOGIN_SKIPPED_KEY);
+        return mSettingsManager.loginSkipped().getValue();
     }
 
+    public LoggedInUserEntity getLoggedInUser() {
+        String email = mSettingsManager.userEmail().getValue();
+        String userId = mSettingsManager.userId().getValue();
+        String authToken = mSettingsManager.authToken().getValue();
+        String facebookId = mSettingsManager.facebookId().getValue();
+
+        if (userId == null || userId.isEmpty()) {
+            return new LoggedInUserEntity("", "", "", ""); // null value object
+        } else {
+            return new LoggedInUserEntity(email, userId, facebookId, authToken);
+        }
+    }
 
     /**
-     *
-     * @return user ID string associated with the active account, or null if there is no
-     *         user registered
+     * This method should be used only by components that require Android account (e.g. SyncController)
      */
-    public String getActiveAccountUserId() {
-        Account account = mMyAccountManager.getActiveAccount();
-
-        if (account != null)
-            return mAccountManager.getUserData(account, Constants.FIELD_NAME_USER_ID);
-        else
-            return null;
+    public Account getAccountManagerAccount() {
+        // make sure that AccountManager recognizes the returned account (otherwise it is useless)
+        Account acc = new Account(DUMMY_ACCOUNT_NAME, DUMMY_ACCOUNT_TYPE);
+        mAccountManager.addAccountExplicitly(acc, null, null);
+        return acc;
     }
 
 

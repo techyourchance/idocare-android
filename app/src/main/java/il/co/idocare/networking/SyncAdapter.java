@@ -1,9 +1,6 @@
 package il.co.idocare.networking;
 
 import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.Context;
@@ -13,13 +10,10 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
-import java.io.IOException;
-
 import javax.inject.Inject;
 
-import il.co.idocare.Constants;
-import il.co.idocare.authentication.AccountAuthenticator;
-import il.co.idocare.dependencyinjection.serversync.ServerSyncComponent;
+import il.co.idocare.authentication.LoggedInUserEntity;
+import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.location.OpenStreetMapsReverseGeocoderFactory;
 import il.co.idocare.location.ReverseGeocoderFactory;
 import il.co.idocare.networking.interfaces.LegacyServerResponseHandlerFactory;
@@ -41,6 +35,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 
     @Inject Logger mLogger;
+    @Inject LoginStateManager mLoginStateManager;
 
 
     /**
@@ -58,10 +53,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         mLogger.d(LOG_TAG, "onPerformSync() called; \"sync extras\" bundle:\n" + extras);
 
-        String authToken = getAuthToken(account);
-
-        String userId = AccountManager.get(getContext())
-                .getUserData(account, Constants.FIELD_NAME_USER_ID);
+        LoggedInUserEntity user = mLoginStateManager.getLoggedInUser();
+        String authToken = user != null ? user.getAuthToken() : null;
+        String userId = user != null ? user.getUserId() : null;
 
         if (!TextUtils.isEmpty(userId) && !TextUtils.isEmpty(authToken)) {
             DataUploader dataUploader =
@@ -101,23 +95,5 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     }
 
-
-    private String getAuthToken(Account account) {
-        String authToken = null;
-        try {
-            authToken = AccountManager.get(this.getContext()).blockingGetAuthToken(
-                    account,
-                    AccountAuthenticator.AUTH_TOKEN_TYPE_DEFAULT,
-                    true);
-        } catch (OperationCanceledException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (AuthenticatorException e) {
-            e.printStackTrace();
-        }
-
-        return authToken;
-    }
 
 }

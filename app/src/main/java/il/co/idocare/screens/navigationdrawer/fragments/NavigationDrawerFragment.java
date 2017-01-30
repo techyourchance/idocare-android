@@ -90,7 +90,7 @@ public class NavigationDrawerFragment extends BaseFragment implements
     }
 
     private void fetchDataOfActiveUser() {
-        String activeUserId = mLoginStateManager.getActiveAccountUserId();
+        String activeUserId = mLoginStateManager.getLoggedInUser().getUserId();
         if (activeUserId != null && !activeUserId.isEmpty()) {
             mUsersDataMonitoringManager.fetchUserByIdAndNotifyIfExists(activeUserId);
         }
@@ -98,7 +98,7 @@ public class NavigationDrawerFragment extends BaseFragment implements
 
     @Override
     public void onUserDataChange(UserEntity user) {
-        if (user.getUserId().equals(mLoginStateManager.getActiveAccountUserId())) {
+        if (user.getUserId().equals(mLoginStateManager.getLoggedInUser().getUserId())) {
             mViewMvc.bindUserData(user);
         }
     }

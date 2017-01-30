@@ -11,7 +11,7 @@ import il.co.idocare.controllers.fragments.LoginChooserFragment;
 import il.co.idocare.controllers.fragments.LoginNativeFragment;
 
 /**
- * This activity takes care of login process. This activity is also used by AccountAuthenticator
+ * This activity takes care of login process. This activity is also used by StubAccountAuthenticator
  * service.
  */
 public class LoginActivity extends AbstractActivity {
@@ -42,7 +42,7 @@ public class LoginActivity extends AbstractActivity {
         if (savedInstanceState == null) {
             if (getIntent().hasExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE)) {
                 // If the above extra is present - this activity was started by
-                // AccountAuthenticator. Therefore - show native login right away!
+                // StubAccountAuthenticator. Therefore - show native login right away!
                 replaceFragment(LoginNativeFragment.class, false, true, getIntent().getExtras());
             } else {
                 Bundle args;

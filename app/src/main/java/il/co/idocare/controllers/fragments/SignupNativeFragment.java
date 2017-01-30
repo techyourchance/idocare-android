@@ -150,12 +150,7 @@ public class SignupNativeFragment extends AbstractFragment implements SignupNati
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginStateEvents.LoginSucceededEvent event) {
-        Bundle loginResult = new Bundle();
-        loginResult.putString(AccountManager.KEY_ACCOUNT_NAME, event.getUsername());
-        loginResult.putString(AccountManager.KEY_AUTHTOKEN, event.getAuthToken());
-        Intent intent = new Intent();
-        intent.putExtras(loginResult);
-        finishActivity(Activity.RESULT_OK, intent, loginResult);
+        finishActivity(Activity.RESULT_OK);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -326,11 +321,10 @@ public class SignupNativeFragment extends AbstractFragment implements SignupNati
 
     }
 
-    private void finishActivity(int resultCode, Intent data, Bundle result) {
+    private void finishActivity(int resultCode) {
         // This code is crap, but no time to think of a better approach
         // TODO: find a solution without casting (or, at least, not at this stage)
-        ((LoginActivity)getActivity()).setAccountAuthenticatorResult(result);
-        ((LoginActivity)getActivity()).setResult(resultCode, data);
+        ((LoginActivity)getActivity()).setResult(resultCode, null);
         ((LoginActivity)getActivity()).finish();
 
         if (getActivity().getIntent().hasExtra(LoginActivity.ARG_LAUNCHED_FROM_STARTUP_ACTIVITY)) {

@@ -20,20 +20,26 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.List;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 import il.co.idocare.Constants;
 import il.co.idocare.R;
+import il.co.idocare.authentication.LoggedInUserEntity;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.eventbusevents.LocationEvents;
 import il.co.idocare.mvcviews.newrequest.NewRequestViewMvc;
 import il.co.idocare.mvcviews.newrequest.NewRequestViewMvcImpl;
 import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
+import il.co.idocare.utils.Logger;
 
 
 public class NewRequestFragment extends NewAndCloseRequestBaseFragment
         implements NewRequestViewMvc.NewRequestViewMvcListener {
 
     private static final String TAG = "NewRequestFragment";
+
+    @Inject Logger mLogger;
 
     NewRequestViewMvc mNewRequestViewMvc;
 
@@ -101,7 +107,15 @@ public class NewRequestFragment extends NewAndCloseRequestBaseFragment
      * action to the local cache of user actions
      */
     private void createRequest() {
-        String createdBy = mLoginStateManager.getActiveAccountUserId();
+        mLogger.d(TAG, "createRequest()");
+
+        LoggedInUserEntity user = mLoginStateManager.getLoggedInUser();
+        if (user == null) {
+            mLogger.e(TAG, "no logged in user - aborting");
+            return;
+        }
+
+        String createdBy = user.getUserId();
 
         LocationEvents.BestLocationEstimateEvent bestLocationEstimateEvent =
                 EventBus.getDefault().getStickyEvent(LocationEvents.BestLocationEstimateEvent.class);

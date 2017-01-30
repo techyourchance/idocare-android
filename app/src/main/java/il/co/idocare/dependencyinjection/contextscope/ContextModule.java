@@ -6,11 +6,10 @@ import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
 import il.co.idocare.authentication.LoginStateManager;
-import il.co.idocare.authentication.MyAccountManager;
+import il.co.idocare.common.settings.SettingsManager;
 import il.co.idocare.helpers.LocationHelper;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.nonstaticproxies.ContentResolverProxy;
-import il.co.idocare.nonstaticproxies.TextUtilsProxy;
 import il.co.idocare.pictures.ImageViewPictureLoader;
 import il.co.idocare.utils.Logger;
 
@@ -31,30 +30,9 @@ public class ContextModule {
 
     @Provides
     @ContextScope
-    LoginStateManager provideLoginStateManager(Context context, AccountManager accountManager,
-                                               MyAccountManager myAccountManager, Logger logger) {
-        return new LoginStateManager(context, accountManager, myAccountManager, logger);
-    }
-
-
-    @Provides
-    @ContextScope
-    MyAccountManager provideMyAccountManager(AccountManager accountManager, Logger logger,
-                                             TextUtilsProxy textUtilsProxy) {
-        return new MyAccountManager(accountManager, logger, textUtilsProxy);
-    }
-
-    @Provides
-    @ContextScope
-    ServerSyncController provideServerSyncController(MyAccountManager myAccountManager,
-                                                     ContentResolverProxy contentResolverProxy) {
-        return new ServerSyncController(myAccountManager, contentResolverProxy);
-    }
-
-    @Provides
-    @ContextScope
-    ImageViewPictureLoader provideImageViewPictureLoader() {
-        return new ImageViewPictureLoader();
+    ServerSyncController provideServerSyncController(ContentResolverProxy contentResolverProxy,
+                                                     LoginStateManager loginStateManager) {
+        return new ServerSyncController(contentResolverProxy, loginStateManager);
     }
 
     @Provides

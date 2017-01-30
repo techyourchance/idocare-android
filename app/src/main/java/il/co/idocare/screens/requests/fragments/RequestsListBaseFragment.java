@@ -28,6 +28,7 @@ import il.co.idocare.requests.RequestEntity;
 import il.co.idocare.requests.RequestsManager;
 import il.co.idocare.screens.common.fragments.BaseScreenFragment;
 import il.co.idocare.screens.requests.mvcviews.RequestsMyViewMvcImpl;
+import il.co.idocare.utils.Logger;
 import il.co.idocare.utils.eventbusregistrator.EventBusRegistrable;
 
 @EventBusRegistrable
@@ -42,6 +43,7 @@ public abstract class RequestsListBaseFragment extends BaseScreenFragment implem
     @Inject DialogsManager mDialogsManager;
     @Inject DialogsFactory mDialogsFactory;
     @Inject MainFrameHelper mMainMainFrameHelper;
+    @Inject Logger mLogger;
 
     private RequestsMyViewMvcImpl mViewMvc;
 

@@ -7,8 +7,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -29,10 +27,10 @@ import javax.inject.Inject;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
+import il.co.idocare.authentication.LoggedInUserEntity;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.controllers.activities.LoginActivity;
-import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.controllers.interfaces.RequestUserActionApplier;
 import il.co.idocare.controllers.listadapters.UserActionsOnRequestApplierImpl;
 import il.co.idocare.datamodels.functional.RequestItem;
@@ -41,14 +39,13 @@ import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.dialogs.events.PromptDialogDismissedEvent;
-import il.co.idocare.requests.RequestsManager;
 import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvc;
 import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvcImpl;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.pictures.ImageViewPictureLoader;
+import il.co.idocare.requests.RequestsManager;
 import il.co.idocare.screens.common.MainFrameHelper;
 import il.co.idocare.screens.common.fragments.BaseScreenFragment;
-import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
 import il.co.idocare.utils.eventbusregistrator.EventBusRegistrable;
 
 @EventBusRegistrable
@@ -179,7 +176,7 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
             return;
         }
 
-        final String pickedUpBy = mLoginStateManager.getActiveAccountUserId();
+        final String pickedUpBy = mLoginStateManager.getLoggedInUser().getUserId();
 
         // If no logged in user - ask him to log in and rerun this method in case he does
         if (TextUtils.isEmpty(pickedUpBy)) {
@@ -277,7 +274,9 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
 
     private void voteForRequest(final int voteType) {
 
-        String activeUserId = mLoginStateManager.getActiveAccountUserId();
+        LoggedInUserEntity user = mLoginStateManager.getLoggedInUser();
+
+        String activeUserId = user.getUserId();
 
         // If no logged in user - ask him to log in
         if (TextUtils.isEmpty(activeUserId)) {
@@ -285,7 +284,7 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
             return;
         }
 
-        mRequestsManager.voteForRequest(String.valueOf(mRequestId), mLoginStateManager.getActiveAccountUserId(), voteType);
+        mRequestsManager.voteForRequest(String.valueOf(mRequestId), activeUserId, voteType);
 
     }
 
@@ -490,7 +489,7 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
 
         mRequestItem = combinedRequestItem;
 
-        mRequestItem.setStatus(mLoginStateManager.getActiveAccountUserId());
+        mRequestItem.setStatus(mLoginStateManager.getLoggedInUser().getUserId());
 
         mRequestDetailsViewMvc.bindRequestItem(mRequestItem);
 

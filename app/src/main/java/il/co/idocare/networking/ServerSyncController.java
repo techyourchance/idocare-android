@@ -3,11 +3,10 @@ package il.co.idocare.networking;
 import android.accounts.Account;
 import android.content.ContentResolver;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 
 import javax.inject.Inject;
 
-import il.co.idocare.authentication.MyAccountManager;
+import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.nonstaticproxies.ContentResolverProxy;
 
@@ -17,25 +16,23 @@ import il.co.idocare.nonstaticproxies.ContentResolverProxy;
  */
 public class ServerSyncController {
 
-    private MyAccountManager mMyAccountManager;
     private ContentResolverProxy mContentResolverProxy;
+    private LoginStateManager mLoginStateManager;
 
     @Inject
-    public ServerSyncController(@NonNull MyAccountManager myAccountManager,
-                                @NonNull ContentResolverProxy contentResolverProxy) {
-        mMyAccountManager = myAccountManager;
+    public ServerSyncController(ContentResolverProxy contentResolverProxy,
+                                LoginStateManager loginStateManager) {
         mContentResolverProxy = contentResolverProxy;
+        mLoginStateManager = loginStateManager;
     }
 
     public void enableAutomaticSync() {
-        Account acc = getActiveOrDummyAccount();
-        mContentResolverProxy.setIsSyncable(acc, IDoCareContract.AUTHORITY, 1);
-        mContentResolverProxy.setSyncAutomatically(acc, IDoCareContract.AUTHORITY, true);
+        mContentResolverProxy.setIsSyncable(getAccount(), IDoCareContract.AUTHORITY, 1);
+        mContentResolverProxy.setSyncAutomatically(getAccount(), IDoCareContract.AUTHORITY, true);
     }
 
     public void disableAutomaticSync() {
-        Account acc = getActiveOrDummyAccount();
-        mContentResolverProxy.setIsSyncable(acc, IDoCareContract.AUTHORITY, 0);
+        mContentResolverProxy.setIsSyncable(getAccount(), IDoCareContract.AUTHORITY, 0);
     }
 
     public void requestImmediateSync() {
@@ -43,19 +40,7 @@ public class ServerSyncController {
     }
 
     private void requestSync(Bundle syncExtras) {
-        Account acc = getActiveOrDummyAccount();
-        mContentResolverProxy.requestSync(acc, IDoCareContract.AUTHORITY, syncExtras);
-    }
-
-
-    private Account getActiveOrDummyAccount() {
-        Account account = mMyAccountManager.getActiveAccount();
-
-        if (account != null) {
-            return account;
-        } else {
-            return mMyAccountManager.getDummyAccount();
-        }
+        mContentResolverProxy.requestSync(getAccount(), IDoCareContract.AUTHORITY, syncExtras);
     }
 
     private Bundle getSyncImmediateBundle() {
@@ -71,6 +56,10 @@ public class ServerSyncController {
         Bundle syncExtras = getSyncImmediateBundle();
         syncExtras.putString(SyncAdapter.SYNC_EXTRAS_USER_ID, userId);
         requestSync(syncExtras);
+    }
+
+    private Account getAccount() {
+        return mLoginStateManager.getAccountManagerAccount();
     }
 
 }

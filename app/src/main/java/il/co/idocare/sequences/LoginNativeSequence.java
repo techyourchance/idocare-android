@@ -9,7 +9,6 @@ import ch.boye.httpclientandroidlib.client.methods.CloseableHttpResponse;
 import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
 import il.co.idocare.Constants;
 import il.co.idocare.URLs;
-import il.co.idocare.authentication.MyAccountManager;
 import il.co.idocare.networking.ServerHttpRequest;
 import il.co.idocare.networking.responseparsers.HttpResponseParseException;
 import il.co.idocare.networking.responseparsers.ResponseParserUtils;
@@ -27,14 +26,12 @@ public class LoginNativeSequence extends AbstractSequence {
 
     private final String mUsername;
     private final String mPassword;
-    private MyAccountManager mMyAccountManager;
 
     private LoginNativeResult mLoginNativeResult;
 
-    public LoginNativeSequence(String username, String password, MyAccountManager myAccountManager) {
+    public LoginNativeSequence(String username, String password) {
         mUsername = username;
         mPassword = password;
-        mMyAccountManager = myAccountManager;
     }
 
     @Override
@@ -92,11 +89,7 @@ public class LoginNativeSequence extends AbstractSequence {
         String userId = parsedResponse.getString(ServerHttpResponseParser.KEY_USER_ID);
         String authToken = parsedResponse.getString(ServerHttpResponseParser.KEY_PUBLIC_KEY);
 
-        if (mMyAccountManager.addAccount(mUsername, userId, authToken)) {
-            loginSucceeded(mUsername, authToken);
-        } else {
-            loginFailed();
-        }
+        loginSucceeded(mUsername, userId, authToken);
 
     }
 
@@ -132,13 +125,13 @@ public class LoginNativeSequence extends AbstractSequence {
         return mLoginNativeResult;
     }
 
-    private void loginSucceeded(String username, String authToken) {
-        setSequenceResult(new LoginNativeResult(true, username, authToken));
+    private void loginSucceeded(String username, String userId, String authToken) {
+        setSequenceResult(new LoginNativeResult(true, username, userId, authToken));
         setState(Sequence.STATE_EXECUTED_SUCCEEDED);
     }
 
     private void loginFailed() {
-        setSequenceResult(new LoginNativeResult(false, null, null));
+        setSequenceResult(new LoginNativeResult(false, null, null, null));
         setState(Sequence.STATE_EXECUTED_FAILED);
     }
 
@@ -149,11 +142,13 @@ public class LoginNativeSequence extends AbstractSequence {
 
         private final boolean mSucceeded;
         private final String mUsername;
+        private final String mUserId;
         private final String mAuthToken;
 
-        public LoginNativeResult(boolean succeeded, String username, String authToken) {
+        public LoginNativeResult(boolean succeeded, String username, String userId, String authToken) {
             mSucceeded = succeeded;
             mUsername = username;
+            mUserId = userId;
             mAuthToken = authToken;
         }
 
@@ -167,6 +162,10 @@ public class LoginNativeSequence extends AbstractSequence {
 
         public String getAuthToken() {
             return mAuthToken;
+        }
+
+        public String getUserId() {
+            return mUserId;
         }
     }
 
