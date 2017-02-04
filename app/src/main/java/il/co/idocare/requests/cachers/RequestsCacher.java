@@ -56,6 +56,22 @@ public class RequestsCacher {
         }
     }
 
+    public void update(RequestEntity request, String currentRequestId) {
+        // TODO: make operations atomic
+        ContentValues cv = requestEntityToContentValues(request);
+
+        int updateCount = mContentResolver.update(
+                Requests.CONTENT_URI,
+                cv,
+                Requests.COL_REQUEST_ID + " = ?",
+                new String[] {currentRequestId}
+        );
+
+        if (updateCount <= 0) {
+            throw new RuntimeException("no entries update");
+        }
+    }
+
     private ContentValues requestEntityToContentValues(RequestEntity requestEntity) {
 
         ContentValues values = new ContentValues();

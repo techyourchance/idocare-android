@@ -8,7 +8,9 @@ import dagger.Module;
 import dagger.Provides;
 import il.co.idocare.networking.newimplementation.ServerApi;
 import il.co.idocare.requests.cachers.RequestsCacher;
+import il.co.idocare.requests.cachers.TempIdCacher;
 import il.co.idocare.requests.retrievers.RawRequestRetriever;
+import il.co.idocare.requests.retrievers.TempIdRetriever;
 import il.co.idocare.serversync.syncers.RequestsSyncer;
 import il.co.idocare.serversync.syncers.UserActionsSyncer;
 import il.co.idocare.useractions.cachers.UserActionCacher;
@@ -23,10 +25,11 @@ public class ServerSyncModule {
     @ServerSyncScope
     RequestsSyncer requestsSyncer(RequestsCacher requestsCacher,
                                   RawRequestRetriever rawRequestsRetriever,
+                                  TempIdCacher tempIdCacher,
                                   ServerApi serverApi,
                                   EventBus eventBus,
                                   Logger logger) {
-        return new RequestsSyncer(requestsCacher, rawRequestsRetriever, serverApi, eventBus, logger);
+        return new RequestsSyncer(requestsCacher, rawRequestsRetriever, tempIdCacher, serverApi, eventBus, logger);
     }
 
     @Provides
@@ -35,10 +38,11 @@ public class ServerSyncModule {
                                         BackgroundThreadPoster backgroundThreadPoster,
                                         UserActionsRetriever userActionsRetriever,
                                         UserActionCacher userActionCacher,
+                                        TempIdRetriever tempIdRetriever,
                                         ContentResolver contentResolver,
                                         Logger logger) {
         return new UserActionsSyncer(requestsSyncer, backgroundThreadPoster, userActionsRetriever,
-                userActionCacher, contentResolver, logger);
+                userActionCacher, tempIdRetriever, contentResolver, logger);
     }
 
 }

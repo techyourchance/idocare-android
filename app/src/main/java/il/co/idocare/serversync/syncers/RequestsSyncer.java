@@ -13,11 +13,13 @@ import java.util.List;
 
 import il.co.idocare.Constants;
 import il.co.idocare.networking.newimplementation.ServerApi;
-import il.co.idocare.networking.newimplementation.schemes.responses.GetRequestsScheme;
+import il.co.idocare.networking.newimplementation.schemes.responses.RequestResponseScheme;
+import il.co.idocare.networking.newimplementation.schemes.responses.RequestsResponseScheme;
 import il.co.idocare.networking.newimplementation.schemes.responses.RequestScheme;
 import il.co.idocare.requests.RequestEntity;
 import il.co.idocare.requests.RequestsChangedEvent;
 import il.co.idocare.requests.cachers.RequestsCacher;
+import il.co.idocare.requests.cachers.TempIdCacher;
 import il.co.idocare.requests.retrievers.RawRequestRetriever;
 import il.co.idocare.utils.Logger;
 import okhttp3.MediaType;
@@ -37,6 +39,7 @@ public class RequestsSyncer {
 
     private final RequestsCacher mRequestsCacher;
     private final RawRequestRetriever mRawRequestsRetriever;
+    private final TempIdCacher mTempIdCacher;
     private final ServerApi mServerApi;
     private final EventBus mEventBus;
     private Logger mLogger;
@@ -45,11 +48,13 @@ public class RequestsSyncer {
 
     public RequestsSyncer(RequestsCacher requestsCacher,
                           RawRequestRetriever rawRequestsRetriever,
+                          TempIdCacher tempIdCacher,
                           ServerApi serverApi,
                           EventBus eventBus,
                           Logger logger) {
         mRequestsCacher = requestsCacher;
         mRawRequestsRetriever = rawRequestsRetriever;
+        mTempIdCacher = tempIdCacher;
         mServerApi = serverApi;
         mEventBus = eventBus;
         mLogger = logger;
@@ -71,61 +76,45 @@ public class RequestsSyncer {
         builder.addFormDataPart(Constants.FIELD_NAME_LONGITUDE, String.valueOf(request.getLongitude()));
         builder.addFormDataPart(Constants.FIELD_NAME_CREATED_POLLUTION_LEVEL, "1"); // TODO: remove
 
-        RequestBody params = builder.build();
 
-        RequestBody pictures = getPicturesRequestBody(
+        getPicturesRequestBody(
+                builder,
                 request.getCreatedPictures(),
                 Constants.FIELD_NAME_CREATED_PICTURES
         );
 
-
-//        RequestBody createdComment =
-//                RequestBody.create(MediaType.parse("text/plain"), request.getCreatedComment());
-//        RequestBody latitude  =
-//                RequestBody.create(MediaType.parse("text/plain"), String.valueOf(request.getLatitude()));
-//        RequestBody longitude  =
-//                RequestBody.create(MediaType.parse("text/plain"), String.valueOf(request.getLongitude()));
-//        RequestBody pollution =
-//                RequestBody.create(MediaType.parse("text/plain"), "1"); // TODO: remove
-//
-//        Map<String, MultipartBody.Part> images = constructImagesPartMap(
-//                Constants.FIELD_NAME_CREATED_PICTURES,
-//                request.getCreatedPictures(),
-//                Constants.FIELD_NAME_CREATED_PICTURES
-//        );
-
-        Call<Void> call = mServerApi.createNewRequest(
-                MultipartBody.Part.create(params),
-                MultipartBody.Part.create(pictures));
+        Call<RequestResponseScheme> call = mServerApi.createNewRequest(builder.build());
 
         try {
-            Response<Void> response = call.execute();
+            Response<RequestResponseScheme> response = call.execute();
 
-            if (!response.isSuccessful()) {
+            if (response.isSuccessful()) {
+                RequestEntity updatedRequest = convertSchemeToRequest(response.body().getRequestScheme());
+                // update temp request with new information
+                mRequestsCacher.update(updatedRequest, requestId);
+                // cache the mapping from temp request ID to a new one
+                mTempIdCacher.cacheTempIdMapping(requestId, updatedRequest.getId());
+            } else {
                 mLogger.e(TAG, "create new request call failed; response code: " + response.code());
+                throw new RuntimeException("create request call failed");
             }
 
         } catch (IOException e) {
             e.printStackTrace();
+            throw new RuntimeException("create request call failed");
         }
-
-
     }
 
-    private RequestBody getPicturesRequestBody(List<String> pictures, String fieldName) {
+    private RequestBody getPicturesRequestBody(MultipartBody.Builder builder, List<String> pictures, String fieldName) {
 
         String pictureUri;
         File pictureFile;
-        MultipartBody.Builder builder = new MultipartBody.Builder();
 
         for (int i = 0; i < pictures.size(); i ++) {
             pictureUri = pictures.get(i);
             pictureFile = new File(pictureUri);
 
             if (pictureFile.exists()) {
-//                picturePart = MultipartBody.Part.create(RequestBody.create(MediaType.parse("image/*"), pictureFile));
-//                result.put(fieldName + "[" + i + "]", picturePart);
-
                 builder.addFormDataPart(
                         fieldName + "[" + i + "]",
                         pictureFile.getName(),
@@ -142,10 +131,10 @@ public class RequestsSyncer {
     public void syncAllRequests() {
         mLogger.d(TAG, "syncAllRequests()");
 
-        Call<GetRequestsScheme> call = mServerApi.getRequests();
+        Call<RequestsResponseScheme> call = mServerApi.getRequests();
 
         try {
-            Response<GetRequestsScheme> response = call.execute();
+            Response<RequestsResponseScheme> response = call.execute();
 
             if (response.isSuccessful()) {
                 processResponse(response.body().getRequestSchemes());

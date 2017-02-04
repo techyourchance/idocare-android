@@ -6,6 +6,7 @@ import dagger.Module;
 import dagger.Provides;
 import il.co.idocare.requests.retrievers.RawRequestRetriever;
 import il.co.idocare.requests.retrievers.RequestsRetriever;
+import il.co.idocare.requests.retrievers.TempIdRetriever;
 import il.co.idocare.useractions.UserActionsToRequestsApplier;
 import il.co.idocare.useractions.retrievers.UserActionsRetriever;
 import il.co.idocare.users.UsersRetriever;
@@ -38,6 +39,11 @@ public class RetrieversModule {
     @Provides
     UsersRetriever usersRetriever(ContentResolver contentResolver) {
         return new UsersRetriever(contentResolver);
+    }
+
+    @Provides
+    TempIdRetriever tempIdRetriever(ContentResolver contentResolver) {
+        return new TempIdRetriever(contentResolver);
     }
 
 }

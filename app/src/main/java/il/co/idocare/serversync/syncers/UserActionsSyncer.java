@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import il.co.idocare.contentproviders.IDoCareContract;
+import il.co.idocare.requests.retrievers.TempIdRetriever;
 import il.co.idocare.useractions.cachers.UserActionCacher;
 import il.co.idocare.useractions.entities.UserActionEntity;
 import il.co.idocare.useractions.retrievers.UserActionsRetriever;
@@ -36,6 +37,7 @@ public class UserActionsSyncer {
     private final BackgroundThreadPoster mBackgroundThreadPoster;
     private final UserActionsRetriever mUserActionsRetriever;
     private final UserActionCacher mUserActionCacher;
+    private final TempIdRetriever mTempIdRetriever;
     private final ContentResolver mContentResolver;
     private final Logger mLogger;
 
@@ -45,12 +47,14 @@ public class UserActionsSyncer {
                              BackgroundThreadPoster backgroundThreadPoster,
                              UserActionsRetriever userActionsRetriever,
                              UserActionCacher userActionCacher,
+                             TempIdRetriever tempIdRetriever,
                              ContentResolver contentResolver,
                              Logger logger) {
         mRequestsSyncer = requestsSyncer;
         mBackgroundThreadPoster = backgroundThreadPoster;
         mUserActionsRetriever = userActionsRetriever;
         mUserActionCacher = userActionCacher;
+        mTempIdRetriever = tempIdRetriever;
         mContentResolver = contentResolver;
         mLogger = logger;
     }
@@ -101,7 +105,7 @@ public class UserActionsSyncer {
                     case IDoCareContract.UserActions.ACTION_TYPE_CREATE_REQUEST:
                         mRequestsSyncer.syncRequestCreated(userAction.getEntityId());
                         break;
-
+                    // TODO: restore
 //                    case IDoCareContract.UserActions.ACTION_TYPE_PICKUP_REQUEST:
 //                        addPickupRequestSpecificInfo(serverHttpRequest, userAction);
 //                        break;
@@ -295,13 +299,10 @@ public class UserActionsSyncer {
                         String entityId = userAction.getEntityId();
 
                         if (isStallingAction(userAction)) {
-                            mEntityIdToStallFlagMap.get(entityId).set(true); // set "stalled" flag
+                            stallActionsForEntity(entityId);
                         }
 
-                        // Mark user's action as being dispatched
-                        mEntityIdToDispatchedUserActionsMap.get(entityId).add(userAction);
-
-                        mDispatchedUserActionsCount++;
+                        handleUserActionDispatched(userAction);
 
                         return userAction;
                     } else {
@@ -317,23 +318,37 @@ public class UserActionsSyncer {
             }
         }
 
+        private void stallActionsForEntity(String entityId) {
+            mEntityIdToStallFlagMap.get(entityId).set(true); // set "stalled" flag
+        }
+
+        private void handleUserActionDispatched(UserActionEntity userAction) {
+            String entityId = userAction.getEntityId();
+
+            // Mark user's action as being dispatched
+            mEntityIdToDispatchedUserActionsMap.get(entityId).add(userAction);
+
+            mDispatchedUserActionsCount++;
+        }
+
         private UserActionEntity removeNextNonStalledNonDispatchedUserAction() {
-            synchronized (DISPATCHER_LOCK) {
-                boolean noMoreNonDispatchedActions = true;
-                for (String entityId : mEntityIdToNonDispatchedUserActionsMap.keySet()) {
-                    if (mEntityIdToNonDispatchedUserActionsMap.get(entityId).size() > 0) {
-                        noMoreNonDispatchedActions = false;
-                        if (!mEntityIdToStallFlagMap.get(entityId).get()) {
-                            // TODO: removing from 0 position is not efficient - reverse sort order and remove from end
-                            return mEntityIdToNonDispatchedUserActionsMap.get(entityId).remove(0);
-                        }
-                    }
+            for (String entityId : mEntityIdToNonDispatchedUserActionsMap.keySet()) {
+
+                if (hasNonDispatchedActionsForEntity(entityId) && !isEntityActionsStalled(entityId)) {
+                    // TODO: removing from 0 position is not efficient - reverse sort order and remove from end
+                    return mEntityIdToNonDispatchedUserActionsMap.get(entityId).remove(0);
                 }
-                if (noMoreNonDispatchedActions) { // precaution "fast fail" assertion
-                    throw new IllegalStateException("assumption of existing non-dispatched actions violated");
-                }
-                return null; // all non-dispatched actions are stalled
+
             }
+            return null; // all non-dispatched actions are stalled
+        }
+
+        private boolean isEntityActionsStalled(String entityId) {
+            return mEntityIdToStallFlagMap.get(entityId).get();
+        }
+
+        private boolean hasNonDispatchedActionsForEntity(String entityId) {
+            return mEntityIdToNonDispatchedUserActionsMap.get(entityId).size() > 0;
         }
 
         /**
@@ -354,7 +369,6 @@ public class UserActionsSyncer {
                 // Remove the action from the dispatched list
                 mEntityIdToDispatchedUserActionsMap.get(entityId).remove(userAction);
 
-                cleanIfNoMoreActionsForEntity(entityId);
 
                 if (isStallingAction(userAction)) {
                     // if the action was of "stalling" type - clear entity's stall flag
@@ -362,6 +376,8 @@ public class UserActionsSyncer {
                     // there might be threads waiting for stalled action to complete - notify them
                     DISPATCHER_LOCK.notifyAll();
                 }
+
+                cleanIfNoMoreActionsForEntity(entityId);
 
                 // There are user actions that their uploading changes IDs of entities (e.g. new requests
                 // get permanent IDs assigned by the server) - account for this change
@@ -446,25 +462,7 @@ public class UserActionsSyncer {
         }
 
         private String getPermanentEntityId(String tempEntityId) {
-            Cursor cursor = null;
-            try {
-                cursor = mContentResolver.query(
-                        IDoCareContract.TempIdMappings.CONTENT_URI,
-                        new String[] {IDoCareContract.TempIdMappings.COL_PERMANENT_ID},
-                        IDoCareContract.TempIdMappings.COL_TEMP_ID + " = ?",
-                        new String[] {tempEntityId},
-                        null
-                );
-
-                if (cursor != null && cursor.moveToFirst()) {
-                    return cursor.getString(cursor.getColumnIndexOrThrow(IDoCareContract.TempIdMappings.COL_PERMANENT_ID));
-                } else {
-                    throw new IllegalStateException("couldn't find a mapping from temp entity " +
-                            "ID to a permanent one; temp ID: " + tempEntityId);
-                }
-            } finally {
-                if (cursor != null) cursor.close();
-            }
+            return mTempIdRetriever.getNewIdForTempId(tempEntityId);
         }
 
         private boolean isCreateRequestUserAction(UserActionEntity userAction) {

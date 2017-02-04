@@ -309,8 +309,8 @@ public class SQLiteWrapper {
         private static final String CREATE_TEMP_ID_MAPPINGS_TABLE =
                 "CREATE TABLE " + TEMP_ID_MAPPINGS_TABLE_NAME + " ( "
                 + IDoCareContract.TempIdMappings._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + IDoCareContract.TempIdMappings.COL_TEMP_ID + " INTEGER, "
-                + IDoCareContract.TempIdMappings.COL_PERMANENT_ID + " INTEGER ); ";
+                + IDoCareContract.TempIdMappings.COL_TEMP_ID + " TEXT UNIQUE, "
+                + IDoCareContract.TempIdMappings.COL_PERMANENT_ID + " TEXT UNIQUE ); ";
 
 
 
