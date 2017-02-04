@@ -5,6 +5,7 @@ import android.support.annotation.WorkerThread;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,13 +13,16 @@ import java.util.List;
 
 import il.co.idocare.Constants;
 import il.co.idocare.networking.newimplementation.ServerApi;
-import il.co.idocare.networking.newimplementation.schemes.RequestsScheme;
-import il.co.idocare.networking.newimplementation.schemes.RequestScheme;
+import il.co.idocare.networking.newimplementation.schemes.responses.GetRequestsScheme;
+import il.co.idocare.networking.newimplementation.schemes.responses.RequestScheme;
 import il.co.idocare.requests.RequestEntity;
 import il.co.idocare.requests.RequestsChangedEvent;
 import il.co.idocare.requests.cachers.RequestsCacher;
-import il.co.idocare.requests.retrievers.RequestsRetriever;
+import il.co.idocare.requests.retrievers.RawRequestRetriever;
 import il.co.idocare.utils.Logger;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -32,7 +36,7 @@ public class RequestsSyncer {
     private static final String TAG = "RequestsSyncer";
 
     private final RequestsCacher mRequestsCacher;
-    private final RequestsRetriever mRequestsRetriever;
+    private final RawRequestRetriever mRawRequestsRetriever;
     private final ServerApi mServerApi;
     private final EventBus mEventBus;
     private Logger mLogger;
@@ -40,25 +44,108 @@ public class RequestsSyncer {
     private List<RequestEntity> mCurrentlyCachedRequests;
 
     public RequestsSyncer(RequestsCacher requestsCacher,
-                          RequestsRetriever requestsRetriever,
+                          RawRequestRetriever rawRequestsRetriever,
                           ServerApi serverApi,
                           EventBus eventBus,
                           Logger logger) {
         mRequestsCacher = requestsCacher;
-        mRequestsRetriever = requestsRetriever;
+        mRawRequestsRetriever = rawRequestsRetriever;
         mServerApi = serverApi;
         mEventBus = eventBus;
         mLogger = logger;
     }
 
     @WorkerThread
+    public void syncRequestCreated(String requestId) {
+        mLogger.d(TAG, "syncRequestCreated(); request ID: " + requestId);
+
+
+        RequestEntity request = mRawRequestsRetriever.getRequestById(requestId);
+
+        MultipartBody.Builder builder = new MultipartBody.Builder();
+
+        builder.setType(MultipartBody.FORM);
+
+        builder.addFormDataPart(Constants.FIELD_NAME_CREATED_COMMENT, request.getCreatedComment());
+        builder.addFormDataPart(Constants.FIELD_NAME_LATITUDE, String.valueOf(request.getLatitude()));
+        builder.addFormDataPart(Constants.FIELD_NAME_LONGITUDE, String.valueOf(request.getLongitude()));
+        builder.addFormDataPart(Constants.FIELD_NAME_CREATED_POLLUTION_LEVEL, "1"); // TODO: remove
+
+        RequestBody params = builder.build();
+
+        RequestBody pictures = getPicturesRequestBody(
+                request.getCreatedPictures(),
+                Constants.FIELD_NAME_CREATED_PICTURES
+        );
+
+
+//        RequestBody createdComment =
+//                RequestBody.create(MediaType.parse("text/plain"), request.getCreatedComment());
+//        RequestBody latitude  =
+//                RequestBody.create(MediaType.parse("text/plain"), String.valueOf(request.getLatitude()));
+//        RequestBody longitude  =
+//                RequestBody.create(MediaType.parse("text/plain"), String.valueOf(request.getLongitude()));
+//        RequestBody pollution =
+//                RequestBody.create(MediaType.parse("text/plain"), "1"); // TODO: remove
+//
+//        Map<String, MultipartBody.Part> images = constructImagesPartMap(
+//                Constants.FIELD_NAME_CREATED_PICTURES,
+//                request.getCreatedPictures(),
+//                Constants.FIELD_NAME_CREATED_PICTURES
+//        );
+
+        Call<Void> call = mServerApi.createNewRequest(
+                MultipartBody.Part.create(params),
+                MultipartBody.Part.create(pictures));
+
+        try {
+            Response<Void> response = call.execute();
+
+            if (!response.isSuccessful()) {
+                mLogger.e(TAG, "create new request call failed; response code: " + response.code());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private RequestBody getPicturesRequestBody(List<String> pictures, String fieldName) {
+
+        String pictureUri;
+        File pictureFile;
+        MultipartBody.Builder builder = new MultipartBody.Builder();
+
+        for (int i = 0; i < pictures.size(); i ++) {
+            pictureUri = pictures.get(i);
+            pictureFile = new File(pictureUri);
+
+            if (pictureFile.exists()) {
+//                picturePart = MultipartBody.Part.create(RequestBody.create(MediaType.parse("image/*"), pictureFile));
+//                result.put(fieldName + "[" + i + "]", picturePart);
+
+                builder.addFormDataPart(
+                        fieldName + "[" + i + "]",
+                        pictureFile.getName(),
+                        RequestBody.create(MediaType.parse("image/*"), pictureFile));
+            } else {
+                mLogger.e(TAG, "picture file doesn't exist: " + pictureFile);
+            }
+        }
+
+        return builder.build();
+    }
+
+    @WorkerThread
     public void syncAllRequests() {
         mLogger.d(TAG, "syncAllRequests()");
 
-        Call<RequestsScheme> call = mServerApi.requestsList();
+        Call<GetRequestsScheme> call = mServerApi.getRequests();
 
         try {
-            Response<RequestsScheme> response = call.execute();
+            Response<GetRequestsScheme> response = call.execute();
 
             if (response.isSuccessful()) {
                 processResponse(response.body().getRequestSchemes());
@@ -85,7 +172,7 @@ public class RequestsSyncer {
     }
 
     private void deleteAllNonModifiedLocallyRequestsFromCache() {
-        mCurrentlyCachedRequests = mRequestsRetriever.getAllRequests();
+        mCurrentlyCachedRequests = mRawRequestsRetriever.getAllRequests();
 
         List<RequestEntity> currentlyCachedModifiedRequests = new ArrayList<>(0);
 

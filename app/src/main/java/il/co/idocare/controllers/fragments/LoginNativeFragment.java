@@ -16,6 +16,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import javax.inject.Inject;
 
 import il.co.idocare.R;
+import il.co.idocare.authentication.AuthManager;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
@@ -38,6 +39,7 @@ public class LoginNativeFragment extends AbstractFragment implements LoginNative
 
 
     @Inject LoginStateManager mLoginStateManager;
+    @Inject AuthManager mAuthManager;
     @Inject DialogsManager mDialogsManager;
     @Inject DialogsFactory mDialogsFactory;
     @Inject Logger mLogger;
@@ -149,7 +151,7 @@ public class LoginNativeFragment extends AbstractFragment implements LoginNative
         // "freeze" UI during login
         mLoginNativeViewMvc.disableUserInput();
 
-        mLoginStateManager.logInNative(username, password);
+        mAuthManager.logInNative(username, password);
 
     }
 

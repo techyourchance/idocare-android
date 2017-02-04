@@ -12,6 +12,7 @@ import dagger.Module;
 import dagger.Provides;
 import il.co.idocare.BuildConfig;
 import il.co.idocare.Constants;
+import il.co.idocare.authentication.AuthManager;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.common.settings.PreferenceSettingsEntryFactoryImpl;
 import il.co.idocare.common.settings.SettingsManager;
@@ -55,6 +56,15 @@ public class ApplicationModule {
                                                SettingsManager settingsManager,
                                                Logger logger) {
         return new LoginStateManager(accountManager, settingsManager, logger);
+    }
+
+    @Provides
+    @ApplicationScope
+    AuthManager authManager(LoginStateManager loginStateManager,
+                            BackgroundThreadPoster backgroundThreadPoster,
+                            ServerApi serverApi,
+                            EventBus eventBus) {
+        return new AuthManager(loginStateManager, backgroundThreadPoster, serverApi, eventBus);
     }
 
     @Provides

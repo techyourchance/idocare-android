@@ -94,9 +94,13 @@ public class RequestsManager extends BaseManager<RequestsManager.RequestsManager
             public void run() {
                 final List<RequestEntity> requests = mRequestsRetriever.getAllRequests();
                 notifyListenersWithRequests(requests);
-                mServerSyncController.requestImmediateSync();
             }
         });
+    }
+
+    public void syncRequestsFromServer() {
+        mLogger.d(TAG, "syncRequestsFromServer() called");
+        mServerSyncController.requestImmediateSync();
     }
 
     public void fetchRequestsAssignedToUserAndNotify(final String userId) {
@@ -107,7 +111,6 @@ public class RequestsManager extends BaseManager<RequestsManager.RequestsManager
             public void run() {
                 final List<RequestEntity> requests = mRequestsRetriever.getRequestsAssignedToUser(userId);
                 notifyListenersWithRequests(requests);
-                mServerSyncController.requestImmediateSync();
             }
         });
 

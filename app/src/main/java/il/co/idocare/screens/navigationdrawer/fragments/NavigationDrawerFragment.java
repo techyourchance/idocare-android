@@ -92,6 +92,9 @@ public class NavigationDrawerFragment extends BaseFragment implements
     private void fetchDataOfActiveUser() {
         String activeUserId = mLoginStateManager.getLoggedInUser().getUserId();
         if (activeUserId != null && !activeUserId.isEmpty()) {
+            // notify the view that there is a logged in user
+            mViewMvc.bindUserData(UserEntity.newBuilder().setUserId(activeUserId).build());
+            // fetch user's info
             mUsersDataMonitoringManager.fetchUserByIdAndNotifyIfExists(activeUserId);
         }
     }

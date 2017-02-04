@@ -259,7 +259,7 @@ public class IDoCareContract {
 
         // Entry fields (correspond to columns in table)
         public static final String COL_TEMP_ID = "temp_id";
-        public static final String COL_PERMANENT_ID = "col_permanent_id";
+        public static final String COL_PERMANENT_ID = "permanent_id";
 
         /**
          * The content URI for this table.

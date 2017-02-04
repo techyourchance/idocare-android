@@ -1,4 +1,4 @@
-package il.co.idocare.networking.newimplementation.schemes;
+package il.co.idocare.networking.newimplementation.schemes.responses;
 
 import com.google.gson.annotations.SerializedName;
 

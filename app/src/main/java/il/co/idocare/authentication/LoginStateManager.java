@@ -8,14 +8,21 @@ import com.facebook.login.LoginManager;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.IOException;
+
 import il.co.idocare.common.settings.SettingsManager;
 import il.co.idocare.datamodels.pojos.UserSignupNativeData;
 import il.co.idocare.eventbusevents.LoginStateEvents;
+import il.co.idocare.networking.newimplementation.ServerApi;
 import il.co.idocare.sequences.LoginFacebookSequence;
 import il.co.idocare.sequences.LoginNativeSequence;
 import il.co.idocare.sequences.Sequence;
 import il.co.idocare.sequences.SignupNativeSequence;
 import il.co.idocare.utils.Logger;
+import il.co.idocare.utils.SecurityUtils;
+import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * This class manages the login state of the user - it aggregates information from all login
@@ -28,13 +35,12 @@ public class LoginStateManager {
     private static final String DUMMY_ACCOUNT_NAME = "dummy_account";
     private static final String DUMMY_ACCOUNT_TYPE = "il.co.idocare.account";
 
-    private AccountManager mAccountManager;
-    private SettingsManager mSettingsManager;
-    private Logger mLogger;
+    private final AccountManager mAccountManager;
+    private final SettingsManager mSettingsManager;
+    private final Logger mLogger;
 
     public LoginStateManager(AccountManager accountManager,
-                             SettingsManager settingsManager,
-                             Logger logger) {
+                             SettingsManager settingsManager, Logger logger) {
         mAccountManager = accountManager;
         mSettingsManager = settingsManager;
         mLogger = logger;
@@ -86,6 +92,7 @@ public class LoginStateManager {
      */
     public void logInNative(String username, String password) {
 
+
         final LoginNativeSequence loginNativeSequence =
                 new LoginNativeSequence(username, password);
 
@@ -107,9 +114,9 @@ public class LoginStateManager {
         loginNativeSequence.executeInBackground();
     }
 
-    private void userLoggedInNative(String username, String authToken, String userId) {
+    /* pp */ void userLoggedInNative(String username, String publicKey, String userId) {
         clearUserSettings();
-        setUserSettings(username, authToken, userId, null);
+        setUserSettings(username, publicKey, userId, null);
     }
 
     /**
@@ -210,6 +217,7 @@ public class LoginStateManager {
         mAccountManager.addAccountExplicitly(acc, null, null);
         return acc;
     }
+
 
 
     // ---------------------------------------------------------------------------------------------

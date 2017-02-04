@@ -10,6 +10,13 @@ import il.co.idocare.contentproviders.IDoCareContract;
 
 public class PickUpRequestUserActionEntity extends UserActionEntity {
 
+    public static PickUpRequestUserActionEntity fromUserAction(UserActionEntity userAction) {
+        return new PickUpRequestUserActionEntity(
+                userAction.getTimestamp(),
+                userAction.getEntityId(),
+                userAction.getActionParam());
+    }
+
     public PickUpRequestUserActionEntity(String timestamp,
                                          @NonNull String requestId,
                                          @NonNull String pickedUpByUserId) {

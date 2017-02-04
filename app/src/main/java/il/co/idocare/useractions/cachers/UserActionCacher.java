@@ -2,7 +2,6 @@ package il.co.idocare.useractions.cachers;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.net.Uri;
 
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.useractions.entities.UserActionEntity;
@@ -23,25 +22,35 @@ public class UserActionCacher {
         mLogger = logger;
     }
 
-    public void cacheUserAction(UserActionEntity userActionEntity) {
+    public void cacheUserAction(UserActionEntity userAction) {
+        mLogger.d(TAG, "cacheUserAction(); user action: " + userAction);
 
         ContentValues userActionCV = new ContentValues(6);
 
-        userActionCV.put(IDoCareContract.UserActions.COL_TIMESTAMP, userActionEntity.getTimestamp());
+        userActionCV.put(IDoCareContract.UserActions.COL_TIMESTAMP, userAction.getTimestamp());
 
-        userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_TYPE, userActionEntity.getEntityType());
+        userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_TYPE, userAction.getEntityType());
 
-        userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_ID, userActionEntity.getEntityId());
+        userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_ID, userAction.getEntityId());
 
-        userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_PARAM, userActionEntity.getEntityParam());
+        userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_PARAM, userAction.getEntityParam());
 
-        userActionCV.put(IDoCareContract.UserActions.COL_ACTION_TYPE, userActionEntity.getActionType());
+        userActionCV.put(IDoCareContract.UserActions.COL_ACTION_TYPE, userAction.getActionType());
 
-        userActionCV.put(IDoCareContract.UserActions.COL_ACTION_PARAM, userActionEntity.getActionParam());
+        userActionCV.put(IDoCareContract.UserActions.COL_ACTION_PARAM, userAction.getActionParam());
 
         mContentResolver.insert(
                 IDoCareContract.UserActions.CONTENT_URI,
                 userActionCV
+        );
+    }
+
+    public void deleteUserAction(UserActionEntity userAction) {
+        mLogger.d(TAG, "deleteUserAction(); user action: " + userAction);
+        mContentResolver.delete(
+                IDoCareContract.UserActions.CONTENT_URI,
+                IDoCareContract.UserActions._ID + " = ?",
+                new String[] {String.valueOf(userAction.getActionId())}
         );
     }
 }

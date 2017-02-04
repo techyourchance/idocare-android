@@ -20,6 +20,7 @@ import il.co.idocare.location.OpenStreetMapsReverseGeocoderFactory;
 import il.co.idocare.location.ReverseGeocoderFactory;
 import il.co.idocare.networking.interfaces.LegacyServerResponseHandlerFactory;
 import il.co.idocare.serversync.syncers.RequestsSyncer;
+import il.co.idocare.serversync.syncers.UserActionsSyncer;
 import il.co.idocare.utils.Logger;
 
 /**
@@ -43,6 +44,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     public static final String SYNC_EXTRAS_MANUAL_SYNC_ID = "SYNC_EXTRAS_MANUAL_SYNC_ID";
 
     @Inject RequestsSyncer mRequestsSyncer;
+    @Inject UserActionsSyncer mUserActionsSyncer;
 
     @Inject LoginStateManager mLoginStateManager;
     @Inject EventBus mEventBus;
@@ -61,6 +63,16 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                               ContentProviderClient provider, SyncResult syncResult) {
 
         mLogger.d(LOG_TAG, "onPerformSync() called; sync extras bundle:" + extras);
+
+
+//        DataUploader dataUploader =
+//                new DataUploader(userId, authToken, provider);
+//
+//        // This call will block until all local actions will be synchronized to the server
+//        // and the respective ContentProvider will be updated
+//        dataUploader.uploadAll();
+
+        mUserActionsSyncer.syncUserActions();
 
         mRequestsSyncer.syncAllRequests();
 
@@ -83,7 +95,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 //        String authToken = user != null ? user.getAuthToken() : null;
 //        String userId = user != null ? user.getUserId() : null;
 //
-//        if (!TextUtils.isEmpty(userId) && !TextUtils.isEmpty(authToken)) {
+//        if (!TextUtils.hasMoreActionsToDispatch(userId) && !TextUtils.hasMoreActionsToDispatch(authToken)) {
 //            DataUploader dataUploader =
 //                    new DataUploader(userId, authToken, provider);
 //

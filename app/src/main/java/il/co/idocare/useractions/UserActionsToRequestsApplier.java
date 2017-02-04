@@ -42,23 +42,24 @@ public class UserActionsToRequestsApplier {
             throw new IllegalArgumentException("user action is not related to the request");
         }
 
-        if (userAction instanceof CloseRequestUserActionEntity) {
-            return closeRequest((CloseRequestUserActionEntity) userAction, requestEntity);
-        } else if (userAction instanceof PickUpRequestUserActionEntity) {
-            return pickUpRequest((PickUpRequestUserActionEntity) userAction, requestEntity);
-        } else if (userAction instanceof CreateRequestUserActionEntity) {
+        if (userAction.getActionType().equals(UserActions.ACTION_TYPE_CLOSE_REQUEST)) {
+            return closeRequest(CloseRequestUserActionEntity.fromUserAction(userAction), requestEntity);
+        } else if (userAction.getActionType().equals(UserActions.ACTION_TYPE_PICKUP_REQUEST)) {
+            return pickUpRequest(PickUpRequestUserActionEntity.fromUserAction(userAction), requestEntity);
+        } else if (userAction.getActionType().equals(UserActions.ACTION_TYPE_CREATE_REQUEST)) {
             // this action is just a "marker" - the actual data has already been written to requests cache
             return requestEntity;
-        } else if (userAction instanceof VoteForRequestUserActionEntity) {
-            return voteForRequest((VoteForRequestUserActionEntity) userAction, requestEntity);
+        } else if (userAction.getActionType().equals(UserActions.ACTION_TYPE_VOTE_FOR_REQUEST)) {
+            return voteForRequest(VoteForRequestUserActionEntity.fromUserAction(userAction), requestEntity);
         } else {
             throw new RuntimeException("invalid user action: " + userAction);
         }
     }
 
 
-    private RequestEntity closeRequest(@NonNull CloseRequestUserActionEntity closeRequestUserAction,
-                                       @NonNull RequestEntity requestEntity) {
+    private RequestEntity closeRequest(CloseRequestUserActionEntity closeRequestUserAction,
+                                       RequestEntity requestEntity) {
+
         if (requestEntity.getClosedBy() != null && !requestEntity.getClosedBy().isEmpty()) {
             throw new IllegalArgumentException("request already closed");
         }

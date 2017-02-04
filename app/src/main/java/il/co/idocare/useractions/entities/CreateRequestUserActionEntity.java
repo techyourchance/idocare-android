@@ -1,7 +1,5 @@
 package il.co.idocare.useractions.entities;
 
-import android.support.annotation.NonNull;
-
 import il.co.idocare.contentproviders.IDoCareContract;
 
 /**

@@ -1,12 +1,12 @@
-package il.co.idocare.networking.newimplementation.schemes;
+package il.co.idocare.networking.newimplementation.schemes.responses;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class RequestsScheme {
+public class GetRequestsScheme {
 
-    @SerializedName("data") List<RequestScheme> mRequestSchemes;
+    @SerializedName("data") private List<RequestScheme> mRequestSchemes;
 
     public List<RequestScheme> getRequestSchemes() {
         return mRequestSchemes;

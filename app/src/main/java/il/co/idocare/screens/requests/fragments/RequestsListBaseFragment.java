@@ -72,7 +72,9 @@ public abstract class RequestsListBaseFragment extends BaseScreenFragment implem
     public void onStart() {
         super.onStart();
         mRequestsManager.registerListener(this);
+        mRequestsManager.syncRequestsFromServer();
         fetchRequests();
+
     }
 
     @Override

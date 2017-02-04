@@ -9,19 +9,19 @@ public class URLs {
     private final static String ROOT_URL = BuildConfig.ROOT_URL;
 
     // Nodes
-    private final static String NODE_SIGN_UP = "/api-04/user/add";
-    private final static String NODE_LOG_IN = "/api-04/user/login";
-    private final static String NODE_USER_DATA = "/api-04/user/get";
+    private final static String NODE_SIGN_UP = "/user/add";
+    private final static String NODE_LOG_IN = "/user/login";
+    private final static String NODE_USER_DATA = "/user/get";
 
-    private final static String NODE_ALL_REQUESTS_DATA = "/api-04/request";
-    private final static String NODE_REQUEST_DATA = "/api-04/request/get";
-    private final static String NODE_CREATE_REQUEST = "/api-04/request/add";
-    private final static String NODE_PICKUP_REQUEST = "/api-04/request/pickup";
-    private final static String NODE_CLOSE_REQUEST = "/api-04/request/close";
-    private final static String NODE_VOTE_FOR_REQUEST = "/api-04/request/vote";
+    private final static String NODE_ALL_REQUESTS_DATA = "/request";
+    private final static String NODE_REQUEST_DATA = "/request/get";
+    private final static String NODE_CREATE_REQUEST = "/request/add";
+    private final static String NODE_PICKUP_REQUEST = "/request/pickup";
+    private final static String NODE_CLOSE_REQUEST = "/request/close";
+    private final static String NODE_VOTE_FOR_REQUEST = "/request/vote";
 
-    private final static String NODE_ALL_ARTICLES_DATA = "/api-04/article";
-    private final static String NODE_VOTE_FOR_ARTICLE = "/api-04/article/vote";
+    private final static String NODE_ALL_ARTICLES_DATA = "/article";
+    private final static String NODE_VOTE_FOR_ARTICLE = "/article/vote";
 
     // assigning indexes to resources used by the app
     private static final int USER_GROUP_OFFSET = 1000;

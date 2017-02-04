@@ -2,7 +2,6 @@ package il.co.idocare.useractions.retrievers;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
-import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,7 @@ public class UserActionsRetriever {
         mContentResolver = contentResolver;
     }
 
-    public @NonNull List<UserActionEntity> getAllUserActions() {
+    public List<UserActionEntity> getAllUserActions() {
 
         String[] projection = UserActions.PROJECTION_ALL;
         String selection = null;
@@ -56,6 +55,7 @@ public class UserActionsRetriever {
     }
 
     private UserActionEntity createUserActionEntityFromCurrentCursorPosition(Cursor cursor) {
+        long id;
         String timestamp;
         String entityType;
         String entityId;
@@ -64,6 +64,7 @@ public class UserActionsRetriever {
         String actionParam;
 
         // mandatory fields
+        id = cursor.getLong(cursor.getColumnIndexOrThrow(UserActions._ID));
         timestamp = cursor.getString(cursor.getColumnIndexOrThrow(UserActions.COL_TIMESTAMP));
         entityType = cursor.getString(cursor.getColumnIndexOrThrow(UserActions.COL_ENTITY_TYPE));
         entityId = cursor.getString(cursor.getColumnIndexOrThrow(UserActions.COL_ENTITY_ID));
@@ -71,6 +72,6 @@ public class UserActionsRetriever {
         actionType = cursor.getString(cursor.getColumnIndexOrThrow(UserActions.COL_ACTION_TYPE));
         actionParam = cursor.getString(cursor.getColumnIndexOrThrow(UserActions.COL_ACTION_PARAM));
 
-        return new UserActionEntity(timestamp, entityType, entityId, entityParam, actionType, actionParam);
+        return new UserActionEntity(id, timestamp, entityType, entityId, entityParam, actionType, actionParam);
     }
 }

@@ -2,6 +2,8 @@ package il.co.idocare.useractions.entities;
 
 import android.support.annotation.NonNull;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,6 +38,20 @@ public class CloseRequestUserActionEntity extends UserActionEntity {
         mClosedPictures = new ArrayList<>(closedPictures);
     }
 
+    public static CloseRequestUserActionEntity fromUserAction(UserActionEntity userAction) {
+        Gson gson = new Gson(); // TODO: this is inefficient
+
+        ActionParam actionParam = gson.fromJson(userAction.getActionParam(), ActionParam.class);
+
+        return new CloseRequestUserActionEntity(
+                userAction.getTimestamp(),
+                userAction.getEntityId(),
+                actionParam.closedBy,
+                actionParam.closedComment,
+                StringUtils.commaSeparatedStringToList(actionParam.closedPictures));
+
+    }
+
     public String getClosedAt() {
         return String.valueOf(getTimestamp());
     }
@@ -52,18 +68,31 @@ public class CloseRequestUserActionEntity extends UserActionEntity {
         return Collections.unmodifiableList(mClosedPictures);
     }
 
+    private static String assembleActionParam(String closedByUserId,
+                                              String closedComment,
+                                              List<String> closedPictures) {
 
-    /**
-     * Create JSON object containing user ID, comment and pictures
-     */
-    private static String assembleActionParam(@NonNull String closedByUserId,
-                                              @NonNull String closedComment,
-                                              @NonNull List<String> closedPictures) {
-        return "{"
-                + "\"" + Constants.FIELD_NAME_CLOSED_BY + "\" : \"" + closedByUserId + "\"" + ","
-                + "\"" + Constants.FIELD_NAME_CLOSED_COMMENT + "\" : \"" + closedComment + "\"" + ","
-                + "\"" + Constants.FIELD_NAME_CLOSED_PICTURES + "\" : \"" + StringUtils.listToCommaSeparatedString(closedPictures) + "\""
-                + "}";
+        Gson gson = new Gson(); // TODO: this is inefficient
+
+        ActionParam actionParam = new ActionParam(
+                closedByUserId,
+                closedComment,
+                StringUtils.listToCommaSeparatedString(closedPictures)
+        );
+
+        return gson.toJson(actionParam);
+    }
+
+    private static class ActionParam {
+        private String closedBy;
+        private String closedComment;
+        private String closedPictures;
+
+        public ActionParam(String closedBy, String closedComment, String closedPictures) {
+            this.closedBy = closedBy;
+            this.closedComment = closedComment;
+            this.closedPictures = closedPictures;
+        }
     }
 
 }
