@@ -21,6 +21,7 @@ import il.co.idocare.requests.RequestsChangedEvent;
 import il.co.idocare.requests.cachers.RequestsCacher;
 import il.co.idocare.requests.cachers.TempIdCacher;
 import il.co.idocare.requests.retrievers.RawRequestRetriever;
+import il.co.idocare.serversync.SyncFailedException;
 import il.co.idocare.utils.Logger;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -95,13 +96,11 @@ public class RequestsSyncer {
                 // cache the mapping from temp request ID to a new one
                 mTempIdCacher.cacheTempIdMapping(requestId, updatedRequest.getId());
             } else {
-                mLogger.e(TAG, "create new request call failed; response code: " + response.code());
-                throw new RuntimeException("create request call failed");
+                throw new SyncFailedException("create new request call failed; response code: " + response.code());
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("create request call failed");
+            throw new SyncFailedException(e);
         }
     }
 

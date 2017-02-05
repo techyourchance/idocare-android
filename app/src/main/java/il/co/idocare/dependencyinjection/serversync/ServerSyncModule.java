@@ -40,9 +40,10 @@ public class ServerSyncModule {
                                         UserActionCacher userActionCacher,
                                         TempIdRetriever tempIdRetriever,
                                         ContentResolver contentResolver,
+                                        ServerApi serverApi,
                                         Logger logger) {
         return new UserActionsSyncer(requestsSyncer, backgroundThreadPoster, userActionsRetriever,
-                userActionCacher, tempIdRetriever, contentResolver, logger);
+                userActionCacher, tempIdRetriever, contentResolver, serverApi, logger);
     }
 
 }

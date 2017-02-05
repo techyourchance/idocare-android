@@ -2,10 +2,13 @@ package il.co.idocare.useractions.retrievers;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.useractions.entities.UserActionEntity;
 import il.co.idocare.contentproviders.IDoCareContract.UserActions;
 
@@ -24,15 +27,25 @@ public class UserActionsRetriever {
 
     public List<UserActionEntity> getAllUserActions() {
 
-        String[] projection = UserActions.PROJECTION_ALL;
-        String selection = null;
-        String[] selectionArgs = null;
+        return getUserActionsWithSelection(null, null);
 
+    }
+
+    public List<UserActionEntity> getUserActionsAffectingEntity(String entityId) {
+
+        String selection = UserActions.COL_ENTITY_ID + " = ?";
+        String[] selectionArgs = new String[] {entityId};
+
+        return getUserActionsWithSelection(selection, selectionArgs);
+    }
+
+    private List<UserActionEntity> getUserActionsWithSelection(
+            @Nullable String selection, @Nullable String[] selectionArgs) {
         Cursor cursor = null;
         try {
             cursor = mContentResolver.query(
                     UserActions.CONTENT_URI,
-                    projection,
+                    UserActions.PROJECTION_ALL,
                     selection,
                     selectionArgs,
                     UserActions.SORT_ORDER_DEFAULT);
@@ -48,7 +61,6 @@ public class UserActionsRetriever {
             } else {
                 return new ArrayList<>(0);
             }
-
         } finally {
             if (cursor != null) cursor.close();
         }

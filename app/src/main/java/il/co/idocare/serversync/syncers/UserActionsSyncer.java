@@ -3,10 +3,10 @@ package il.co.idocare.serversync.syncers;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.database.Cursor;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,12 +17,17 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import il.co.idocare.contentproviders.IDoCareContract;
+import il.co.idocare.networking.newimplementation.ServerApi;
 import il.co.idocare.requests.retrievers.TempIdRetriever;
+import il.co.idocare.serversync.SyncFailedException;
 import il.co.idocare.useractions.cachers.UserActionCacher;
+import il.co.idocare.useractions.entities.PickUpRequestUserActionEntity;
 import il.co.idocare.useractions.entities.UserActionEntity;
 import il.co.idocare.useractions.retrievers.UserActionsRetriever;
 import il.co.idocare.utils.Logger;
 import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * This class handles synchronization of user actions to/from the server.<br>
@@ -33,12 +38,14 @@ public class UserActionsSyncer {
 
     private static final String TAG = "UserActionsSyncer";
 
+    // TODO: implement full "event sourcing" and remove dependency on request syncer
     private final RequestsSyncer mRequestsSyncer;
     private final BackgroundThreadPoster mBackgroundThreadPoster;
     private final UserActionsRetriever mUserActionsRetriever;
     private final UserActionCacher mUserActionCacher;
     private final TempIdRetriever mTempIdRetriever;
     private final ContentResolver mContentResolver;
+    private final ServerApi mServerApi;
     private final Logger mLogger;
 
     private UserActionsDispatcher mDispatcher = new UserActionsDispatcher();
@@ -49,6 +56,7 @@ public class UserActionsSyncer {
                              UserActionCacher userActionCacher,
                              TempIdRetriever tempIdRetriever,
                              ContentResolver contentResolver,
+                             ServerApi serverApi,
                              Logger logger) {
         mRequestsSyncer = requestsSyncer;
         mBackgroundThreadPoster = backgroundThreadPoster;
@@ -56,6 +64,7 @@ public class UserActionsSyncer {
         mUserActionCacher = userActionCacher;
         mTempIdRetriever = tempIdRetriever;
         mContentResolver = contentResolver;
+        mServerApi = serverApi;
         mLogger = logger;
     }
 
@@ -99,17 +108,20 @@ public class UserActionsSyncer {
         String entityType = userAction.getEntityType();
         String actionType = userAction.getActionType();
 
-        switch (entityType) {
-            case IDoCareContract.UserActions.ENTITY_TYPE_REQUEST:
-                switch (actionType) {
-                    case IDoCareContract.UserActions.ACTION_TYPE_CREATE_REQUEST:
-                        mRequestsSyncer.syncRequestCreated(userAction.getEntityId());
-                        break;
-                    // TODO: restore
-//                    case IDoCareContract.UserActions.ACTION_TYPE_PICKUP_REQUEST:
-//                        addPickupRequestSpecificInfo(serverHttpRequest, userAction);
-//                        break;
-//
+        boolean userActionSyncedSuccessfully = true;
+
+        try {
+            switch (entityType) {
+                case IDoCareContract.UserActions.ENTITY_TYPE_REQUEST:
+                    switch (actionType) {
+                        case IDoCareContract.UserActions.ACTION_TYPE_CREATE_REQUEST:
+                            mRequestsSyncer.syncRequestCreated(userAction.getEntityId());
+                            break;
+
+                        case IDoCareContract.UserActions.ACTION_TYPE_PICKUP_REQUEST:
+                            syncRequestPickedUpAction(PickUpRequestUserActionEntity.fromUserAction(userAction));
+                            break;
+
 //                    case IDoCareContract.UserActions.ACTION_TYPE_CLOSE_REQUEST:
 //                        addCloseRequestSpecificInfo(serverHttpRequest, userAction);
 //                        break;
@@ -118,17 +130,35 @@ public class UserActionsSyncer {
 //                        addVoteSpecificInfo(serverHttpRequest, userAction);
 //                        break;
 
-                    default:
-                        throw new RuntimeException("unsupported action type: " + actionType);
-                }
-                break;
-            default:
-                throw new RuntimeException("unsupported entity type: " + entityType);
+                        default:
+                            throw new RuntimeException("unsupported action type: " + actionType);
+                    }
+                    break;
+                default:
+                    throw new RuntimeException("unsupported entity type: " + entityType);
+            }
+
+            mUserActionCacher.deleteUserAction(userAction);
+
+        } catch (SyncFailedException e) {
+            e.printStackTrace();
+            userActionSyncedSuccessfully = false;
         }
 
-        mUserActionCacher.deleteUserAction(userAction);
+        mDispatcher.notifyUserActionSyncComplete(userAction, userActionSyncedSuccessfully);
+    }
 
-        mDispatcher.notifyUserActionSynced(userAction);
+    private void syncRequestPickedUpAction(PickUpRequestUserActionEntity userAction) {
+        Call<Void> call = mServerApi.pickupRequest(userAction.getEntityId());
+
+        try {
+            Response<Void> response = call.execute();
+            if (!response.isSuccessful()) {
+                throw new SyncFailedException("pickup request call failed; response code: " + response.code());
+            }
+        } catch (IOException e) {
+            throw new SyncFailedException(e);
+        }
     }
 
     /**
@@ -153,38 +183,24 @@ public class UserActionsSyncer {
 
         List<String> completedEntitiesIds = mDispatcher.getCompletedEntityIds();
 
-        Cursor cursor = null;
-
         // TODO: probably there is a better way of clearing the flags (maybe single SQL statement?)
 
         for (String entityId : completedEntitiesIds) {
-            try {
-                cursor = mContentResolver.query(
-                        IDoCareContract.UserActions.CONTENT_URI,
-                        new String[] {IDoCareContract.UserActions._ID},
-                        IDoCareContract.UserActions.COL_ENTITY_ID + " = ?",
-                        new String[] {entityId},
-                        IDoCareContract.UserActions.SORT_ORDER_DEFAULT
+            List<UserActionEntity> userActionsAffectingEntity =
+                    mUserActionsRetriever.getUserActionsAffectingEntity(entityId);
+
+            if (userActionsAffectingEntity.isEmpty()) {
+
+
+                // No user actions for that ENTITY_ID - clear locally modified flag
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG, "0");
+                mContentResolver.update(
+                        IDoCareContract.Requests.CONTENT_URI,
+                        contentValues,
+                        IDoCareContract.Requests.COL_REQUEST_ID + " = ?",
+                        new String[] {entityId}
                 );
-
-                if (cursor != null && cursor.getCount() == 0) {
-                    // No user actions for that ENTITY_ID - clear locally modified flag
-                    ContentValues contentValues = new ContentValues();
-                    contentValues.put(IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG, "0");
-                    mContentResolver.update(
-                            IDoCareContract.Requests.CONTENT_URI,
-                            contentValues,
-                            IDoCareContract.Requests.COL_REQUEST_ID + " = ?",
-                            new String[] {entityId}
-                    );
-                }
-
-                // just a small "fail-fast" precaution
-                if (cursor == null) {
-                    throw new IllegalStateException("cursor mustn't be null");
-                }
-            } finally {
-                if (cursor != null) cursor.close();
             }
         }
     }
@@ -355,8 +371,9 @@ public class UserActionsSyncer {
          * Let the dispatcher know that one of the dispatched actions have been uploaded to the
          * server
          */
-        public void notifyUserActionSynced(UserActionEntity userAction) {
-            mLogger.d(TAG, "notifyUserActionSynced(); user action: " + userAction);
+        public void notifyUserActionSyncComplete(UserActionEntity userAction, boolean isSuccess) {
+            mLogger.d(TAG, "notifyUserActionSyncComplete(); user action: " + userAction
+                    + "; is success: " + isSuccess);
 
             synchronized (DISPATCHER_LOCK) {
 
@@ -369,7 +386,6 @@ public class UserActionsSyncer {
                 // Remove the action from the dispatched list
                 mEntityIdToDispatchedUserActionsMap.get(entityId).remove(userAction);
 
-
                 if (isStallingAction(userAction)) {
                     // if the action was of "stalling" type - clear entity's stall flag
                     mEntityIdToStallFlagMap.get(entityId).set(false);
@@ -379,9 +395,11 @@ public class UserActionsSyncer {
 
                 cleanIfNoMoreActionsForEntity(entityId);
 
-                // There are user actions that their uploading changes IDs of entities (e.g. new requests
-                // get permanent IDs assigned by the server) - account for this change
-                ensureConsistentEntityIds(userAction);
+                if (isSuccess) {
+                    // There are user actions that their uploading changes IDs of entities (e.g. new requests
+                    // get permanent IDs assigned by the server) - account for this change
+                    ensureConsistentEntityIds(userAction);
+                }
             }
 
 

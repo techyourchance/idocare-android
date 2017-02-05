@@ -29,5 +29,9 @@ public interface ServerApi {
     @POST("request/add")
     Call<RequestResponseScheme> createNewRequest(@Body MultipartBody part);
 
+    @FormUrlEncoded
+    @POST("request/pickup")
+    Call<Void> pickupRequest(@Field("request_id") String requestId);
+
 
 }
