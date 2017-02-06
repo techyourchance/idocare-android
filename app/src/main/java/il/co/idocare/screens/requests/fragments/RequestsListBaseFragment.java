@@ -85,9 +85,8 @@ public abstract class RequestsListBaseFragment extends BaseScreenFragment implem
 
     @Override
     public void onRequestClicked(RequestEntity request) {
-        Bundle args = new Bundle();
-        args.putString(RequestDetailsFragment.ARG_REQUEST_ID, request.getId());
-        mMainMainFrameHelper.replaceFragment(RequestDetailsFragment.class, true, false, args);
+        RequestDetailsFragment fragment = RequestDetailsFragment.newInstance(request.getId());
+        mMainMainFrameHelper.replaceFragment(fragment, true, false);
     }
 
     @Override

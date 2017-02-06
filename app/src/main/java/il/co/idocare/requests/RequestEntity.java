@@ -44,14 +44,11 @@ public class RequestEntity {
     
     private final String mLocation;
 
-    private final boolean mModifiedLocally;
-
     public RequestEntity(String id, String createdBy, String createdAt, String createdComment,
                          List<String> createdPictures, int createdVotes,
                          double latitude, double longitude, String pickedUpBy, String pickedUpAt,
                          String closedBy, String closedAt, String closedComment,
-                         List<String> closedPictures, int closedVotes, String location,
-                         boolean modifiedLocally) {
+                         List<String> closedPictures, int closedVotes, String location) {
         mId = id;
         mCreatedBy = createdBy;
         mCreatedAt = createdAt;
@@ -68,7 +65,6 @@ public class RequestEntity {
         mClosedPictures = closedPictures != null ? new ArrayList<>(closedPictures) : new ArrayList<String>(0);
         mClosedVotes = closedVotes;
         mLocation = location;
-        mModifiedLocally = modifiedLocally;
     }
 
 
@@ -174,9 +170,6 @@ public class RequestEntity {
         return mLocation;
     }
 
-    public boolean isModifiedLocally() {
-        return mModifiedLocally;
-    }
 
     // ---------------------------------------------------------------------------------------------
     // Builder
@@ -201,7 +194,6 @@ public class RequestEntity {
         private List<String> mClosedPictures = null;
         private int mClosedVotes = 0;
         private String mLocation = null;
-        private boolean mModifiedLocally = false;
 
         private RequestEntityBuilder() {}
 
@@ -222,7 +214,6 @@ public class RequestEntity {
             mClosedPictures = requestEntity.mClosedPictures;
             mClosedVotes = requestEntity.mClosedVotes;
             mLocation = requestEntity.mLocation;
-            mModifiedLocally = requestEntity.mModifiedLocally;
         }
 
         public RequestEntityBuilder setId(String id) {
@@ -305,15 +296,10 @@ public class RequestEntity {
             return this;
         }
 
-        public RequestEntityBuilder setModifiedLocally(boolean modifiedLocally) {
-            mModifiedLocally = modifiedLocally;
-            return this;
-        }
-
         public RequestEntity build() {
             return new RequestEntity(mId, mCreatedBy, mCreatedAt, mCreatedComment, mCreatedPictures,
                     mCreatedVotes, mLatitude, mLongitude, mPickedUpBy, mPickedUpAt, mClosedBy,
-                    mClosedAt, mClosedComment, mClosedPictures, mClosedVotes, mLocation, mModifiedLocally);
+                    mClosedAt, mClosedComment, mClosedPictures, mClosedVotes, mLocation);
         }
     }
 }

@@ -106,11 +106,10 @@ public class RawRequestRetriever {
                 cursor.getString(cursor.getColumnIndexOrThrow(Requests.COL_CLOSED_PICTURES)));
         int closedVotes = cursor.getInt(cursor.getColumnIndexOrThrow(Requests.COL_CLOSED_VOTES));
         String location = cursor.getString(cursor.getColumnIndexOrThrow(Requests.COL_LOCATION));
-        boolean modifiedLocally = cursor.getInt(cursor.getColumnIndexOrThrow(Requests.COL_MODIFIED_LOCALLY_FLAG)) > 0;
 
         return new RequestEntity(requestId, createdBy, createdAt, createdComment, createdPictures,
                 createdVotes, latitude, longitude, pickedUpBy, pickedUpAt, closedBy, closedAt,
-                closedComment, closedPictures, closedVotes, location, modifiedLocally);
+                closedComment, closedPictures, closedVotes, location);
     }
 
 }

@@ -278,8 +278,7 @@ public class SQLiteWrapper {
                 + IDoCareContract.Requests.COL_CLOSED_BY + " INTEGER, "
                 + IDoCareContract.Requests.COL_CREATED_VOTES + " INTEGER DEFAULT 0, "
                 + IDoCareContract.Requests.COL_CLOSED_VOTES + " INTEGER DEFAULT 0, "
-                + IDoCareContract.Requests.COL_LOCATION + " TEXT, "
-                + IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG + " INTEGER DEFAULT 0);";
+                + IDoCareContract.Requests.COL_LOCATION + " TEXT );";
 
 
         private static final String CREATE_USERS_TABLE = "CREATE TABLE " + USERS_TABLE_NAME + " ( "

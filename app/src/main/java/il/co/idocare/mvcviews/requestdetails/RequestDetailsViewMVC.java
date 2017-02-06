@@ -4,6 +4,7 @@ import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.mvcviews.ObservableViewMVC;
 import il.co.idocare.mvcviews.ViewMVC;
+import il.co.idocare.requests.RequestEntity;
 
 /**
  * This MVC view represents a screen showing request's details
@@ -21,7 +22,9 @@ public interface RequestDetailsViewMvc
     }
 
 
-    void bindRequestItem(RequestItem requestItem);
+    void bindRequest(RequestEntity request);
+
+    void bindCurrentUserId(String currentUserId);
 
     void bindCreatedByUser(UserItem user);
 

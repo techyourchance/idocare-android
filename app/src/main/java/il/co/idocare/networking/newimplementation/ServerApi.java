@@ -33,5 +33,7 @@ public interface ServerApi {
     @POST("request/pickup")
     Call<Void> pickupRequest(@Field("request_id") String requestId);
 
+    @POST("request/close")
+    Call<Void> closeRequest(@Body MultipartBody part);
 
 }

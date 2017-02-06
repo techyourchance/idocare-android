@@ -16,16 +16,20 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.networking.newimplementation.ServerApi;
 import il.co.idocare.requests.retrievers.TempIdRetriever;
+import il.co.idocare.serversync.ServerSyncUtils;
 import il.co.idocare.serversync.SyncFailedException;
 import il.co.idocare.useractions.cachers.UserActionCacher;
+import il.co.idocare.useractions.entities.CloseRequestUserActionEntity;
 import il.co.idocare.useractions.entities.PickUpRequestUserActionEntity;
 import il.co.idocare.useractions.entities.UserActionEntity;
 import il.co.idocare.useractions.retrievers.UserActionsRetriever;
 import il.co.idocare.utils.Logger;
 import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -122,10 +126,10 @@ public class UserActionsSyncer {
                             syncRequestPickedUpAction(PickUpRequestUserActionEntity.fromUserAction(userAction));
                             break;
 
-//                    case IDoCareContract.UserActions.ACTION_TYPE_CLOSE_REQUEST:
-//                        addCloseRequestSpecificInfo(serverHttpRequest, userAction);
-//                        break;
-//
+                        case IDoCareContract.UserActions.ACTION_TYPE_CLOSE_REQUEST:
+                            syncRequestClosedAction(CloseRequestUserActionEntity.fromUserAction(userAction));
+                            break;
+
 //                    case IDoCareContract.UserActions.ACTION_TYPE_VOTE_FOR_REQUEST:
 //                        addVoteSpecificInfo(serverHttpRequest, userAction);
 //                        break;
@@ -148,7 +152,39 @@ public class UserActionsSyncer {
         mDispatcher.notifyUserActionSyncComplete(userAction, userActionSyncedSuccessfully);
     }
 
+    private void syncRequestClosedAction(CloseRequestUserActionEntity userAction) {
+        mLogger.d(TAG, "syncRequestClosedAction(); entity ID: " + userAction.getEntityId());
+
+        MultipartBody.Builder builder = new MultipartBody.Builder();
+
+        builder.setType(MultipartBody.FORM);
+
+        builder.addFormDataPart(Constants.FIELD_NAME_REQUEST_ID, userAction.getEntityId());
+        builder.addFormDataPart(Constants.FIELD_NAME_CLOSED_COMMENT, userAction.getClosedComment());
+
+
+        builder = ServerSyncUtils.addPicturesParts(
+                builder,
+                userAction.getClosedPictures(),
+                Constants.FIELD_NAME_CLOSED_PICTURES
+        );
+
+        Call<Void> call = mServerApi.closeRequest(builder.build());
+
+        try {
+            Response<Void> response = call.execute();
+
+            if (!response.isSuccessful()) {
+                throw new SyncFailedException("close request call failed; response code: " + response.code());
+            }
+        } catch (IOException e) {
+            throw new SyncFailedException(e);
+        }
+    }
+
     private void syncRequestPickedUpAction(PickUpRequestUserActionEntity userAction) {
+        mLogger.d(TAG, "syncRequestPickedUpAction(); entity ID: " + userAction.getEntityId());
+
         Call<Void> call = mServerApi.pickupRequest(userAction.getEntityId());
 
         try {
@@ -165,44 +201,8 @@ public class UserActionsSyncer {
      * This method performs all the necessary cleanup when users' actions have been uploaded
      */
     private void performCleanup() {
-        clearLocallyModifiedFlags();
-
         // TODO: we need these mappings to survive in order to be used to re-create loaders in fragments - try to find workaround!
         // clearTempIdMappings();
-
-    }
-
-
-    /**
-     * This method clears LOCALLY_MODIFIED flags from requests if there are no more user actions
-     * pending for them
-     */
-    private void clearLocallyModifiedFlags() {
-        // TODO: ensure atomicity
-        // TODO: remove dependency on ContentResolver
-
-        List<String> completedEntitiesIds = mDispatcher.getCompletedEntityIds();
-
-        // TODO: probably there is a better way of clearing the flags (maybe single SQL statement?)
-
-        for (String entityId : completedEntitiesIds) {
-            List<UserActionEntity> userActionsAffectingEntity =
-                    mUserActionsRetriever.getUserActionsAffectingEntity(entityId);
-
-            if (userActionsAffectingEntity.isEmpty()) {
-
-
-                // No user actions for that ENTITY_ID - clear locally modified flag
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG, "0");
-                mContentResolver.update(
-                        IDoCareContract.Requests.CONTENT_URI,
-                        contentValues,
-                        IDoCareContract.Requests.COL_REQUEST_ID + " = ?",
-                        new String[] {entityId}
-                );
-            }
-        }
     }
 
     /**

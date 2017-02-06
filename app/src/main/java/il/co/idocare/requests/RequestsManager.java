@@ -1,5 +1,6 @@
 package il.co.idocare.requests;
 
+import java.util.Collections;
 import java.util.List;
 
 import il.co.idocare.common.BaseManager;
@@ -19,7 +20,6 @@ import il.co.idocare.utils.multithreading.MainThreadPoster;
 public class RequestsManager extends BaseManager<RequestsManager.RequestsManagerListener> {
 
     private static final String TAG = "RequestsManager";
-
 
     public interface RequestsManagerListener {
         public void onRequestsFetched(List<RequestEntity> requests);
@@ -76,12 +76,8 @@ public class RequestsManager extends BaseManager<RequestsManager.RequestsManager
         mBackgroundThreadPoster.post(new Runnable() {
             @Override
             public void run() {
-                // TODO: ensure atomicity of below actions using TransactionController
+                // TODO: move this functionality to UserActionsManager
                 mUserActionCacher.cacheUserAction(voteAction);
-                RequestEntity request = mRequestsRetriever.getRequestById(voteAction.getEntityId());
-                RequestEntity modifiedRequest = 
-                        RequestEntity.getBuilder(request).setModifiedLocally(true).build();
-                mRequestsCacher.updateOrInsertAndNotify(modifiedRequest);
             }
         });
     }
@@ -113,7 +109,18 @@ public class RequestsManager extends BaseManager<RequestsManager.RequestsManager
                 notifyListenersWithRequests(requests);
             }
         });
+    }
 
+
+    public void fetchRequestByIdAndNotify(final String requestId) {
+        mBackgroundThreadPoster.post(new Runnable() {
+            @Override
+            public void run() {
+                final List<RequestEntity> requests =
+                        Collections.singletonList(mRequestsRetriever.getRequestById(requestId));
+                notifyListenersWithRequests(requests);
+            }
+        });
     }
 
     private void notifyListenersWithRequests(final List<RequestEntity> requests) {

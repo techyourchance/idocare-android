@@ -133,13 +133,8 @@ public class NewRequestFragment extends NewAndCloseRequestBaseFragment
             latitude = location.getLatitude();
             longitude = location.getLongitude();
         }
+
         List<String> createdPictures = getPicturesPaths();
-//        StringBuilder sb = new StringBuilder("");
-//        for (int i=0; i < picturesPahts.size(); i++) {
-//            sb.append(picturesPahts.get(i));
-//            if (i < picturesPahts.size()-1) sb.append(Constants.PICTURES_LIST_SEPARATOR);
-//        }
-//        String createdPictures = sb.toString();
 
         Bundle bundleNewRequest = mNewRequestViewMvc.getViewState();
         String createdComment =
@@ -164,36 +159,12 @@ public class NewRequestFragment extends NewAndCloseRequestBaseFragment
                 .setCreatedPictures(createdPictures)
                 .setLongitude(longitude)
                 .setLatitude(latitude)
-                .setModifiedLocally(true)
                 .build();
 
         mRequestsManager.addNewRequest(newRequest);
 
         mServerSyncController.requestImmediateSync(); // TODO: remove this after geocoder and names appear without sync
         mMainFrameHelper.replaceFragment(RequestsAllFragment.class, false, true, null);
-
-//        // Create entries for user action corresponding to request's creation
-//        final ContentValues userActionCV = new ContentValues();
-//        userActionCV.put(IDoCareContract.UserActions.COL_TIMESTAMP, timestamp);
-//        userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_TYPE,
-//                IDoCareContract.UserActions.ENTITY_TYPE_REQUEST);
-//        userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_ID, tempId);
-//        userActionCV.put(IDoCareContract.UserActions.COL_ACTION_TYPE, IDoCareContract.UserActions.ACTION_TYPE_CREATE_REQUEST);
-//
-//
-//        new AsyncTask<Void, Void, Void>() {
-//            @Override
-//            protected Void doInBackground(Void... voids) {
-//                getActivity().getContentResolver().insert(IDoCareContract.Requests.CONTENT_URI, requestCV);
-//                getActivity().getContentResolver().insert(IDoCareContract.UserActions.CONTENT_URI, userActionCV);
-//                return null;
-//            }
-//
-//            @Override
-//            protected void onPostExecute(Void aVoid) {
-//            }
-//        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[] {null});
-
     }
 
     private boolean validRequestParameters(String userId, List<String> pictures) {

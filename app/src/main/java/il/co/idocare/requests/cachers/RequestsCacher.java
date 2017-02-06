@@ -92,7 +92,6 @@ public class RequestsCacher {
         values.put(Requests.COL_CLOSED_PICTURES, StringUtils.listToCommaSeparatedString(requestEntity.getClosedPictures()));
         values.put(Requests.COL_CLOSED_VOTES, requestEntity.getClosedVotes());
         values.put(Requests.COL_LOCATION, requestEntity.getLocation());
-        values.put(Requests.COL_MODIFIED_LOCALLY_FLAG, requestEntity.isModifiedLocally());
 
         return values;
     }

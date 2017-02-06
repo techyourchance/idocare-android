@@ -3,6 +3,7 @@ package il.co.idocare.useractions.entities;
 import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -84,9 +85,9 @@ public class CloseRequestUserActionEntity extends UserActionEntity {
     }
 
     private static class ActionParam {
-        private String closedBy;
-        private String closedComment;
-        private String closedPictures;
+        @SerializedName("closed_by") private String closedBy;
+        @SerializedName("closed_comment") private String closedComment;
+        @SerializedName("closed_pictures") private String closedPictures;
 
         public ActionParam(String closedBy, String closedComment, String closedPictures) {
             this.closedBy = closedBy;

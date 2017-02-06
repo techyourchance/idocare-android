@@ -7,18 +7,14 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
 import javax.inject.Inject;
 
-import il.co.idocare.authentication.LoggedInUserEntity;
 import il.co.idocare.authentication.LoginStateManager;
-import il.co.idocare.location.OpenStreetMapsReverseGeocoderFactory;
-import il.co.idocare.location.ReverseGeocoderFactory;
-import il.co.idocare.networking.interfaces.LegacyServerResponseHandlerFactory;
+import il.co.idocare.serversync.ManualSyncCompletedEvent;
 import il.co.idocare.serversync.syncers.RequestsSyncer;
 import il.co.idocare.serversync.syncers.UserActionsSyncer;
 import il.co.idocare.utils.Logger;

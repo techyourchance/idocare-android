@@ -49,17 +49,12 @@ public class IDoCareContract {
         public static final String COL_CREATED_VOTES = Constants.FIELD_NAME_CREATED_REPUTATION;
         public static final String COL_CLOSED_VOTES = Constants.FIELD_NAME_CLOSED_REPUTATION;
         public static final String COL_CLOSED_BY = Constants.FIELD_NAME_CLOSED_BY;
+
         /**
          * This column contains a description of the location specified by LATITUDE and
          * LONGITUDE (reverse geocoding)
          */
         public static final String COL_LOCATION = Constants.FIELD_NAME_LOCATION;
-        /**
-         * This column, when set to int>0, indicates that the corresponding request was modified
-         * locally (potentially more than once), and that these local changes haven't been
-         * synced to the server yet.
-         */
-        public static final String COL_MODIFIED_LOCALLY_FLAG = "col_modified_locally_flag";
 
 		/**
 		 * The content URI for this table.
@@ -97,8 +92,7 @@ public class IDoCareContract {
                 COL_CREATED_VOTES,
                 COL_CLOSED_VOTES,
                 COL_CLOSED_BY,
-                COL_LOCATION,
-                COL_MODIFIED_LOCALLY_FLAG};
+                COL_LOCATION};
 
         // TODO: add column containing "timestamp" (latest activity time) and make default sort by this column
 		/**

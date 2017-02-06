@@ -21,7 +21,10 @@ import il.co.idocare.requests.RequestsChangedEvent;
 import il.co.idocare.requests.cachers.RequestsCacher;
 import il.co.idocare.requests.cachers.TempIdCacher;
 import il.co.idocare.requests.retrievers.RawRequestRetriever;
+import il.co.idocare.serversync.ServerSyncUtils;
 import il.co.idocare.serversync.SyncFailedException;
+import il.co.idocare.useractions.entities.UserActionEntity;
+import il.co.idocare.useractions.retrievers.UserActionsRetriever;
 import il.co.idocare.utils.Logger;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -40,6 +43,7 @@ public class RequestsSyncer {
 
     private final RequestsCacher mRequestsCacher;
     private final RawRequestRetriever mRawRequestsRetriever;
+    private final UserActionsRetriever mUserActionsRetriever;
     private final TempIdCacher mTempIdCacher;
     private final ServerApi mServerApi;
     private final EventBus mEventBus;
@@ -49,12 +53,14 @@ public class RequestsSyncer {
 
     public RequestsSyncer(RequestsCacher requestsCacher,
                           RawRequestRetriever rawRequestsRetriever,
+                          UserActionsRetriever userActionsRetriever,
                           TempIdCacher tempIdCacher,
                           ServerApi serverApi,
                           EventBus eventBus,
                           Logger logger) {
         mRequestsCacher = requestsCacher;
         mRawRequestsRetriever = rawRequestsRetriever;
+        mUserActionsRetriever = userActionsRetriever;
         mTempIdCacher = tempIdCacher;
         mServerApi = serverApi;
         mEventBus = eventBus;
@@ -78,7 +84,7 @@ public class RequestsSyncer {
         builder.addFormDataPart(Constants.FIELD_NAME_CREATED_POLLUTION_LEVEL, "1"); // TODO: remove
 
 
-        getPicturesRequestBody(
+        builder = ServerSyncUtils.addPicturesParts(
                 builder,
                 request.getCreatedPictures(),
                 Constants.FIELD_NAME_CREATED_PICTURES
@@ -104,27 +110,6 @@ public class RequestsSyncer {
         }
     }
 
-    private RequestBody getPicturesRequestBody(MultipartBody.Builder builder, List<String> pictures, String fieldName) {
-
-        String pictureUri;
-        File pictureFile;
-
-        for (int i = 0; i < pictures.size(); i ++) {
-            pictureUri = pictures.get(i);
-            pictureFile = new File(pictureUri);
-
-            if (pictureFile.exists()) {
-                builder.addFormDataPart(
-                        fieldName + "[" + i + "]",
-                        pictureFile.getName(),
-                        RequestBody.create(MediaType.parse("image/*"), pictureFile));
-            } else {
-                mLogger.e(TAG, "picture file doesn't exist: " + pictureFile);
-            }
-        }
-
-        return builder.build();
-    }
 
     @WorkerThread
     public void syncAllRequests() {
@@ -165,7 +150,11 @@ public class RequestsSyncer {
         List<RequestEntity> currentlyCachedModifiedRequests = new ArrayList<>(0);
 
         for (RequestEntity cachedRequest : mCurrentlyCachedRequests) {
-            if (!cachedRequest.isModifiedLocally()) {
+
+            List<UserActionEntity> userActionsAffectingCachedRequest =
+                    mUserActionsRetriever.getUserActionsAffectingEntity(cachedRequest.getId());
+
+            if (userActionsAffectingCachedRequest.isEmpty()) {
                 mRequestsCacher.delete(cachedRequest);
             } else {
                 currentlyCachedModifiedRequests.add(cachedRequest);
@@ -213,8 +202,7 @@ public class RequestsSyncer {
                 requestScheme.getClosedComment(),
                 parsePicturesList(requestScheme.getClosedPictures()),
                 requestScheme.getClosedReputation(),
-                "",
-                false);
+                "");
     }
 
     private List<String> parsePicturesList(String picturesListString) {

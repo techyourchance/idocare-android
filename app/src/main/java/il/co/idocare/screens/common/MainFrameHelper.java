@@ -25,23 +25,6 @@ public class MainFrameHelper {
     public void replaceFragment(Class<? extends Fragment> claz, boolean addToBackStack,
                                 boolean clearBackStack, Bundle args) {
 
-        // TODO: this is not a very good approach... Come up with a "single top" alternative for fragments
-        if (isFragmentShown(claz)) {
-            return;
-        }
-
-        if (clearBackStack) {
-            // Remove all entries from back stack
-            mFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }
-
-
-        if (isFragmentShown(claz)) {
-            // The requested fragment is already shown - nothing to do
-            // Log.v(TAG, "the fragment " + claz.getSimpleName() + " is already shown");
-            return;
-        }
-
         // Create new fragment
         Fragment newFragment;
 
@@ -56,6 +39,17 @@ public class MainFrameHelper {
             return;
         }
 
+        replaceFragment(newFragment, addToBackStack, clearBackStack);
+    }
+
+
+    public void replaceFragment(Fragment newFragment, boolean addToBackStack, boolean clearBackStack) {
+
+        if (clearBackStack) {
+            // Remove all entries from back stack
+            mFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+
         FragmentTransaction ft = mFragmentManager.beginTransaction();
 
         if (addToBackStack) {
@@ -63,7 +57,7 @@ public class MainFrameHelper {
         }
 
         // Change to a new fragment
-        ft.replace(R.id.frame_contents, newFragment, claz.getClass().getSimpleName());
+        ft.replace(R.id.frame_contents, newFragment, null);
         ft.commit();
     }
 

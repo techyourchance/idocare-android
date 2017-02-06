@@ -12,8 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
@@ -24,6 +26,7 @@ import il.co.idocare.mvcviews.location.LocationInfoViewMvcImpl;
 import il.co.idocare.mvcviews.location.LocationInfoViewMvc;
 import il.co.idocare.mvcviews.userinfo.RequestRelatedUserInfoViewMvc;
 import il.co.idocare.pictures.ImageViewPictureLoader;
+import il.co.idocare.requests.RequestEntity;
 import il.co.idocare.widgets.SwipeImageGalleryView;
 
 /**
@@ -48,7 +51,7 @@ public class RequestDetailsViewMvcImpl
 
     private LocationInfoViewMvc mLocationInfoViewMvc;
 
-    private RequestItem mRequestItem;
+    private RequestEntity mRequest;
 
     private TextView mTxtStatus;
     private TextView mTxtTopUserTitle;
@@ -58,6 +61,7 @@ public class RequestDetailsViewMvcImpl
 
     private Button mBtnPickUpRequest;
     private Button mBtnCloseRequest;
+    private String mCurrentUserId;
 
 
     public RequestDetailsViewMvcImpl(@NonNull LayoutInflater inflater,
@@ -176,28 +180,27 @@ public class RequestDetailsViewMvcImpl
         return null;
     }
 
-    /**
-     *
-     * Show the details of the request
-     * @param requestItem the request that should be shown
-     */
     @Override
-    public void bindRequestItem(RequestItem requestItem) {
+    public void bindRequest(RequestEntity request) {
 
-        mRequestItem = requestItem;
+        mRequest = request;
 
-        if (mRequestItem.isClosed()) {
+        if (mRequest.isClosed()) {
             mPresentationStrategy = new ClosedPresentationStrategy();
-        } else if (mRequestItem.isPickedUp()) {
+        } else if (mRequest.isPickedUp()) {
             mPresentationStrategy = new PickedUpPresentationStrategy();
         } else {
             mPresentationStrategy = new NewPresentationStrategy();
         }
 
-        mPresentationStrategy.bindRequestItem(requestItem);
+        mPresentationStrategy.bindRequest(request);
 
     }
 
+    @Override
+    public void bindCurrentUserId(String currentUserId) {
+        mCurrentUserId = currentUserId;
+    }
 
     @Override
     public void bindCreatedByUser(UserItem user) {
@@ -223,16 +226,12 @@ public class RequestDetailsViewMvcImpl
      */
     private abstract class PresentationStrategy {
 
-        private RequestItem mRequestItemCopy;
-
-        protected RequestItem getRequestItem() {
-            return mRequestItemCopy;
+        protected RequestEntity getRequestItem() {
+            return mRequest;
         }
 
-        private void bindRequestItem(RequestItem request) {
+        private void bindRequest(RequestEntity request) {
             beforeBindRequestItem();
-
-            mRequestItemCopy = RequestItem.create(request); // copy in order to prevent accidental changes
 
             mTxtStatus.setBackgroundColor(mResources.getColor(getStatusColorResId()));
             mTxtStatus.setText(getStatusString());
@@ -261,8 +260,8 @@ public class RequestDetailsViewMvcImpl
             }
 
             mSwipeImageGalleryTop.clear();
-            String[] mTopPictures = getTopPictures();
-            if (mTopPictures == null || mTopPictures.length == 0) {
+            List<String> mTopPictures = getTopPictures();
+            if (mTopPictures == null || mTopPictures.isEmpty()) {
                 mSwipeImageGalleryTop.setVisibility(View.GONE);
             } else {
                 mSwipeImageGalleryTop.setVisibility(View.VISIBLE);
@@ -294,8 +293,8 @@ public class RequestDetailsViewMvcImpl
             }
 
             mSwipeImageGalleryBottom.clear();
-            String[] mBottomPictures = getBottomPictures();
-            if (mBottomPictures == null || mBottomPictures.length == 0) {
+            List<String> mBottomPictures = getBottomPictures();
+            if (mBottomPictures == null || mBottomPictures.isEmpty()) {
                 mSwipeImageGalleryBottom.setVisibility(View.GONE);
             } else {
                 mSwipeImageGalleryBottom.setVisibility(View.VISIBLE);
@@ -313,11 +312,11 @@ public class RequestDetailsViewMvcImpl
             afterBindRequestItem();
         }
 
-        private void bindLocationFields(RequestItem request) {
+        private void bindLocationFields(RequestEntity request) {
             mLocationInfoViewMvc.setLocationString(request.getLocation());
 
             mLocationInfoViewMvc.setLocation(
-                    mRequestItem.getLatitude(), mRequestItem.getLongitude());
+                    mRequest.getLatitude(), mRequest.getLongitude());
         }
 
 
@@ -333,7 +332,7 @@ public class RequestDetailsViewMvcImpl
         protected abstract String getStatusString();
 
         protected abstract String getTopUserTitle();
-        protected abstract String[] getTopPictures();
+        protected abstract List<String> getTopPictures();
         protected abstract String getTopUserComment();
         protected abstract String getTopUserVotes();
         protected abstract String getTopUserDate();
@@ -341,7 +340,7 @@ public class RequestDetailsViewMvcImpl
         protected abstract String getBottomUserDate();
         protected abstract String getBottomUserVotes();
         protected abstract String getBottomUserComment();
-        protected abstract String[] getBottomPictures();
+        protected abstract List<String> getBottomPictures();
         protected abstract String getBottomUserTitle();
 
         protected abstract boolean showPickUpRequestButton();
@@ -397,8 +396,8 @@ public class RequestDetailsViewMvcImpl
         }
 
         @Override
-        protected String[] getTopPictures() {
-            return getRequestItem().getCreatedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
+        protected List<String> getTopPictures() {
+            return getRequestItem().getCreatedPictures();
         }
 
         @Override
@@ -432,8 +431,8 @@ public class RequestDetailsViewMvcImpl
         }
 
         @Override
-        protected String[] getBottomPictures() {
-            return new String[0];
+        protected List<String> getBottomPictures() {
+            return new ArrayList<>(0);
         }
 
         @Override
@@ -520,8 +519,8 @@ public class RequestDetailsViewMvcImpl
         }
 
         @Override
-        protected String[] getTopPictures() {
-            return getRequestItem().getCreatedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
+        protected List<String> getTopPictures() {
+            return getRequestItem().getCreatedPictures();
         }
 
         @Override
@@ -536,12 +535,12 @@ public class RequestDetailsViewMvcImpl
 
         @Override
         protected String getTopUserDate() {
-            return mRequestItem.getPickedUpAt();
+            return mRequest.getPickedUpAt();
         }
 
         @Override
         protected String getBottomUserDate() {
-            return mRequestItem.getCreatedAt();
+            return mRequest.getCreatedAt();
         }
 
         @Override
@@ -555,8 +554,8 @@ public class RequestDetailsViewMvcImpl
         }
 
         @Override
-        protected String[] getBottomPictures() {
-            return new String[0];
+        protected List<String> getBottomPictures() {
+            return new ArrayList<>(0);
         }
 
         @Override
@@ -571,7 +570,8 @@ public class RequestDetailsViewMvcImpl
 
         @Override
         protected boolean showCloseRequestButton() {
-            return getRequestItem().getStatus() == RequestItem.RequestStatus.PICKED_UP_BY_ME;
+            String pickedUpBy = getRequestItem().getPickedUpBy();
+            return pickedUpBy != null && pickedUpBy.equals(mCurrentUserId);
         }
 
         @Override
@@ -644,8 +644,8 @@ public class RequestDetailsViewMvcImpl
         }
 
         @Override
-        protected String[] getTopPictures() {
-            return getRequestItem().getClosedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
+        protected List<String> getTopPictures() {
+            return getRequestItem().getClosedPictures();
         }
 
         @Override
@@ -679,8 +679,8 @@ public class RequestDetailsViewMvcImpl
         }
 
         @Override
-        protected String[] getBottomPictures() {
-            return getRequestItem().getClosedPictures().split(Constants.PICTURES_LIST_SEPARATOR);
+        protected List<String> getBottomPictures() {
+            return getRequestItem().getClosedPictures();
         }
 
         @Override

@@ -18,6 +18,7 @@ import il.co.idocare.screens.common.toolbar.ToolbarManager;
 import il.co.idocare.screens.common.toolbar.ToolbarDelegate;
 import il.co.idocare.screens.navigationdrawer.NavigationDrawerDelegate;
 import il.co.idocare.screens.navigationdrawer.NavigationDrawerManager;
+import il.co.idocare.useractions.UserActionsManager;
 import il.co.idocare.users.UsersDataMonitoringManager;
 import il.co.idocare.users.UsersRetriever;
 import il.co.idocare.utils.eventbusregistrator.EventBusRegistrator;
@@ -107,6 +108,13 @@ public class ControllerModule {
                                             BackgroundThreadPoster backgroundThreadPoster,
                                             MainThreadPoster mainThreadPoster) {
         return new UsersDataMonitoringManager(usersRetriever, backgroundThreadPoster, mainThreadPoster);
+    }
+
+    @Provides
+    UserActionsManager userActionsManager(UserActionCacher userActionCacher,
+                                          BackgroundThreadPoster backgroundThreadPoster,
+                                          MainThreadPoster mainThreadPoster) {
+        return new UserActionsManager(userActionCacher, backgroundThreadPoster, mainThreadPoster);
     }
 
 

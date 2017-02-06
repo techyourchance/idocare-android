@@ -1,10 +1,7 @@
 package il.co.idocare.screens.requestdetails.fragments;
 
 import android.app.Activity;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,8 +14,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.List;
 
@@ -27,12 +22,14 @@ import javax.inject.Inject;
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoggedInUserEntity;
-import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.controllers.fragments.AbstractFragment;
 import il.co.idocare.eventbusevents.LocationEvents;
 import il.co.idocare.mvcviews.closerequest.CloseRequestViewMvc;
 import il.co.idocare.mvcviews.closerequest.CloseRequestViewMvcImpl;
 import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
+import il.co.idocare.useractions.UserActionEntityFactory;
+import il.co.idocare.useractions.UserActionsManager;
+import il.co.idocare.useractions.entities.CloseRequestUserActionEntity;
+import il.co.idocare.useractions.entities.UserActionEntity;
 import il.co.idocare.utils.Logger;
 
 
@@ -41,12 +38,26 @@ public class CloseRequestFragment extends NewAndCloseRequestBaseFragment
 
     private final static String TAG = "CloseRequestFragment";
 
+    @Inject UserActionEntityFactory mUserActionEntityFactory;
+    @Inject UserActionsManager mUserActionsManager;
     @Inject Logger mLogger;
 
     private CloseRequestViewMvc mCloseRequestViewMvc;
 
-    private long mRequestId;
+    private String mRequestId;
     private Location mRequestLocation;
+
+    public static CloseRequestFragment newInstance(String requestId, double longitude, double latitude) {
+        CloseRequestFragment fragment = new CloseRequestFragment();
+
+        Bundle args = new Bundle();
+        args.putString(Constants.FIELD_NAME_REQUEST_ID, requestId);
+        args.putDouble(Constants.FIELD_NAME_LATITUDE, latitude);
+        args.putDouble(Constants.FIELD_NAME_LONGITUDE, longitude);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
 
 
     @Override
@@ -62,7 +73,7 @@ public class CloseRequestFragment extends NewAndCloseRequestBaseFragment
 
         Bundle args = getArguments();
 
-        mRequestId = args.getLong(Constants.FIELD_NAME_REQUEST_ID);
+        mRequestId = args.getString(Constants.FIELD_NAME_REQUEST_ID);
         // TODO: the only argument should be request ID - use loader in order to load request's info!
         mRequestLocation = new Location("none");
         mRequestLocation.setLongitude(args.getDouble(Constants.FIELD_NAME_LONGITUDE));
@@ -134,13 +145,7 @@ public class CloseRequestFragment extends NewAndCloseRequestBaseFragment
             return;
         }
 
-        List<String> picturesPaths = getPicturesPaths();
-        StringBuilder sb = new StringBuilder("");
-        for (int i=0; i < picturesPaths.size(); i++) {
-            sb.append(picturesPaths.get(i));
-            if (i < picturesPaths.size()-1) sb.append(", ");
-        }
-        String closedPictures = sb.toString();
+        List<String> closedPictures = getPicturesPaths();
 
         Bundle bundleCloseRequest = mCloseRequestViewMvc.getViewState();
         String closedComment =
@@ -151,57 +156,18 @@ public class CloseRequestFragment extends NewAndCloseRequestBaseFragment
             return;
         }
 
+        CloseRequestUserActionEntity closeRequestUserAction =
+                mUserActionEntityFactory.newCloseRequest(mRequestId, closedBy, closedComment, closedPictures);
 
-        // Create JSON object containing comment and pictures
-
-        JSONObject userActionParamJson = new JSONObject();
-        try {
-            userActionParamJson.put(Constants.FIELD_NAME_CLOSED_BY, closedBy);
-            userActionParamJson.put(Constants.FIELD_NAME_CLOSED_COMMENT, closedComment);
-            userActionParamJson.put(Constants.FIELD_NAME_CLOSED_PICTURES, closedPictures);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return;
-        }
-        String userActionParam = userActionParamJson.toString();
-
-        // Entries to update request with LOCALLY_MODIFIED flag
-        final ContentValues requestCV = new ContentValues();
-        requestCV.put(IDoCareContract.Requests.COL_MODIFIED_LOCALLY_FLAG, 1);
-
-        // Create entries for user action corresponding to request's close
-        final ContentValues userActionCV = new ContentValues();
-        userActionCV.put(IDoCareContract.UserActions.COL_TIMESTAMP, System.currentTimeMillis());
-        userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_TYPE,
-                IDoCareContract.UserActions.ENTITY_TYPE_REQUEST);
-        userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_ID, mRequestId);
-        userActionCV.put(IDoCareContract.UserActions.COL_ACTION_TYPE,
-                IDoCareContract.UserActions.ACTION_TYPE_CLOSE_REQUEST);
-        userActionCV.put(IDoCareContract.UserActions.COL_ACTION_PARAM, userActionParam);
-
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                getActivity().getContentResolver().update(
-                        ContentUris.withAppendedId(IDoCareContract.Requests.CONTENT_URI, mRequestId),
-                        requestCV,
-                        null,
-                        null);
-                getActivity().getContentResolver().insert(IDoCareContract.UserActions.CONTENT_URI, userActionCV);
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-
-                // Create a bundle and put the id there
-                Bundle args = new Bundle();
-                args.putLong(Constants.FIELD_NAME_REQUEST_ID, mRequestId);
-
-                mMainFrameHelper.replaceFragment(RequestDetailsFragment.class, false, true, args);
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[] {null});
-
+        mUserActionsManager.addUserActionAndNotify(
+                closeRequestUserAction,
+                new UserActionsManager.UserActionsManagerListener() {
+                    @Override
+                    public void onUserActionAdded(UserActionEntity userAction) {
+                        RequestDetailsFragment fragment = RequestDetailsFragment.newInstance(userAction.getEntityId());
+                        mMainFrameHelper.replaceFragment(fragment, false, true);
+                    }
+                });
     }
 
 
@@ -218,7 +184,7 @@ public class CloseRequestFragment extends NewAndCloseRequestBaseFragment
 
         Location location = bestLocationEstimateEvent.location;
 
-        if (mLocationHelper.areSameLocations(location, mRequestLocation)) {
+        if (!mLocationHelper.areSameLocations(location, mRequestLocation)) {
             Log.d(TAG, "location is too far from request's location");
             Toast.makeText(getActivity(), getString(R.string.msg_too_far_from_original_location),
                     Toast.LENGTH_LONG).show();
@@ -227,14 +193,14 @@ public class CloseRequestFragment extends NewAndCloseRequestBaseFragment
         return true;
     }
 
-    private boolean validRequestParameters(String userId, String pictures) {
+    private boolean validRequestParameters(String userId, List<String> pictures) {
 
         if (TextUtils.isEmpty(userId)) {
             onUserLoggedOut();
             return false;
         }
 
-        if (TextUtils.isEmpty(pictures)) {
+        if (pictures.isEmpty()) {
             Toast.makeText(getActivity(), getString(R.string.msg_pictures_required),
                     Toast.LENGTH_LONG).show();
             return false;

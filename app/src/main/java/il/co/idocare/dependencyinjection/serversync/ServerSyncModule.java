@@ -25,11 +25,13 @@ public class ServerSyncModule {
     @ServerSyncScope
     RequestsSyncer requestsSyncer(RequestsCacher requestsCacher,
                                   RawRequestRetriever rawRequestsRetriever,
+                                  UserActionsRetriever userActionsRetriever,
                                   TempIdCacher tempIdCacher,
                                   ServerApi serverApi,
                                   EventBus eventBus,
                                   Logger logger) {
-        return new RequestsSyncer(requestsCacher, rawRequestsRetriever, tempIdCacher, serverApi, eventBus, logger);
+        return new RequestsSyncer(requestsCacher, rawRequestsRetriever, userActionsRetriever,
+                tempIdCacher, serverApi, eventBus, logger);
     }
 
     @Provides
