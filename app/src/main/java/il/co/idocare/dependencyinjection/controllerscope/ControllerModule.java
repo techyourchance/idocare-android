@@ -20,6 +20,7 @@ import il.co.idocare.screens.navigationdrawer.NavigationDrawerDelegate;
 import il.co.idocare.screens.navigationdrawer.NavigationDrawerManager;
 import il.co.idocare.useractions.UserActionsManager;
 import il.co.idocare.users.UsersDataMonitoringManager;
+import il.co.idocare.users.UsersManager;
 import il.co.idocare.users.UsersRetriever;
 import il.co.idocare.utils.eventbusregistrator.EventBusRegistrator;
 import il.co.idocare.utils.multithreading.MainThreadPoster;
@@ -104,10 +105,17 @@ public class ControllerModule {
     }
 
     @Provides
-    UsersDataMonitoringManager usersManager(UsersRetriever usersRetriever,
-                                            BackgroundThreadPoster backgroundThreadPoster,
-                                            MainThreadPoster mainThreadPoster) {
+    UsersDataMonitoringManager usersDataMonitoringManager(UsersRetriever usersRetriever,
+                                                           BackgroundThreadPoster backgroundThreadPoster,
+                                                           MainThreadPoster mainThreadPoster) {
         return new UsersDataMonitoringManager(usersRetriever, backgroundThreadPoster, mainThreadPoster);
+    }
+
+    @Provides
+    UsersManager usersManager(UsersRetriever usersRetriever,
+                              BackgroundThreadPoster backgroundThreadPoster,
+                              MainThreadPoster mainThreadPoster) {
+        return new UsersManager(usersRetriever, backgroundThreadPoster, mainThreadPoster);
     }
 
     @Provides

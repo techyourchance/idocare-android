@@ -13,6 +13,7 @@ import com.google.android.gms.maps.MapView;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -29,6 +30,7 @@ import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvcImpl;
 import il.co.idocare.networking.ServerSyncController;
 import il.co.idocare.pictures.ImageViewPictureLoader;
 import il.co.idocare.requests.RequestEntity;
+import il.co.idocare.requests.RequestsChangedEvent;
 import il.co.idocare.requests.RequestsManager;
 import il.co.idocare.screens.common.MainFrameHelper;
 import il.co.idocare.screens.common.fragments.BaseScreenFragment;
@@ -37,13 +39,16 @@ import il.co.idocare.useractions.UserActionsManager;
 import il.co.idocare.useractions.entities.PickUpRequestUserActionEntity;
 import il.co.idocare.useractions.entities.UserActionEntity;
 import il.co.idocare.useractions.entities.VoteForRequestUserActionEntity;
+import il.co.idocare.users.UserEntity;
+import il.co.idocare.users.UsersManager;
+import il.co.idocare.users.events.UserDataChangedEvent;
 import il.co.idocare.utils.Logger;
 import il.co.idocare.utils.eventbusregistrator.EventBusRegistrable;
 
 @EventBusRegistrable
 public class RequestDetailsFragment extends BaseScreenFragment implements
         RequestDetailsViewMvc.RequestDetailsViewMvcListener,
-        RequestsManager.RequestsManagerListener {
+        RequestsManager.RequestsManagerListener, UsersManager.UsersManagerListener {
 
     private final static String TAG = "RequestDetailsFragment";
 
@@ -59,6 +64,7 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
     @Inject ImageViewPictureLoader mImageViewPictureLoader;
     @Inject UserActionsManager mUserActionsManager;
     @Inject RequestsManager mRequestsManager;
+    @Inject UsersManager mUsersManager;
     @Inject UserActionEntityFactory mUserActionEntityFactory;
     @Inject MainFrameHelper mMainFrameHelper;
     @Inject DialogsManager mDialogsManager;
@@ -120,6 +126,16 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginStateManager.UserLoggedOutEvent event) {
         mRequestDetailsViewMvc.bindCurrentUserId(mLoginStateManager.getLoggedInUser().getUserId());
+        refreshRequest();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(UserDataChangedEvent event) {
+        refreshUsers();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(RequestsChangedEvent event) {
         refreshRequest();
     }
 
@@ -252,44 +268,50 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
 
     private void refreshUsers() {
 
-//
-//        if (mUsersCursor != null && mUsersCursor.moveToFirst()) {
-//            do {
-//                UserItem user = UserItem.create(mUsersCursor);
-//
-//                boolean used = false;
-//
-//                if (user.getId() == mRequestItem.getCreatedBy()) {
-//                    mRequestDetailsViewMvc.bindCreatedByUser(user);
-//                    used = true;
-//                }
-//                if (user.getId() == mRequestItem.getPickedUpBy()) {
-//                    mRequestDetailsViewMvc.bindPickedUpByUser(user);
-//                    used = true;
-//                }
-//                if (user.getId() == mRequestItem.getClosedBy()) {
-//                    mRequestDetailsViewMvc.bindClosedByUser(user);
-//                    used = true;
-//                }
-//
-//                if (!used)
-//                    Log.e(TAG, "user's data returned in the mUsersCursor does not correspond to" +
-//                            "either of creating, picking up or closing user IDs in the request.");
-//
-//
-//            } while (mUsersCursor.moveToNext());
-//        }
+        List<String> usersIds = new ArrayList<>(3);
+
+        usersIds.add(mRequest.getCreatedBy());
+
+        String pickedUpBy = mRequest.getPickedUpBy();
+        String closedBy = mRequest.getClosedBy();
+
+        if (pickedUpBy != null && !pickedUpBy.isEmpty()) {
+            usersIds.add(pickedUpBy);
+        }
+
+        if (closedBy != null && !closedBy.isEmpty()) {
+            usersIds.add(closedBy);
+        }
+
+        mUsersManager.fetchUsersByIdAndNotify(usersIds, this);
+
     }
 
     @Override
     public void onRequestsFetched(List<RequestEntity> requests) {
         mLogger.d(TAG, "onRequestsFetched() called");
         if (requests.isEmpty()) {
-            mLogger.e(TAG, "failed to fetch request info");
-            // TODO: navigate up
+            throw new RuntimeException("failed to fetch request info");
         }
         mRequest = requests.get(0);
         mRequestDetailsViewMvc.bindRequest(mRequest);
         refreshUsers();
+    }
+
+    @Override
+    public void onUsersFetched(List<UserEntity> users) {
+        mLogger.d(TAG, "onUsersFetched() called");
+
+        for (UserEntity user : users) {
+            if (user.getUserId().equals(mRequest.getCreatedBy())) {
+                mRequestDetailsViewMvc.bindCreatedByUser(user);
+            } else if (user.getUserId().equals(mRequest.getPickedUpBy())) {
+                mRequestDetailsViewMvc.bindPickedUpByUser(user);
+            } else if (user.getUserId().equals(mRequest.getClosedBy())) {
+                mRequestDetailsViewMvc.bindClosedByUser(user);
+            } else {
+                mLogger.w(TAG, "user not related to request; user ID: " + user.getUserId());
+            }
+        }
     }
 }

@@ -10,15 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import il.co.idocare.R;
-import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.mvcviews.AbstractViewMVC;
 import il.co.idocare.mvcviews.ViewMVC;
 import il.co.idocare.pictures.ImageViewPictureLoader;
+import il.co.idocare.users.UserEntity;
 
-/**
- * Created by Vasiliy on 5/6/2016.
- */
-@SuppressWarnings("FieldCanBeLocal")
 public class RequestRelatedUserInfoViewMvc
         extends AbstractViewMVC<RequestRelatedUserInfoViewMvc.RequestRelatedUserInfoViewMvcListener>
         implements ViewMVC {
@@ -87,7 +83,7 @@ public class RequestRelatedUserInfoViewMvc
         return null;
     }
 
-    public void bindUser(UserItem userItem) {
+    public void bindUser(UserEntity userItem) {
 
         mTxtUserNickname.setText(userItem.getNickname());
 

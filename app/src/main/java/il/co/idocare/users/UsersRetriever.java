@@ -5,6 +5,10 @@ import android.database.Cursor;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import il.co.idocare.contentproviders.ContentProviderUtils;
 import il.co.idocare.contentproviders.IDoCareContract;
 
 /**
@@ -24,19 +28,52 @@ public class UsersRetriever {
      */
     @WorkerThread
     public @Nullable UserEntity getUserById(String userId) {
+        String selection = IDoCareContract.Users.COL_USER_ID + " = ?";
+        String[] selectionArgs = new String[] {userId};
+
+        List<UserEntity> users = getUsersWithSelection(selection, selectionArgs);
+
+        if (users.isEmpty()) {
+            return null;
+        } else {
+            return users.get(0);
+        }
+    }
+
+    @WorkerThread
+    public List<UserEntity> getUsersByIds(List<String> userIds) {
+        if (userIds.isEmpty()) {
+            return new ArrayList<>(0);
+        }
+
+        ContentProviderUtils.SelectionAndSelectionArgsPair selectionsPair =
+                ContentProviderUtils.getSelectionByColumnForListOfValues(
+                        IDoCareContract.Users.COL_USER_ID, userIds);
+
+        return getUsersWithSelection(selectionsPair.getSelection(), selectionsPair.getSelectionArgs());
+    }
+
+    private List<UserEntity> getUsersWithSelection(String selection, String[] selectionArgs) {
         Cursor cursor = null;
         try {
             cursor = mContentResolver.query(
                     IDoCareContract.Users.CONTENT_URI,
                     IDoCareContract.Users.PROJECTION_ALL,
-                    IDoCareContract.Users.COL_USER_ID + " = ?",
-                    new String[] {userId},
-                    null);
+                    selection,
+                    selectionArgs,
+                    IDoCareContract.Users.SORT_ORDER_DEFAULT);
 
             if (cursor != null && cursor.moveToFirst()) {
-                return createUserEntityFromCurrentCursorPosition(cursor);
+
+                List<UserEntity> results = new ArrayList<>(cursor.getCount());
+
+                do {
+                    results.add(createUserEntityFromCurrentCursorPosition(cursor));
+                } while (cursor.moveToNext());
+
+                return results;
             } else {
-                return null;
+                return new ArrayList<>(0);
             }
         } finally {
             if (cursor != null) cursor.close();

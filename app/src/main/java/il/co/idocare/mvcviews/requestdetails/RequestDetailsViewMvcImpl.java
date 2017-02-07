@@ -17,16 +17,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.datamodels.functional.RequestItem;
-import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.mvcviews.AbstractViewMVC;
-import il.co.idocare.mvcviews.location.LocationInfoViewMvcImpl;
 import il.co.idocare.mvcviews.location.LocationInfoViewMvc;
+import il.co.idocare.mvcviews.location.LocationInfoViewMvcImpl;
 import il.co.idocare.mvcviews.userinfo.RequestRelatedUserInfoViewMvc;
 import il.co.idocare.pictures.ImageViewPictureLoader;
 import il.co.idocare.requests.RequestEntity;
+import il.co.idocare.users.UserEntity;
 import il.co.idocare.widgets.SwipeImageGalleryView;
 
 /**
@@ -203,19 +201,19 @@ public class RequestDetailsViewMvcImpl
     }
 
     @Override
-    public void bindCreatedByUser(UserItem user) {
+    public void bindCreatedByUser(UserEntity user) {
         mPresentationStrategy.bindCreatedByUser(user);
     }
 
 
     @Override
-    public void bindClosedByUser(UserItem user) {
+    public void bindClosedByUser(UserEntity user) {
         mPresentationStrategy.bindClosedByUser(user);
     }
 
 
     @Override
-    public void bindPickedUpByUser(UserItem user) {
+    public void bindPickedUpByUser(UserEntity user) {
         mPresentationStrategy.bindPickedUpByUser(user);
     }
 
@@ -320,9 +318,9 @@ public class RequestDetailsViewMvcImpl
         }
 
 
-        abstract void bindCreatedByUser(UserItem user);
-        abstract void bindPickedUpByUser(UserItem user);
-        abstract void bindClosedByUser(UserItem user);
+        abstract void bindCreatedByUser(UserEntity user);
+        abstract void bindPickedUpByUser(UserEntity user);
+        abstract void bindClosedByUser(UserEntity user);
 
 
         protected abstract void beforeBindRequestItem();
@@ -356,17 +354,17 @@ public class RequestDetailsViewMvcImpl
     private class NewPresentationStrategy extends PresentationStrategy {
 
         @Override
-        void bindCreatedByUser(UserItem user) {
+        void bindCreatedByUser(UserEntity user) {
             mUserInfoTopViewMvc.bindUser(user);
         }
 
         @Override
-        void bindPickedUpByUser(UserItem user) {
+        void bindPickedUpByUser(UserEntity user) {
             throw new UnsupportedOperationException("new requests can't have 'picked up by' user");
         }
 
         @Override
-        void bindClosedByUser(UserItem user) {
+        void bindClosedByUser(UserEntity user) {
             throw new UnsupportedOperationException("new requests can't have 'closed by' user");
         }
 
@@ -478,17 +476,17 @@ public class RequestDetailsViewMvcImpl
     private class PickedUpPresentationStrategy extends PresentationStrategy {
 
         @Override
-        void bindCreatedByUser(UserItem user) {
+        void bindCreatedByUser(UserEntity user) {
             mUserInfoBottomViewMvc.bindUser(user);
         }
 
         @Override
-        void bindPickedUpByUser(UserItem user) {
+        void bindPickedUpByUser(UserEntity user) {
             mUserInfoTopViewMvc.bindUser(user);
         }
 
         @Override
-        void bindClosedByUser(UserItem user) {
+        void bindClosedByUser(UserEntity user) {
             throw new UnsupportedOperationException("picked up requests can't have 'closed by' user");
         }
 
@@ -603,17 +601,17 @@ public class RequestDetailsViewMvcImpl
     private class ClosedPresentationStrategy extends PresentationStrategy {
 
         @Override
-        void bindCreatedByUser(UserItem user) {
+        void bindCreatedByUser(UserEntity user) {
             mUserInfoBottomViewMvc.bindUser(user);
         }
 
         @Override
-        void bindPickedUpByUser(UserItem user) {
+        void bindPickedUpByUser(UserEntity user) {
             // no-op - this user should be identical to "closed by"
         }
 
         @Override
-        void bindClosedByUser(UserItem user) {
+        void bindClosedByUser(UserEntity user) {
             mUserInfoTopViewMvc.bindUser(user);
         }
 

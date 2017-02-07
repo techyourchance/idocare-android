@@ -41,7 +41,10 @@ public class RequestsRetriever {
 
         if (rawRequest == null) return null;
 
-        return applyUserActionsToRequests(Collections.singletonList(rawRequest)).get(0);
+        List<RequestEntity> requests = new ArrayList<>(1);
+        requests.add(rawRequest);
+
+        return applyUserActionsToRequests(requests).get(0);
     }
 
     public List<RequestEntity> getAllRequests() {
