@@ -33,15 +33,30 @@ public final class ContentProviderUtils {
      */
     public static SelectionAndSelectionArgsPair getSelectionByColumnForListOfValues(
             String columnName, List<String> args) {
+        return getSelectionByColumnInner(columnName, "IN", args);
+    }
+
+
+    /**
+     * @throws IllegalArgumentException if the list of arguments is empty
+     */
+    public static SelectionAndSelectionArgsPair getSelectionByColumnExceptListOfValues(
+            String columnName, List<String> args) {
+        return getSelectionByColumnInner(columnName, "NOT IN", args);
+    }
+
+    private static SelectionAndSelectionArgsPair getSelectionByColumnInner(
+            String columnName, String selectionOperator, List<String> args) {
         if (args.isEmpty()) {
             throw new IllegalArgumentException("there is no semantically correct behavior for empty args");
         }
 
-        StringBuilder sb = new StringBuilder(columnName);
-        sb.append(" IN ( ");
+        StringBuilder sb = new StringBuilder(columnName); // column
+        sb.append(" ").append(selectionOperator).append(" ( "); // selection operator
 
         String[] selectionsArgs = new String[args.size()];
 
+        // selection placeholders and args
         for (int i = 0; i < args.size(); i++) {
             sb.append(" ? ");
             if (i < args.size() - 1) {
@@ -50,7 +65,7 @@ public final class ContentProviderUtils {
             selectionsArgs[i] = args.get(i);
         }
 
-        sb.append(" ) ");
+        sb.append(" ) "); // complete selection statement
         String selection = sb.toString();
 
         return new SelectionAndSelectionArgsPair(selection, selectionsArgs);

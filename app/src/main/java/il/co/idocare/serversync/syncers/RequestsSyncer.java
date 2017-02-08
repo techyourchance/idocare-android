@@ -22,7 +22,6 @@ import il.co.idocare.requests.cachers.TempIdCacher;
 import il.co.idocare.requests.retrievers.RawRequestRetriever;
 import il.co.idocare.serversync.ServerSyncUtils;
 import il.co.idocare.serversync.SyncFailedException;
-import il.co.idocare.useractions.entities.UserActionEntity;
 import il.co.idocare.useractions.retrievers.UserActionsRetriever;
 import il.co.idocare.utils.Logger;
 import okhttp3.MultipartBody;
@@ -45,8 +44,6 @@ public class RequestsSyncer {
     private final ServerApi mServerApi;
     private final EventBus mEventBus;
     private Logger mLogger;
-
-    private List<RequestEntity> mCurrentlyCachedRequests;
 
     public RequestsSyncer(RequestsCacher requestsCacher,
                           RawRequestRetriever rawRequestsRetriever,
@@ -120,70 +117,45 @@ public class RequestsSyncer {
             if (response.isSuccessful()) {
                 processResponse(response.body().getRequestSchemes());
             } else {
-                mLogger.e(TAG, "couldn't fetch requests from the server; response code: " + response.code());
+                throw new SyncFailedException("couldn't fetch requests from the server; response code: " + response.code());
             }
-
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new SyncFailedException(e);
         }
     }
 
     private void processResponse(@Nullable List<RequestScheme> requests) {
         mLogger.d(TAG, "processResponse() called");
         // TODO: ensure the actions performed atomically
+        if (requests == null || requests.isEmpty()) {
+            mLogger.d(TAG, "empty request list - deleting all requests from local cache");
+            mRequestsCacher.deleteAllRequests();
+        } else {
+            List<String> processedRequestIds = updateOrInsertRequestSchemes(requests);
 
-        deleteAllNonModifiedLocallyRequestsFromCache();
-
-        if (requests == null) return;
-
-        cacheRequests(requests);
+            // currently we assume that the requests not returned by the server can be deleted
+            // TODO: review this assumption
+            mRequestsCacher.deleteAllRequestsWithNonMatchingIds(processedRequestIds);
+        }
 
         notifyRequestsChanged();
-
     }
 
-    private void deleteAllNonModifiedLocallyRequestsFromCache() {
-        mLogger.d(TAG, "deleteAllNonModifiedLocallyRequestsFromCache() called");
-        mCurrentlyCachedRequests = mRawRequestsRetriever.getAllRequests();
+    /**
+     * @return list containing IDs of all processed requests
+     */
+    private List<String> updateOrInsertRequestSchemes(List<RequestScheme> requestSchemes) {
+        mLogger.d(TAG, "updateOrInsertRequestSchemes() called");
 
-        List<RequestEntity> currentlyCachedModifiedRequests = new ArrayList<>(0);
+        List<String> processedRequestIds = new ArrayList<>(requestSchemes.size());
 
-        for (RequestEntity cachedRequest : mCurrentlyCachedRequests) {
-
-            List<UserActionEntity> userActionsAffectingCachedRequest =
-                    mUserActionsRetriever.getUserActionsAffectingEntity(cachedRequest.getId());
-
-            if (userActionsAffectingCachedRequest.isEmpty()) {
-                mRequestsCacher.delete(cachedRequest);
-            } else {
-                currentlyCachedModifiedRequests.add(cachedRequest);
-            }
-        }
-
-        // after this method returns, mCurrentlyCachedRequests will contain only locally modified requests
-        mCurrentlyCachedRequests = currentlyCachedModifiedRequests;
-    }
-
-
-    private void cacheRequests(List<RequestScheme> requestSchemes) {
-        mLogger.d(TAG, "cacheRequests() called");
         for (RequestScheme requestScheme : requestSchemes) {
-            if (!isRequestCurrentlyCached(requestScheme.getId())) {
-                RequestEntity request = convertSchemeToRequest(requestScheme);
-                mRequestsCacher.updateOrInsert(request);
-                mCurrentlyCachedRequests.add(request);
-            }
+            RequestEntity request = convertSchemeToRequest(requestScheme);
+            mRequestsCacher.updateOrInsert(request);
+            processedRequestIds.add(request.getId());
         }
-        mLogger.d(TAG, "cacheRequests() returned");
-    }
 
-    private boolean isRequestCurrentlyCached(String requestId) {
-        for (RequestEntity request : mCurrentlyCachedRequests) {
-            if (request.getId().equals(requestId)) {
-                return true;
-            }
-        }
-        return false;
+        return processedRequestIds;
     }
 
     private RequestEntity convertSchemeToRequest(RequestScheme requestScheme) {

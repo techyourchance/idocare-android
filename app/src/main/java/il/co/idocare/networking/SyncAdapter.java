@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.serversync.ManualSyncCompletedEvent;
+import il.co.idocare.serversync.SyncFailedException;
 import il.co.idocare.serversync.syncers.RequestsSyncer;
 import il.co.idocare.serversync.syncers.UserActionsSyncer;
 import il.co.idocare.utils.Logger;
@@ -60,17 +61,15 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         mLogger.d(LOG_TAG, "onPerformSync() called; sync extras bundle:" + extras);
 
+        try {
+            mUserActionsSyncer.syncUserActions();
 
-//        DataUploader dataUploader =
-//                new DataUploader(userId, authToken, provider);
-//
-//        // This call will block until all local actions will be synchronized to the server
-//        // and the respective ContentProvider will be updated
-//        dataUploader.uploadAll();
+            mRequestsSyncer.syncAllRequests();
 
-        mUserActionsSyncer.syncUserActions();
-
-        mRequestsSyncer.syncAllRequests();
+        } catch (SyncFailedException e) {
+            e.printStackTrace();
+            // TODO: what to do here?
+        }
 
         if (extras.containsKey(SYNC_EXTRAS_MANUAL_SYNC_ID)) {
             notifyManualSyncCompleted(extras.getLong(SYNC_EXTRAS_MANUAL_SYNC_ID));

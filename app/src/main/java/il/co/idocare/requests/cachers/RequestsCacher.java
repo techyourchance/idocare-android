@@ -5,6 +5,9 @@ import android.content.ContentValues;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.List;
+
+import il.co.idocare.contentproviders.ContentProviderUtils;
 import il.co.idocare.requests.RequestEntity;
 import il.co.idocare.contentproviders.IDoCareContract.Requests;
 import il.co.idocare.requests.RequestsChangedEvent;
@@ -37,6 +40,28 @@ public class RequestsCacher {
         );
     }
 
+    public void deleteAllRequestsWithNonMatchingIds(List<String> requestIds) {
+        ContentProviderUtils.SelectionAndSelectionArgsPair selectionPair =
+                ContentProviderUtils.getSelectionByColumnExceptListOfValues(
+                        Requests.COL_REQUEST_ID,
+                        requestIds
+                );
+
+        mContentResolver.delete(
+                Requests.CONTENT_URI,
+                selectionPair.getSelection(),
+                selectionPair.getSelectionArgs()
+        );
+    }
+
+    public void deleteAllRequests() {
+        mContentResolver.delete(
+                Requests.CONTENT_URI,
+                null,
+                null
+        );
+    }
+
     public void updateOrInsertAndNotify(RequestEntity request) {
         updateOrInsert(request);
         notifyRequestsChanged();
@@ -59,6 +84,9 @@ public class RequestsCacher {
                     Requests.CONTENT_URI,
                     cv
             );
+            mLogger.v(TAG, "new request inserted");
+        } else {
+            mLogger.v(TAG, "request updated");
         }
     }
 
