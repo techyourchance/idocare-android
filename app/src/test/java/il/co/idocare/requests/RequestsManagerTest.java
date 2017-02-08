@@ -11,7 +11,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Arrays;
 import java.util.List;
 
-import il.co.idocare.networking.ServerSyncController;
+import il.co.idocare.serversync.ServerSyncController;
 import il.co.idocare.requests.cachers.RequestsCacher;
 import il.co.idocare.requests.retrievers.RequestsRetriever;
 import il.co.idocare.testdoubles.entities.RequestEntityProvider;
@@ -20,13 +20,11 @@ import il.co.idocare.testdoubles.utils.multithreading.ThreadPostersTestControlle
 import il.co.idocare.useractions.cachers.UserActionCacher;
 import il.co.idocare.useractions.entities.CreateRequestUserActionEntity;
 import il.co.idocare.useractions.entities.UserActionEntity;
-import il.co.idocare.useractions.entities.VoteForRequestUserActionEntity;
 import il.co.idocare.utils.Logger;
 
 import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

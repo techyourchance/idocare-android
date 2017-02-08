@@ -1,4 +1,4 @@
-package il.co.idocare.networking;
+package il.co.idocare.serversync;
 
 import android.accounts.Account;
 import android.content.ContentResolver;
@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.nonstaticproxies.ContentResolverProxy;
+import il.co.idocare.serversync.SyncAdapter;
 
 /**
  * This class aggregates functionality related to control of server synchronization (though it is

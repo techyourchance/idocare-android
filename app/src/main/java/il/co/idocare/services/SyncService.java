@@ -8,8 +8,7 @@ import il.co.idocare.MyApplication;
 import il.co.idocare.dependencyinjection.contextscope.ContextModule;
 import il.co.idocare.dependencyinjection.serversync.ServerSyncComponent;
 import il.co.idocare.dependencyinjection.serversync.ServerSyncModule;
-import il.co.idocare.networking.SyncAdapter;
-import il.co.idocare.utils.Logger;
+import il.co.idocare.serversync.SyncAdapter;
 
 /**
  * Bound service to be used by the framework for SyncAdapter enablement

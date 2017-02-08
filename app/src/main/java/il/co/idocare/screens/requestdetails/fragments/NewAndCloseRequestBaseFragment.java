@@ -17,7 +17,7 @@ import javax.inject.Inject;
 import il.co.idocare.Constants;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.helpers.LocationHelper;
-import il.co.idocare.networking.ServerSyncController;
+import il.co.idocare.serversync.ServerSyncController;
 import il.co.idocare.pictures.CameraAdapter;
 import il.co.idocare.screens.common.MainFrameHelper;
 import il.co.idocare.screens.common.fragments.BaseScreenFragment;

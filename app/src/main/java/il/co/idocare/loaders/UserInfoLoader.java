@@ -11,7 +11,7 @@ import android.text.TextUtils;
 import il.co.idocare.datamodels.functional.UserItem;
 import il.co.idocare.localcachedata.LocalCacheDataChangeListener;
 import il.co.idocare.localcachedata.LocalCacheUserData;
-import il.co.idocare.networking.ServerSyncController;
+import il.co.idocare.serversync.ServerSyncController;
 
 /**
  * This Loader is responsible for loading user's data. It searches for the data in the local cache,

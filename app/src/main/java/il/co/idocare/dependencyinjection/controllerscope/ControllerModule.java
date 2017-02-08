@@ -28,7 +28,7 @@ import il.co.idocare.requests.retrievers.RequestsRetriever;
 import il.co.idocare.useractions.cachers.UserActionCacher;
 import il.co.idocare.requests.RequestsManager;
 import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
-import il.co.idocare.networking.ServerSyncController;
+import il.co.idocare.serversync.ServerSyncController;
 import il.co.idocare.pictures.CameraAdapter;
 import il.co.idocare.utils.Logger;
 

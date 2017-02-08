@@ -22,7 +22,7 @@ import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.dialogs.events.PromptDialogDismissedEvent;
 import il.co.idocare.eventbusevents.LoginStateEvents;
-import il.co.idocare.networking.ServerSyncController;
+import il.co.idocare.serversync.ServerSyncController;
 import il.co.idocare.screens.common.MainFrameHelper;
 import il.co.idocare.screens.common.fragments.BaseFragment;
 import il.co.idocare.screens.navigationdrawer.NavigationDrawerManager;

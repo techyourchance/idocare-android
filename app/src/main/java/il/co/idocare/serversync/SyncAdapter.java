@@ -1,4 +1,4 @@
-package il.co.idocare.networking;
+package il.co.idocare.serversync;
 
 import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
@@ -14,8 +14,6 @@ import org.greenrobot.eventbus.EventBus;
 import javax.inject.Inject;
 
 import il.co.idocare.authentication.LoginStateManager;
-import il.co.idocare.serversync.ManualSyncCompletedEvent;
-import il.co.idocare.serversync.SyncFailedException;
 import il.co.idocare.serversync.syncers.RequestsSyncer;
 import il.co.idocare.serversync.syncers.UserActionsSyncer;
 import il.co.idocare.utils.Logger;
@@ -65,6 +63,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             mUserActionsSyncer.syncUserActions();
 
             mRequestsSyncer.syncAllRequests();
+
+
 
         } catch (SyncFailedException e) {
             e.printStackTrace();

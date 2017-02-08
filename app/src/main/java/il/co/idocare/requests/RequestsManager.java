@@ -5,12 +5,11 @@ import java.util.Collections;
 import java.util.List;
 
 import il.co.idocare.common.BaseManager;
-import il.co.idocare.networking.ServerSyncController;
+import il.co.idocare.serversync.ServerSyncController;
 import il.co.idocare.requests.cachers.RequestsCacher;
 import il.co.idocare.requests.retrievers.RequestsRetriever;
 import il.co.idocare.useractions.cachers.UserActionCacher;
 import il.co.idocare.useractions.entities.CreateRequestUserActionEntity;
-import il.co.idocare.useractions.entities.VoteForRequestUserActionEntity;
 import il.co.idocare.utils.Logger;
 import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
 import il.co.idocare.utils.multithreading.MainThreadPoster;

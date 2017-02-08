@@ -1,13 +1,11 @@
 package il.co.idocare.controllers.activities;
 
 import android.Manifest;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -26,10 +24,9 @@ import il.co.idocare.screens.common.toolbar.ToolbarDelegate;
 import il.co.idocare.screens.navigationdrawer.NavigationDrawerDelegate;
 import il.co.idocare.screens.navigationdrawer.events.NavigationDrawerStateChangeEvent;
 import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
-import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
 import il.co.idocare.location.LocationTrackerService;
 import il.co.idocare.mvcviews.mainnavdrawer.MainViewMVC;
-import il.co.idocare.networking.ServerSyncController;
+import il.co.idocare.serversync.ServerSyncController;
 import il.co.idocare.utils.Logger;
 
 
