@@ -137,54 +137,6 @@ public class RequestsManagerTest {
     }
 
     @Test
-    public void voteForRequest_requestExists_userActionCached() {
-        // Arrange
-        VoteForRequestUserActionEntity voteForRequestUserAction =
-                new VoteForRequestUserActionEntity("1000", "request_id", 1);
-        when(mRequestsRetrieverMock.getRequestById(anyString()))
-                .thenReturn(RequestEntityProvider.getNewRequestEntity());
-        // Act
-        SUT.voteForRequest(voteForRequestUserAction);
-
-        // Assert
-        mThreadPostersTestController.waitUntilAllActionsCompleted();
-
-        verify(mUserActionCacherMock).cacheUserAction(mUserActionsCaptor.capture());
-        assertUserActionsEqual(mUserActionsCaptor.getValue(), voteForRequestUserAction);
-    }
-
-    @Test
-    public void voteForRequest_requestExists_requestCachedAsLocallyModified() {
-        // Arrange
-        String requestId = "request_id";
-
-        VoteForRequestUserActionEntity voteForRequestUserAction =
-                new VoteForRequestUserActionEntity("1000", requestId, 1);
-
-        RequestEntity pickedUpRequest =
-                RequestEntity.getBuilder(RequestEntityProvider.getPickedUpRequestEntity())
-                        .setId(requestId)
-                        .setModifiedLocally(false)
-                        .build();
-
-        when(mRequestsRetrieverMock.getRequestById(requestId)).thenReturn(pickedUpRequest);
-
-        // Act
-        SUT.voteForRequest(voteForRequestUserAction);
-
-        // Assert
-        mThreadPostersTestController.waitUntilAllActionsCompleted();
-
-        verify(mRequestsCacherMock).updateOrInsertAndNotify(mRequestsCaptor.capture());
-
-        RequestEntity capturedRequest = mRequestsCaptor.getValue();
-        RequestEntity expectedRequest =
-                RequestEntity.getBuilder(pickedUpRequest).setModifiedLocally(true).build();
-
-        assertRequestsEqual(capturedRequest, expectedRequest);
-    }
-
-    @Test
     public void addNewRequest_requestCached() {
         // Arrange
         RequestEntity newRequest = RequestEntityProvider.getNewRequestEntity();
@@ -246,6 +198,5 @@ public class RequestsManagerTest {
         assertEquals(actual.getClosedPictures(), expected.getClosedPictures());
         assertThat(actual.getClosedVotes(), is(expected.getClosedVotes()));
         assertThat(actual.getLocation(), is(expected.getLocation()));
-        assertThat(actual.isModifiedLocally(), is(expected.isModifiedLocally()));
     }
 }

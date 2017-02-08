@@ -31,7 +31,6 @@ public class RequestEntityProvider {
     public static final List<String> REQUEST_CLOSED_PICTURES = Arrays.asList("picture3", "picture4");
     public static final int REQUEST_CLOSED_VOTES = 1;
     public static final String REQUEST_LOCATION = "Jerusalem, Israel";
-    public static final boolean REQUEST_MODIFIED_LOCALLY = false;
 
 
     public static RequestEntity getNewRequestEntity() {
@@ -51,8 +50,7 @@ public class RequestEntityProvider {
                 null,
                 null,
                 0,
-                REQUEST_LOCATION,
-                REQUEST_MODIFIED_LOCALLY);
+                REQUEST_LOCATION);
         return request;
     }
 
@@ -73,8 +71,7 @@ public class RequestEntityProvider {
                 null,
                 null,
                 0,
-                REQUEST_LOCATION,
-                REQUEST_MODIFIED_LOCALLY);
+                REQUEST_LOCATION);
         return request;
     }
 
@@ -95,8 +92,7 @@ public class RequestEntityProvider {
                 REQUEST_CLOSED_COMMENT,
                 REQUEST_CLOSED_PICTURES,
                 REQUEST_CLOSED_VOTES,
-                REQUEST_LOCATION,
-                REQUEST_MODIFIED_LOCALLY);
+                REQUEST_LOCATION);
         return request;
     }
 }

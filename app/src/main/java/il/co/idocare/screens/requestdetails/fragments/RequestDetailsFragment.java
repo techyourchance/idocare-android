@@ -60,7 +60,6 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
     private RequestDetailsViewMvc mRequestDetailsViewMvc;
 
     @Inject LoginStateManager mLoginStateManager;
-    @Inject ServerSyncController mServerSyncController;
     @Inject ImageViewPictureLoader mImageViewPictureLoader;
     @Inject UserActionsManager mUserActionsManager;
     @Inject RequestsManager mRequestsManager;
@@ -212,12 +211,10 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
                     public void onUserActionAdded(UserActionEntity userAction) {
                         refreshRequest();
                         // Request pickup is time critical action - need to be uploaded to the server ASAP
-                        mServerSyncController.requestImmediateSync();
+                        mRequestsManager.syncRequestsFromServer();
 
                     }
                 });
-
-
     }
 
     private void askUserToLogIn() {
@@ -248,7 +245,7 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
     }
 
 
-    private void voteForRequest(VoteForRequestUserActionEntity entity) {
+    private void voteForRequest(VoteForRequestUserActionEntity voteAction) {
         String activeUserId = mLoginStateManager.getLoggedInUser().getUserId();
 
         // If no logged in user - ask him to log in
@@ -257,8 +254,14 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
             return;
         }
 
-        mRequestsManager.voteForRequest(entity);
-
+        mUserActionsManager.addUserActionAndNotify(
+                voteAction,
+                new UserActionsManager.UserActionsManagerListener() {
+                    @Override
+                    public void onUserActionAdded(UserActionEntity userAction) {
+                        refreshRequest();
+                    }
+                });
     }
 
     private void refreshRequest() {

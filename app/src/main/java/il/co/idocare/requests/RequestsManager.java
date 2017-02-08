@@ -69,19 +69,6 @@ public class RequestsManager extends BaseManager<RequestsManager.RequestsManager
         });
     }
 
-    public void voteForRequest(final VoteForRequestUserActionEntity voteAction) {
-
-        mLogger.d(TAG, "voteForRequest(); request ID: " + voteAction.getEntityId() + "; vote: " + voteAction);
-
-        mBackgroundThreadPoster.post(new Runnable() {
-            @Override
-            public void run() {
-                // TODO: move this functionality to UserActionsManager
-                mUserActionCacher.cacheUserAction(voteAction);
-            }
-        });
-    }
-
     public void fetchAllRequestsAndNotify() {
         mLogger.d(TAG, "fetchAllRequestsAndNotify() called");
 
