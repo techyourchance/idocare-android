@@ -8,6 +8,7 @@ import org.greenrobot.eventbus.EventBus;
 import il.co.idocare.requests.RequestEntity;
 import il.co.idocare.contentproviders.IDoCareContract.Requests;
 import il.co.idocare.requests.RequestsChangedEvent;
+import il.co.idocare.utils.Logger;
 import il.co.idocare.utils.StringUtils;
 
 /**
@@ -15,12 +16,16 @@ import il.co.idocare.utils.StringUtils;
  */
 public class RequestsCacher {
 
+    private static final String TAG = "RequestsCacher";
+
     private final ContentResolver mContentResolver;
     private EventBus mEventBus;
+    private final Logger mLogger;
 
-    public RequestsCacher(ContentResolver contentResolver, EventBus eventBus) {
+    public RequestsCacher(ContentResolver contentResolver, EventBus eventBus, Logger logger) {
         mContentResolver = contentResolver;
         mEventBus = eventBus;
+        mLogger = logger;
     }
 
 
@@ -38,6 +43,7 @@ public class RequestsCacher {
     }
 
     public void updateOrInsert(RequestEntity request) {
+        mLogger.d(TAG, "updateOrInsert() called; request ID: " + request.getId());
         // TODO: make operations atomic
         ContentValues cv = requestEntityToContentValues(request);
 
@@ -56,7 +62,8 @@ public class RequestsCacher {
         }
     }
 
-    public void update(RequestEntity request, String currentRequestId) {
+    public void updateWithPossibleIdChange(RequestEntity request, String currentRequestId) {
+        mLogger.d(TAG, "updateWithPossibleIdChange() called; current request ID: " + request.getId());
         // TODO: make operations atomic
         ContentValues cv = requestEntityToContentValues(request);
 
@@ -68,7 +75,7 @@ public class RequestsCacher {
         );
 
         if (updateCount <= 0) {
-            throw new RuntimeException("no entries update");
+            throw new RuntimeException("no entries updateWithPossibleIdChange");
         }
     }
 

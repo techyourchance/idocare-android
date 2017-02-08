@@ -1,5 +1,6 @@
 package il.co.idocare.requests;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -103,9 +104,12 @@ public class RequestsManager extends BaseManager<RequestsManager.RequestsManager
         mBackgroundThreadPoster.post(new Runnable() {
             @Override
             public void run() {
-                final List<RequestEntity> requests =
-                        Collections.singletonList(mRequestsRetriever.getRequestById(requestId));
-                notifyListenersWithRequests(requests);
+                RequestEntity request = mRequestsRetriever.getRequestById(requestId);
+                if (request == null) {
+                    notifyListenersWithRequests(new ArrayList<RequestEntity>(0));
+                } else {
+                    notifyListenersWithRequests(Collections.singletonList(request));
+                }
             }
         });
     }

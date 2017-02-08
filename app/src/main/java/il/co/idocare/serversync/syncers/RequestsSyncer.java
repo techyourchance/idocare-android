@@ -5,7 +5,6 @@ import android.support.annotation.WorkerThread;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,9 +25,7 @@ import il.co.idocare.serversync.SyncFailedException;
 import il.co.idocare.useractions.entities.UserActionEntity;
 import il.co.idocare.useractions.retrievers.UserActionsRetriever;
 import il.co.idocare.utils.Logger;
-import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -98,7 +95,7 @@ public class RequestsSyncer {
             if (response.isSuccessful()) {
                 RequestEntity updatedRequest = convertSchemeToRequest(response.body().getRequestScheme());
                 // update temp request with new information
-                mRequestsCacher.update(updatedRequest, requestId);
+                mRequestsCacher.updateWithPossibleIdChange(updatedRequest, requestId);
                 // cache the mapping from temp request ID to a new one
                 mTempIdCacher.cacheTempIdMapping(requestId, updatedRequest.getId());
             } else {
@@ -132,6 +129,7 @@ public class RequestsSyncer {
     }
 
     private void processResponse(@Nullable List<RequestScheme> requests) {
+        mLogger.d(TAG, "processResponse() called");
         // TODO: ensure the actions performed atomically
 
         deleteAllNonModifiedLocallyRequestsFromCache();
@@ -145,6 +143,7 @@ public class RequestsSyncer {
     }
 
     private void deleteAllNonModifiedLocallyRequestsFromCache() {
+        mLogger.d(TAG, "deleteAllNonModifiedLocallyRequestsFromCache() called");
         mCurrentlyCachedRequests = mRawRequestsRetriever.getAllRequests();
 
         List<RequestEntity> currentlyCachedModifiedRequests = new ArrayList<>(0);
@@ -167,6 +166,7 @@ public class RequestsSyncer {
 
 
     private void cacheRequests(List<RequestScheme> requestSchemes) {
+        mLogger.d(TAG, "cacheRequests() called");
         for (RequestScheme requestScheme : requestSchemes) {
             if (!isRequestCurrentlyCached(requestScheme.getId())) {
                 RequestEntity request = convertSchemeToRequest(requestScheme);
@@ -174,6 +174,7 @@ public class RequestsSyncer {
                 mCurrentlyCachedRequests.add(request);
             }
         }
+        mLogger.d(TAG, "cacheRequests() returned");
     }
 
     private boolean isRequestCurrentlyCached(String requestId) {

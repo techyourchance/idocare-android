@@ -20,8 +20,8 @@ public class CachersModule {
     }
 
     @Provides
-    RequestsCacher requestsCacher(ContentResolver contentResolver, EventBus eventBus) {
-        return new RequestsCacher(contentResolver, eventBus);
+    RequestsCacher requestsCacher(ContentResolver contentResolver, EventBus eventBus, Logger logger) {
+        return new RequestsCacher(contentResolver, eventBus, logger);
     }
 
     @Provides

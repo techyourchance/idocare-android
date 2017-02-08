@@ -62,7 +62,7 @@ public abstract class BaseScreenFragment extends BaseFragment implements Screen 
      * @return the class of the navigation hierarchy parent of this fragment; null value means
      *         that this fragment is a top level fragment
      */
-    protected @Nullable Class<? extends Fragment> getHierarchicalParentFragment() {
+    public  @Nullable Class<? extends Fragment> getHierarchicalParentFragment() {
         return RequestsAllFragment.class;
     }
 

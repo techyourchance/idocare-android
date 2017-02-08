@@ -47,7 +47,7 @@ public class RawRequestRetriever {
 
         List<RequestEntity> requests = getRequestsForSelection(selection, selectionArgs);
 
-        if (requestId.isEmpty()) {
+        if (requests.isEmpty()) {
             return null;
         } else {
             return requests.get(0);

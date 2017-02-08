@@ -1,12 +1,15 @@
 package il.co.idocare.screens.common;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NavUtils;
 
 import il.co.idocare.R;
+import il.co.idocare.screens.common.fragments.BaseScreenFragment;
 
 /**
  * This helper can be used in order to manager the contents of a single FrameLayout
@@ -15,9 +18,11 @@ import il.co.idocare.R;
 public class MainFrameHelper {
 
 
-    private FragmentManager mFragmentManager;
+    private final Activity mActivity;
+    private final FragmentManager mFragmentManager;
 
-    public MainFrameHelper(FragmentManager fragmentManager) {
+    public MainFrameHelper(Activity activity, FragmentManager fragmentManager) {
+        mActivity = activity;
         mFragmentManager = fragmentManager;
     }
 
@@ -57,23 +62,28 @@ public class MainFrameHelper {
         }
 
         // Change to a new fragment
-        ft.replace(R.id.frame_contents, newFragment, null);
+        ft.replace(getMainFrameId(), newFragment, null);
         ft.commit();
     }
 
-    /**
-     * Check whether a fragment of a specific class is currently shown
-     * @param claz class of fragment to test. Null considered as "test no fragment shown"
-     * @return true if fragment of the same class (or a superclass) is currently shown
-     */
-    private boolean isFragmentShown(Class<? extends Fragment> claz) {
-        Fragment currFragment = mFragmentManager.findFragmentById(R.id.frame_contents);
+    public void navigateUp() {
+        Fragment currentFragment = mFragmentManager.findFragmentById(getMainFrameId());
 
-
-        return (currFragment == null && claz == null) || (
-                currFragment != null && claz.isInstance(currFragment));
+        if (mFragmentManager.popBackStackImmediate()) {
+            return; // navigated "back" in fragments back-stack
+        } else if ( currentFragment != null && currentFragment instanceof BaseScreenFragment) {
+            Class<? extends Fragment> hierParentClass =
+                    ((BaseScreenFragment)currentFragment).getHierarchicalParentFragment();
+            // navigate "up" to hierarchical parent fragment
+            replaceFragment(hierParentClass, false, true, null);
+        } else if (mActivity.onNavigateUp()) {
+            return; // navigated "up" to hierarchical parent activity
+        } else {
+            mActivity.finish(); // finish the activity as last resort
+        }
     }
 
-
-
+    private @IdRes int getMainFrameId() {
+        return R.id.frame_contents;
+    }
 }

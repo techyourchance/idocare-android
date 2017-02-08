@@ -74,8 +74,8 @@ public class ControllerModule {
 
     @Provides
     @ControllerScope
-    MainFrameHelper frameHelper(FragmentManager fragmentManager) {
-        return new MainFrameHelper(fragmentManager);
+    MainFrameHelper frameHelper(Activity activity, FragmentManager fragmentManager) {
+        return new MainFrameHelper(activity, fragmentManager);
     }
 
     @Provides

@@ -294,7 +294,8 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
     public void onRequestsFetched(List<RequestEntity> requests) {
         mLogger.d(TAG, "onRequestsFetched() called");
         if (requests.isEmpty()) {
-            throw new RuntimeException("failed to fetch request info");
+            mMainFrameHelper.navigateUp();
+            return;
         }
         mRequest = requests.get(0);
         mRequestDetailsViewMvc.bindRequest(mRequest);
