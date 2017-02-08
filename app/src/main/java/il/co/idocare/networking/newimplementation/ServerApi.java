@@ -36,4 +36,12 @@ public interface ServerApi {
     @POST("request/close")
     Call<Void> closeRequest(@Body MultipartBody part);
 
+    @FormUrlEncoded
+    @POST("request/vote")
+    Call<Void> voteForRequest(
+            @Field("entity_id") String requestId,
+            @Field("score") int score,
+            @Field("entity_param") String createdOrClosed
+    );
+
 }

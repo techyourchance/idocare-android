@@ -96,4 +96,11 @@ public class VoteForRequestUserActionEntity extends UserActionEntity {
         }
     }
 
+    public int getVoteScore() {
+        return Integer.valueOf(getActionParam());
+    }
+
+    public String getCreatedOrClosed() {
+        return getEntityParam();
+    }
 }

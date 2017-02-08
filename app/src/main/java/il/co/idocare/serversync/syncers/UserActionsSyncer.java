@@ -26,6 +26,7 @@ import il.co.idocare.useractions.cachers.UserActionCacher;
 import il.co.idocare.useractions.entities.CloseRequestUserActionEntity;
 import il.co.idocare.useractions.entities.PickUpRequestUserActionEntity;
 import il.co.idocare.useractions.entities.UserActionEntity;
+import il.co.idocare.useractions.entities.VoteForRequestUserActionEntity;
 import il.co.idocare.useractions.retrievers.UserActionsRetriever;
 import il.co.idocare.utils.Logger;
 import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
@@ -113,12 +114,13 @@ public class UserActionsSyncer {
         String actionType = userAction.getActionType();
 
         boolean userActionSyncedSuccessfully = true;
-
+        // TODO: replace this switch with object oriented factory based polimorphic implementation
         try {
             switch (entityType) {
                 case IDoCareContract.UserActions.ENTITY_TYPE_REQUEST:
                     switch (actionType) {
                         case IDoCareContract.UserActions.ACTION_TYPE_CREATE_REQUEST:
+                            // TODO: this action should be synced without dependency on RequestSyncer
                             mRequestsSyncer.syncRequestCreated(userAction.getEntityId());
                             break;
 
@@ -130,9 +132,9 @@ public class UserActionsSyncer {
                             syncRequestClosedAction(CloseRequestUserActionEntity.fromUserAction(userAction));
                             break;
 
-//                    case IDoCareContract.UserActions.ACTION_TYPE_VOTE_FOR_REQUEST:
-//                        addVoteSpecificInfo(serverHttpRequest, userAction);
-//                        break;
+                        case IDoCareContract.UserActions.ACTION_TYPE_VOTE_FOR_REQUEST:
+                            syncVoteForRequestUserAction(VoteForRequestUserActionEntity.fromUserAction(userAction));
+                            break;
 
                         default:
                             throw new RuntimeException("unsupported action type: " + actionType);
@@ -151,6 +153,7 @@ public class UserActionsSyncer {
 
         mDispatcher.notifyUserActionSyncComplete(userAction, userActionSyncedSuccessfully);
     }
+
 
     private void syncRequestClosedAction(CloseRequestUserActionEntity userAction) {
         mLogger.d(TAG, "syncRequestClosedAction(); entity ID: " + userAction.getEntityId());
@@ -197,6 +200,22 @@ public class UserActionsSyncer {
         }
     }
 
+    private void syncVoteForRequestUserAction(VoteForRequestUserActionEntity userAction) {
+        mLogger.d(TAG, "syncVoteForRequestUserAction(); entity ID: " + userAction.getEntityId());
+
+        Call<Void> call = mServerApi.voteForRequest(userAction.getEntityId(),
+                userAction.getVoteScore(), userAction.getCreatedOrClosed());
+
+        try {
+            Response<Void> response = call.execute();
+            if (!response.isSuccessful()) {
+                throw new SyncFailedException("vote for request call failed; response code: " + response.code());
+            }
+        } catch (IOException e) {
+            throw new SyncFailedException(e);
+        }
+    }
+
     /**
      * This method performs all the necessary cleanup when users' actions have been uploaded
      */
@@ -230,8 +249,6 @@ public class UserActionsSyncer {
         private int mTotalUserActionsCount;
         private int mDispatchedUserActionsCount;
         private int mTotalAffectedEntitiesCount;
-
-        public UserActionsDispatcher() {}
 
         public void prepareUserActionsForDispatching(List<UserActionEntity> userActions) {
 
