@@ -1,5 +1,8 @@
 package il.co.idocare.networking.newimplementation;
 
+import java.util.Map;
+
+import il.co.idocare.networking.newimplementation.schemes.responses.GetUserResponseScheme;
 import il.co.idocare.networking.newimplementation.schemes.responses.RequestsResponseScheme;
 import il.co.idocare.networking.newimplementation.schemes.responses.LoginNativeResponseScheme;
 import il.co.idocare.networking.newimplementation.schemes.responses.RequestResponseScheme;
@@ -7,6 +10,7 @@ import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
+import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
@@ -22,6 +26,10 @@ public interface ServerApi {
             @Header("Idc-user-data") String username,
             @Field("user_data_auth") String password
     );
+
+    @FormUrlEncoded
+    @POST("user/get")
+    Call<Void> getUsersInfo(@FieldMap Map<String, String> userIds);
 
     @POST("request")
     Call<RequestsResponseScheme> getRequests();

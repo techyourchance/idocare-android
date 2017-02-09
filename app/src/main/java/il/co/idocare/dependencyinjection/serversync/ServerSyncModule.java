@@ -6,6 +6,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import dagger.Module;
 import dagger.Provides;
+import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.networking.newimplementation.ServerApi;
 import il.co.idocare.requests.cachers.RequestsCacher;
 import il.co.idocare.requests.cachers.TempIdCacher;
@@ -13,8 +14,10 @@ import il.co.idocare.requests.retrievers.RawRequestRetriever;
 import il.co.idocare.requests.retrievers.TempIdRetriever;
 import il.co.idocare.serversync.syncers.RequestsSyncer;
 import il.co.idocare.serversync.syncers.UserActionsSyncer;
+import il.co.idocare.serversync.syncers.UsersSyncer;
 import il.co.idocare.useractions.cachers.UserActionCacher;
 import il.co.idocare.useractions.retrievers.UserActionsRetriever;
+import il.co.idocare.users.UsersRetriever;
 import il.co.idocare.utils.Logger;
 import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
 
@@ -46,6 +49,16 @@ public class ServerSyncModule {
                                         Logger logger) {
         return new UserActionsSyncer(requestsSyncer, backgroundThreadPoster, userActionsRetriever,
                 userActionCacher, tempIdRetriever, contentResolver, serverApi, logger);
+    }
+    @Provides
+    @ServerSyncScope
+    UsersSyncer usersSyncer(BackgroundThreadPoster backgroundThreadPoster,
+                            UsersRetriever usersRetriever,
+                            LoginStateManager loginStateManager,
+                            ServerApi serverApi,
+                            Logger logger) {
+        return new UsersSyncer(usersRetriever, loginStateManager, backgroundThreadPoster,
+                serverApi, logger);
     }
 
 }

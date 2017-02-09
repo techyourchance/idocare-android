@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName;
 public class LoginNativeResponseScheme {
 
 
-    @SerializedName("data") private UserInfoScheme mUserInfoScheme;
+    @SerializedName("data") private AuthInfoScheme mAuthInfoScheme;
 
-    public UserInfoScheme getUserInfo() {
-        return mUserInfoScheme;
+    public AuthInfoScheme getUserInfo() {
+        return mAuthInfoScheme;
     }
 }

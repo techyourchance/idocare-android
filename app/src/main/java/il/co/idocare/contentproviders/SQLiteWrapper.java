@@ -137,9 +137,11 @@ public class SQLiteWrapper {
                 + " UNION "
                 + " SELECT " + IDoCareContract.Requests.COL_PICKED_UP_BY + " AS "
                 + IDoCareContract.UniqueUserIds.COL_USER_ID + " FROM " + MySQLiteOpenHelper.REQUESTS_TABLE_NAME
+                + " WHERE " + IDoCareContract.Requests.COL_PICKED_UP_BY + " IS NOT NULL "
                 + " UNION "
                 + " SELECT " + IDoCareContract.Requests.COL_CLOSED_BY + " AS "
-                + IDoCareContract.UniqueUserIds.COL_USER_ID + " FROM " + MySQLiteOpenHelper.REQUESTS_TABLE_NAME;
+                + IDoCareContract.UniqueUserIds.COL_USER_ID + " FROM " + MySQLiteOpenHelper.REQUESTS_TABLE_NAME
+                + " WHERE " + IDoCareContract.Requests.COL_CLOSED_BY + " IS NOT NULL ";
 
         return mHelper.getReadableDatabase().rawQuery(query, null);
     }

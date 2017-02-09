@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.serversync.syncers.RequestsSyncer;
 import il.co.idocare.serversync.syncers.UserActionsSyncer;
+import il.co.idocare.serversync.syncers.UsersSyncer;
 import il.co.idocare.utils.Logger;
 
 /**
@@ -40,6 +41,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     @Inject RequestsSyncer mRequestsSyncer;
     @Inject UserActionsSyncer mUserActionsSyncer;
+    @Inject UsersSyncer mUsersSyncer;
 
     @Inject LoginStateManager mLoginStateManager;
     @Inject EventBus mEventBus;
@@ -60,11 +62,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         mLogger.d(LOG_TAG, "onPerformSync() called; sync extras bundle:" + extras);
 
         try {
+
+            // the order of syncers' invocation is important
+
             mUserActionsSyncer.syncUserActions();
 
             mRequestsSyncer.syncAllRequests();
 
-
+            mUsersSyncer.syncUsers();
 
         } catch (SyncFailedException e) {
             e.printStackTrace();
