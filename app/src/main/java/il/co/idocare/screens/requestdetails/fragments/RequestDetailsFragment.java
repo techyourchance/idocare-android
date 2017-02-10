@@ -304,14 +304,18 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
         mLogger.d(TAG, "onUsersFetched() called");
 
         for (UserEntity user : users) {
+            // one user can have multiple "roles"
+            
             if (user.getUserId().equals(mRequest.getCreatedBy())) {
                 mRequestDetailsViewMvc.bindCreatedByUser(user);
-            } else if (user.getUserId().equals(mRequest.getPickedUpBy())) {
+            }
+
+            if (user.getUserId().equals(mRequest.getPickedUpBy())) {
                 mRequestDetailsViewMvc.bindPickedUpByUser(user);
-            } else if (user.getUserId().equals(mRequest.getClosedBy())) {
+            }
+
+            if (user.getUserId().equals(mRequest.getClosedBy())) {
                 mRequestDetailsViewMvc.bindClosedByUser(user);
-            } else {
-                mLogger.w(TAG, "user not related to request; user ID: " + user.getUserId());
             }
         }
     }
