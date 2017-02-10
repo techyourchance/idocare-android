@@ -27,7 +27,7 @@ public class UserEntity {
                 .setPictureUrl(user.mPictureUrl);
     }
 
-    private UserEntity(String userId, String nickname, String firstName,
+    public UserEntity(String userId, String nickname, String firstName,
                       String lastName, int reputation, String pictureUrl) {
         mUserId = userId;
         mNickname = nickname;

@@ -17,6 +17,7 @@ import il.co.idocare.serversync.syncers.UserActionsSyncer;
 import il.co.idocare.serversync.syncers.UsersSyncer;
 import il.co.idocare.useractions.cachers.UserActionCacher;
 import il.co.idocare.useractions.retrievers.UserActionsRetriever;
+import il.co.idocare.users.UsersCacher;
 import il.co.idocare.users.UsersRetriever;
 import il.co.idocare.utils.Logger;
 import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
@@ -52,13 +53,12 @@ public class ServerSyncModule {
     }
     @Provides
     @ServerSyncScope
-    UsersSyncer usersSyncer(BackgroundThreadPoster backgroundThreadPoster,
-                            UsersRetriever usersRetriever,
+    UsersSyncer usersSyncer(UsersRetriever usersRetriever,
+                            UsersCacher usersCacher,
                             LoginStateManager loginStateManager,
                             ServerApi serverApi,
                             Logger logger) {
-        return new UsersSyncer(usersRetriever, loginStateManager, backgroundThreadPoster,
-                serverApi, logger);
+        return new UsersSyncer(usersRetriever, usersCacher, loginStateManager, serverApi, logger);
     }
 
 }

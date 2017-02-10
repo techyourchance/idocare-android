@@ -2,7 +2,7 @@ package il.co.idocare.networking.newimplementation;
 
 import java.util.Map;
 
-import il.co.idocare.networking.newimplementation.schemes.responses.GetUserResponseScheme;
+import il.co.idocare.networking.newimplementation.schemes.responses.GetUsersInfoResponseScheme;
 import il.co.idocare.networking.newimplementation.schemes.responses.RequestsResponseScheme;
 import il.co.idocare.networking.newimplementation.schemes.responses.LoginNativeResponseScheme;
 import il.co.idocare.networking.newimplementation.schemes.responses.RequestResponseScheme;
@@ -29,7 +29,7 @@ public interface ServerApi {
 
     @FormUrlEncoded
     @POST("user/get")
-    Call<Void> getUsersInfo(@FieldMap Map<String, String> userIds);
+    Call<GetUsersInfoResponseScheme> getUsersInfo(@FieldMap Map<String, String> userIds);
 
     @POST("request")
     Call<RequestsResponseScheme> getRequests();

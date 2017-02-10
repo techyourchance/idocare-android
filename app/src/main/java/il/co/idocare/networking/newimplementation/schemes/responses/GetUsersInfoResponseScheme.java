@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class GetUserResponseScheme {
+public class GetUsersInfoResponseScheme {
 
 
     @SerializedName("data") private List<UserInfoScheme> mUsersInfo;

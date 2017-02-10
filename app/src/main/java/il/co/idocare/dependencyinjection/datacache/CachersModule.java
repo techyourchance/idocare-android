@@ -9,6 +9,7 @@ import dagger.Provides;
 import il.co.idocare.requests.cachers.RequestsCacher;
 import il.co.idocare.requests.cachers.TempIdCacher;
 import il.co.idocare.useractions.cachers.UserActionCacher;
+import il.co.idocare.users.UsersCacher;
 import il.co.idocare.utils.Logger;
 
 @Module
@@ -22,6 +23,11 @@ public class CachersModule {
     @Provides
     RequestsCacher requestsCacher(ContentResolver contentResolver, EventBus eventBus, Logger logger) {
         return new RequestsCacher(contentResolver, eventBus, logger);
+    }
+
+    @Provides
+    UsersCacher usersCacher(ContentResolver contentResolver, EventBus eventBus, Logger logger) {
+        return new UsersCacher(contentResolver, eventBus, logger);
     }
 
     @Provides

@@ -10,5 +10,27 @@ public class UserInfoScheme {
     @SerializedName("user_data_picture") private String mPicture;
     @SerializedName("user_data_reputation") private int mReputation;
 
+    public String getId() {
+        return mId;
+    }
 
+    public String getFirstName() {
+        return mFirstName;
+    }
+
+    public String getLastName() {
+        return mLastName;
+    }
+
+    public String getNickname() {
+        return mNickname;
+    }
+
+    public String getPicture() {
+        return mPicture;
+    }
+
+    public int getReputation() {
+        return mReputation;
+    }
 }
