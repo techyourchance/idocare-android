@@ -16,6 +16,7 @@ import javax.inject.Inject;
 
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
+import il.co.idocare.authentication.events.UserLoggedOutEvent;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.screens.requestdetails.fragments.NewRequestFragment;
 import il.co.idocare.dialogs.DialogsFactory;
@@ -96,6 +97,9 @@ public class NavigationDrawerFragment extends BaseFragment implements
             mViewMvc.bindUserData(UserEntity.newBuilder().setUserId(activeUserId).build());
             // fetch user's info
             mUsersDataMonitoringManager.fetchUserByIdAndNotifyIfExists(activeUserId);
+        } else {
+            // no active user
+            mViewMvc.bindUserData(null);
         }
     }
 
@@ -187,7 +191,7 @@ public class NavigationDrawerFragment extends BaseFragment implements
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(LoginStateManager.UserLoggedOutEvent event) {
+    public void onEvent(UserLoggedOutEvent event) {
         fetchDataOfActiveUser();
     }
 

@@ -3,17 +3,12 @@ package il.co.idocare.authentication;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 
-import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 
 import org.greenrobot.eventbus.EventBus;
 
+import il.co.idocare.authentication.events.UserLoggedOutEvent;
 import il.co.idocare.common.settings.SettingsManager;
-import il.co.idocare.datamodels.pojos.UserSignupData;
-import il.co.idocare.eventbusevents.LoginStateEvents;
-import il.co.idocare.sequences.LoginFacebookSequence;
-import il.co.idocare.sequences.Sequence;
-import il.co.idocare.sequences.SignupNativeSequence;
 import il.co.idocare.utils.Logger;
 
 /**
@@ -47,86 +42,21 @@ public class LoginStateManager {
         return authToken != null && !authToken.isEmpty();
     }
 
-    private boolean isLoggedInWithFacebook() {
-        String facebookId = mSettingsManager.facebookId().getValue();
-        return facebookId != null && !facebookId.isEmpty();
-    }
-
-    /**
-     * Perform native signup
-     */
-    public void signUpNative(UserSignupData userData) {
-        final SignupNativeSequence signupNativeSequence =
-                new SignupNativeSequence(userData);
-
-        signupNativeSequence.registerStateChangeListener(new Sequence.StateChangeListener() {
-            @Override
-            public void onSequenceStateChanged(int newState) {
-                if (newState == Sequence.STATE_EXECUTED_SUCCEEDED) {
-                    String username = signupNativeSequence.getSequenceResult().getUsername();
-                    String authToken = signupNativeSequence.getSequenceResult().getAuthToken();
-                    String userId = signupNativeSequence.getSequenceResult().getUserId();
-                    LoginStateManager.this.userLoggedInNative(username, authToken, userId);
-                    EventBus.getDefault()
-                            .post(new LoginStateEvents.LoginSucceededEvent());
-                } else if (newState == Sequence.STATE_EXECUTED_FAILED) {
-                    EventBus.getDefault().post(new LoginStateEvents.LoginFailedEvent());
-                }
-            }
-        });
-        signupNativeSequence.executeInBackground();
-    }
-
-
-    /* pp */ void userLoggedInNative(String username, String publicKey, String userId) {
+    /* pp */ void userLoggedIn(String username, String publicKey, String userId) {
         clearUserSettings();
-        setUserSettings(username, publicKey, userId, null);
-    }
-
-    /**
-     * TODO: write javadoc
-     */
-    public void logInFacebook(AccessToken accessToken) {
-
-        final LoginFacebookSequence loginFacebookSequence =
-                new LoginFacebookSequence(accessToken, mLogger);
-
-        loginFacebookSequence.registerStateChangeListener(new Sequence.StateChangeListener() {
-            @Override
-            public void onSequenceStateChanged(int newState) {
-                if (newState == Sequence.STATE_EXECUTED_SUCCEEDED) {
-                    String username = loginFacebookSequence.getSequenceResult().getUsername();
-                    String authToken = loginFacebookSequence.getSequenceResult().getAuthToken();
-                    String facebookId = loginFacebookSequence.getSequenceResult().getFacebookId();
-                    LoginStateManager.this.userLoggedInFacebook(username, authToken, facebookId);
-                    EventBus.getDefault()
-                            .post(new LoginStateEvents.LoginSucceededEvent());
-                } else if (newState == Sequence.STATE_EXECUTED_FAILED) {
-                    EventBus.getDefault().post(new LoginStateEvents.LoginFailedEvent());
-                }
-            }
-        });
-        loginFacebookSequence.executeInBackground();
-
-    }
-
-    private void userLoggedInFacebook(String username, String authToken, String facebookId) {
-        clearUserSettings();
-        setUserSettings(username, authToken, facebookId, facebookId);
+        setUserSettings(username, publicKey, userId);
     }
 
     private void clearUserSettings() {
         mSettingsManager.userEmail().remove();
         mSettingsManager.userId().remove();
         mSettingsManager.authToken().remove();
-        mSettingsManager.facebookId().remove();
     }
 
-    private void setUserSettings(String username, String authToken, String userId, String facebookId) {
+    private void setUserSettings(String username, String authToken, String userId) {
         mSettingsManager.userEmail().setValue(username);
         mSettingsManager.userId().setValue(userId);
         mSettingsManager.authToken().setValue(authToken);
-        mSettingsManager.facebookId().setValue(facebookId);
     }
 
     /**
@@ -134,9 +64,7 @@ public class LoginStateManager {
      */
     public void logOut() {
 
-        if (isLoggedInWithFacebook()) {
-            LoginManager.getInstance().logOut();
-        }
+        LoginManager.getInstance().logOut(); // log out if logged in with FB
 
         clearUserSettings();
 
@@ -146,11 +74,6 @@ public class LoginStateManager {
         EventBus.getDefault().post(new UserLoggedOutEvent());
     }
 
-
-    /**
-     * Set the value of "user chose to skip login" flag
-     * @param loginSkipped true in order to set the flag, false to clear it
-     */
     public void setLoginSkipped(boolean loginSkipped) {
         mSettingsManager.loginSkipped().setValue(loginSkipped);
     }
@@ -163,12 +86,11 @@ public class LoginStateManager {
         String email = mSettingsManager.userEmail().getValue();
         String userId = mSettingsManager.userId().getValue();
         String authToken = mSettingsManager.authToken().getValue();
-        String facebookId = mSettingsManager.facebookId().getValue();
 
         if (userId == null || userId.isEmpty()) {
-            return new LoggedInUserEntity("", "", "", ""); // null value object
+            return new LoggedInUserEntity("", "", ""); // null value object
         } else {
-            return new LoggedInUserEntity(email, userId, facebookId, authToken);
+            return new LoggedInUserEntity(email, userId, authToken);
         }
     }
 
@@ -181,19 +103,5 @@ public class LoginStateManager {
         mAccountManager.addAccountExplicitly(acc, null, null);
         return acc;
     }
-
-
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // EventBus events
-
-    public static class UserLoggedInEvent {}
-
-    public static class UserLoggedOutEvent {}
-
-    // End of EventBus events
-    //
-    // ---------------------------------------------------------------------------------------------
 
 }

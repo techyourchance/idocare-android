@@ -1,6 +1,7 @@
 package il.co.idocare.screens.navigationdrawer.mvcviews;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,7 +68,7 @@ public class NavigationDrawerViewMvcImpl extends
     }
 
     @Override
-    public void bindUserData(UserEntity user) {
+    public void bindUserData(@Nullable UserEntity user) {
         mCurrentUser = user;
         refreshDrawer();
     }

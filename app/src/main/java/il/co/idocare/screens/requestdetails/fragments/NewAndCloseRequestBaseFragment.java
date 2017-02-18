@@ -16,6 +16,7 @@ import javax.inject.Inject;
 
 import il.co.idocare.Constants;
 import il.co.idocare.authentication.LoginStateManager;
+import il.co.idocare.authentication.events.UserLoggedOutEvent;
 import il.co.idocare.helpers.LocationHelper;
 import il.co.idocare.serversync.ServerSyncController;
 import il.co.idocare.pictures.CameraAdapter;
@@ -119,7 +120,7 @@ public abstract class NewAndCloseRequestBaseFragment extends BaseScreenFragment 
     // EventBus events handling
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(LoginStateManager.UserLoggedOutEvent event) {
+    public void onEvent(UserLoggedOutEvent event) {
         onUserLoggedOut();
     }
 

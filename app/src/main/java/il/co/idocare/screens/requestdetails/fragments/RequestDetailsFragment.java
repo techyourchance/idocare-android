@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
+import il.co.idocare.authentication.events.UserLoggedOutEvent;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
@@ -120,7 +121,7 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(LoginStateManager.UserLoggedOutEvent event) {
+    public void onEvent(UserLoggedOutEvent event) {
         mRequestDetailsViewMvc.bindCurrentUserId(mLoginStateManager.getLoggedInUser().getUserId());
         refreshRequest();
     }

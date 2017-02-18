@@ -63,8 +63,9 @@ public class ApplicationModule {
     AuthManager authManager(LoginStateManager loginStateManager,
                             BackgroundThreadPoster backgroundThreadPoster,
                             ServerApi serverApi,
-                            EventBus eventBus) {
-        return new AuthManager(loginStateManager, backgroundThreadPoster, serverApi, eventBus);
+                            EventBus eventBus,
+                            Logger logger) {
+        return new AuthManager(loginStateManager, backgroundThreadPoster, serverApi, eventBus, logger);
     }
 
     @Provides

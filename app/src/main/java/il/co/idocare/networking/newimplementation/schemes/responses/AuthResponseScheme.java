@@ -2,7 +2,7 @@ package il.co.idocare.networking.newimplementation.schemes.responses;
 
 import com.google.gson.annotations.SerializedName;
 
-public class LoginNativeResponseScheme {
+public class AuthResponseScheme {
 
 
     @SerializedName("data") private AuthInfoScheme mAuthInfoScheme;

@@ -32,10 +32,6 @@ public class SettingsManager {
         return mSettingsEntryFactory.getDataEntry(String.class, KEY_USER_AUTH_TOKEN, null);
     }
 
-    public SettingDataEntry<String> facebookId() {
-        return mSettingsEntryFactory.getDataEntry(String.class, KEY_USER_FB_ID, null);
-    }
-
     public SettingDataEntry<Boolean> loginSkipped() {
         return mSettingsEntryFactory.getDataEntry(Boolean.class, KEY_LOGIN_SKIPPED, false);
     }

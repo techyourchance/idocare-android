@@ -27,6 +27,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import javax.inject.Inject;
 
 import il.co.idocare.R;
+import il.co.idocare.authentication.AuthManager;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
@@ -59,6 +60,7 @@ public class LoginChooserFragment extends AbstractFragment
     private CallbackManager mFacebookCallbackManager;
 
     @Inject LoginStateManager mLoginStateManager;
+    @Inject AuthManager mAuthManager;
     @Inject DialogsManager mDialogsManager;
     @Inject DialogsFactory mDialogsFactory;
     @Inject Logger mLogger;
@@ -267,7 +269,7 @@ public class LoginChooserFragment extends AbstractFragment
             LoginChooserFragment.this.showProgressDialog("Synchronizing with Facebook",
                     "Please wait while we are synchronizing with your Facebook profile...");
 
-            mLoginStateManager.logInFacebook(accessToken);
+            mAuthManager.logInFacebook(accessToken);
         }
 
 

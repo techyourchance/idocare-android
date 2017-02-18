@@ -1,6 +1,16 @@
 package il.co.idocare.authentication;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
+
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +19,8 @@ import il.co.idocare.Constants;
 import il.co.idocare.datamodels.pojos.UserSignupData;
 import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.networking.newimplementation.ServerApi;
-import il.co.idocare.networking.newimplementation.schemes.responses.LoginNativeResponseScheme;
+import il.co.idocare.networking.newimplementation.schemes.responses.AuthResponseScheme;
+import il.co.idocare.utils.Logger;
 import il.co.idocare.utils.SecurityUtils;
 import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
 import okhttp3.MediaType;
@@ -24,77 +35,157 @@ import retrofit2.Response;
  */
 public class AuthManager {
 
+    private static final String TAG = "AuthManager";
+
     private final LoginStateManager mLoginStateManager;
     private final BackgroundThreadPoster mBackgroundThreadPoster;
     private final ServerApi mServerApi;
     private final EventBus mEventBus;
+    private final Logger mLogger;
 
     public AuthManager(LoginStateManager loginStateManager,
                        BackgroundThreadPoster backgroundThreadPoster,
                        ServerApi serverApi,
-                       EventBus eventBus) {
+                       EventBus eventBus,
+                       Logger logger) {
         mLoginStateManager = loginStateManager;
         mBackgroundThreadPoster = backgroundThreadPoster;
         mServerApi = serverApi;
         mEventBus = eventBus;
+        mLogger = logger;
     }
 
-    public void logInNative(final String username, String password) {
+
+    public void logInFacebook(final AccessToken accessToken) {
+        mBackgroundThreadPoster.post(new Runnable() {
+            @Override
+            public void run() {
+                logInFacebookSync(accessToken);
+            }
+        });
+    }
+
+    @WorkerThread
+    private void logInFacebookSync(AccessToken accessToken) {
+        // Construct a request to fetch user's details
+        GraphRequest request = GraphRequest.newMeRequest(accessToken, null);
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "id, first_name, last_name, email");
+        request.setParameters(parameters);
+
+        GraphResponse response = GraphRequest.executeAndWait(request);
+
+        mLogger.v(TAG, "Contents of facebook/me response: " + response.getRawResponse());
+
+        if (response.getError() != null) {
+            mLogger.e(TAG, "facebook/me returned error response: " +
+                    response.getError().getErrorMessage());
+            // TODO: facebook errors should be processed - there is a way to recover from some of them
+            return;
+        }
+
+        JSONObject jsonResponse = response.getJSONObject();
+        if (jsonResponse == null) {
+            mLogger.e(TAG, "couldn't obtain JSON object from FB response");
+            return;
+        }
+
+        final String facebookId;
+        String email;
+        String password;
+        String firstName;
+        String lastName;
+        String nickname;
+
+        try {
+            facebookId = jsonResponse.getString("id");
+            email = jsonResponse.getString("email");
+            password = facebookId;
+            firstName = jsonResponse.getString("first_name");
+            lastName = jsonResponse.getString("last_name");
+            nickname = firstName + " " + lastName;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        AuthResponseScheme authResponseScheme = null;
+
+        if ((authResponseScheme = logInNativeSync(email, password)) != null) {
+            mLogger.d(TAG, "native login using FB credentials succeeded");
+        } else {
+            mLogger.d(TAG, "native login using FB credentials failed; attempting native signup");
+            UserSignupData userData = new UserSignupData(email, password, nickname,
+                    firstName, lastName, facebookId, null);
+            authResponseScheme = signUpNativeSync(userData);
+        }
+
+        processAuthenticationResponse(email, authResponseScheme);
+    }
+
+    public void logInNative(final String username, final String password) {
+        mBackgroundThreadPoster.post(new Runnable() {
+            @Override
+            public void run() {
+                AuthResponseScheme responseScheme = logInNativeSync(username, password);
+                processAuthenticationResponse(username, responseScheme);
+
+            }
+        });
+    }
+
+    @WorkerThread
+    @Nullable
+    private AuthResponseScheme logInNativeSync(String username, String password) {
 
         final String encodedUsername = SecurityUtils.encodeStringAsCredential(username);
         final String encodedPassword = SecurityUtils.encodeStringAsCredential(password);
 
-        mBackgroundThreadPoster.post(new Runnable() {
-            @Override
-            public void run() {
-                Call<LoginNativeResponseScheme> call = mServerApi.loginNative(encodedUsername, encodedPassword);
-                try {
-                    Response<LoginNativeResponseScheme> response = call.execute();
-                    if (response.isSuccessful()) {
-                        processLoginNativeResponse(username, response.body());
-                        notifyLoginSucceeded();
-                    } else {
-                        notifyLoginFailed();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    notifyLoginFailed();
-                }
-            }
-        });
-    }
+        Call<AuthResponseScheme> call = mServerApi.loginNative(encodedUsername, encodedPassword);
 
-    private void processLoginNativeResponse(String username, LoginNativeResponseScheme loginNativeResponse) {
-        String publicKey = loginNativeResponse.getUserInfo().getPublicKey();
-        String userId = loginNativeResponse.getUserInfo().getUserId();
-        mLoginStateManager.userLoggedInNative(username, publicKey, userId);
+        AuthResponseScheme responseScheme = null;
+        try {
+            Response<AuthResponseScheme> response = call.execute();
+            if (response.isSuccessful()) {
+                responseScheme = response.body();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return responseScheme;
     }
 
 
     public void signUp(final UserSignupData signupUserData) {
-
-        final String username = signupUserData.getEmail();
-
-        final MultipartBody signupBody = createSignupBody(signupUserData);
-
         mBackgroundThreadPoster.post(new Runnable() {
             @Override
             public void run() {
-                Call<LoginNativeResponseScheme> call = mServerApi.signup(signupBody);
-                try {
-                    Response<LoginNativeResponseScheme> response = call.execute();
-                    if (response.isSuccessful()) {
-                        processLoginNativeResponse(username, response.body());
-                        notifyLoginSucceeded();
-                    } else {
-                        notifyLoginFailed();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    notifyLoginFailed();
-                }
+                String username = signupUserData.getEmail();
+                AuthResponseScheme authResponseScheme = signUpNativeSync(signupUserData);
+                processAuthenticationResponse(username, authResponseScheme);
             }
         });
+    }
+
+    @WorkerThread
+    @Nullable
+    private AuthResponseScheme signUpNativeSync(UserSignupData signupUserData) {
+        final MultipartBody signupBody = createSignupBody(signupUserData);
+
+        Call<AuthResponseScheme> call = mServerApi.signup(signupBody);
+
+        AuthResponseScheme authResponseScheme = null;
+        try {
+            Response<AuthResponseScheme> response = call.execute();
+            if (response.isSuccessful()) {
+                authResponseScheme = response.body();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return authResponseScheme;
     }
 
     private MultipartBody createSignupBody(UserSignupData signupUserData) {
@@ -137,6 +228,17 @@ public class AuthManager {
         return builder.build();
     }
 
+    private void processAuthenticationResponse(String username,
+                                               @Nullable AuthResponseScheme authResponseScheme) {
+        if (authResponseScheme != null) {
+            String publicKey = authResponseScheme.getUserInfo().getPublicKey();
+            String userId = authResponseScheme.getUserInfo().getUserId();
+            mLoginStateManager.userLoggedIn(username, publicKey, userId);
+            notifyLoginSucceeded();
+        } else {
+            notifyLoginFailed();
+        }
+    }
 
     private void notifyLoginFailed() {
         mEventBus.post(new LoginStateEvents.LoginFailedEvent());
