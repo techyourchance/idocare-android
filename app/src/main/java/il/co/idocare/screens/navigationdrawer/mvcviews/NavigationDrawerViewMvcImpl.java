@@ -134,8 +134,9 @@ public class NavigationDrawerViewMvcImpl extends
 
         entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_new_request,
                 R.drawable.ic_drawer_add_new_request, ENTRY_NEW_REQUEST));
-        entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_map,
-                R.drawable.ic_drawer_location, ENTRY_SHOW_MAP));
+        // TODO: add map functionality
+//        entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_map,
+//                R.drawable.ic_drawer_location, ENTRY_SHOW_MAP));
         entries.add(new NavigationDrawerEntry(R.string.nav_drawer_entry_requests_list,
                 R.drawable.ic_drawer_requests_list, ENTRY_REQUESTS_LIST));
 
