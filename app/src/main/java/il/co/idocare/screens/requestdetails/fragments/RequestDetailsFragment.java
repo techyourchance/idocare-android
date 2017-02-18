@@ -305,7 +305,7 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
 
         for (UserEntity user : users) {
             // one user can have multiple "roles"
-            
+
             if (user.getUserId().equals(mRequest.getCreatedBy())) {
                 mRequestDetailsViewMvc.bindCreatedByUser(user);
             }

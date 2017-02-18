@@ -19,17 +19,11 @@ public class SecurityUtils {
      * @return the encoded string, or null in case of an error
      */
     public static String encodeStringAsCredential(String stringToEncode) {
-        if (stringToEncode == null) {
-            Log.e(TAG, "encodeStringAsCredential: null parameter - returning null");
-            return null;
-        }
-
         byte[] encodedStringBytes;
         try {
             encodedStringBytes = ("fuckyouhackers" + stringToEncode).getBytes("UTF-8");
         } catch (UnsupportedEncodingException e ) {
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException(e);
         }
         return Base64.encodeToString(encodedStringBytes, Base64.NO_WRAP);
     }

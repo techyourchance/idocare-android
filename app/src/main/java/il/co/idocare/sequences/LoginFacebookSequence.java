@@ -9,7 +9,7 @@ import com.facebook.GraphResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import il.co.idocare.datamodels.pojos.UserSignupNativeData;
+import il.co.idocare.datamodels.pojos.UserSignupData;
 import il.co.idocare.utils.Logger;
 
 /**
@@ -86,7 +86,7 @@ public class LoginFacebookSequence extends AbstractSequence {
             mLogger.d(TAG, "native login using FB credentials succeeded");
             loginSucceeded(email, authToken, facebookId);
         } else {
-            UserSignupNativeData userData = new UserSignupNativeData(email, password, nickname,
+            UserSignupData userData = new UserSignupData(email, password, nickname,
                     firstName, lastName, facebookId, null);
             if ((authToken = attemptSignupNative(userData)) != null) {
                 mLogger.d(TAG, "native signup using FB credentials succeeded");
@@ -112,7 +112,7 @@ public class LoginFacebookSequence extends AbstractSequence {
         }
     }
 
-    private String attemptSignupNative(UserSignupNativeData userData) {
+    private String attemptSignupNative(UserSignupData userData) {
         final SignupNativeSequence signupNativeSequence =
                 new SignupNativeSequence(userData);
 

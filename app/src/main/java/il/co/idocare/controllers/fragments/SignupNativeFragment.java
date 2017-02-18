@@ -1,6 +1,5 @@
 package il.co.idocare.controllers.fragments;
 
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -26,10 +25,11 @@ import javax.inject.Inject;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
+import il.co.idocare.authentication.AuthManager;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
-import il.co.idocare.datamodels.pojos.UserSignupNativeData;
+import il.co.idocare.datamodels.pojos.UserSignupData;
 import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.mvcviews.signupnative.SignupNativeViewMvc;
 import il.co.idocare.mvcviews.signupnative.SignupNativeViewMvcImpl;
@@ -51,8 +51,8 @@ public class SignupNativeFragment extends AbstractFragment implements SignupNati
 
     private SignupNativeViewMvcImpl mSignupNativeViewMvc;
 
-    @Inject
-    LoginStateManager mLoginStateManager;
+    @Inject LoginStateManager mLoginStateManager;
+    @Inject AuthManager mAuthManager;
 
     private AlertDialog mAlertDialog;
 
@@ -210,13 +210,13 @@ public class SignupNativeFragment extends AbstractFragment implements SignupNati
             return;
         }
 
-        UserSignupNativeData userData = new UserSignupNativeData(email, password, nickname,
+        UserSignupData userData = new UserSignupData(email, password, nickname,
                 firstName, lastName, null, mUserPicturePath);
 
         // disable user input during signup
         mSignupNativeViewMvc.disableUserInput();
 
-        mLoginStateManager.signUpNative(userData);
+        mAuthManager.signUp(userData);
 
     }
 

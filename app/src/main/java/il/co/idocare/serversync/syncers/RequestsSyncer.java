@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import il.co.idocare.Constants;
+import il.co.idocare.networking.newimplementation.NetworkingUtils;
 import il.co.idocare.networking.newimplementation.ServerApi;
 import il.co.idocare.networking.newimplementation.schemes.responses.RequestResponseScheme;
 import il.co.idocare.networking.newimplementation.schemes.responses.RequestsResponseScheme;
@@ -20,7 +21,6 @@ import il.co.idocare.requests.RequestsChangedEvent;
 import il.co.idocare.requests.cachers.RequestsCacher;
 import il.co.idocare.requests.cachers.TempIdCacher;
 import il.co.idocare.requests.retrievers.RawRequestRetriever;
-import il.co.idocare.serversync.ServerSyncUtils;
 import il.co.idocare.serversync.SyncFailedException;
 import il.co.idocare.useractions.retrievers.UserActionsRetriever;
 import il.co.idocare.utils.Logger;
@@ -78,7 +78,7 @@ public class RequestsSyncer {
         builder.addFormDataPart(Constants.FIELD_NAME_CREATED_POLLUTION_LEVEL, "1"); // TODO: remove
 
 
-        builder = ServerSyncUtils.addPicturesParts(
+        builder = NetworkingUtils.addPicturesParts(
                 builder,
                 request.getCreatedPictures(),
                 Constants.FIELD_NAME_CREATED_PICTURES

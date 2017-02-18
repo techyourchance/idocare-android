@@ -2,10 +2,7 @@ package il.co.idocare.datamodels.pojos;
 
 import android.support.annotation.Nullable;
 
-/**
- * Created by Vasiliy on 1/27/2016.
- */
-public class UserSignupNativeData {
+public class UserSignupData {
 
     private final String mEmail;
     private final String mPassword;
@@ -17,9 +14,9 @@ public class UserSignupNativeData {
     @Nullable
     private final String mUserPicturePath;
 
-    public UserSignupNativeData(String email, String password, String nickname, String firstName,
-                                String lastName, @Nullable String facebookId,
-                                @Nullable String userPicturePath) {
+    public UserSignupData(String email, String password, String nickname, String firstName,
+                          String lastName, @Nullable String facebookId,
+                          @Nullable String userPicturePath) {
 
         mEmail = email;
         mPassword = password;

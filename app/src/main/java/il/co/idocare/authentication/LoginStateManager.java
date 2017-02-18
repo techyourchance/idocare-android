@@ -8,21 +8,13 @@ import com.facebook.login.LoginManager;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.IOException;
-
 import il.co.idocare.common.settings.SettingsManager;
-import il.co.idocare.datamodels.pojos.UserSignupNativeData;
+import il.co.idocare.datamodels.pojos.UserSignupData;
 import il.co.idocare.eventbusevents.LoginStateEvents;
-import il.co.idocare.networking.newimplementation.ServerApi;
 import il.co.idocare.sequences.LoginFacebookSequence;
-import il.co.idocare.sequences.LoginNativeSequence;
 import il.co.idocare.sequences.Sequence;
 import il.co.idocare.sequences.SignupNativeSequence;
 import il.co.idocare.utils.Logger;
-import il.co.idocare.utils.SecurityUtils;
-import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
-import retrofit2.Call;
-import retrofit2.Response;
 
 /**
  * This class manages the login state of the user - it aggregates information from all login
@@ -63,7 +55,7 @@ public class LoginStateManager {
     /**
      * Perform native signup
      */
-    public void signUpNative(UserSignupNativeData userData) {
+    public void signUpNative(UserSignupData userData) {
         final SignupNativeSequence signupNativeSequence =
                 new SignupNativeSequence(userData);
 
@@ -85,34 +77,6 @@ public class LoginStateManager {
         signupNativeSequence.executeInBackground();
     }
 
-    /**
-     * Attempt to perform a native log in with the provided credentials.
-     * @param username
-     * @param password
-     */
-    public void logInNative(String username, String password) {
-
-
-        final LoginNativeSequence loginNativeSequence =
-                new LoginNativeSequence(username, password);
-
-        loginNativeSequence.registerStateChangeListener(new Sequence.StateChangeListener() {
-            @Override
-            public void onSequenceStateChanged(int newState) {
-                if (newState == Sequence.STATE_EXECUTED_SUCCEEDED) {
-                    String username = loginNativeSequence.getSequenceResult().getUsername();
-                    String authToken = loginNativeSequence.getSequenceResult().getAuthToken();
-                    String userId = loginNativeSequence.getSequenceResult().getUserId();
-                    LoginStateManager.this.userLoggedInNative(username, authToken, userId);
-                    EventBus.getDefault()
-                            .post(new LoginStateEvents.LoginSucceededEvent());
-                } else if (newState == Sequence.STATE_EXECUTED_FAILED) {
-                    EventBus.getDefault().post(new LoginStateEvents.LoginFailedEvent());
-                }
-            }
-        });
-        loginNativeSequence.executeInBackground();
-    }
 
     /* pp */ void userLoggedInNative(String username, String publicKey, String userId) {
         clearUserSettings();

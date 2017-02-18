@@ -2,7 +2,6 @@ package il.co.idocare.serversync.syncers;
 
 
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
@@ -18,9 +17,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
+import il.co.idocare.networking.newimplementation.NetworkingUtils;
 import il.co.idocare.networking.newimplementation.ServerApi;
 import il.co.idocare.requests.retrievers.TempIdRetriever;
-import il.co.idocare.serversync.ServerSyncUtils;
 import il.co.idocare.serversync.SyncFailedException;
 import il.co.idocare.useractions.cachers.UserActionCacher;
 import il.co.idocare.useractions.entities.CloseRequestUserActionEntity;
@@ -166,7 +165,7 @@ public class UserActionsSyncer {
         builder.addFormDataPart(Constants.FIELD_NAME_CLOSED_COMMENT, userAction.getClosedComment());
 
 
-        builder = ServerSyncUtils.addPicturesParts(
+        builder = NetworkingUtils.addPicturesParts(
                 builder,
                 userAction.getClosedPictures(),
                 Constants.FIELD_NAME_CLOSED_PICTURES

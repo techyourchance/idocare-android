@@ -1,4 +1,4 @@
-package il.co.idocare.serversync;
+package il.co.idocare.networking.newimplementation;
 
 import java.io.File;
 import java.util.List;
@@ -7,10 +7,22 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
-public final class ServerSyncUtils {
-    private ServerSyncUtils() {}
+public final class NetworkingUtils {
+
+    private static final String MULTIPART_FORM_DATA = "multipart/form-data";
 
 
+    private NetworkingUtils() {}
+
+
+    public static RequestBody createPictureBody(String pictureUri) {
+        File pictureFile = new File(pictureUri);
+        return RequestBody.create(MediaType.parse("image/*"), pictureFile);
+    }
+
+    public static RequestBody createStringBody(String string) {
+        return RequestBody.create(MediaType.parse(MULTIPART_FORM_DATA), string);
+    }
 
     public static MultipartBody.Builder addPicturesParts(MultipartBody.Builder builder, List<String> pictures, String fieldName) {
 

@@ -10,7 +10,7 @@ import ch.boye.httpclientandroidlib.client.methods.CloseableHttpResponse;
 import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
 import il.co.idocare.Constants;
 import il.co.idocare.URLs;
-import il.co.idocare.datamodels.pojos.UserSignupNativeData;
+import il.co.idocare.datamodels.pojos.UserSignupData;
 import il.co.idocare.networking.ServerHttpRequest;
 import il.co.idocare.networking.responseparsers.HttpResponseParseException;
 import il.co.idocare.networking.responseparsers.ResponseParserUtils;
@@ -25,11 +25,11 @@ public class SignupNativeSequence extends AbstractSequence {
 
     private static final String TAG = "SignupNativeSequence";
 
-    private UserSignupNativeData mUserData;
+    private UserSignupData mUserData;
 
     private SignupNativeResult mSignupNativeResult;
 
-    public SignupNativeSequence(UserSignupNativeData userData) {
+    public SignupNativeSequence(UserSignupData userData) {
         mUserData = userData;
     }
 
