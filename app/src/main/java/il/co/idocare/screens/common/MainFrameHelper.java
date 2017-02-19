@@ -52,7 +52,7 @@ public class MainFrameHelper {
 
         if (clearBackStack) {
             // Remove all entries from back stack
-            mFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            mFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
 
         FragmentTransaction ft = mFragmentManager.beginTransaction();
