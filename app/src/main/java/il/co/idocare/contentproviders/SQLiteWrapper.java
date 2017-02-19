@@ -17,11 +17,11 @@ public class SQLiteWrapper {
     private static final String LOG_TAG = SQLiteWrapper.class.getSimpleName();
 
 
-    private IdcSQLiteOpenHelper mHelper;
+    private final IdcSQLiteOpenHelper mHelper;
 
 
-    public SQLiteWrapper(Context context) {
-        mHelper = new IdcSQLiteOpenHelper(context);
+    public SQLiteWrapper(IdcSQLiteOpenHelper helper) {
+        mHelper = helper;
     }
 
 

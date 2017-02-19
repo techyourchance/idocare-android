@@ -51,7 +51,7 @@ public class IDoCareContentProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        mSQLiteWrapper = new SQLiteWrapper(getContext());
+        mSQLiteWrapper = new SQLiteWrapper(IdcSQLiteOpenHelper.getInstance(getContext()));
         return true;
     }
 

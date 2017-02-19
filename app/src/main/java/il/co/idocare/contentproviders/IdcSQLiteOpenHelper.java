@@ -6,10 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-/**
- * Custom implementation of SQLiteOpenHelper.
- */
-class IdcSQLiteOpenHelper extends SQLiteOpenHelper {
+public class IdcSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "IdcSQLiteOpenHelper";
 
@@ -75,8 +72,25 @@ class IdcSQLiteOpenHelper extends SQLiteOpenHelper {
             + IDoCareContract.TempIdMappings.COL_PERMANENT_ID + " TEXT UNIQUE ); ";
 
 
+    // ---------------------------------------------------------------------------------------------
+    //
+    // Singleton management
 
-    public IdcSQLiteOpenHelper(Context context) {
+    private static IdcSQLiteOpenHelper sInstance;
+
+    public static IdcSQLiteOpenHelper getInstance(Context context) {
+        synchronized (IdcSQLiteOpenHelper.class) {
+            if (sInstance == null) {
+                sInstance = new IdcSQLiteOpenHelper(context.getApplicationContext());
+            }
+            return sInstance;
+        }
+    }
+
+    //
+    // ---------------------------------------------------------------------------------------------
+
+    private IdcSQLiteOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
