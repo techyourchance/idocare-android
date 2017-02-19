@@ -8,7 +8,7 @@ import dagger.Module;
 import dagger.Provides;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.TransactionsController;
-import il.co.idocare.networking.newimplementation.ServerApi;
+import il.co.idocare.networking.ServerApi;
 import il.co.idocare.requests.cachers.RequestsCacher;
 import il.co.idocare.requests.cachers.TempIdCacher;
 import il.co.idocare.requests.retrievers.RawRequestRetriever;

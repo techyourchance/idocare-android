@@ -17,8 +17,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.networking.newimplementation.NetworkingUtils;
-import il.co.idocare.networking.newimplementation.ServerApi;
+import il.co.idocare.networking.NetworkingUtils;
+import il.co.idocare.networking.ServerApi;
 import il.co.idocare.requests.retrievers.TempIdRetriever;
 import il.co.idocare.serversync.SyncFailedException;
 import il.co.idocare.useractions.cachers.UserActionCacher;

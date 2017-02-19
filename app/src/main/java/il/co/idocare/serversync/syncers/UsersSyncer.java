@@ -10,9 +10,9 @@ import java.util.Map;
 
 import il.co.idocare.Constants;
 import il.co.idocare.authentication.LoginStateManager;
-import il.co.idocare.networking.newimplementation.ServerApi;
-import il.co.idocare.networking.newimplementation.schemes.responses.GetUsersInfoResponseScheme;
-import il.co.idocare.networking.newimplementation.schemes.responses.UserInfoScheme;
+import il.co.idocare.networking.ServerApi;
+import il.co.idocare.networking.schemes.responses.GetUsersInfoResponseScheme;
+import il.co.idocare.networking.schemes.responses.UserInfoScheme;
 import il.co.idocare.serversync.SyncFailedException;
 import il.co.idocare.users.UserEntity;
 import il.co.idocare.users.UsersCacher;

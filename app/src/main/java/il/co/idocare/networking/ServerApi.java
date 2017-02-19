@@ -1,11 +1,11 @@
-package il.co.idocare.networking.newimplementation;
+package il.co.idocare.networking;
 
 import java.util.Map;
 
-import il.co.idocare.networking.newimplementation.schemes.responses.GetUsersInfoResponseScheme;
-import il.co.idocare.networking.newimplementation.schemes.responses.RequestsResponseScheme;
-import il.co.idocare.networking.newimplementation.schemes.responses.AuthResponseScheme;
-import il.co.idocare.networking.newimplementation.schemes.responses.RequestResponseScheme;
+import il.co.idocare.networking.schemes.responses.GetUsersInfoResponseScheme;
+import il.co.idocare.networking.schemes.responses.RequestsResponseScheme;
+import il.co.idocare.networking.schemes.responses.AuthResponseScheme;
+import il.co.idocare.networking.schemes.responses.RequestResponseScheme;
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;

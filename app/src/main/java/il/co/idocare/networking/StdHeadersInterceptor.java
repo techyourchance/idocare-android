@@ -1,4 +1,4 @@
-package il.co.idocare.networking.newimplementation;
+package il.co.idocare.networking;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

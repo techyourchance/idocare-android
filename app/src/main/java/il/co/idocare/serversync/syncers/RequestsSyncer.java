@@ -12,11 +12,11 @@ import java.util.List;
 
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.TransactionsController;
-import il.co.idocare.networking.newimplementation.NetworkingUtils;
-import il.co.idocare.networking.newimplementation.ServerApi;
-import il.co.idocare.networking.newimplementation.schemes.responses.RequestResponseScheme;
-import il.co.idocare.networking.newimplementation.schemes.responses.RequestsResponseScheme;
-import il.co.idocare.networking.newimplementation.schemes.responses.RequestScheme;
+import il.co.idocare.networking.NetworkingUtils;
+import il.co.idocare.networking.ServerApi;
+import il.co.idocare.networking.schemes.responses.RequestResponseScheme;
+import il.co.idocare.networking.schemes.responses.RequestsResponseScheme;
+import il.co.idocare.networking.schemes.responses.RequestScheme;
 import il.co.idocare.requests.RequestEntity;
 import il.co.idocare.requests.events.RequestIdChangedEvent;
 import il.co.idocare.requests.events.RequestsChangedEvent;
