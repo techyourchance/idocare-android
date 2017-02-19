@@ -3,10 +3,7 @@ package il.co.idocare.contentproviders;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 
 /**
@@ -20,11 +17,11 @@ public class SQLiteWrapper {
     private static final String LOG_TAG = SQLiteWrapper.class.getSimpleName();
 
 
-    private MySQLiteOpenHelper mHelper;
+    private IdcSQLiteOpenHelper mHelper;
 
 
     public SQLiteWrapper(Context context) {
-        mHelper = new MySQLiteOpenHelper(context);
+        mHelper = new IdcSQLiteOpenHelper(context);
     }
 
 
@@ -34,7 +31,7 @@ public class SQLiteWrapper {
 
         // TODO: make sure that the added data is verified beforehand!
 
-        long id = db.insert(MySQLiteOpenHelper.REQUESTS_TABLE_NAME, null, contentValues);
+        long id = db.insert(IdcSQLiteOpenHelper.REQUESTS_TABLE_NAME, null, contentValues);
 
         return id;
     }
@@ -47,7 +44,7 @@ public class SQLiteWrapper {
     public Cursor queryRequests(String[] projection, String selection, String[] selectionArgs,
                                 String groupBy, String having, String sortOrder) {
         Cursor cursor = mHelper.getReadableDatabase().query(
-                MySQLiteOpenHelper.REQUESTS_TABLE_NAME,
+                IdcSQLiteOpenHelper.REQUESTS_TABLE_NAME,
                 projection,
                 selection,
                 selectionArgs,
@@ -63,7 +60,7 @@ public class SQLiteWrapper {
      * @return the number of rows affected
      */
     public int updateRequests(ContentValues values, String selection, String[] selectionArgs) {
-        return mHelper.getWritableDatabase().update(MySQLiteOpenHelper.REQUESTS_TABLE_NAME, values,
+        return mHelper.getWritableDatabase().update(IdcSQLiteOpenHelper.REQUESTS_TABLE_NAME, values,
                 selection, selectionArgs);
     }
 
@@ -73,7 +70,7 @@ public class SQLiteWrapper {
      * @return the number of rows affected
      */
     public int deleteRequests(String selection, String[] selectionArgs) {
-        return mHelper.getWritableDatabase().delete(MySQLiteOpenHelper.REQUESTS_TABLE_NAME,
+        return mHelper.getWritableDatabase().delete(IdcSQLiteOpenHelper.REQUESTS_TABLE_NAME,
                 selection, selectionArgs);
     }
 
@@ -85,7 +82,7 @@ public class SQLiteWrapper {
 
         // TODO: make sure that the added data is verified beforehand!
 
-        long id = db.insert(MySQLiteOpenHelper.USERS_TABLE_NAME, null, contentValues);
+        long id = db.insert(IdcSQLiteOpenHelper.USERS_TABLE_NAME, null, contentValues);
 
         return id;
     }
@@ -98,7 +95,7 @@ public class SQLiteWrapper {
     public Cursor queryUsers(String[] projection, String selection, String[] selectionArgs,
                                 String groupBy, String having, String sortOrder) {
         Cursor cursor = mHelper.getReadableDatabase().query(
-                MySQLiteOpenHelper.USERS_TABLE_NAME,
+                IdcSQLiteOpenHelper.USERS_TABLE_NAME,
                 projection,
                 selection,
                 selectionArgs,
@@ -114,7 +111,7 @@ public class SQLiteWrapper {
      * @return the number of rows affected
      */
     public int updateUsers(ContentValues values, String selection, String[] selectionArgs) {
-        return mHelper.getWritableDatabase().update(MySQLiteOpenHelper.USERS_TABLE_NAME, values,
+        return mHelper.getWritableDatabase().update(IdcSQLiteOpenHelper.USERS_TABLE_NAME, values,
                 selection, selectionArgs);
     }
 
@@ -124,7 +121,7 @@ public class SQLiteWrapper {
      * @return the number of rows affected
      */
     public int deleteUsers(String selection, String[] selectionArgs) {
-        return mHelper.getWritableDatabase().delete(MySQLiteOpenHelper.USERS_TABLE_NAME,
+        return mHelper.getWritableDatabase().delete(IdcSQLiteOpenHelper.USERS_TABLE_NAME,
                 selection, selectionArgs);
     }
 
@@ -133,14 +130,14 @@ public class SQLiteWrapper {
                                      Object o, Object o1, String sortOrder) {
 
         String query = "SELECT " + IDoCareContract.Requests.COL_CREATED_BY + " AS "
-                + IDoCareContract.UniqueUserIds.COL_USER_ID  + " FROM " + MySQLiteOpenHelper.REQUESTS_TABLE_NAME
+                + IDoCareContract.UniqueUserIds.COL_USER_ID  + " FROM " + IdcSQLiteOpenHelper.REQUESTS_TABLE_NAME
                 + " UNION "
                 + " SELECT " + IDoCareContract.Requests.COL_PICKED_UP_BY + " AS "
-                + IDoCareContract.UniqueUserIds.COL_USER_ID + " FROM " + MySQLiteOpenHelper.REQUESTS_TABLE_NAME
+                + IDoCareContract.UniqueUserIds.COL_USER_ID + " FROM " + IdcSQLiteOpenHelper.REQUESTS_TABLE_NAME
                 + " WHERE " + IDoCareContract.Requests.COL_PICKED_UP_BY + " IS NOT NULL "
                 + " UNION "
                 + " SELECT " + IDoCareContract.Requests.COL_CLOSED_BY + " AS "
-                + IDoCareContract.UniqueUserIds.COL_USER_ID + " FROM " + MySQLiteOpenHelper.REQUESTS_TABLE_NAME
+                + IDoCareContract.UniqueUserIds.COL_USER_ID + " FROM " + IdcSQLiteOpenHelper.REQUESTS_TABLE_NAME
                 + " WHERE " + IDoCareContract.Requests.COL_CLOSED_BY + " IS NOT NULL ";
 
         return mHelper.getReadableDatabase().rawQuery(query, null);
@@ -153,7 +150,7 @@ public class SQLiteWrapper {
 
         // TODO: make sure that the added data is verified beforehand!
 
-        long id = db.insert(MySQLiteOpenHelper.USER_ACTIONS_TABLE_NAME, null, contentValues);
+        long id = db.insert(IdcSQLiteOpenHelper.USER_ACTIONS_TABLE_NAME, null, contentValues);
 
         return id;
     }
@@ -165,7 +162,7 @@ public class SQLiteWrapper {
     public Cursor queryUserActions(String[] projection, String selection, String[] selectionArgs,
                                 String groupBy, String having, String sortOrder) {
         Cursor cursor = mHelper.getReadableDatabase().query(
-                MySQLiteOpenHelper.USER_ACTIONS_TABLE_NAME,
+                IdcSQLiteOpenHelper.USER_ACTIONS_TABLE_NAME,
                 projection,
                 selection,
                 selectionArgs,
@@ -182,7 +179,7 @@ public class SQLiteWrapper {
      * @return the number of rows affected
      */
     public int updateUserActions(ContentValues values, String selection, String[] selectionArgs) {
-        return mHelper.getWritableDatabase().update(MySQLiteOpenHelper.USER_ACTIONS_TABLE_NAME, values,
+        return mHelper.getWritableDatabase().update(IdcSQLiteOpenHelper.USER_ACTIONS_TABLE_NAME, values,
                 selection, selectionArgs);
     }
 
@@ -192,7 +189,7 @@ public class SQLiteWrapper {
      * @return the number of rows affected
      */
     public int deleteUserActions(String selection, String[] selectionArgs) {
-        return mHelper.getWritableDatabase().delete(MySQLiteOpenHelper.USER_ACTIONS_TABLE_NAME,
+        return mHelper.getWritableDatabase().delete(IdcSQLiteOpenHelper.USER_ACTIONS_TABLE_NAME,
                 selection, selectionArgs);
     }
 
@@ -201,7 +198,7 @@ public class SQLiteWrapper {
 
         SQLiteDatabase db = mHelper.getWritableDatabase();
 
-        long id = db.insert(MySQLiteOpenHelper.TEMP_ID_MAPPINGS_TABLE_NAME, null, contentValues);
+        long id = db.insert(IdcSQLiteOpenHelper.TEMP_ID_MAPPINGS_TABLE_NAME, null, contentValues);
 
         return id;
     }
@@ -213,7 +210,7 @@ public class SQLiteWrapper {
     public Cursor queryTempIdMappings(String[] projection, String selection, String[] selectionArgs,
                                    String groupBy, String having, String sortOrder) {
         Cursor cursor = mHelper.getReadableDatabase().query(
-                MySQLiteOpenHelper.TEMP_ID_MAPPINGS_TABLE_NAME,
+                IdcSQLiteOpenHelper.TEMP_ID_MAPPINGS_TABLE_NAME,
                 projection,
                 selection,
                 selectionArgs,
@@ -230,7 +227,7 @@ public class SQLiteWrapper {
      * @return the number of rows affected
      */
     public int updateTempIdMappings(ContentValues values, String selection, String[] selectionArgs) {
-        return mHelper.getWritableDatabase().update(MySQLiteOpenHelper.TEMP_ID_MAPPINGS_TABLE_NAME,
+        return mHelper.getWritableDatabase().update(IdcSQLiteOpenHelper.TEMP_ID_MAPPINGS_TABLE_NAME,
                 values, selection, selectionArgs);
     }
 
@@ -240,113 +237,9 @@ public class SQLiteWrapper {
      * @return the number of rows affected
      */
     public int deleteTempIdMappings(String selection, String[] selectionArgs) {
-        return mHelper.getWritableDatabase().delete(MySQLiteOpenHelper.TEMP_ID_MAPPINGS_TABLE_NAME,
+        return mHelper.getWritableDatabase().delete(IdcSQLiteOpenHelper.TEMP_ID_MAPPINGS_TABLE_NAME,
                 selection, selectionArgs);
     }
 
-
-    /**
-     * Custom implementation of SQLiteOpenHelper.
-     */
-    private static class MySQLiteOpenHelper extends SQLiteOpenHelper {
-
-        private static final String LOG_TAG = MySQLiteOpenHelper.class.getSimpleName();
-
-        private static final int DATABASE_VERSION = 1; 
-
-        private static final String DATABASE_NAME = "idocare_db";
-
-        private static final String REQUESTS_TABLE_NAME = "requests_tbl";
-        private static final String USERS_TABLE_NAME = "users_tbl";
-        private static final String USER_ACTIONS_TABLE_NAME = "user_actions_tbl";
-        private static final String TEMP_ID_MAPPINGS_TABLE_NAME = "temp_id_mappings_tbl";
-
-        private static final String CREATE_REQUESTS_TABLE =
-                "CREATE TABLE " + REQUESTS_TABLE_NAME + " ( "
-                + IDoCareContract.Requests._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + IDoCareContract.Requests.COL_REQUEST_ID + " INTEGER, "
-                + IDoCareContract.Requests.COL_CREATED_BY + " INTEGER, "
-                + IDoCareContract.Requests.COL_PICKED_UP_BY + " INTEGER, "
-                + IDoCareContract.Requests.COL_CREATED_AT + " DATETIME, "
-                + IDoCareContract.Requests.COL_PICKED_UP_AT + " DATETIME, "
-                + IDoCareContract.Requests.COL_CLOSED_AT + " DATETIME, "
-                + IDoCareContract.Requests.COL_CREATED_COMMENT + " TEXT, "
-                + IDoCareContract.Requests.COL_CLOSED_COMMENT + " TEXT, "
-                + IDoCareContract.Requests.COL_LATITUDE + " REAL, "
-                + IDoCareContract.Requests.COL_LONGITUDE + " REAL, "
-                + IDoCareContract.Requests.COL_CREATED_PICTURES + " TEXT, "
-                + IDoCareContract.Requests.COL_CLOSED_PICTURES + " TEXT, "
-                + IDoCareContract.Requests.COL_POLLUTION_LEVEL + " INTEGER, "
-                + IDoCareContract.Requests.COL_CLOSED_BY + " INTEGER, "
-                + IDoCareContract.Requests.COL_CREATED_VOTES + " INTEGER DEFAULT 0, "
-                + IDoCareContract.Requests.COL_CLOSED_VOTES + " INTEGER DEFAULT 0, "
-                + IDoCareContract.Requests.COL_LOCATION + " TEXT );";
-
-
-        private static final String CREATE_USERS_TABLE = "CREATE TABLE " + USERS_TABLE_NAME + " ( "
-                + IDoCareContract.Users._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + IDoCareContract.Users.COL_USER_ID + " INTEGER, "
-                + IDoCareContract.Users.COL_USER_NICKNAME + " TEXT, "
-                + IDoCareContract.Users.COL_USER_FIRST_NAME + " TEXT, "
-                + IDoCareContract.Users.COL_USER_LAST_NAME + " TEXT, "
-                + IDoCareContract.Users.COL_USER_REPUTATION + " INTEGER, "
-                + IDoCareContract.Users.COL_USER_PICTURE + " TEXT ); ";
-
-
-        private static final String CREATE_USER_ACTIONS_TABLE =
-                "CREATE TABLE " + USER_ACTIONS_TABLE_NAME + " ( "
-                + IDoCareContract.UserActions._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + IDoCareContract.UserActions.COL_TIMESTAMP + " INTEGER, "
-                + IDoCareContract.UserActions.COL_ENTITY_TYPE + " TEXT, "
-                + IDoCareContract.UserActions.COL_ENTITY_ID + " INTEGER, "
-                + IDoCareContract.UserActions.COL_ENTITY_PARAM + " TEXT, "
-                + IDoCareContract.UserActions.COL_ACTION_TYPE + " TEXT, "
-                + IDoCareContract.UserActions.COL_ACTION_PARAM + " TEXT, "
-                + IDoCareContract.UserActions.COL_SERVER_RESPONSE_STATUS_CODE + " INTEGER DEFAULT 0, "
-                + IDoCareContract.UserActions.COL_SERVER_RESPONSE_REASON_PHRASE + " TEXT DEFAULT '', "
-                + IDoCareContract.UserActions.COL_SERVER_RESPONSE_ENTITY + " TEXT DEFAULT '' );";
-
-
-        private static final String CREATE_TEMP_ID_MAPPINGS_TABLE =
-                "CREATE TABLE " + TEMP_ID_MAPPINGS_TABLE_NAME + " ( "
-                + IDoCareContract.TempIdMappings._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + IDoCareContract.TempIdMappings.COL_TEMP_ID + " TEXT UNIQUE, "
-                + IDoCareContract.TempIdMappings.COL_PERMANENT_ID + " TEXT UNIQUE ); ";
-
-
-
-        public MySQLiteOpenHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            Log.v(LOG_TAG, "onCreate is called");
-            try {
-                db.execSQL(CREATE_REQUESTS_TABLE);
-                db.execSQL(CREATE_USERS_TABLE);
-                db.execSQL(CREATE_USER_ACTIONS_TABLE);
-                db.execSQL(CREATE_TEMP_ID_MAPPINGS_TABLE);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            Log.v(LOG_TAG, "onUpgrade is called. Old ver: " + oldVersion + " new ver: " + newVersion);
-            try {
-                db.execSQL("DROP TABLE IF EXISTS " + REQUESTS_TABLE_NAME);
-                db.execSQL("DROP TABLE IF EXISTS " + USERS_TABLE_NAME);
-                db.execSQL("DROP TABLE IF EXISTS " + USER_ACTIONS_TABLE_NAME);
-                db.execSQL("DROP TABLE IF EXISTS " + TEMP_ID_MAPPINGS_TABLE_NAME);
-                onCreate(db);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-    }
 
 }

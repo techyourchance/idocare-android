@@ -115,7 +115,10 @@ public class RequestsSyncer {
             Response<RequestsResponseScheme> response = call.execute();
 
             if (response.isSuccessful()) {
+                long startProcessingTime = System.currentTimeMillis();
                 processResponse(response.body().getRequestSchemes());
+                long totalProcessingTime = System.currentTimeMillis() - startProcessingTime;
+                mLogger.v(TAG, "processing of all requests took: " + totalProcessingTime + " ms");
             } else {
                 throw new SyncFailedException("couldn't fetch requests from the server; response code: " + response.code());
             }
