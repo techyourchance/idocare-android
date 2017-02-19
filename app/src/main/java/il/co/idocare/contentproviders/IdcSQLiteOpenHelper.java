@@ -22,8 +22,8 @@ public class IdcSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String CREATE_REQUESTS_TABLE =
             "CREATE TABLE " + REQUESTS_TABLE_NAME + " ( "
             + IDoCareContract.Requests._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + IDoCareContract.Requests.COL_REQUEST_ID + " INTEGER, "
-            + IDoCareContract.Requests.COL_CREATED_BY + " INTEGER, "
+            + IDoCareContract.Requests.COL_REQUEST_ID + " TEXT NOT NULL UNIQUE, "
+            + IDoCareContract.Requests.COL_CREATED_BY + " TEXT NOT NULL, "
             + IDoCareContract.Requests.COL_PICKED_UP_BY + " INTEGER, "
             + IDoCareContract.Requests.COL_CREATED_AT + " DATETIME, "
             + IDoCareContract.Requests.COL_PICKED_UP_AT + " DATETIME, "
@@ -43,7 +43,7 @@ public class IdcSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_USERS_TABLE = "CREATE TABLE " + USERS_TABLE_NAME + " ( "
             + IDoCareContract.Users._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + IDoCareContract.Users.COL_USER_ID + " INTEGER, "
+            + IDoCareContract.Users.COL_USER_ID + " TEXT NOT NULL UNIQUE, "
             + IDoCareContract.Users.COL_USER_NICKNAME + " TEXT, "
             + IDoCareContract.Users.COL_USER_FIRST_NAME + " TEXT, "
             + IDoCareContract.Users.COL_USER_LAST_NAME + " TEXT, "
@@ -68,8 +68,8 @@ public class IdcSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String CREATE_TEMP_ID_MAPPINGS_TABLE =
             "CREATE TABLE " + TEMP_ID_MAPPINGS_TABLE_NAME + " ( "
             + IDoCareContract.TempIdMappings._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + IDoCareContract.TempIdMappings.COL_TEMP_ID + " TEXT UNIQUE, "
-            + IDoCareContract.TempIdMappings.COL_PERMANENT_ID + " TEXT UNIQUE ); ";
+            + IDoCareContract.TempIdMappings.COL_TEMP_ID + " TEXT NOT NULL UNIQUE, "
+            + IDoCareContract.TempIdMappings.COL_PERMANENT_ID + " TEXT NOT NULL UNIQUE ); ";
 
 
     // ---------------------------------------------------------------------------------------------
