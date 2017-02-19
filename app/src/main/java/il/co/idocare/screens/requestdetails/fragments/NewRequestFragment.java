@@ -141,8 +141,7 @@ public class NewRequestFragment extends NewAndCloseRequestBaseFragment
                 bundleNewRequest.getString(NewRequestViewMvc.KEY_CREATED_COMMENT);
 
         // Generate a temporary ID for this request - the actual ID will be assigned by the server
-        // TODO: this ID might be not unique
-        long tempId = UUID.randomUUID().getLeastSignificantBits();
+        String tempId = UUID.randomUUID().toString();
 
         long timestamp = System.currentTimeMillis();
 
@@ -152,7 +151,7 @@ public class NewRequestFragment extends NewAndCloseRequestBaseFragment
         }
 
         RequestEntity newRequest = RequestEntity.getBuilder()
-                .setId(String.valueOf(tempId))
+                .setId(tempId)
                 .setCreatedBy(createdBy)
                 .setCreatedAt(String.valueOf(timestamp))
                 .setCreatedComment(createdComment)
@@ -164,7 +163,7 @@ public class NewRequestFragment extends NewAndCloseRequestBaseFragment
         mRequestsManager.addNewRequest(newRequest);
 
         mServerSyncController.requestImmediateSync(); // TODO: remove this after geocoder and names appear without sync
-        mMainFrameHelper.replaceFragment(RequestsAllFragment.class, false, true, null);
+        mMainFrameHelper.replaceFragment(RequestDetailsFragment.newInstance(tempId), false, true);
     }
 
     private boolean validRequestParameters(String userId, List<String> pictures) {

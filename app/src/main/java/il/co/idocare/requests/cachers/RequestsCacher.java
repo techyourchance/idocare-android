@@ -10,7 +10,7 @@ import java.util.List;
 import il.co.idocare.contentproviders.ContentProviderUtils;
 import il.co.idocare.requests.RequestEntity;
 import il.co.idocare.contentproviders.IDoCareContract.Requests;
-import il.co.idocare.requests.RequestsChangedEvent;
+import il.co.idocare.requests.events.RequestsChangedEvent;
 import il.co.idocare.utils.Logger;
 import il.co.idocare.utils.StringUtils;
 

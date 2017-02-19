@@ -28,7 +28,8 @@ import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvc;
 import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvcImpl;
 import il.co.idocare.pictures.ImageViewPictureLoader;
 import il.co.idocare.requests.RequestEntity;
-import il.co.idocare.requests.RequestsChangedEvent;
+import il.co.idocare.requests.events.RequestIdChangedEvent;
+import il.co.idocare.requests.events.RequestsChangedEvent;
 import il.co.idocare.requests.RequestsManager;
 import il.co.idocare.screens.common.MainFrameHelper;
 import il.co.idocare.screens.common.fragments.BaseScreenFragment;
@@ -134,6 +135,14 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(RequestsChangedEvent event) {
         refreshRequest();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(RequestIdChangedEvent event) {
+        if (mRequestId.equals(event.getOldId())) {
+            mRequestId = event.getNewId();
+            refreshRequest();
+        }
     }
 
 
@@ -292,6 +301,7 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
     public void onRequestsFetched(List<RequestEntity> requests) {
         mLogger.d(TAG, "onRequestsFetched() called");
         if (requests.isEmpty()) {
+            mLogger.e(TAG, "couldn't fetch request's info; navigating up");
             mMainFrameHelper.navigateUp();
             return;
         }

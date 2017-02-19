@@ -20,6 +20,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import il.co.idocare.R;
+import il.co.idocare.screens.common.MainFrameHelper;
 import il.co.idocare.screens.common.toolbar.ToolbarDelegate;
 import il.co.idocare.screens.navigationdrawer.NavigationDrawerDelegate;
 import il.co.idocare.screens.navigationdrawer.events.NavigationDrawerStateChangeEvent;
@@ -44,6 +45,7 @@ public class MainActivity extends AbstractActivity implements
     @Inject ServerSyncController mServerSyncController;
     @Inject Logger mLogger;
     @Inject EventBus mEventBus;
+    @Inject MainFrameHelper mMainFrameHelper;
 
 
     private MainViewMVC mMainViewMVC;
@@ -170,7 +172,7 @@ public class MainActivity extends AbstractActivity implements
 
     @Override
     public void onNavigationClick() {
-        onNavigateUp();
+        mMainFrameHelper.navigateUp();
     }
 
     @Override

@@ -2,6 +2,7 @@ package il.co.idocare.requests.retrievers;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.support.annotation.Nullable;
 
 import il.co.idocare.contentproviders.IDoCareContract;
 
@@ -13,6 +14,7 @@ public class TempIdRetriever {
         mContentResolver = contentResolver;
     }
 
+    @Nullable
     public String getNewIdForTempId(String oldId) {
 
         Cursor cursor = null;

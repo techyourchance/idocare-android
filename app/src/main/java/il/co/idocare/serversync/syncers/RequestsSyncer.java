@@ -18,12 +18,12 @@ import il.co.idocare.networking.newimplementation.schemes.responses.RequestRespo
 import il.co.idocare.networking.newimplementation.schemes.responses.RequestsResponseScheme;
 import il.co.idocare.networking.newimplementation.schemes.responses.RequestScheme;
 import il.co.idocare.requests.RequestEntity;
-import il.co.idocare.requests.RequestsChangedEvent;
+import il.co.idocare.requests.events.RequestIdChangedEvent;
+import il.co.idocare.requests.events.RequestsChangedEvent;
 import il.co.idocare.requests.cachers.RequestsCacher;
 import il.co.idocare.requests.cachers.TempIdCacher;
 import il.co.idocare.requests.retrievers.RawRequestRetriever;
 import il.co.idocare.serversync.SyncFailedException;
-import il.co.idocare.useractions.retrievers.UserActionsRetriever;
 import il.co.idocare.utils.Logger;
 import okhttp3.MultipartBody;
 import retrofit2.Call;
@@ -96,6 +96,8 @@ public class RequestsSyncer {
                 mRequestsCacher.updateWithPossibleIdChange(updatedRequest, requestId);
                 // cache the mapping from temp request ID to a new one
                 mTempIdCacher.cacheTempIdMapping(requestId, updatedRequest.getId());
+                // post event that notifies about ID change
+                mEventBus.post(new RequestIdChangedEvent(requestId, updatedRequest.getId()));
             } else {
                 throw new SyncFailedException("create new request call failed; response code: " + response.code());
             }
