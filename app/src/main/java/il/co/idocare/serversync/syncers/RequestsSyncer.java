@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import il.co.idocare.Constants;
+import il.co.idocare.contentproviders.TransactionsController;
 import il.co.idocare.networking.newimplementation.NetworkingUtils;
 import il.co.idocare.networking.newimplementation.ServerApi;
 import il.co.idocare.networking.newimplementation.schemes.responses.RequestResponseScheme;
@@ -39,7 +40,7 @@ public class RequestsSyncer {
 
     private final RequestsCacher mRequestsCacher;
     private final RawRequestRetriever mRawRequestsRetriever;
-    private final UserActionsRetriever mUserActionsRetriever;
+    private final TransactionsController mTransactionsController;
     private final TempIdCacher mTempIdCacher;
     private final ServerApi mServerApi;
     private final EventBus mEventBus;
@@ -47,14 +48,14 @@ public class RequestsSyncer {
 
     public RequestsSyncer(RequestsCacher requestsCacher,
                           RawRequestRetriever rawRequestsRetriever,
-                          UserActionsRetriever userActionsRetriever,
+                          TransactionsController transactionsController,
                           TempIdCacher tempIdCacher,
                           ServerApi serverApi,
                           EventBus eventBus,
                           Logger logger) {
         mRequestsCacher = requestsCacher;
         mRawRequestsRetriever = rawRequestsRetriever;
-        mUserActionsRetriever = userActionsRetriever;
+        mTransactionsController = transactionsController;
         mTempIdCacher = tempIdCacher;
         mServerApi = serverApi;
         mEventBus = eventBus;
@@ -129,16 +130,25 @@ public class RequestsSyncer {
 
     private void processResponse(@Nullable List<RequestScheme> requests) {
         mLogger.d(TAG, "processResponse() called");
-        // TODO: ensure the actions performed atomically
-        if (requests == null || requests.isEmpty()) {
-            mLogger.d(TAG, "empty request list - deleting all requests from local cache");
-            mRequestsCacher.deleteAllRequests();
-        } else {
-            List<String> processedRequestIds = updateOrInsertRequestSchemes(requests);
 
-            // currently we assume that the requests not returned by the server can be deleted
-            // TODO: review this assumption
-            mRequestsCacher.deleteAllRequestsWithNonMatchingIds(processedRequestIds);
+        mTransactionsController.beginTransaction();
+
+        try {
+
+            if (requests == null || requests.isEmpty()) {
+                mLogger.d(TAG, "empty request list - deleting all requests from local cache");
+                mRequestsCacher.deleteAllRequests();
+            } else {
+                List<String> processedRequestIds = updateOrInsertRequestSchemes(requests);
+
+                // currently we assume that the requests not returned by the server can be deleted
+                // TODO: review this assumption
+                mRequestsCacher.deleteAllRequestsWithNonMatchingIds(processedRequestIds);
+            }
+            mTransactionsController.setTransactionSuccessful();
+
+        } finally {
+            mTransactionsController.endTransaction();
         }
 
         notifyRequestsChanged();

@@ -16,6 +16,8 @@ import il.co.idocare.authentication.AuthManager;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.common.settings.PreferenceSettingsEntryFactoryImpl;
 import il.co.idocare.common.settings.SettingsManager;
+import il.co.idocare.contentproviders.IdcSQLiteOpenHelper;
+import il.co.idocare.contentproviders.TransactionsController;
 import il.co.idocare.networking.newimplementation.ServerApi;
 import il.co.idocare.networking.newimplementation.StdHeadersInterceptor;
 import il.co.idocare.nonstaticproxies.ContentResolverProxy;
@@ -33,9 +35,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApplicationModule {
 
     private final Application mApplication;
+    private final IdcSQLiteOpenHelper mSqLiteOpenHelper;
 
-    public ApplicationModule(Application application) {
+    public ApplicationModule(Application application, IdcSQLiteOpenHelper sqLiteOpenHelper) {
         mApplication = application;
+        mSqLiteOpenHelper = sqLiteOpenHelper;
     }
 
     @Provides
@@ -157,5 +161,10 @@ public class ApplicationModule {
     @ApplicationScope
     ServerApi serverApi(Retrofit retrofit) {
         return retrofit.create(ServerApi.class);
+    }
+
+    @Provides
+    TransactionsController transactionsController() {
+        return new TransactionsController(mSqLiteOpenHelper);
     }
 }

@@ -5,12 +5,10 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
-import il.co.idocare.MyApplication;
+import il.co.idocare.IdcApplication;
 import il.co.idocare.dependencyinjection.contextscope.ContextModule;
 import il.co.idocare.dependencyinjection.controllerscope.ControllerComponent;
 import il.co.idocare.dependencyinjection.controllerscope.ControllerModule;
-import il.co.idocare.dependencyinjection.datacache.CachersModule;
-import il.co.idocare.dependencyinjection.datacache.RetrieversModule;
 
 /**
  * Base class for all dialogs
@@ -31,7 +29,7 @@ public abstract class BaseDialog extends DialogFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        mControllerComponent = ((MyApplication)getActivity().getApplication())
+        mControllerComponent = ((IdcApplication)getActivity().getApplication())
                 .getApplicationComponent()
                 .newContextComponent(new ContextModule(getActivity()))
                 .newControllerComponent(

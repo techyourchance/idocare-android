@@ -19,15 +19,13 @@ import org.greenrobot.eventbus.Subscribe;
 import javax.inject.Inject;
 
 import il.co.idocare.Constants;
-import il.co.idocare.MyApplication;
+import il.co.idocare.IdcApplication;
 import il.co.idocare.R;
 import il.co.idocare.controllers.fragments.IDoCareFragmentCallback;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
 import il.co.idocare.dependencyinjection.contextscope.ContextModule;
 import il.co.idocare.dependencyinjection.controllerscope.ControllerComponent;
 import il.co.idocare.dependencyinjection.controllerscope.ControllerModule;
-import il.co.idocare.dependencyinjection.datacache.CachersModule;
-import il.co.idocare.dependencyinjection.datacache.RetrieversModule;
 import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.dialogs.events.PromptDialogDismissedEvent;
@@ -59,7 +57,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mControllerComponent = ((MyApplication)getApplication()).getApplicationComponent()
+        mControllerComponent = ((IdcApplication)getApplication()).getApplicationComponent()
                 .newContextComponent(new ContextModule(this))
                 .newControllerComponent(
                         new ControllerModule(this, getSupportFragmentManager()));

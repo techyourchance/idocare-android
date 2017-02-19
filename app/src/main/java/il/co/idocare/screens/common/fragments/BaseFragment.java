@@ -1,24 +1,14 @@
 package il.co.idocare.screens.common.fragments;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-
-import org.greenrobot.eventbus.EventBus;
 
 import javax.inject.Inject;
 
-import il.co.idocare.MyApplication;
-import il.co.idocare.controllers.fragments.IDoCareFragmentCallback;
-import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
+import il.co.idocare.IdcApplication;
 import il.co.idocare.dependencyinjection.contextscope.ContextModule;
 import il.co.idocare.dependencyinjection.controllerscope.ControllerComponent;
 import il.co.idocare.dependencyinjection.controllerscope.ControllerModule;
-import il.co.idocare.dependencyinjection.datacache.CachersModule;
-import il.co.idocare.dependencyinjection.datacache.RetrieversModule;
 import il.co.idocare.utils.eventbusregistrator.EventBusRegistrator;
 
 
@@ -35,7 +25,7 @@ public abstract class BaseFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        mControllerComponent = ((MyApplication)getActivity().getApplication())
+        mControllerComponent = ((IdcApplication)getActivity().getApplication())
                 .getApplicationComponent()
                 .newContextComponent(new ContextModule(getActivity()))
                 .newControllerComponent(

@@ -17,7 +17,7 @@
 
 
     <application
-        android:name=".MyApplication"
+        android:name=".IdcApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:logo="@drawable/ic_logo_grayscale">

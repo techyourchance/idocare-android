@@ -4,7 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import il.co.idocare.MyApplication;
+import il.co.idocare.IdcApplication;
 import il.co.idocare.dependencyinjection.contextscope.ContextModule;
 import il.co.idocare.dependencyinjection.serversync.ServerSyncComponent;
 import il.co.idocare.dependencyinjection.serversync.ServerSyncModule;
@@ -32,7 +32,7 @@ public class SyncService extends Service {
          */
         synchronized (sSyncAdapterLock) {
             if (sSyncAdapter == null) {
-                ServerSyncComponent serverSyncComponent = ((MyApplication)getApplication())
+                ServerSyncComponent serverSyncComponent = ((IdcApplication)getApplication())
                         .getApplicationComponent()
                         .newContextComponent(new ContextModule(this))
                         .newServerSyncComponent(new ServerSyncModule());
