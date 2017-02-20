@@ -28,15 +28,6 @@ public interface IDoCareFragmentCallback {
 
 
     /**
-     * This method will pop up a yes/no dialog asking the user to log in. If the user agrees
-     * LoginActivity will be started.
-     * @param message the message to show in a dialog
-     * @param runnable this runnable will be executed if there will be a logged in user when
-     *                 LoginActivity finishes
-     */
-    public void askUserToLogIn(String message, final Runnable runnable);
-
-    /**
      * Calls to this method will alter the visibility of action bar
      * @param show set to true in order for action bar to be shown; false otherwise
      */

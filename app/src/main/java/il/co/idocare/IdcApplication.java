@@ -2,6 +2,10 @@ package il.co.idocare;
 
 import android.app.Application;
 
+import com.facebook.FacebookSdk;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
 import il.co.idocare.contentproviders.IdcSQLiteOpenHelper;
 import il.co.idocare.dependencyinjection.applicationscope.ApplicationComponent;
 import il.co.idocare.dependencyinjection.applicationscope.ApplicationModule;
@@ -25,11 +29,20 @@ public class IdcApplication extends Application {
                         .build()
         );
 
+        FacebookSdk.sdkInitialize(getApplicationContext());
+
         mApplicationComponent = DaggerApplicationComponent.builder()
                 .applicationModule(new ApplicationModule(this, IdcSQLiteOpenHelper.getInstance(this)))
                 .cachersModule(new CachersModule())
                 .retrieversModule(new RetrieversModule())
                 .build();
+
+
+        // TODO: alter the configuration of UIL according to our needs
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
+                .defaultDisplayImageOptions(Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS)
+                .build();
+        ImageLoader.getInstance().init(config);
     }
 
     public ApplicationComponent getApplicationComponent() {

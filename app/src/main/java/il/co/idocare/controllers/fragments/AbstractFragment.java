@@ -78,27 +78,10 @@ public abstract class AbstractFragment extends Fragment implements
         mCallback.replaceFragment(claz, addToBackStack, clearBackStack, args);
     }
 
-
-    /**
-     * See {@link IDoCareFragmentCallback#setTitle(String)}
-     */
-    public void setActionBarTitle(String title) {
-        mCallback.setTitle(title);
-    }
-
-
     @Override
     public boolean shouldShowActionBar() {
         return true;
     }
-
-    /**
-     * See {@link IDoCareFragmentCallback#askUserToLogIn(String, Runnable)}
-     */
-    public void askUserToLogIn(String message, final Runnable runnable) {
-        mCallback.askUserToLogIn(message, runnable);
-    }
-
 
     /**
      * Show standard (for the app) progress dialog
@@ -115,18 +98,6 @@ public abstract class AbstractFragment extends Fragment implements
         if (mProgressDialog != null) {
             mProgressDialog.dismiss();
             mProgressDialog = null;
-        }
-    }
-
-    /**
-     * Call to this method will either pop a previous fragment from the back-stack, or navigate
-     * to Fragment's hierarchical parent
-     */
-    protected void navigateUp() {
-        if (getFragmentManager().getBackStackEntryCount() > 0) {
-            getFragmentManager().popBackStack();
-        } else {
-            replaceFragment(getNavHierParentFragment(), false, false, null);
         }
     }
 

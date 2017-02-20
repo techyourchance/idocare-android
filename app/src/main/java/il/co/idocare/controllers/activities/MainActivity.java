@@ -83,7 +83,6 @@ public class MainActivity extends AbstractActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
         mServerSyncController.enableAutomaticSync();
         mServerSyncController.requestImmediateSync();
         checkPermissions();
@@ -92,7 +91,6 @@ public class MainActivity extends AbstractActivity implements
     @Override
     protected void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
         mServerSyncController.disableAutomaticSync();
     }
 

@@ -278,6 +278,11 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
 
     private void refreshUsers() {
 
+        if (mRequest == null) {
+            // request's info hasn't been fetched yet - users info can't be refreshed
+            return;
+        }
+
         List<String> usersIds = new ArrayList<>(3);
 
         usersIds.add(mRequest.getCreatedBy());

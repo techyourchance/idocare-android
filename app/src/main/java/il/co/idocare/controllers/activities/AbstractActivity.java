@@ -1,24 +1,15 @@
 package il.co.idocare.controllers.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
-import com.facebook.FacebookSdk;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-
-import org.greenrobot.eventbus.Subscribe;
-
 import javax.inject.Inject;
 
-import il.co.idocare.Constants;
 import il.co.idocare.IdcApplication;
 import il.co.idocare.R;
 import il.co.idocare.controllers.fragments.IDoCareFragmentCallback;
@@ -28,7 +19,6 @@ import il.co.idocare.dependencyinjection.controllerscope.ControllerComponent;
 import il.co.idocare.dependencyinjection.controllerscope.ControllerModule;
 import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
-import il.co.idocare.dialogs.events.PromptDialogDismissedEvent;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
@@ -37,16 +27,11 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public abstract class AbstractActivity extends AppCompatActivity implements
         IDoCareFragmentCallback {
 
-    private static final String TAG = "AbstractActivity";
-
-    private static final String USER_LOGIN_DIALOG_TAG = "USER_LOGIN_DIALOG_TAG";
 
     @Inject DialogsManager mDialogsManager;
     @Inject DialogsFactory mDialogsFactory;
 
     private ControllerComponent mControllerComponent;
-
-    private Runnable mPostLoginRunnable;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -62,25 +47,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements
                 .newControllerComponent(
                         new ControllerModule(this, getSupportFragmentManager()));
 
-        mPostLoginRunnable = null;
 
-        FacebookSdk.sdkInitialize(getApplicationContext());
-
-        // TODO: alter the configuration of UIL according to our needs
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
-                .defaultDisplayImageOptions(Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS)
-                .build();
-        ImageLoader.getInstance().init(config);
-
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (onNavigateUp()) {
-            return;
-        }
-
-        super.onBackPressed();
     }
 
     @Override
@@ -105,11 +72,6 @@ public abstract class AbstractActivity extends AppCompatActivity implements
     // End of dependency injection
     //
     // ---------------------------------------------------------------------------------------------
-
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // Fragments management
 
     // TODO: maybe we need to preserve the state of the replaced fragments?
     @Override
@@ -193,67 +155,8 @@ public abstract class AbstractActivity extends AppCompatActivity implements
     }
 
 
-    // End of fragments management
-    //
-    // ---------------------------------------------------------------------------------------------
-
-
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // User state management
-
-
-
-    @Override
-    public void askUserToLogIn(String message, final Runnable runnable) {
-        DialogFragment dialogFragment = mDialogsFactory.newPromptDialog(
-                null,
-                message,
-                getResources().getString(R.string.btn_dialog_positive),
-                getResources().getString(R.string.btn_dialog_negative));
-
-        mDialogsManager.showRetainedDialogWithTag(dialogFragment, USER_LOGIN_DIALOG_TAG);
-
-        mPostLoginRunnable = runnable;
-
-    }
-
-    @Subscribe
-    public void onPromptDialogDismissed(PromptDialogDismissedEvent event) {
-        if (event.getTag().equals(USER_LOGIN_DIALOG_TAG)) {
-            if (event.getClickedButtonIndex() == PromptDialogDismissedEvent.BUTTON_POSITIVE) {
-                initiateLoginFlow();
-            } else {
-                mPostLoginRunnable = null;
-            }
-        }
-    }
-
-    /**
-     * Initiate a flow that will take the user through login process
-     */
-    public void initiateLoginFlow() {
-        Intent intent = new Intent(AbstractActivity.this, LoginActivity.class);
-        startActivityForResult(intent, Constants.REQUEST_CODE_LOGIN);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        switch (requestCode) {
-            case Constants.REQUEST_CODE_LOGIN:
-                // If login succeeded and there is a runnable - run it
-                // TODO: ensure tha RESULT_OK indeed means login succeeded
-                if (resultCode == Activity.RESULT_OK && mPostLoginRunnable != null) {
-                    runOnUiThread(mPostLoginRunnable);
-                }
-                mPostLoginRunnable = null; // In any case - clear the runnable
-                return;
-
-            default:
-                break;
-        }
 
         /*
         This code is required in order to support Facebook's LoginButton functionality -
@@ -269,11 +172,6 @@ public abstract class AbstractActivity extends AppCompatActivity implements
 
         super.onActivityResult(requestCode, resultCode, data);
     }
-
-    // End of user state management
-    //
-    // ---------------------------------------------------------------------------------------------
-
 
 
 
