@@ -10,7 +10,7 @@ public class IdcSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "IdcSQLiteOpenHelper";
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     private static final String DATABASE_NAME = "idocare_db";
 

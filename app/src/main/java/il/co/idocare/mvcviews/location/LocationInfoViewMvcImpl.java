@@ -12,6 +12,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -23,11 +24,14 @@ import il.co.idocare.mvcviews.AbstractViewMVC;
  */
 public class LocationInfoViewMvcImpl
         extends AbstractViewMVC<LocationInfoViewMvc.LocationInfoViewMvcListener>
-        implements LocationInfoViewMvc {
+        implements LocationInfoViewMvc, OnMapReadyCallback {
 
     private TextView mTxtLocationTitle;
     private TextView mTxtFineLocation;
-    private MapView mMapPreview;
+    private MapView mMapView;
+
+    private GoogleMap mGoogleMap;
+    private LatLng mLocation;
 
 
     public LocationInfoViewMvcImpl(@NonNull LayoutInflater inflater,
@@ -41,7 +45,8 @@ public class LocationInfoViewMvcImpl
         mTxtFineLocation = (TextView) getRootView().findViewById(R.id.txt_request_fine_location);
         mTxtLocationTitle = (TextView) getRootView().findViewById(R.id.txt_location_title);
 
-        mMapPreview = (MapView) getRootView().findViewById(R.id.map_preview);
+        mMapView = (MapView) getRootView().findViewById(R.id.map_preview);
+        mMapView.getMapAsync(this);
     }
 
     @Override
@@ -50,19 +55,35 @@ public class LocationInfoViewMvcImpl
     }
 
     @Override
-    public void setLocation(double latitude, double longitude) {
-        GoogleMap map = mMapPreview.getMap();
+    public void onMapReady(GoogleMap googleMap) {
+        mGoogleMap = googleMap;
 
         MapsInitializer.initialize(getRootView().getContext());
-        map.setMyLocationEnabled(false); // Don't show my location
-        map.setBuildingsEnabled(false); // Don't show 3D buildings
-        map.getUiSettings().setMapToolbarEnabled(false); // No toolbar needed in a lite preview
+        mGoogleMap.setMyLocationEnabled(false); // Don't show my location
+        mGoogleMap.setBuildingsEnabled(false); // Don't show 3D buildings
+        mGoogleMap.getUiSettings().setMapToolbarEnabled(false); // No toolbar needed in a lite preview
 
-        LatLng location = new LatLng(latitude, longitude);
+        if (mLocation != null) {
+            // location has already been bound - bind it to the map
+            setLocation(mLocation);
+        }
+    }
+
+    @Override
+    public void setLocation(double latitude, double longitude) {
+        mLocation = new LatLng(latitude, longitude);
+
+        if (mGoogleMap != null) {
+            // map initialized - bind location to it
+            setLocation(mLocation);
+        }
+    }
+
+    private void setLocation(LatLng location) {
         // Center the camera at request location
-        map.moveCamera(CameraUpdateFactory.newLatLng(location));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(location));
         // Put a marker
-        map.addMarker(new MarkerOptions().position(location));
+        mGoogleMap.addMarker(new MarkerOptions().position(location));
     }
 
     @Override
@@ -76,4 +97,5 @@ public class LocationInfoViewMvcImpl
             mTxtFineLocation.setText(location);
         }
     }
+
 }

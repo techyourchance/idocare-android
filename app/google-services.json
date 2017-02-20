@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "173880520533",
+    "firebase_url": "https://idocare-1034.firebaseio.com",
+    "project_id": "idocare-1034",
+    "storage_bucket": "idocare-1034.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:173880520533:android:7f68ed439150dcb9",
+        "android_client_info": {
+          "package_name": "il.co.idocare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "173880520533-50mnstklp381sq0246t31o2mna6iqspc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkyGaf4CKOcTv2rFKF1e6nBhF7UJUcxJM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
