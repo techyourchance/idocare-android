@@ -678,7 +678,7 @@ public class RequestDetailsViewMvcImpl
 
         @Override
         protected List<String> getBottomPictures() {
-            return getRequestItem().getClosedPictures();
+            return getRequestItem().getCreatedPictures();
         }
 
         @Override
