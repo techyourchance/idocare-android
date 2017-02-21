@@ -19,6 +19,7 @@
     <color name="gray">#727272</color>
     <color name="gray_light">#BEBBB9</color>
     <color name="gray_lightest">#EEEEEE</color>
+    <color name="gray_lightest_2">#F6F6F6</color>
     <color name="transparent">#00000000</color>
     <color name="white">#FFFFFF</color>
 
@@ -34,7 +35,10 @@
     <color name="divider_color">@color/gray_light</color>
 
     <color name="background">@color/gray_lightest</color>
+    <color name="request_details_background">@color/gray_lightest_2</color>
     <color name="background_white">@color/white</color>
+
+
     <color name="button_pressed_text_color">@color/gray_lightest</color>
     <color name="skip_login_button_text_color">@color/text_color_secondary</color>
 

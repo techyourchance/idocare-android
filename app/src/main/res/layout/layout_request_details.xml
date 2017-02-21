@@ -3,10 +3,12 @@
 
 <il.co.idocare.widgets.VerticalScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:scrollbars="none"
-    android:padding="@dimen/fragment_default_padding">
+    android:padding="@dimen/fragment_default_padding"
+    android:fillViewport="true"
+    android:background="@color/request_details_background">
 
     <LinearLayout
         android:orientation="vertical"
