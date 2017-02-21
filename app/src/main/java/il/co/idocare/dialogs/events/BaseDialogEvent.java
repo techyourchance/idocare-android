@@ -10,7 +10,7 @@ package il.co.idocare.dialogs.events;
         mTag = tag;
     }
 
-    public String getTag() {
+    public String getDialogTag() {
         return mTag;
     }
 }

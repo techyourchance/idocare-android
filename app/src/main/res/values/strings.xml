@@ -72,8 +72,6 @@
     <string name="btn_close_request">I DID IT!</string>
     <string name="btn_add_picture">Add a picture</string>
 
-    <string name="btn_upload_existing">Upload existing</string>
-    <string name="btn_take_new_with_camera">Take new</string>
 
     <!--
     Hints for EditText's
@@ -112,8 +110,6 @@
     <string name="msg_last_name_is_required">last name is required</string>
     <string name="msg_resolve_errors">Please resolve these errors:</string>
 
-    <string name="msg_choose_add_user_picture_method">Would you like to upload an  existing picture,
-        or take a new one with device\'s camera?</string>
 
     <string name="msg_insufficient_location_accuracy">Insufficient location accuracy</string>
 
@@ -126,6 +122,10 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 
-
+    <!-- User picture chooser dialog -->
+    <string name="user_picture_chooser_dialog_message">Would you like to upload a picture from gallery,
+        or take a new one with device\'s camera?</string>
+    <string name="user_picture_chooser_dialog_button_caption_from_gallery">From gallery</string>
+    <string name="user_picture_chooser_dialog_button_caption_new">New</string>
 
 </resources>

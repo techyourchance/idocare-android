@@ -104,7 +104,7 @@ public abstract class RequestsListBaseFragment extends BaseScreenFragment implem
 
     @Subscribe
     public void onPromptDialogDismissed(PromptDialogDismissedEvent event) {
-        if (event.getTag().equals(USER_LOGIN_DIALOG_TAG)) {
+        if (event.getDialogTag().equals(USER_LOGIN_DIALOG_TAG)) {
             if (event.getClickedButtonIndex() == PromptDialogDismissedEvent.BUTTON_POSITIVE) {
                 initiateLoginFlow();
             }

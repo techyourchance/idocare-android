@@ -236,7 +236,7 @@ public class RequestDetailsFragment extends BaseScreenFragment implements
 
     @Subscribe
     public void onPromptDialogDismissed(PromptDialogDismissedEvent event) {
-        if (event.getTag().equals(USER_LOGIN_DIALOG_TAG)) {
+        if (event.getDialogTag().equals(USER_LOGIN_DIALOG_TAG)) {
             if (event.getClickedButtonIndex() == PromptDialogDismissedEvent.BUTTON_POSITIVE) {
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
                 startActivity(intent);

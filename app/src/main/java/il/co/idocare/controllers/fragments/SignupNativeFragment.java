@@ -1,14 +1,13 @@
 package il.co.idocare.controllers.fragments;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -30,31 +29,38 @@ import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.datamodels.pojos.UserSignupData;
+import il.co.idocare.dialogs.DialogsFactory;
+import il.co.idocare.dialogs.DialogsManager;
+import il.co.idocare.dialogs.events.PromptDialogDismissedEvent;
 import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.mvcviews.signupnative.SignupNativeViewMvc;
 import il.co.idocare.mvcviews.signupnative.SignupNativeViewMvcImpl;
 import il.co.idocare.pictures.CameraAdapter;
 import il.co.idocare.utils.UtilMethods;
+import il.co.idocare.utils.eventbusregistrator.EventBusRegistrable;
 
 /**
  * This fragment handles native signup flow
  */
+@EventBusRegistrable
 public class SignupNativeFragment extends AbstractFragment implements SignupNativeViewMvcImpl.SignupNativeViewMvcListener {
 
 
-    private static final String LOG_TAG = SignupNativeFragment.class.getSimpleName();
+    private static final String TAG = "SignupNativeFragment";
 
     private static final Pattern passwordValidationNoSpaces =
             Pattern.compile("^\\S+$");
     private static final Pattern passwordValidationMinimumLength =
             Pattern.compile("^.*.{6,}$");
 
+    private static final String PICTURE_CAPTURE_DIALOG_TAG = "PICTURE_CAPTURE_DIALOG_TAG";
+
     private SignupNativeViewMvcImpl mSignupNativeViewMvc;
 
     @Inject LoginStateManager mLoginStateManager;
     @Inject AuthManager mAuthManager;
-
-    private AlertDialog mAlertDialog;
+    @Inject DialogsManager mDialogsManager;
+    @Inject DialogsFactory mDialogsFactory;
 
     private String mCameraPicturePath;
     private String mUserPicturePath;
@@ -111,10 +117,6 @@ public class SignupNativeFragment extends AbstractFragment implements SignupNati
     @Override
     public void onResume() {
         super.onResume();
-        if (mLoginStateManager.isLoggedIn()) {
-            // Disallow multiple accounts by showing a dialog which finishes the activity
-            showMultipleAccountsNotAllowedDialog();
-        }
     }
 
 
@@ -246,19 +248,14 @@ public class SignupNativeFragment extends AbstractFragment implements SignupNati
         String errorMessage = errorMessageBuff.toString();
 
         if (!TextUtils.isEmpty(errorMessage)) {
-            // Show alert dialog with error message
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage(getString(R.string.msg_resolve_errors) + errorMessage)
-                    .setCancelable(false)
-                    .setPositiveButton(getResources().getString(R.string.btn_dialog_close),
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    mAlertDialog = null;
-                                }
-                            });
+            DialogFragment dialog = mDialogsFactory.newInfoDialog(
+                    "",
+                    getString(R.string.msg_resolve_errors) + errorMessage, // TODO: make use of string resource with params
+                    getString(R.string.btn_dialog_close)
+            );
 
-            mAlertDialog = builder.create();
-            mAlertDialog.show();
+            mDialogsManager.showRetainedDialogWithTag(dialog, null);
+
             return false;
         } else {
             return true;
@@ -266,44 +263,26 @@ public class SignupNativeFragment extends AbstractFragment implements SignupNati
 
     }
 
-    private void showMultipleAccountsNotAllowedDialog() {
-        if (mAlertDialog != null && mAlertDialog.isShowing()) {
-            mAlertDialog.dismiss();
-        }
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(getResources().getString(R.string.no_support_for_multiple_accounts_message))
-                .setCancelable(false)
-                .setPositiveButton(getResources().getString(R.string.btn_dialog_close),
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                ((LoginActivity) getActivity()).finish();
-                            }
-                        });
-        mAlertDialog = builder.create();
-        mAlertDialog.show();
+    private void showAddPictureDialog() {
+        DialogFragment dialog = mDialogsFactory.newPromptDialog(
+                "",
+                getString(R.string.user_picture_chooser_dialog_message),
+                getString(R.string.user_picture_chooser_dialog_button_caption_new),
+                getString(R.string.user_picture_chooser_dialog_button_caption_from_gallery)
+        );
+
+        mDialogsManager.showRetainedDialogWithTag(dialog, PICTURE_CAPTURE_DIALOG_TAG);
     }
 
-    private void showAddPictureDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(getString(R.string.msg_choose_add_user_picture_method))
-                .setCancelable(true)
-                .setPositiveButton(getString(R.string.btn_upload_existing),
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                mAlertDialog.dismiss();
-                                uploadExistingPicture();
-                            }
-                        })
-                .setNegativeButton(getString(R.string.btn_take_new_with_camera),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                mAlertDialog.dismiss();
-                                takePictureWithCamera();
-                            }
-                        });
-        mAlertDialog = builder.create();
-        mAlertDialog.show();
+    @Subscribe
+    public void onEvent(PromptDialogDismissedEvent event) {
+        if (PICTURE_CAPTURE_DIALOG_TAG.equals(event.getDialogTag())) {
+            if (event.getClickedButtonIndex() == PromptDialogDismissedEvent.BUTTON_POSITIVE) {
+                takePictureWithCamera();
+            } else if (event.getClickedButtonIndex() == PromptDialogDismissedEvent.BUTTON_NEGATIVE) {
+                uploadExistingPicture();
+            }
+        }
     }
 
     private void uploadExistingPicture() {

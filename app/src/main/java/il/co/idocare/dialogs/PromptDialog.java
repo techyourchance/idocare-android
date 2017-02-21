@@ -3,6 +3,7 @@ package il.co.idocare.dialogs;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -112,4 +113,9 @@ public class PromptDialog extends BaseDialog {
         mBtnNegative.setText(negativeButtonCaption);
     }
 
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        dismiss();
+        mEventBus.post(new PromptDialogDismissedEvent(getDialogTag(), PromptDialogDismissedEvent.BUTTON_NONE));
+    }
 }
