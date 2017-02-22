@@ -166,33 +166,6 @@ public class SignupNativeFragment extends AbstractFragment implements SignupNati
     // ---------------------------------------------------------------------------------------------
 
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.REQUEST_CODE_TAKE_PICTURE) {
-            if (resultCode == Activity.RESULT_OK) {
-                mUserPicturePath = mCameraPicturePath;
-                UtilMethods.adjustCameraPicture(mUserPicturePath);
-                mSignupNativeViewMvc.showUserPicture(mUserPicturePath);
-            } else {
-                // TODO: do we need anything here?
-            }
-        } else if (requestCode == Constants.REQUEST_CODE_SELECT_PICTURE) {
-            if (resultCode == Activity.RESULT_OK) {
-                Uri selectedImage = data.getData();
-                String[] filePathColumn = { MediaStore.Images.Media.DATA };
-                Cursor cursor = getActivity().getContentResolver()
-                        .query(selectedImage, filePathColumn, null, null, null);
-                cursor.moveToFirst();
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                mUserPicturePath = cursor.getString(columnIndex);
-                cursor.close();
-                mSignupNativeViewMvc.showUserPicture(mUserPicturePath);
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
     /**
      * Initiate signup server request
      */
@@ -298,6 +271,33 @@ public class SignupNativeFragment extends AbstractFragment implements SignupNati
         mCameraPicturePath = cameraAdapter.takePicture(
                 Constants.REQUEST_CODE_TAKE_PICTURE, "new_request");
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constants.REQUEST_CODE_TAKE_PICTURE) {
+            if (resultCode == Activity.RESULT_OK) {
+                mUserPicturePath = mCameraPicturePath;
+                UtilMethods.adjustCameraPicture(mUserPicturePath);
+                mSignupNativeViewMvc.showUserPicture(mUserPicturePath);
+            } else {
+                // TODO: do we need anything here?
+            }
+        } else if (requestCode == Constants.REQUEST_CODE_SELECT_PICTURE) {
+            if (resultCode == Activity.RESULT_OK) {
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                Cursor cursor = getActivity().getContentResolver()
+                        .query(selectedImage, filePathColumn, null, null, null);
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                mUserPicturePath = cursor.getString(columnIndex);
+                cursor.close();
+                mSignupNativeViewMvc.showUserPicture(mUserPicturePath);
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     private void finishActivity(int resultCode) {

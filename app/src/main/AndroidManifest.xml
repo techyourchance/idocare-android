@@ -14,6 +14,9 @@
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
+    <!-- This one needed for reading pictures from gallery -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
 
 
     <application

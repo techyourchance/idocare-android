@@ -1,44 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!-- TODO: fix this layout and remove nested LinearLayouts if not used -->
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:background="@color/background_white">
 
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/signup_native_margin_1" />
-
-    <com.makeramen.roundedimageview.RoundedImageView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/img_user_picture"
-        android:src="@drawable/ic_add_user_picture"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:scaleType="centerCrop"
-        app:riv_oval="true"/>
-
-
-    <TextView
-        android:id="@+id/txt_add_user_picture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:textColor="@color/green"
-        android:textSize="@dimen/small_text_size"
-        android:text="@string/txt_add_user_photo"/>
-
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/element_picture"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_horizontal|bottom">
+        android:layout_above="@+id/element_form"
+        android:gravity="center"
+        android:orientation="vertical">
 
+        <com.makeramen.roundedimageview.RoundedImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/img_user_picture"
+            android:src="@drawable/ic_add_user_picture"
+            android:layout_height="@dimen/signup_user_picture_size"
+            android:layout_width="@dimen/signup_user_picture_size"
+            android:scaleType="centerCrop"
+            app:riv_oval="true"/>
+
+
+        <TextView
+            android:id="@+id/txt_add_user_picture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/green"
+            android:textSize="@dimen/small_text_size"
+            android:text="@string/txt_add_user_photo"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/element_form"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_horizontal|bottom">
 
         <EditText
             android:id="@+id/edt_first_name"
@@ -133,7 +138,6 @@
 
         </LinearLayout>
 
-
         <Space
             android:layout_width="match_parent"
             android:layout_height="20dp" />
@@ -141,4 +145,4 @@
     </LinearLayout>
 
 
-</LinearLayout>
+</RelativeLayout>

@@ -85,5 +85,8 @@
     <dimen name="dialog_padding">20dp</dimen>
     <dimen name="dialog_button_horizontal_padding">30dp</dimen>
 
+    <!-- Signup screen -->
+    <dimen name="signup_user_picture_size">114dp</dimen>
+
 
 </resources>
