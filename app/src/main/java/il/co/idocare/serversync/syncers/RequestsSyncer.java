@@ -9,9 +9,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.TransactionsController;
+import il.co.idocare.location.ReverseGeocoder;
 import il.co.idocare.networking.NetworkingUtils;
 import il.co.idocare.networking.ServerApi;
 import il.co.idocare.networking.schemes.responses.RequestResponseScheme;
@@ -43,6 +45,7 @@ public class RequestsSyncer {
     private final TransactionsController mTransactionsController;
     private final TempIdCacher mTempIdCacher;
     private final ServerApi mServerApi;
+    private final ReverseGeocoder mReverseGeocoder;
     private final EventBus mEventBus;
     private Logger mLogger;
 
@@ -51,6 +54,7 @@ public class RequestsSyncer {
                           TransactionsController transactionsController,
                           TempIdCacher tempIdCacher,
                           ServerApi serverApi,
+                          ReverseGeocoder reverseGeocoder,
                           EventBus eventBus,
                           Logger logger) {
         mRequestsCacher = requestsCacher;
@@ -58,6 +62,7 @@ public class RequestsSyncer {
         mTransactionsController = transactionsController;
         mTempIdCacher = tempIdCacher;
         mServerApi = serverApi;
+        mReverseGeocoder = reverseGeocoder;
         mEventBus = eventBus;
         mLogger = logger;
     }
@@ -166,11 +171,24 @@ public class RequestsSyncer {
 
         for (RequestScheme requestScheme : requestSchemes) {
             RequestEntity request = convertSchemeToRequest(requestScheme);
+            request = addReverseGeocodedLocation(request);
             mRequestsCacher.updateOrInsert(request);
             processedRequestIds.add(request.getId());
         }
 
         return processedRequestIds;
+    }
+
+    private RequestEntity addReverseGeocodedLocation(RequestEntity request) {
+        String location = mReverseGeocoder.getFromLocation(
+                request.getLatitude(),
+                request.getLongitude(),
+                Locale.getDefault());
+        if (location != null) {
+            return RequestEntity.getBuilder(request).setLocation(location).build();
+        } else {
+            return request;
+        }
     }
 
     private RequestEntity convertSchemeToRequest(RequestScheme requestScheme) {

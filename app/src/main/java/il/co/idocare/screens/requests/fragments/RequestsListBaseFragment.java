@@ -27,11 +27,11 @@ import il.co.idocare.dialogs.events.PromptDialogDismissedEvent;
 import il.co.idocare.requests.RequestEntity;
 import il.co.idocare.requests.RequestsManager;
 import il.co.idocare.screens.common.fragments.BaseScreenFragment;
-import il.co.idocare.screens.requests.mvcviews.RequestsMyViewMvcImpl;
+import il.co.idocare.screens.requests.mvcviews.RequestsListViewMvcImpl;
 import il.co.idocare.utils.Logger;
 
 public abstract class RequestsListBaseFragment extends BaseScreenFragment implements
-        RequestsMyViewMvcImpl.RequestsMyViewMvcListener,
+        RequestsListViewMvcImpl.RequestsListViewMvcListener,
         RequestsManager.RequestsManagerListener {
 
     private static final String USER_LOGIN_DIALOG_TAG = "USER_LOGIN_DIALOG_TAG";
@@ -43,7 +43,7 @@ public abstract class RequestsListBaseFragment extends BaseScreenFragment implem
     @Inject MainFrameHelper mMainMainFrameHelper;
     @Inject Logger mLogger;
 
-    private RequestsMyViewMvcImpl mViewMvc;
+    private RequestsListViewMvcImpl mViewMvc;
 
     /**
      * This method will be called whenever requests need to be loaded. Call one of the methods
@@ -60,7 +60,7 @@ public abstract class RequestsListBaseFragment extends BaseScreenFragment implem
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mViewMvc = new RequestsMyViewMvcImpl(inflater, container);
+        mViewMvc = new RequestsListViewMvcImpl(inflater, container);
         mViewMvc.registerListener(this);
 
         return mViewMvc.getRootView();

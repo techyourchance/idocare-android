@@ -8,6 +8,7 @@ import dagger.Module;
 import dagger.Provides;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.contentproviders.TransactionsController;
+import il.co.idocare.location.ReverseGeocoder;
 import il.co.idocare.networking.ServerApi;
 import il.co.idocare.requests.cachers.RequestsCacher;
 import il.co.idocare.requests.cachers.TempIdCacher;
@@ -33,10 +34,11 @@ public class ServerSyncModule {
                                   TransactionsController transactionsController,
                                   TempIdCacher tempIdCacher,
                                   ServerApi serverApi,
+                                  ReverseGeocoder reverseGeocoder,
                                   EventBus eventBus,
                                   Logger logger) {
         return new RequestsSyncer(requestsCacher, rawRequestsRetriever, transactionsController,
-                tempIdCacher, serverApi, eventBus, logger);
+                tempIdCacher, serverApi, reverseGeocoder, eventBus, logger);
     }
 
     @Provides

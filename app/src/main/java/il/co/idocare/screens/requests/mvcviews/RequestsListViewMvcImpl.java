@@ -18,11 +18,11 @@ import il.co.idocare.screens.requests.listadapters.RequestsListAdapter;
 /**
  * This MVC view shows a list of requests
  */
-public class RequestsMyViewMvcImpl
-        extends AbstractViewMVC<RequestsMyViewMvcImpl.RequestsMyViewMvcListener> {
+public class RequestsListViewMvcImpl
+        extends AbstractViewMVC<RequestsListViewMvcImpl.RequestsListViewMvcListener> {
 
 
-    public interface RequestsMyViewMvcListener {
+    public interface RequestsListViewMvcListener {
         public void onRequestClicked(RequestEntity request);
         public void onCreateNewRequestClicked();
     }
@@ -31,7 +31,7 @@ public class RequestsMyViewMvcImpl
     private RequestsListAdapter mRequestsListAdapter;
     private FloatingActionButton mFloatingActionButton;
 
-    public RequestsMyViewMvcImpl(LayoutInflater inflater, ViewGroup container) {
+    public RequestsListViewMvcImpl(LayoutInflater inflater, ViewGroup container) {
         setRootView(inflater.inflate(R.layout.layout_requests_my, container, false));
 
         initList();
@@ -48,7 +48,7 @@ public class RequestsMyViewMvcImpl
         mLstMyRequests.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                for (RequestsMyViewMvcListener listener : getListeners()) {
+                for (RequestsListViewMvcListener listener : getListeners()) {
                     listener.onRequestClicked(mRequestsListAdapter.getItem(position));
                 }
             }
@@ -63,7 +63,7 @@ public class RequestsMyViewMvcImpl
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (RequestsMyViewMvcListener listener : getListeners()) {
+                for (RequestsListViewMvcListener listener : getListeners()) {
                     listener.onCreateNewRequestClicked();
                 }
             }

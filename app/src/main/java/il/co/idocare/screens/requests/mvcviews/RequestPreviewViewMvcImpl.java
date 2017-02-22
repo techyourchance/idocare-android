@@ -1,6 +1,7 @@
 package il.co.idocare.screens.requests.mvcviews;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +66,7 @@ public class RequestPreviewViewMvcImpl
         setColors();
         setTexts();
         setPreviewPicture();
+        setLocation();
 
     }
 
@@ -140,5 +142,12 @@ public class RequestPreviewViewMvcImpl
         mImgRequestThumbnail.setImageResource(R.drawable.ic_background_grass);
     }
 
-
+    private void setLocation() {
+        if (!TextUtils.isEmpty(mRequest.getLocation())) {
+            mTxtRequestLocation.setText(mRequest.getLocation());
+            mTxtRequestLocation.setVisibility(View.VISIBLE);
+        } else {
+            mTxtRequestLocation.setVisibility(View.INVISIBLE);
+        }
+    }
 }

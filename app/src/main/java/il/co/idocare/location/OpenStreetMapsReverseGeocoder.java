@@ -1,83 +1,47 @@
 package il.co.idocare.location;
 
-import android.text.TextUtils;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Locale;
 
-import ch.boye.httpclientandroidlib.client.methods.CloseableHttpResponse;
-import ch.boye.httpclientandroidlib.client.methods.HttpGet;
-import ch.boye.httpclientandroidlib.client.methods.HttpUriRequest;
-import ch.boye.httpclientandroidlib.client.utils.URIBuilder;
-import ch.boye.httpclientandroidlib.impl.client.CloseableHttpClient;
-import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
-import ch.boye.httpclientandroidlib.util.EntityUtils;
+import il.co.idocare.networking.GeneralApi;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Response;
 
-/**
- * Created by Vasiliy on 8/28/2015.
- */
 public class OpenStreetMapsReverseGeocoder implements ReverseGeocoder {
 
-    private static final String OSM_SCHEME = "http";
-    private static final String OSM_HOST = "nominatim.openstreetmaps.org";
-    private static final String OSM_REVERSE_GEOCODE_PATH = "/reverse";
+    private final GeneralApi mGeneralApi;
+
+    public OpenStreetMapsReverseGeocoder(GeneralApi generalApi) {
+        mGeneralApi = generalApi;
+    }
 
     @Override
     public String getFromLocation(double latitude, double longitude, Locale locale) {
 
+        Call<ResponseBody> call = mGeneralApi.reverseGeocode(
+                18,
+                1,
+                locale.getCountry() + "," + Locale.US.getCountry(),
+                latitude,
+                longitude
+        );
 
-        // Build the required URI
-        URI uri = null;
         try {
-            uri = new URIBuilder()
-                    .setScheme(OSM_SCHEME)
-                    .setHost(OSM_HOST)
-                    .setPath(OSM_REVERSE_GEOCODE_PATH)
-                    .setParameter("format", "json")
-                    .setParameter("zoom", "18")
-                    .setParameter("addressdetails", "1")
-                    .setParameter("lat", String.valueOf(latitude))
-                    .setParameter("lon", String.valueOf(longitude))
-                    .setParameter("accept-language", locale.getCountry() + "," + Locale.US.getCountry())
-                    .build();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        HttpUriRequest httpRequest = new HttpGet(uri);
-
-        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-
-        CloseableHttpResponse httpResponse = null;
-        String responseEntityString = "";
-        // Execute the request and read the entity payload
-        try {
-            httpResponse = httpClient.execute(httpRequest);
-            responseEntityString = EntityUtils.toString(httpResponse.getEntity());
+            Response<ResponseBody> response = call.execute();
+            if (response.isSuccessful()) {
+                String responseEntityString = response.body().string();
+                return parseResponse(responseEntityString);
+            } else  {
+                return null;
+            }
         } catch (IOException e) {
             e.printStackTrace();
             return null;
-        } finally {
-            if (httpResponse != null)
-                try {
-                    httpResponse.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
         }
-
-        // Parse the response
-        if ((httpResponse.getStatusLine().getStatusCode() / 100 != 2) ||
-                TextUtils.isEmpty(responseEntityString))
-            return null;
-        else
-            return parseResponse(responseEntityString);
 
     }
 

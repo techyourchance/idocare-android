@@ -5,8 +5,11 @@ import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Geocoder;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.Locale;
 
 import dagger.Module;
 import dagger.Provides;
@@ -18,6 +21,9 @@ import il.co.idocare.common.settings.PreferenceSettingsEntryFactoryImpl;
 import il.co.idocare.common.settings.SettingsManager;
 import il.co.idocare.contentproviders.IdcSQLiteOpenHelper;
 import il.co.idocare.contentproviders.TransactionsController;
+import il.co.idocare.location.OpenStreetMapsReverseGeocoder;
+import il.co.idocare.location.ReverseGeocoder;
+import il.co.idocare.location.StandardReverseGeocoder;
 import il.co.idocare.networking.FilesDownloader;
 import il.co.idocare.networking.GeneralApi;
 import il.co.idocare.networking.ServerApi;
@@ -180,5 +186,11 @@ public class ApplicationModule {
     @Provides
     TransactionsController transactionsController() {
         return new TransactionsController(mSqLiteOpenHelper);
+    }
+
+    @Provides
+    ReverseGeocoder reverseGeocoder(Application application) {
+        Geocoder geocoder = new Geocoder(application, Locale.getDefault());
+        return new StandardReverseGeocoder(geocoder);
     }
 }

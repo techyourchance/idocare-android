@@ -29,7 +29,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             style="@style/RequestStatusTextViewStyle"/>
-        
+
         <TextView
             android:id="@+id/txt_request_coarse_location"
             android:layout_width="wrap_content"
@@ -38,7 +38,7 @@
             android:layout_alignParentLeft="true"
             android:layout_above="@+id/txt_created_by"
             style="@style/RequestLocationTextViewStyle"
-            android:text="Location"/>
+            android:visibility="invisible"/>
 
         <TextView
             android:id="@+id/txt_created_by"

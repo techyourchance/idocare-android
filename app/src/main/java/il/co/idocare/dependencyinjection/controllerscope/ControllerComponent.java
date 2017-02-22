@@ -5,7 +5,6 @@ import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.controllers.activities.StartupActivity;
 import il.co.idocare.dialogs.InfoDialog;
 import il.co.idocare.screens.requestdetails.fragments.CloseRequestFragment;
-import il.co.idocare.dependencyinjection.datacache.RetrieversModule;
 import il.co.idocare.screens.common.fragments.BaseFragment;
 import il.co.idocare.screens.common.fragments.BaseScreenFragment;
 import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
@@ -15,7 +14,6 @@ import il.co.idocare.screens.requestdetails.fragments.NewAndCloseRequestBaseFrag
 import il.co.idocare.screens.requestdetails.fragments.NewRequestFragment;
 import il.co.idocare.screens.requestdetails.fragments.RequestDetailsFragment;
 import il.co.idocare.controllers.fragments.SignupNativeFragment;
-import il.co.idocare.dependencyinjection.datacache.CachersModule;
 import il.co.idocare.dialogs.PromptDialog;
 import il.co.idocare.screens.navigationdrawer.fragments.NavigationDrawerFragment;
 import il.co.idocare.screens.requests.fragments.RequestsListBaseFragment;
