@@ -18,6 +18,8 @@ import il.co.idocare.common.settings.PreferenceSettingsEntryFactoryImpl;
 import il.co.idocare.common.settings.SettingsManager;
 import il.co.idocare.contentproviders.IdcSQLiteOpenHelper;
 import il.co.idocare.contentproviders.TransactionsController;
+import il.co.idocare.networking.FilesDownloader;
+import il.co.idocare.networking.GeneralApi;
 import il.co.idocare.networking.ServerApi;
 import il.co.idocare.networking.StdHeadersInterceptor;
 import il.co.idocare.nonstaticproxies.ContentResolverProxy;
@@ -67,9 +69,10 @@ public class ApplicationModule {
     AuthManager authManager(LoginStateManager loginStateManager,
                             BackgroundThreadPoster backgroundThreadPoster,
                             ServerApi serverApi,
+                            FilesDownloader filesDownloader,
                             EventBus eventBus,
                             Logger logger) {
-        return new AuthManager(loginStateManager, backgroundThreadPoster, serverApi, eventBus, logger);
+        return new AuthManager(loginStateManager, backgroundThreadPoster, serverApi, filesDownloader, eventBus, logger);
     }
 
     @Provides
@@ -161,6 +164,17 @@ public class ApplicationModule {
     @ApplicationScope
     ServerApi serverApi(Retrofit retrofit) {
         return retrofit.create(ServerApi.class);
+    }
+
+    @Provides
+    @ApplicationScope
+    GeneralApi generalApi(Retrofit retrofit) {
+        return retrofit.create(GeneralApi.class);
+    }
+
+    @Provides
+    FilesDownloader filesDownloader( Application application, GeneralApi generalApi, Logger logger) {
+        return new FilesDownloader(application, generalApi, logger);
     }
 
     @Provides

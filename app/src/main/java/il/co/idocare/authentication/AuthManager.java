@@ -18,6 +18,7 @@ import java.io.IOException;
 import il.co.idocare.Constants;
 import il.co.idocare.datamodels.pojos.UserSignupData;
 import il.co.idocare.eventbusevents.LoginStateEvents;
+import il.co.idocare.networking.FilesDownloader;
 import il.co.idocare.networking.ServerApi;
 import il.co.idocare.networking.schemes.responses.AuthResponseScheme;
 import il.co.idocare.utils.Logger;
@@ -40,17 +41,20 @@ public class AuthManager {
     private final LoginStateManager mLoginStateManager;
     private final BackgroundThreadPoster mBackgroundThreadPoster;
     private final ServerApi mServerApi;
+    private final FilesDownloader mFilesDownloader;
     private final EventBus mEventBus;
     private final Logger mLogger;
 
     public AuthManager(LoginStateManager loginStateManager,
                        BackgroundThreadPoster backgroundThreadPoster,
                        ServerApi serverApi,
+                       FilesDownloader filesDownloader,
                        EventBus eventBus,
                        Logger logger) {
         mLoginStateManager = loginStateManager;
         mBackgroundThreadPoster = backgroundThreadPoster;
         mServerApi = serverApi;
+        mFilesDownloader = filesDownloader;
         mEventBus = eventBus;
         mLogger = logger;
     }
@@ -70,7 +74,7 @@ public class AuthManager {
         // Construct a request to fetch user's details
         GraphRequest request = GraphRequest.newMeRequest(accessToken, null);
         Bundle parameters = new Bundle();
-        parameters.putString("fields", "id, first_name, last_name, email");
+        parameters.putString("fields", "id, first_name, last_name, email, picture.type(square).width(768)");
         request.setParameters(parameters);
 
         GraphResponse response = GraphRequest.executeAndWait(request);
@@ -96,6 +100,7 @@ public class AuthManager {
         String firstName;
         String lastName;
         String nickname;
+        String pictureUrl;
 
         try {
             facebookId = jsonResponse.getString("id");
@@ -104,6 +109,7 @@ public class AuthManager {
             firstName = jsonResponse.getString("first_name");
             lastName = jsonResponse.getString("last_name");
             nickname = firstName + " " + lastName;
+            pictureUrl = jsonResponse.getJSONObject("picture").getJSONObject("data").getString("url");
         } catch (JSONException e) {
             e.printStackTrace();
             return;
@@ -115,13 +121,15 @@ public class AuthManager {
             mLogger.d(TAG, "native login using FB credentials succeeded");
         } else {
             mLogger.d(TAG, "native login using FB credentials failed; attempting native signup");
+            String localPictureUri = mFilesDownloader.downloadFileAndStoreLocallySync(pictureUrl);
             UserSignupData userData = new UserSignupData(email, password, nickname,
-                    firstName, lastName, facebookId, null);
+                    firstName, lastName, facebookId, localPictureUri);
             authResponseScheme = signUpNativeSync(userData);
         }
 
         processAuthenticationResponse(email, authResponseScheme);
     }
+
 
     public void logInNative(final String username, final String password) {
         mBackgroundThreadPoster.post(new Runnable() {
