@@ -22,7 +22,7 @@ android {
 
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             buildConfigField "String", "ROOT_URL", "\"http://dev-04.idocare.co.il/api-04/\""
             return true

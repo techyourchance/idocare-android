@@ -27,6 +27,30 @@
 
 ## --------------------------------------------------------------------------------
 #
+# Clear logging statements
+#
+## --------------------------------------------------------------------------------
+
+# Default Android logger
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+    public static *** i(...);
+    public static *** w(...);
+    public static *** e(...);
+}
+
+# Our custom non-static logger
+-assumenosideeffects class il.co.idocare.utils.Logger {
+    public *** d(...);
+    public *** v(...);
+    public *** i(...);
+    public *** w(...);
+    public *** e(...);
+}
+
+## --------------------------------------------------------------------------------
+#
 # The below ignore roundedimageview errors
 #
 # TODO: remove this lib in favor of Picasso and remove this section
@@ -61,6 +85,16 @@
 -keepattributes Signature
 # Retain declared checked exceptions for use by a Proxy instance.
 -keepattributes Exceptions
+
+## --------------------------------------------------------------------------------
+#
+# Additional config for Retrofit
+#
+## --------------------------------------------------------------------------------
+
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
 
 ## --------------------------------------------------------------------------------
 #
