@@ -7,6 +7,7 @@ import il.co.idocare.networking.schemes.responses.RequestsResponseScheme;
 import il.co.idocare.networking.schemes.responses.AuthResponseScheme;
 import il.co.idocare.networking.schemes.responses.RequestResponseScheme;
 import okhttp3.MultipartBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
@@ -57,14 +58,14 @@ public interface ServerApi {
 
     @FormUrlEncoded
     @POST("request/pickup")
-    Call<Void> pickupRequest(@Field("request_id") String requestId);
+    Call<ResponseBody> pickupRequest(@Field("request_id") String requestId);
 
     @POST("request/close")
-    Call<Void> closeRequest(@Body MultipartBody part);
+    Call<ResponseBody> closeRequest(@Body MultipartBody part);
 
     @FormUrlEncoded
     @POST("request/vote")
-    Call<Void> voteForRequest(
+    Call<ResponseBody> voteForRequest(
             @Field("entity_id") String requestId,
             @Field("score") int score,
             @Field("entity_param") String createdOrClosed

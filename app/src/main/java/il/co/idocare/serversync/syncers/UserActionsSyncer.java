@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract;
+import il.co.idocare.networking.HttpUtils;
 import il.co.idocare.networking.NetworkingUtils;
 import il.co.idocare.networking.ServerApi;
 import il.co.idocare.requests.retrievers.TempIdRetriever;
@@ -30,6 +31,7 @@ import il.co.idocare.useractions.retrievers.UserActionsRetriever;
 import il.co.idocare.utils.Logger;
 import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
 import okhttp3.MultipartBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -171,13 +173,18 @@ public class UserActionsSyncer {
                 Constants.FIELD_NAME_CLOSED_PICTURES
         );
 
-        Call<Void> call = mServerApi.closeRequest(builder.build());
+        Call<ResponseBody> call = mServerApi.closeRequest(builder.build());
 
         try {
-            Response<Void> response = call.execute();
+            Response<ResponseBody> response = call.execute();
 
             if (!response.isSuccessful()) {
-                throw new SyncFailedException("close request call failed; response code: " + response.code());
+                if (HttpUtils.isClientSideError(response.code())) {
+                    mLogger.w(TAG, "close request call failed due to client error; " +
+                            "response code: " + response.code() + "\nresponse: " + response.body());
+                } else {
+                    throw new SyncFailedException("close request call failed; response code: " + response.code());
+                }
             }
         } catch (IOException e) {
             throw new SyncFailedException(e);
@@ -187,12 +194,19 @@ public class UserActionsSyncer {
     private void syncRequestPickedUpAction(PickUpRequestUserActionEntity userAction) {
         mLogger.d(TAG, "syncRequestPickedUpAction(); entity ID: " + userAction.getEntityId());
 
-        Call<Void> call = mServerApi.pickupRequest(userAction.getEntityId());
+        Call<ResponseBody> call = mServerApi.pickupRequest(userAction.getEntityId());
 
         try {
-            Response<Void> response = call.execute();
+            Response<ResponseBody> response = call.execute();
+
             if (!response.isSuccessful()) {
-                throw new SyncFailedException("pickup request call failed; response code: " + response.code());
+
+                if (HttpUtils.isClientSideError(response.code())) {
+                    mLogger.w(TAG, "pick up request call failed due to client error; " +
+                            "response code: " + response.code() + "\nresponse: " + response.body());
+                } else {
+                    throw new SyncFailedException("pickup request call failed; response code: " + response.code());
+                }
             }
         } catch (IOException e) {
             throw new SyncFailedException(e);
@@ -202,13 +216,19 @@ public class UserActionsSyncer {
     private void syncVoteForRequestUserAction(VoteForRequestUserActionEntity userAction) {
         mLogger.d(TAG, "syncVoteForRequestUserAction(); entity ID: " + userAction.getEntityId());
 
-        Call<Void> call = mServerApi.voteForRequest(userAction.getEntityId(),
+        Call<ResponseBody> call = mServerApi.voteForRequest(userAction.getEntityId(),
                 userAction.getVoteScore(), userAction.getCreatedOrClosed());
 
         try {
-            Response<Void> response = call.execute();
+            Response<ResponseBody> response = call.execute();
+            
             if (!response.isSuccessful()) {
-                throw new SyncFailedException("vote for request call failed; response code: " + response.code());
+                if (HttpUtils.isClientSideError(response.code())) {
+                    mLogger.w(TAG, "vote for request call failed due to client error; " +
+                            "response code: " + response.code() + "\nresponse: " + response.body());
+                } else {
+                    throw new SyncFailedException("vote for request call failed; response code: " + response.code());
+                }
             }
         } catch (IOException e) {
             throw new SyncFailedException(e);
