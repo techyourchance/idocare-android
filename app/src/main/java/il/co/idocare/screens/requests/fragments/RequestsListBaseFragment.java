@@ -28,6 +28,7 @@ import il.co.idocare.requests.RequestEntity;
 import il.co.idocare.requests.RequestsManager;
 import il.co.idocare.screens.common.fragments.BaseScreenFragment;
 import il.co.idocare.screens.requests.mvcviews.RequestsListViewMvcImpl;
+import il.co.idocare.users.UsersManager;
 import il.co.idocare.utils.Logger;
 
 public abstract class RequestsListBaseFragment extends BaseScreenFragment implements
@@ -41,6 +42,7 @@ public abstract class RequestsListBaseFragment extends BaseScreenFragment implem
     @Inject DialogsManager mDialogsManager;
     @Inject DialogsFactory mDialogsFactory;
     @Inject MainFrameHelper mMainMainFrameHelper;
+    @Inject UsersManager mUsersManager;
     @Inject Logger mLogger;
 
     private RequestsListViewMvcImpl mViewMvc;
@@ -60,7 +62,8 @@ public abstract class RequestsListBaseFragment extends BaseScreenFragment implem
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mViewMvc = new RequestsListViewMvcImpl(inflater, container);
+        // TODO: find approach that doesn't involve passing users manager directly!
+        mViewMvc = new RequestsListViewMvcImpl(inflater, container, mUsersManager);
         mViewMvc.registerListener(this);
 
         return mViewMvc.getRootView();

@@ -18,6 +18,7 @@ import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.mvcviews.AbstractViewMVC;
 import il.co.idocare.requests.RequestEntity;
+import il.co.idocare.users.UserEntity;
 
 
 /**
@@ -26,6 +27,7 @@ import il.co.idocare.requests.RequestEntity;
  */
 public class RequestPreviewViewMvcImpl
         extends AbstractViewMVC<RequestPreviewViewMvcImpl.RequestPreviewViewMvcListener> {
+
 
     public interface RequestPreviewViewMvcListener {
         public void onRequestClicked(RequestEntity request);
@@ -70,6 +72,9 @@ public class RequestPreviewViewMvcImpl
 
     }
 
+    public void bindCreatedByUser(UserEntity user) {
+        mTxtCreatedBy.setText(user.getNickname());
+    }
 
     private void setColors() {
         int statusColor;

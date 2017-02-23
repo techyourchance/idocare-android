@@ -14,12 +14,14 @@ import il.co.idocare.R;
 import il.co.idocare.mvcviews.AbstractViewMVC;
 import il.co.idocare.requests.RequestEntity;
 import il.co.idocare.screens.requests.listadapters.RequestsListAdapter;
+import il.co.idocare.users.UsersManager;
 
 /**
  * This MVC view shows a list of requests
  */
 public class RequestsListViewMvcImpl
         extends AbstractViewMVC<RequestsListViewMvcImpl.RequestsListViewMvcListener> {
+
 
 
     public interface RequestsListViewMvcListener {
@@ -30,8 +32,10 @@ public class RequestsListViewMvcImpl
     private ListView mLstMyRequests;
     private RequestsListAdapter mRequestsListAdapter;
     private FloatingActionButton mFloatingActionButton;
+    private final UsersManager mUsersManager;
 
-    public RequestsListViewMvcImpl(LayoutInflater inflater, ViewGroup container) {
+    public RequestsListViewMvcImpl(LayoutInflater inflater, ViewGroup container, UsersManager usersManager) {
+        mUsersManager = usersManager;
         setRootView(inflater.inflate(R.layout.layout_requests_my, container, false));
 
         initList();
@@ -42,7 +46,7 @@ public class RequestsListViewMvcImpl
     private void initList() {
         mLstMyRequests = findViewById(R.id.lst_my_requests);
 
-        mRequestsListAdapter = new RequestsListAdapter(getContext(), 0);
+        mRequestsListAdapter = new RequestsListAdapter(getContext(), 0, mUsersManager);
         mLstMyRequests.setAdapter(mRequestsListAdapter);
 
         mLstMyRequests.setOnItemClickListener(new AdapterView.OnItemClickListener() {
