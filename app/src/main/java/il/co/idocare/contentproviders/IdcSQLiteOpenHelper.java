@@ -6,11 +6,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import il.co.idocare.BuildConfig;
+
 public class IdcSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "IdcSQLiteOpenHelper";
 
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = BuildConfig.DATABASE_SCHEMA_VERSION;
 
     private static final String DATABASE_NAME = "idocare_db";
 

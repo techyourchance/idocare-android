@@ -9849,7 +9849,9 @@ il.co.idocare.controllers.fragments.LoginNativeFragment:
     private static final java.lang.String MULTIPLE_ACCOUNTS_NOT_SUPPORTED_DIALOG_TAG
     64:64:public boolean isTopLevelFragment()
 il.co.idocare.controllers.fragments.SignupNativeFragment:
-    98:98:public boolean isTopLevelFragment()
+    private static final java.lang.String TAG
+    private static final java.lang.String PICTURE_CAPTURE_DIALOG_TAG
+    104:104:public boolean isTopLevelFragment()
 il.co.idocare.controllers.fragments.SplashFragment:
     private static final java.lang.String LOG_TAG
     private static final int MIN_SPLASH_DURATION_SEC
@@ -9859,12 +9861,12 @@ il.co.idocare.datamodels.functional.UserActionItem
 il.co.idocare.datamodels.functional.UserItem
 il.co.idocare.datamodels.pojos.RequestItemPojo
 il.co.idocare.dependencyinjection.applicationscope.ApplicationModule:
-    107:107:il.co.idocare.nonstaticproxies.TextUtilsProxy provideTextUtilsProxy()
+    116:116:il.co.idocare.nonstaticproxies.TextUtilsProxy provideTextUtilsProxy()
 il.co.idocare.dependencyinjection.applicationscope.ApplicationModule_ProvideTextUtilsProxyFactory
 il.co.idocare.dependencyinjection.applicationscope.ApplicationScope
 il.co.idocare.dependencyinjection.applicationscope.DaggerApplicationComponent$ContextComponentImpl$ControllerComponentImpl:
-    395:396:public void inject(il.co.idocare.screens.requests.fragments.RequestsAllFragment)
-    400:401:public void inject(il.co.idocare.screens.requests.fragments.RequestsMyFragment)
+    404:405:public void inject(il.co.idocare.screens.requests.fragments.RequestsAllFragment)
+    409:410:public void inject(il.co.idocare.screens.requests.fragments.RequestsMyFragment)
 il.co.idocare.dependencyinjection.contextscope.ContextModule:
     24:24:android.content.Context provideContext()
 il.co.idocare.dependencyinjection.contextscope.ContextModule_ProvideContextFactory
@@ -9897,6 +9899,7 @@ il.co.idocare.dialogs.PromptDialog:
     static final java.lang.String ARG_POSITIVE_BUTTON_CAPTION
     static final java.lang.String ARG_NEGATIVE_BUTTON_CAPTION
 il.co.idocare.dialogs.events.PromptDialogDismissedEvent:
+    public static final int BUTTON_NONE
     public static final int BUTTON_POSITIVE
     public static final int BUTTON_NEGATIVE
 il.co.idocare.eventbusevents.LocationEvents:
@@ -9918,11 +9921,8 @@ il.co.idocare.location.LocationTrackerService:
     private static final int GPS_PERMISSION_RECHECK_INTERVAL
     private static final int NOTIFICATION_ID_GPS_PERMISSION_REQUEST
 il.co.idocare.location.OpenStreetMapsReverseGeocoder
-il.co.idocare.location.OpenStreetMapsReverseGeocoderFactory
-il.co.idocare.location.ReverseGeocoder
-il.co.idocare.location.ReverseGeocoderFactory
 il.co.idocare.mvcviews.AbstractViewMVC:
-    30:31:public void unregisterListener(java.lang.Object)
+    32:33:public void unregisterListener(java.lang.Object)
 il.co.idocare.mvcviews.ObservableViewMVC:
     public abstract void unregisterListener(java.lang.Object)
 il.co.idocare.mvcviews.cameracontrol.CameraControlViewMvc:
@@ -9958,6 +9958,10 @@ il.co.idocare.mvcviews.signupnative.SignupNativeViewMvc:
     public abstract void disableUserInput()
     public abstract void enableUserInput()
     public abstract void showUserPicture(java.lang.String)
+il.co.idocare.networking.FilesDownloader:
+    private static final java.lang.String TAG
+il.co.idocare.networking.HttpUtils:
+    6:6:private HttpUtils()
 il.co.idocare.networking.NetworkingUtils:
     private static final java.lang.String MULTIPART_FORM_DATA
     15:15:private NetworkingUtils()
@@ -9969,8 +9973,6 @@ il.co.idocare.networking.schemes.requests.CreateNewRequestScheme
 il.co.idocare.networking.schemes.responses.AuthInfoScheme:
     5:5:public AuthInfoScheme()
 il.co.idocare.nonstaticproxies.TextUtilsProxy
-il.co.idocare.requests.RequestEntity$RequestEntityBuilder:
-    295:296:public il.co.idocare.requests.RequestEntity$RequestEntityBuilder setLocation(java.lang.String)
 il.co.idocare.requests.RequestsManager:
     private static final java.lang.String TAG
 il.co.idocare.requests.cachers.RequestsCacher:
@@ -10021,7 +10023,6 @@ il.co.idocare.screens.requests.fragments.RequestsMyFragment:
 il.co.idocare.screens.requests.mvcviews.RequestPreviewViewMvcImpl$RequestPreviewViewMvcListener
 il.co.idocare.screens.requests.mvcviews.RequestThumbnailViewMvc
 il.co.idocare.screens.requests.mvcviews.RequestThumbnailViewMvc$RequestThumbnailViewMvcListener
-il.co.idocare.screens.requests.mvcviews.RequestThumbnailViewMvcImpl
 il.co.idocare.screens.requests.mvcviews.RequestsAllViewMvc
 il.co.idocare.screens.requests.mvcviews.RequestsAllViewMvc$RequestsAllViewMvcListener
 il.co.idocare.screens.requests.mvcviews.RequestsAllViewMvcImpl
@@ -10042,7 +10043,7 @@ il.co.idocare.serversync.syncers.RequestsSyncer:
 il.co.idocare.serversync.syncers.UserActionsSyncer:
     private static final java.lang.String TAG
 il.co.idocare.serversync.syncers.UserActionsSyncer$UserActionsDispatcher:
-    529:531:public java.util.List getCompletedEntityIds()
+    549:551:public java.util.List getCompletedEntityIds()
 il.co.idocare.serversync.syncers.UsersSyncer:
     private static final java.lang.String TAG
 il.co.idocare.useractions.UserActionEntityFactory:
@@ -10067,8 +10068,6 @@ il.co.idocare.users.UserEntity:
 il.co.idocare.users.UsersCacher:
     private static final java.lang.String TAG
 il.co.idocare.utils.IDoCareJSONUtils
-il.co.idocare.utils.Logger:
-    15:16:public void w(java.lang.String,java.lang.String)
 il.co.idocare.utils.SecurityUtils:
     private static final java.lang.String TAG
     15:15:private SecurityUtils()
