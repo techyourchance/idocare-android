@@ -23,7 +23,7 @@ public class UserActionsToRequestsApplierTest {
 
     private UserActionEntityFactory mUserActionEntityFactory = new UserActionEntityFactory() {
         @Override
-        protected String getTimestamp() {
+        protected String getDateTime() {
             return DEFAULT_TIMESTAMP;
         }
     };

@@ -27,7 +27,7 @@ public class UserActionCacher {
 
         ContentValues userActionCV = new ContentValues(6);
 
-        userActionCV.put(IDoCareContract.UserActions.COL_TIMESTAMP, userAction.getTimestamp());
+        userActionCV.put(IDoCareContract.UserActions.COL_TIMESTAMP, userAction.getDatetime());
 
         userActionCV.put(IDoCareContract.UserActions.COL_ENTITY_TYPE, userAction.getEntityType());
 

@@ -17,7 +17,7 @@ public class VoteForRequestUserActionEntity extends UserActionEntity {
 
     public static VoteForRequestUserActionEntity fromUserAction(UserActionEntity userAction) {
         return new VoteForRequestUserActionEntity(
-                userAction.getTimestamp(),
+                userAction.getDatetime(),
                 userAction.getEntityId(),
                 getVoteTypeFromUserAction(userAction)
         );

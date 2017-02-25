@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import il.co.idocare.Constants;
 import il.co.idocare.contentproviders.IDoCareContract.UserActions;
 import il.co.idocare.utils.StringUtils;
 
@@ -45,7 +44,7 @@ public class CloseRequestUserActionEntity extends UserActionEntity {
         ActionParam actionParam = gson.fromJson(userAction.getActionParam(), ActionParam.class);
 
         return new CloseRequestUserActionEntity(
-                userAction.getTimestamp(),
+                userAction.getDatetime(),
                 userAction.getEntityId(),
                 actionParam.closedBy,
                 actionParam.closedComment,
@@ -54,7 +53,7 @@ public class CloseRequestUserActionEntity extends UserActionEntity {
     }
 
     public String getClosedAt() {
-        return String.valueOf(getTimestamp());
+        return String.valueOf(getDatetime());
     }
 
     public String getClosedByUserId() {

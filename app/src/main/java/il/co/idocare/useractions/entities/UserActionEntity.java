@@ -6,7 +6,7 @@ package il.co.idocare.useractions.entities;
 public class UserActionEntity {
 
     private final long mId;
-    private final String mTimestamp;
+    private final String mDatetime;
     private final String mEntityType;
     private final String mEntityId;
     private final String mEntityParam;
@@ -20,7 +20,7 @@ public class UserActionEntity {
     public static Builder newBuilder(UserActionEntity userAction) {
         return newBuilder()
                 .setId(userAction.getActionId())
-                .setTimestamp(userAction.getTimestamp())
+                .setTimestamp(userAction.getDatetime())
                 .setEntityType(userAction.getEntityType())
                 .setEntityId(userAction.getEntityId())
                 .setEntityParam(userAction.getEntityParam())
@@ -29,14 +29,14 @@ public class UserActionEntity {
     }
 
     public UserActionEntity(long id,
-                            String timestamp,
+                            String datetime,
                             String entityType,
                             String entityId,
                             String entityParam,
                             String actionType,
                             String actionParam) {
         mId = id;
-        mTimestamp = timestamp;
+        mDatetime = datetime;
         mEntityType = entityType;
         mEntityId = entityId;
         mEntityParam = entityParam;
@@ -44,13 +44,13 @@ public class UserActionEntity {
         mActionParam = actionParam;
     }
 
-    public UserActionEntity(String timestamp,
+    public UserActionEntity(String datetime,
                             String entityType,
                             String entityId,
                             String entityParam,
                             String actionType,
                             String actionParam) {
-        this(0, timestamp, entityType, entityId, entityParam, actionType, actionParam);
+        this(0, datetime, entityType, entityId, entityParam, actionType, actionParam);
     }
 
     // Getters
@@ -59,8 +59,8 @@ public class UserActionEntity {
         return mId;
     }
 
-    public String getTimestamp() {
-        return mTimestamp;
+    public String getDatetime() {
+        return mDatetime;
     }
 
     public String getEntityType() {

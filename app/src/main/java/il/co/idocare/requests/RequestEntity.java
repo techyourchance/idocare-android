@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import il.co.idocare.utils.IdcDateTimeUtils;
+
 /**
  * This object encapsulates the data about a single request
  */
@@ -168,6 +170,10 @@ public class RequestEntity {
 
     public String getLocation() {
         return mLocation;
+    }
+
+    public String getLatestActivityAt() {
+        return IdcDateTimeUtils.getLatestDateTime(getCreatedAt(), getPickedUpAt(), getClosedAt());
     }
 
 

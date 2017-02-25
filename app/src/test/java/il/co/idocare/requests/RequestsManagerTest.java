@@ -176,7 +176,7 @@ public class RequestsManagerTest {
         assertThat(actual.getEntityId(), is(expected.getEntityId()));
         assertThat(actual.getEntityParam(), is(expected.getEntityParam()));
         assertThat(actual.getEntityType(), is(expected.getEntityType()));
-        assertThat(actual.getTimestamp(), is(expected.getTimestamp()));
+        assertThat(actual.getDatetime(), is(expected.getDatetime()));
     }
 
     private void assertRequestsEqual(RequestEntity actual, RequestEntity expected) {

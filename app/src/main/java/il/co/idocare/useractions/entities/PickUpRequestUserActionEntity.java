@@ -12,7 +12,7 @@ public class PickUpRequestUserActionEntity extends UserActionEntity {
 
     public static PickUpRequestUserActionEntity fromUserAction(UserActionEntity userAction) {
         return new PickUpRequestUserActionEntity(
-                userAction.getTimestamp(),
+                userAction.getDatetime(),
                 userAction.getEntityId(),
                 userAction.getActionParam());
     }
@@ -34,7 +34,7 @@ public class PickUpRequestUserActionEntity extends UserActionEntity {
     }
 
     public String getPickedUpAt() {
-        return String.valueOf(getTimestamp());
+        return String.valueOf(getDatetime());
     }
 
 }

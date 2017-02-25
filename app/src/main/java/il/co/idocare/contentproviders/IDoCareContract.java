@@ -94,7 +94,6 @@ public class IDoCareContract {
                 COL_CLOSED_BY,
                 COL_LOCATION};
 
-        // TODO: add column containing "timestamp" (latest activity time) and make default sort by this column
 		/**
 		 * The default sort order for queries containing NAME fields.
 		 */

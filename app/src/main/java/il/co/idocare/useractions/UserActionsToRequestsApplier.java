@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import il.co.idocare.contentproviders.IDoCareContract.UserActions;
 import il.co.idocare.requests.RequestEntity;
 import il.co.idocare.useractions.entities.CloseRequestUserActionEntity;
-import il.co.idocare.useractions.entities.CreateRequestUserActionEntity;
 import il.co.idocare.useractions.entities.PickUpRequestUserActionEntity;
 import il.co.idocare.useractions.entities.UserActionEntity;
 import il.co.idocare.useractions.entities.VoteForRequestUserActionEntity;
@@ -72,7 +71,7 @@ public class UserActionsToRequestsApplier {
 
         return RequestEntity.getBuilder(requestEntity)
                 .setClosedBy(closeRequestUserAction.getClosedByUserId())
-                .setClosedAt(String.valueOf(closeRequestUserAction.getTimestamp()))
+                .setClosedAt(String.valueOf(closeRequestUserAction.getDatetime()))
                 .setClosedComment(closeRequestUserAction.getClosedComment())
                 .setClosedPictures(closeRequestUserAction.getClosedPictures())
                 .build();
@@ -88,7 +87,7 @@ public class UserActionsToRequestsApplier {
 
         return RequestEntity.getBuilder(requestEntity)
                 .setPickedUpBy(pickedUpByUserId)
-                .setPickedUpAt(String.valueOf(pickUpRequestUserAction.getTimestamp()))
+                .setPickedUpAt(String.valueOf(pickUpRequestUserAction.getDatetime()))
                 .build();
     }
 

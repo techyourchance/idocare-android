@@ -33,6 +33,7 @@ import il.co.idocare.mvcviews.newrequest.NewRequestViewMvcImpl;
 import il.co.idocare.requests.RequestEntity;
 import il.co.idocare.requests.RequestsManager;
 import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
+import il.co.idocare.utils.IdcDateTimeUtils;
 import il.co.idocare.utils.Logger;
 
 
@@ -143,8 +144,6 @@ public class NewRequestFragment extends NewAndCloseRequestBaseFragment
         // Generate a temporary ID for this request - the actual ID will be assigned by the server
         String tempId = UUID.randomUUID().toString();
 
-        long timestamp = System.currentTimeMillis();
-
         if (!validRequestParameters(createdBy, createdPictures)) {
             Log.d(TAG, "aborting request creation due to invalid parameters");
             return;
@@ -153,7 +152,7 @@ public class NewRequestFragment extends NewAndCloseRequestBaseFragment
         RequestEntity newRequest = RequestEntity.getBuilder()
                 .setId(tempId)
                 .setCreatedBy(createdBy)
-                .setCreatedAt(String.valueOf(timestamp))
+                .setCreatedAt(IdcDateTimeUtils.getCurrentDateTimeLocalized())
                 .setCreatedComment(createdComment)
                 .setCreatedPictures(createdPictures)
                 .setLongitude(longitude)

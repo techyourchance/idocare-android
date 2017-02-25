@@ -71,6 +71,8 @@ dependencies {
     testCompile 'org.mockito:mockito-core:1.10.19'
     // Crash report
     compile 'com.google.firebase:firebase-crash:10.0.1'
+    // Datetime library
+    compile 'joda-time:joda-time:2.9.4'
 }
 
 apply plugin: 'com.google.gms.google-services'

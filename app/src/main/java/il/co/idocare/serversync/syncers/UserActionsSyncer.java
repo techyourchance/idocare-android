@@ -5,6 +5,8 @@ import android.content.ContentResolver;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
+import org.joda.time.DateTime;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -572,7 +574,7 @@ public class UserActionsSyncer {
 
         @Override
         public int compare(UserActionEntity lhs, UserActionEntity rhs) {
-            return lhs.getTimestamp().compareTo(rhs.getTimestamp());
+            return new DateTime(lhs.getDatetime()).compareTo(new DateTime(rhs.getDatetime()));
         }
     }
 
