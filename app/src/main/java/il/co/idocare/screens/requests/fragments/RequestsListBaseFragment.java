@@ -120,7 +120,7 @@ public abstract class RequestsListBaseFragment extends BaseScreenFragment implem
     }
 
     @Override
-    public void onRequestsFetched(@NonNull List<RequestEntity> requests) {
+    public void onRequestsFetched(List<RequestEntity> requests) {
         mViewMvc.bindRequests(requests);
     }
 

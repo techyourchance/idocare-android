@@ -15,6 +15,7 @@ import il.co.idocare.mvcviews.AbstractViewMVC;
 import il.co.idocare.requests.RequestEntity;
 import il.co.idocare.screens.requests.listadapters.RequestsListAdapter;
 import il.co.idocare.users.UsersManager;
+import il.co.idocare.utils.IdcViewUtils;
 
 /**
  * This MVC view shows a list of requests
@@ -34,12 +35,17 @@ public class RequestsListViewMvcImpl
     private FloatingActionButton mFloatingActionButton;
     private final UsersManager mUsersManager;
 
+    private final View mProgressView;
+
     public RequestsListViewMvcImpl(LayoutInflater inflater, ViewGroup container, UsersManager usersManager) {
         mUsersManager = usersManager;
         setRootView(inflater.inflate(R.layout.layout_requests_my, container, false));
 
         initList();
         initFloatingActionButton();
+
+        mProgressView = findViewById(R.id.element_progress_overlay);
+        IdcViewUtils.showProgressOverlay(mProgressView);
 
     }
 
@@ -76,6 +82,7 @@ public class RequestsListViewMvcImpl
 
     public void bindRequests(List<RequestEntity> requests) {
         mRequestsListAdapter.bindRequests(requests);
+        IdcViewUtils.hideProgressOverlay(mProgressView);
     }
 
     @Override

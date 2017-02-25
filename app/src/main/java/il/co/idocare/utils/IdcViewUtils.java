@@ -36,6 +36,10 @@ public  final class IdcViewUtils {
                                                    final int toVisibility,
                                                    float toAlpha,
                                                    int duration) {
+        if (view.getVisibility() == toVisibility) {
+            return;
+        }
+
         boolean show = toVisibility == View.VISIBLE;
         if (show) {
             view.setAlpha(0);
