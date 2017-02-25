@@ -21,15 +21,9 @@ public interface LoginNativeViewMvc
         void onSignupClicked();
     }
 
-    /**
-     * Call to this method will make the UI unresponsive to user's input ("freeze UI")
-     */
-    void disableUserInput();
+    void onLoginInitiated();
 
-    /**
-     * Call to this method will make the UI responsive to user's input ("unfreeze UI")
-     */
-    void enableUserInput();
+    void onLoginCompleted();
 
 
 

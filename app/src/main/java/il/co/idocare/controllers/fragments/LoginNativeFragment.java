@@ -1,6 +1,5 @@
 package il.co.idocare.controllers.fragments;
 
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -106,7 +105,7 @@ public class LoginNativeFragment extends AbstractFragment implements LoginNative
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginStateEvents.LoginFailedEvent event) {
         // "unfreeze" UI
-        mLoginNativeViewMvc.enableUserInput();
+        mLoginNativeViewMvc.onLoginCompleted();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -135,7 +134,7 @@ public class LoginNativeFragment extends AbstractFragment implements LoginNative
         final String password = userDataBundle.getString(LoginNativeViewMvcImpl.VIEW_STATE_PASSWORD);
 
         // "freeze" UI during login
-        mLoginNativeViewMvc.disableUserInput();
+        mLoginNativeViewMvc.onLoginInitiated();
 
         mAuthManager.logInNative(username, password);
 
