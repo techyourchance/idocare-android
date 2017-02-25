@@ -39,4 +39,10 @@ public final class IdcDateTimeUtils {
 
         return sFormatter.print(latestDateTime);
     }
+
+    public static int compareDateTimes(String lhs, String rhs) {
+        DateTime lhsDateTime = DateTime.parse(lhs, sFormatter);
+        DateTime rhsDateTime = DateTime.parse(rhs, sFormatter);
+        return lhsDateTime.compareTo(rhsDateTime);
+    }
 }

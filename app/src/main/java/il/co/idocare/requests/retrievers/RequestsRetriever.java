@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 import il.co.idocare.requests.RequestEntity;
+import il.co.idocare.requests.RequestsByLatestActivityComparator;
 import il.co.idocare.useractions.entities.UserActionEntity;
 import il.co.idocare.useractions.retrievers.UserActionsRetriever;
 import il.co.idocare.requests.RequestsByIdComparator;
@@ -50,7 +51,9 @@ public class RequestsRetriever {
     public List<RequestEntity> getAllRequests() {
         List<RequestEntity> rawRequests = mRawRequestsRetriever.getAllRequests();
 
-        return applyUserActionsToRequests(rawRequests);
+        List<RequestEntity> requests = applyUserActionsToRequests(rawRequests);
+
+        return orderRequestsByLatestActivity(requests);
     }
 
     /**
@@ -62,8 +65,11 @@ public class RequestsRetriever {
     public List<RequestEntity> getRequestsAssignedToUser(String userId) {
         List<RequestEntity> rawRequests = mRawRequestsRetriever.getRequestsAssignedToUser(userId);
 
-        return applyUserActionsToRequests(rawRequests);
+        List<RequestEntity> requests = applyUserActionsToRequests(rawRequests);
+
+        return orderRequestsByLatestActivity(requests);
     }
+
 
     private List<RequestEntity> applyUserActionsToRequests(List<RequestEntity> requests) {
 
@@ -98,6 +104,11 @@ public class RequestsRetriever {
 
         return updatedRequests;
 
+    }
+
+    private List<RequestEntity> orderRequestsByLatestActivity(List<RequestEntity> requests) {
+        Collections.sort(requests, new RequestsByLatestActivityComparator());
+        return requests;
     }
 
 }
