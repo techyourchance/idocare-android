@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -53,8 +54,6 @@ public class LoginChooserFragment extends AbstractFragment
      */
     public static final String ARG_PLAY_ANIMATION = "arg_play_animation";
 
-    private static final String MULTIPLE_ACCOUNTS_NOT_SUPPORTED_DIALOG_TAG = "MULTIPLE_ACCOUNTS_NOT_SUPPORTED_DIALOG_TAG";
-
     private LoginChooserViewMvcImpl mLoginChooserViewMVC;
 
     private CallbackManager mFacebookCallbackManager;
@@ -64,6 +63,9 @@ public class LoginChooserFragment extends AbstractFragment
     @Inject DialogsManager mDialogsManager;
     @Inject DialogsFactory mDialogsFactory;
     @Inject Logger mLogger;
+
+
+    private boolean mShowFacebookEmailRequiredDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -96,6 +98,8 @@ public class LoginChooserFragment extends AbstractFragment
     public boolean shouldShowActionBar() {
         return false;
     }
+
+
 
     private void initializeFacebookLogin() {
 
@@ -140,8 +144,17 @@ public class LoginChooserFragment extends AbstractFragment
             getArguments().remove(ARG_PLAY_ANIMATION);
         }
 
-        if (mLoginStateManager.isLoggedIn())
-            forbidMultiuserLogin();
+        if (mShowFacebookEmailRequiredDialog) {
+            mShowFacebookEmailRequiredDialog = false;
+
+            DialogFragment dialogFragment = mDialogsFactory.newInfoDialog(
+                    getString(R.string.fb_login_email_required_dialog_title),
+                    getString(R.string.fb_login_email_required_dialog_message),
+                    getString(R.string.btn_dialog_close)
+            );
+
+            mDialogsManager.showRetainedDialogWithTag(dialogFragment, null);
+        }
     }
 
     private void animateButtonsSlideIn() {
@@ -163,16 +176,6 @@ public class LoginChooserFragment extends AbstractFragment
             }
         });
         valueAnimator.start();
-    }
-
-    private void forbidMultiuserLogin() {
-        // Disallow multiple accounts by showing a dialog which finishes the activity
-        mDialogsManager.showRetainedDialogWithTag(
-                mDialogsFactory.newInfoDialog(
-                        null,
-                        getResources().getString(R.string.no_support_for_multiple_accounts_message),
-                        getResources().getString(R.string.btn_dialog_close)),
-                MULTIPLE_ACCOUNTS_NOT_SUPPORTED_DIALOG_TAG);
     }
 
     private void finishActivity() {
@@ -203,15 +206,6 @@ public class LoginChooserFragment extends AbstractFragment
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginStateEvents.LoginFailedEvent event) {
         LoginChooserFragment.this.dismissProgressDialog();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onInfoDialogDismissed(InfoDialogDismissedEvent event) {
-        if (mDialogsManager.getCurrentlyShownDialogTag().equals(MULTIPLE_ACCOUNTS_NOT_SUPPORTED_DIALOG_TAG)) {
-            finishActivity();
-        } else {
-            mLogger.e(TAG, "received unrecognized InfoDialogDismissedEvent");
-        }
     }
 
     // End of EventBus events handling
@@ -266,9 +260,6 @@ public class LoginChooserFragment extends AbstractFragment
 
             final AccessToken accessToken = loginResult.getAccessToken();
 
-            LoginChooserFragment.this.showProgressDialog("Synchronizing with Facebook",
-                    "Please wait while we are synchronizing with your Facebook profile...");
-
             mAuthManager.logInFacebook(accessToken);
         }
 
@@ -294,20 +285,8 @@ public class LoginChooserFragment extends AbstractFragment
 
             LoginManager.getInstance().logOut();
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage("IDoCare currently requires your email address in order to work. " +
-                    "In order to grant us this permission, Facebook login flow requires that " +
-                    "you will remove IDoCare from apps list at your Facebook page " +
-                    "(Settings->Apps), and then re-try Facebook login." +
-                    "\nWe apologize for inconvenience")
-                    .setCancelable(false)
-                    .setPositiveButton("Close", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // Currently nothing to do here
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.show();
+            mShowFacebookEmailRequiredDialog = true;
+
         }
 
     }

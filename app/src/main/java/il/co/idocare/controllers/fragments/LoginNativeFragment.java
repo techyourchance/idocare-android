@@ -74,20 +74,6 @@ public class LoginNativeFragment extends AbstractFragment implements LoginNative
         return getString(R.string.title_login_native);
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mLoginStateManager.isLoggedIn()) {
-            mDialogsManager.showRetainedDialogWithTag(
-                    mDialogsFactory.newInfoDialog(
-                            null,
-                            getResources().getString(R.string.no_support_for_multiple_accounts_message),
-                            getResources().getString(R.string.btn_dialog_close)),
-                    MULTIPLE_ACCOUNTS_NOT_SUPPORTED_DIALOG_TAG);
-        }
-    }
-
     // ---------------------------------------------------------------------------------------------
     //
     // Callbacks from MVC view(s)

@@ -89,8 +89,6 @@
     Messages shown to the user
     -->
 
-    <string name="no_support_for_multiple_accounts_message">Multiple accounts not supported</string>
-
     <string name="dialog_title_login_required">Login required</string>
 
     <string name="msg_ask_to_log_in_before_new_request">In order to create new requests you need
@@ -127,5 +125,10 @@
         or take a new one with device\'s camera?</string>
     <string name="user_picture_chooser_dialog_button_caption_from_gallery">From gallery</string>
     <string name="user_picture_chooser_dialog_button_caption_new">New</string>
+
+    <!-- Facebook login email required dialog -->
+    <string name="fb_login_email_required_dialog_title">Email permission not granted</string>
+    <string name="fb_login_email_required_dialog_message">IDoCare requires your email address for authentication. Please remove IDoCare from your Facebook apps list and try again.</string>
+
 
 </resources>
