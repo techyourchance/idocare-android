@@ -3,6 +3,7 @@ package il.co.idocare.mvcviews;
 import android.content.Context;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.view.View;
 
 import java.util.Collections;
@@ -58,6 +59,10 @@ public abstract class AbstractViewMVC<ListenerType> implements ObservableViewMVC
 
     protected Context getContext() {
         return getRootView().getContext();
+    }
+
+    protected String getString(@StringRes int id) {
+        return getContext().getString(id);
     }
 
 

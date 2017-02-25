@@ -14,26 +14,15 @@ public interface SignupNativeViewMvc extends ViewMVC {
     String VIEW_STATE_FIRST_NAME= "first_name";
     String VIEW_STATE_LAST_NAME= "last_name";
 
-
-    /**
-     * This interface should be implemented by classes which instantiate SignupNativeViewMvc in
-     * order to get notifications about input events
-     */
     public interface SignupNativeViewMvcListener {
         void onSignupClicked();
         void onChangeUserPictureClicked();
         void onLoginClicked();
     }
 
-    /**
-     * Call to this method will make the UI unresponsive to user's input ("freeze UI")
-     */
-    void disableUserInput();
+    void onSignupInitiated();
 
-    /**
-     * Call to this method will make the UI responsive to user's input ("unfreeze UI")
-     */
-    void enableUserInput();
+    void onSignupCompleted();
 
     /**
      * Show a picture on signup screen

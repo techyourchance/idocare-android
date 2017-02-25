@@ -15,6 +15,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.mvcviews.AbstractViewMVC;
+import il.co.idocare.utils.IdcViewUtils;
 
 /**
  * MVC View of the Home screen.
@@ -23,25 +24,26 @@ public class SignupNativeViewMvcImpl
         extends AbstractViewMVC<SignupNativeViewMvc.SignupNativeViewMvcListener>
         implements SignupNativeViewMvc {
 
-    View mRootView;
 
-    Button mBtnSignup;
-    EditText mEdtEmail;
-    EditText mEdtPassword;
-    EditText mEdtRepeatPassword;
-    EditText mEdtNickname;
-    EditText mEdtFirstName;
-    EditText mEdtLastName;
-    ImageView mImgUserPicture;
-    TextView mTxtAddUserPicture;
-    TextView mTxtLogin;
+     private final Button mBtnSignup;
+     private final EditText mEdtEmail;
+     private final EditText mEdtPassword;
+     private final EditText mEdtRepeatPassword;
+     private final EditText mEdtNickname;
+     private final EditText mEdtFirstName;
+     private final EditText mEdtLastName;
+     private final ImageView mImgUserPicture;
+     private final TextView mTxtAddUserPicture;
+     private final TextView mTxtLogin;
+
+    private final View mProgressView;
 
 
     public SignupNativeViewMvcImpl(LayoutInflater inflater, ViewGroup container) {
-        mRootView = inflater.inflate(R.layout.layout_signup_native, container, false);
+        setRootView(inflater.inflate(R.layout.layout_signup_native, container, false));
 
 
-        mBtnSignup = (Button) mRootView.findViewById(R.id.btn_signup);
+        mBtnSignup = findViewById(R.id.btn_signup);
         mBtnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -51,7 +53,7 @@ public class SignupNativeViewMvcImpl
             }
         });
 
-        mTxtLogin = (TextView) mRootView.findViewById(R.id.txt_login);
+        mTxtLogin = findViewById(R.id.txt_login);
         mTxtLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,14 +64,14 @@ public class SignupNativeViewMvcImpl
         });
 
 
-        mEdtEmail = (EditText) mRootView.findViewById(R.id.edt_email);
-        mEdtPassword = (EditText) mRootView.findViewById(R.id.edt_password);
-        mEdtRepeatPassword = (EditText) mRootView.findViewById(R.id.edt_confirm_password);
-        mEdtNickname = (EditText) mRootView.findViewById(R.id.edt_nickname);
-        mEdtFirstName = (EditText) mRootView.findViewById(R.id.edt_first_name);
-        mEdtLastName= (EditText) mRootView.findViewById(R.id.edt_last_name);
+        mEdtEmail = findViewById(R.id.edt_email);
+        mEdtPassword = findViewById(R.id.edt_password);
+        mEdtRepeatPassword = findViewById(R.id.edt_confirm_password);
+        mEdtNickname = findViewById(R.id.edt_nickname);
+        mEdtFirstName = findViewById(R.id.edt_first_name);
+        mEdtLastName= findViewById(R.id.edt_last_name);
 
-        mImgUserPicture = (ImageView) mRootView.findViewById(R.id.img_user_picture);
+        mImgUserPicture = findViewById(R.id.img_user_picture);
         mImgUserPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,13 +81,10 @@ public class SignupNativeViewMvcImpl
             }
         });
 
-        mTxtAddUserPicture = (TextView) mRootView.findViewById(R.id.txt_add_user_picture);
+        mTxtAddUserPicture = findViewById(R.id.txt_add_user_picture);
 
-    }
+        mProgressView = findViewById(R.id.element_progress_overlay);
 
-    @Override
-    public View getRootView() {
-        return mRootView;
     }
 
     @Override
@@ -102,53 +101,14 @@ public class SignupNativeViewMvcImpl
 
 
     @Override
-    public void disableUserInput() {
-        // Disable UI components
-        mEdtEmail.setTag(mEdtEmail.getKeyListener());
-        mEdtEmail.setKeyListener(null);
-
-        mEdtPassword.setTag(mEdtPassword.getKeyListener());
-        mEdtPassword.setKeyListener(null);
-
-        mEdtRepeatPassword.setTag(mEdtRepeatPassword.getKeyListener());
-        mEdtRepeatPassword.setKeyListener(null);
-
-        mEdtNickname.setTag(mEdtNickname.getKeyListener());
-        mEdtNickname.setKeyListener(null);
-
-        mEdtFirstName.setTag(mEdtFirstName.getKeyListener());
-        mEdtFirstName.setKeyListener(null);
-
-        mEdtLastName.setTag(mEdtLastName.getKeyListener());
-        mEdtLastName.setKeyListener(null);
-
-        mBtnSignup.setEnabled(false);
+    public void onSignupInitiated() {
+        IdcViewUtils.showProgressOverlay(mProgressView);
     }
 
     @Override
-    public void enableUserInput() {
-
-        mEdtEmail.setKeyListener((KeyListener) mEdtEmail.getTag());
-        mEdtEmail.setText("");
-        
-        mEdtPassword.setKeyListener((KeyListener) mEdtPassword.getTag());
-        mEdtPassword.setText("");
-
-        mEdtRepeatPassword.setKeyListener((KeyListener) mEdtRepeatPassword.getTag());
-        mEdtRepeatPassword.setText("");
-
-        mEdtNickname.setKeyListener((KeyListener) mEdtNickname.getTag());
-        mEdtNickname.setText("");
-
-        mEdtFirstName.setKeyListener((KeyListener) mEdtFirstName.getTag());
-        mEdtFirstName.setText("");
-
-        mEdtLastName.setKeyListener((KeyListener) mEdtLastName.getTag());
-        mEdtLastName.setText("");
-        
+    public void onSignupCompleted() {
+        IdcViewUtils.hideProgressOverlay(mProgressView);
         mEdtEmail.requestFocus();
-
-        mBtnSignup.setEnabled(true);
     }
 
     @Override
@@ -159,7 +119,7 @@ public class SignupNativeViewMvcImpl
                 mImgUserPicture,
                 Constants.DEFAULT_DISPLAY_IMAGE_OPTIONS);
 
-        mTxtAddUserPicture.setText(mRootView.getContext().getString(R.string.txt_change_user_photo));
+        mTxtAddUserPicture.setText(getString(R.string.txt_change_user_photo));
 
     }
 

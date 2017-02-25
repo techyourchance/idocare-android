@@ -133,6 +133,16 @@ public class LoginChooserFragment extends AbstractFragment
         mFacebookCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (mLoginStateManager.isLoggedIn()) {
+            finishActivity();
+            return;
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();

@@ -157,7 +157,7 @@ public class SignupNativeFragment extends AbstractFragment implements SignupNati
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginStateEvents.LoginFailedEvent event) {
-        mSignupNativeViewMvc.enableUserInput();
+        mSignupNativeViewMvc.onSignupCompleted();
 
     }
 
@@ -189,7 +189,7 @@ public class SignupNativeFragment extends AbstractFragment implements SignupNati
                 firstName, lastName, null, mUserPicturePath);
 
         // disable user input during signup
-        mSignupNativeViewMvc.disableUserInput();
+        mSignupNativeViewMvc.onSignupInitiated();
 
         mAuthManager.signUp(userData);
 
