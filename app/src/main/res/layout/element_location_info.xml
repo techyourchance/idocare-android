@@ -13,7 +13,8 @@
             android:id="@+id/txt_location_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/txt_location_title"/>
+            android:text="@string/txt_location_title"
+            android:visibility="invisible"/>
 
         <Space
             android:layout_width="@dimen/fragment_tiniest_padding"
@@ -27,7 +28,7 @@
             android:paddingStart="@dimen/fragment_default_padding"
             android:paddingRight="@dimen/fragment_default_padding"
             android:paddingEnd="@dimen/fragment_default_padding"
-            android:text="TODO Location"/>
+            android:visibility="invisible"/>
 
     </LinearLayout>
 

@@ -89,8 +89,8 @@ public class LocationInfoViewMvcImpl
     @Override
     public void setLocationString(@Nullable String location) {
         if (location == null || location.length() == 0) {
-            mTxtLocationTitle.setVisibility(View.GONE);
-            mTxtFineLocation.setVisibility(View.GONE);
+            mTxtLocationTitle.setVisibility(View.INVISIBLE);
+            mTxtFineLocation.setVisibility(View.INVISIBLE);
         } else {
             mTxtLocationTitle.setVisibility(View.VISIBLE);
             mTxtFineLocation.setVisibility(View.VISIBLE);

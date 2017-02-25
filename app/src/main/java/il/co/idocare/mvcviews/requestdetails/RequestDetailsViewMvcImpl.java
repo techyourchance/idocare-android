@@ -62,6 +62,7 @@ public class RequestDetailsViewMvcImpl
     private String mCurrentUserId;
 
 
+
     public RequestDetailsViewMvcImpl(@NonNull LayoutInflater inflater,
                                      @Nullable ViewGroup container,
                                      @NonNull ImageViewPictureLoader imageViewPictureLoader) {
