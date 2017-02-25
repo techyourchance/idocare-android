@@ -18,4 +18,8 @@ public interface LoginChooserViewMvc extends ViewMVC {
         void onLoginNativeClicked();
     }
 
+    public void onLoginInitiated();
+
+    public void onLoginCompleted();
+
 }

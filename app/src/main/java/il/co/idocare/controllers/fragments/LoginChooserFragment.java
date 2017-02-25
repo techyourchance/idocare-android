@@ -99,8 +99,6 @@ public class LoginChooserFragment extends AbstractFragment
         return false;
     }
 
-
-
     private void initializeFacebookLogin() {
 
         mFacebookCallbackManager = CallbackManager.Factory.create();
@@ -134,7 +132,6 @@ public class LoginChooserFragment extends AbstractFragment
         super.onActivityResult(requestCode, resultCode, data);
         mFacebookCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
-
 
     @Override
     public void onResume() {
@@ -193,30 +190,16 @@ public class LoginChooserFragment extends AbstractFragment
 
     }
 
-    // ---------------------------------------------------------------------------------------------
-    //
-    // EventBus events handling
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginStateEvents.LoginSucceededEvent event) {
-        LoginChooserFragment.this.dismissProgressDialog();
+        mLoginChooserViewMVC.onLoginCompleted();
         finishActivity();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginStateEvents.LoginFailedEvent event) {
-        LoginChooserFragment.this.dismissProgressDialog();
+        mLoginChooserViewMVC.onLoginCompleted();
     }
-
-    // End of EventBus events handling
-    //
-    // ---------------------------------------------------------------------------------------------
-
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // Callbacks from MVC view(s)
-
 
     @Override
     public void onSkipClicked() {
@@ -234,14 +217,12 @@ public class LoginChooserFragment extends AbstractFragment
         replaceFragment(LoginNativeFragment.class, true, false, getArguments());
     }
 
-    // End of callbacks from MVC view(s)
-    //
-    // ---------------------------------------------------------------------------------------------
-
-
+    private void loginFacebook(AccessToken accessToken) {
+        mLoginChooserViewMVC.onLoginInitiated();
+        mAuthManager.logInFacebook(accessToken);
+    }
 
     private class LoginFacebookCallback implements FacebookCallback<LoginResult> {
-
 
         @Override
         public void onSuccess(LoginResult loginResult) {
@@ -258,9 +239,7 @@ public class LoginChooserFragment extends AbstractFragment
                 return;
             }
 
-            final AccessToken accessToken = loginResult.getAccessToken();
-
-            mAuthManager.logInFacebook(accessToken);
+            loginFacebook(loginResult.getAccessToken());
         }
 
 

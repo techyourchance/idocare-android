@@ -83,23 +83,6 @@ public abstract class AbstractFragment extends Fragment implements
         return true;
     }
 
-    /**
-     * Show standard (for the app) progress dialog
-     */
-    public void showProgressDialog(String title, String message) {
-        mProgressDialog = ProgressDialog.
-                show(getActivity(), title, message, true);
-    }
-
-    /**
-     * Dismiss the standard progress dialog
-     */
-    public void dismissProgressDialog() {
-        if (mProgressDialog != null) {
-            mProgressDialog.dismiss();
-            mProgressDialog = null;
-        }
-    }
 
     // ---------------------------------------------------------------------------------------------
     //

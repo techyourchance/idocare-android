@@ -96,5 +96,7 @@
 
     </LinearLayout>
 
+    <!-- Progress overlay -->
+    <include layout="@layout/element_progress_overlay"/>
 
 </RelativeLayout>
