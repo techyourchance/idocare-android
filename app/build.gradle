@@ -19,7 +19,7 @@ android {
         applicationId "il.co.idocare"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 5
+        versionCode 6
         versionName "0.7.1"
 
         buildConfigField "int", "DATABASE_SCHEMA_VERSION", "4"
@@ -38,7 +38,7 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            buildConfigField "String", "ROOT_URL", "\"http://dev-04.idocare.co.il/api-04/\""
+            buildConfigField "String", "ROOT_URL", "\"https://idocare.co.il/api-04/\""
             return true
         }
 
