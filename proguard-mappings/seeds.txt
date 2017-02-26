@@ -5914,6 +5914,7 @@ il.co.idocare.R$id: int edt_nickname
 il.co.idocare.R$id: int edt_password
 il.co.idocare.R$id: int element_form
 il.co.idocare.R$id: int element_picture
+il.co.idocare.R$id: int element_progress_overlay
 il.co.idocare.R$id: int element_user_reputation
 il.co.idocare.R$id: int element_votes
 il.co.idocare.R$id: int end
@@ -6144,6 +6145,7 @@ il.co.idocare.R$layout: int element_camera_control
 il.co.idocare.R$layout: int element_location_info
 il.co.idocare.R$layout: int element_nav_drawer_entry
 il.co.idocare.R$layout: int element_nav_drawer_header
+il.co.idocare.R$layout: int element_progress_overlay
 il.co.idocare.R$layout: int element_request_related_user_info
 il.co.idocare.R$layout: int element_swipe_image_gallery
 il.co.idocare.R$layout: int element_toolbar
@@ -6277,6 +6279,8 @@ il.co.idocare.R$string: int dialog_title_login_required
 il.co.idocare.R$string: int drawer_close
 il.co.idocare.R$string: int drawer_open
 il.co.idocare.R$string: int facebook_app_id
+il.co.idocare.R$string: int fb_login_email_required_dialog_message
+il.co.idocare.R$string: int fb_login_email_required_dialog_title
 il.co.idocare.R$string: int firebase_database_url
 il.co.idocare.R$string: int gcm_defaultSenderId
 il.co.idocare.R$string: int google_api_key
@@ -6325,7 +6329,6 @@ il.co.idocare.R$string: int nav_drawer_entry_my
 il.co.idocare.R$string: int nav_drawer_entry_new_request
 il.co.idocare.R$string: int nav_drawer_entry_requests_list
 il.co.idocare.R$string: int new_request_fragment_title
-il.co.idocare.R$string: int no_support_for_multiple_accounts_message
 il.co.idocare.R$string: int notification_gps_permission_request_body
 il.co.idocare.R$string: int notification_gps_permission_request_title
 il.co.idocare.R$string: int password_toggle_content_description
@@ -7356,7 +7359,6 @@ il.co.idocare.controllers.activities.StartupActivity
 il.co.idocare.controllers.activities.StartupActivity: StartupActivity()
 il.co.idocare.controllers.fragments.LoginChooserFragment: void onEvent(il.co.idocare.eventbusevents.LoginStateEvents$LoginSucceededEvent)
 il.co.idocare.controllers.fragments.LoginChooserFragment: void onEvent(il.co.idocare.eventbusevents.LoginStateEvents$LoginFailedEvent)
-il.co.idocare.controllers.fragments.LoginChooserFragment: void onInfoDialogDismissed(il.co.idocare.dialogs.events.InfoDialogDismissedEvent)
 il.co.idocare.controllers.fragments.LoginNativeFragment: void onEvent(il.co.idocare.eventbusevents.LoginStateEvents$LoginSucceededEvent)
 il.co.idocare.controllers.fragments.LoginNativeFragment: void onEvent(il.co.idocare.eventbusevents.LoginStateEvents$LoginFailedEvent)
 il.co.idocare.controllers.fragments.LoginNativeFragment: void onInfoDialogDismissed(il.co.idocare.dialogs.events.InfoDialogDismissedEvent)
@@ -7431,6 +7433,8 @@ org.greenrobot.eventbus.ThreadMode: org.greenrobot.eventbus.ThreadMode[] values(
 org.greenrobot.eventbus.ThreadMode: org.greenrobot.eventbus.ThreadMode valueOf(java.lang.String)
 org.greenrobot.eventbus.ThreadMode: ThreadMode(java.lang.String,int)
 org.greenrobot.eventbus.ThreadMode: void <clinit>()
+org.joda.time.format.DateTimeFormatterBuilder$TimeZoneId: org.joda.time.format.DateTimeFormatterBuilder$TimeZoneId[] values()
+org.joda.time.format.DateTimeFormatterBuilder$TimeZoneId: org.joda.time.format.DateTimeFormatterBuilder$TimeZoneId valueOf(java.lang.String)
 uk.co.chrisjenx.calligraphy.BuildConfig
 uk.co.chrisjenx.calligraphy.BuildConfig: boolean DEBUG
 uk.co.chrisjenx.calligraphy.BuildConfig: java.lang.String APPLICATION_ID
