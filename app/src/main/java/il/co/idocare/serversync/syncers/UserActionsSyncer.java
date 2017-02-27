@@ -30,6 +30,7 @@ import il.co.idocare.useractions.entities.PickUpRequestUserActionEntity;
 import il.co.idocare.useractions.entities.UserActionEntity;
 import il.co.idocare.useractions.entities.VoteForRequestUserActionEntity;
 import il.co.idocare.useractions.retrievers.UserActionsRetriever;
+import il.co.idocare.utils.IdcDateTimeUtils;
 import il.co.idocare.utils.Logger;
 import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
 import okhttp3.MultipartBody;
@@ -574,7 +575,7 @@ public class UserActionsSyncer {
 
         @Override
         public int compare(UserActionEntity lhs, UserActionEntity rhs) {
-            return new DateTime(lhs.getDatetime()).compareTo(new DateTime(rhs.getDatetime()));
+            return IdcDateTimeUtils.compareDateTimes(lhs.getDatetime(), rhs.getDatetime());
         }
     }
 
