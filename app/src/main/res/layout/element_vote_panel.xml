@@ -3,26 +3,23 @@
               android:orientation="horizontal"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:padding="@dimen/vote_panel_spacing"
               android:gravity="center_vertical"
               android:background="@drawable/border_background">
 
+    <FrameLayout
+        android:id="@+id/view_vote_down"
+        android:layout_width="48dp"
+        android:layout_height="48dp">
 
-    <ImageView
-        android:id="@+id/img_vote_down"
-        android:clickable="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingStart="@dimen/vote_panel_spacing"
-        android:paddingLeft="@dimen/vote_panel_spacing"
-        android:paddingEnd="@dimen/vote_panel_spacing"
-        android:paddingRight="@dimen/vote_panel_spacing"
-        android:src="@drawable/ic_vote_down"
-        android:contentDescription="@string/btn_vote_down_accessibility" />
+        <ImageView
+            android:clickable="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_vote_down"
+            android:contentDescription="@string/btn_vote_down_accessibility" />
 
-    <Space
-        android:layout_width="@dimen/vote_panel_spacing"
-        android:layout_height="match_parent"/>
+    </FrameLayout>
 
     <View
         android:layout_width="@dimen/divider_width"
@@ -57,20 +54,19 @@
         android:layout_height="@dimen/vote_panel_divider_height"
         android:background="@color/divider_color"/>
 
-    <Space
-        android:layout_width="@dimen/vote_panel_spacing"
-        android:layout_height="match_parent"/>
+    <FrameLayout
+        android:id="@+id/view_vote_up"
+        android:layout_width="48dp"
+        android:layout_height="48dp">
 
-    <ImageView
-        android:id="@+id/img_vote_up"
-        android:clickable="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingStart="@dimen/vote_panel_spacing"
-        android:paddingLeft="@dimen/vote_panel_spacing"
-        android:paddingEnd="@dimen/vote_panel_spacing"
-        android:paddingRight="@dimen/vote_panel_spacing"
-        android:src="@drawable/ic_vote_up"
-        android:contentDescription="@string/btn_vote_up_accessibility" />
+        <ImageView
+            android:clickable="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_vote_up"
+            android:contentDescription="@string/btn_vote_up_accessibility" />
+
+    </FrameLayout>
 
 </LinearLayout>

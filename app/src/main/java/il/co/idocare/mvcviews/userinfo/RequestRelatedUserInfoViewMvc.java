@@ -35,8 +35,8 @@ public class RequestRelatedUserInfoViewMvc
     private TextView mTxtUserReputation;
     private TextView mTxtComment;
     private TextView mTxtVotes;
-    private ImageView mImgVoteUp;
-    private ImageView mImgVoteDown;
+    private View mViewVoteUp;
+    private View mViewVoteDown;
     private View mViewVotePanel;
 
 
@@ -55,11 +55,11 @@ public class RequestRelatedUserInfoViewMvc
         mTxtUserReputation = (TextView) getRootView().findViewById(R.id.txt_user_reputation);
         mTxtComment = (TextView) getRootView().findViewById(R.id.txt_comment);
         mTxtVotes = (TextView) getRootView().findViewById(R.id.txt_votes);
-        mImgVoteUp = (ImageView) getRootView().findViewById(R.id.img_vote_up);
-        mImgVoteDown = (ImageView) getRootView().findViewById(R.id.img_vote_down);
+        mViewVoteUp = findViewById(R.id.view_vote_up);
+        mViewVoteDown = findViewById(R.id.view_vote_down);
         mViewVotePanel = getRootView().findViewById(R.id.element_votes);
 
-        mImgVoteUp.setOnClickListener(new View.OnClickListener() {
+        mViewVoteUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 for (RequestRelatedUserInfoViewMvcListener listener : getListeners()) {
@@ -68,7 +68,7 @@ public class RequestRelatedUserInfoViewMvc
             }
         });
 
-        mImgVoteDown.setOnClickListener(new View.OnClickListener() {
+        mViewVoteDown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 for (RequestRelatedUserInfoViewMvcListener listener : getListeners()) {
