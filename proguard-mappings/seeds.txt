@@ -5951,8 +5951,6 @@ il.co.idocare.R$id: int img_reputation_star
 il.co.idocare.R$id: int img_request_thumbnail
 il.co.idocare.R$id: int img_take_picture
 il.co.idocare.R$id: int img_user_picture
-il.co.idocare.R$id: int img_vote_down
-il.co.idocare.R$id: int img_vote_up
 il.co.idocare.R$id: int indicators_holder
 il.co.idocare.R$id: int info
 il.co.idocare.R$id: int inline
@@ -6081,6 +6079,8 @@ il.co.idocare.R$id: int useLogo
 il.co.idocare.R$id: int view_offset_helper
 il.co.idocare.R$id: int view_pager
 il.co.idocare.R$id: int view_take_picture
+il.co.idocare.R$id: int view_vote_down
+il.co.idocare.R$id: int view_vote_up
 il.co.idocare.R$id: int visible
 il.co.idocare.R$id: int wide
 il.co.idocare.R$id: int withText
@@ -7369,7 +7369,6 @@ il.co.idocare.datamodels.functional.RequestItem$RequestStatus: il.co.idocare.dat
 il.co.idocare.datamodels.functional.RequestItem$RequestStatus: il.co.idocare.datamodels.functional.RequestItem$RequestStatus valueOf(java.lang.String)
 il.co.idocare.location.LocationTrackerService
 il.co.idocare.location.LocationTrackerService: LocationTrackerService()
-il.co.idocare.location.LocationTrackerService: void onEvent(il.co.idocare.eventbusevents.LocationEvents$HighAccuracyLocationRequiredEvent)
 il.co.idocare.mvcviews.navdrawerentry.NavigationDrawerEntryViewMVC: android.os.Bundle getViewState()
 il.co.idocare.networking.GeneralApi
 il.co.idocare.networking.GeneralApi: retrofit2.Call downloadFile(java.lang.String)

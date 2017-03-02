@@ -19,8 +19,8 @@ android {
         applicationId "il.co.idocare"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 6
-        versionName "0.7.1"
+        versionCode 7
+        versionName "0.7.2"
 
         buildConfigField "int", "DATABASE_SCHEMA_VERSION", "4"
     }
