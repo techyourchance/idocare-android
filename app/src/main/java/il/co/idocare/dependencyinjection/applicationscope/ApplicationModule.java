@@ -21,7 +21,7 @@ import il.co.idocare.common.settings.PreferenceSettingsEntryFactoryImpl;
 import il.co.idocare.common.settings.SettingsManager;
 import il.co.idocare.contentproviders.IdcSQLiteOpenHelper;
 import il.co.idocare.contentproviders.TransactionsController;
-import il.co.idocare.location.OpenStreetMapsReverseGeocoder;
+import il.co.idocare.location.IdcLocationManager;
 import il.co.idocare.location.ReverseGeocoder;
 import il.co.idocare.location.StandardReverseGeocoder;
 import il.co.idocare.networking.FilesDownloader;
@@ -192,5 +192,11 @@ public class ApplicationModule {
     ReverseGeocoder reverseGeocoder(Application application) {
         Geocoder geocoder = new Geocoder(application, Locale.getDefault());
         return new StandardReverseGeocoder(geocoder);
+    }
+
+    @Provides
+    @ApplicationScope
+    IdcLocationManager idcLocationManager(Application application, MainThreadPoster mainThreadPoster, Logger logger) {
+        return new IdcLocationManager(application, mainThreadPoster, logger);
     }
 }

@@ -5,7 +5,7 @@ import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
 import il.co.idocare.authentication.LoginStateManager;
-import il.co.idocare.helpers.LocationHelper;
+import il.co.idocare.location.IdcLocationManager;
 import il.co.idocare.serversync.ServerSyncController;
 import il.co.idocare.nonstaticproxies.ContentResolverProxy;
 
@@ -29,11 +29,6 @@ public class ContextModule {
     ServerSyncController provideServerSyncController(ContentResolverProxy contentResolverProxy,
                                                      LoginStateManager loginStateManager) {
         return new ServerSyncController(contentResolverProxy, loginStateManager);
-    }
-
-    @Provides
-    LocationHelper locationHelper() {
-        return new LocationHelper();
     }
 
 }

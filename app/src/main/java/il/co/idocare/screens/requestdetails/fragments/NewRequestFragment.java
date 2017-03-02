@@ -1,9 +1,7 @@
 package il.co.idocare.screens.requestdetails.fragments;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,12 +20,7 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
-import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.authentication.LoggedInUserEntity;
-import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.controllers.fragments.AbstractFragment;
-import il.co.idocare.eventbusevents.LocationEvents;
 import il.co.idocare.mvcviews.newrequest.NewRequestViewMvc;
 import il.co.idocare.mvcviews.newrequest.NewRequestViewMvcImpl;
 import il.co.idocare.requests.RequestEntity;
@@ -113,27 +106,19 @@ public class NewRequestFragment extends NewAndCloseRequestBaseFragment
     private void createRequest() {
         mLogger.d(TAG, "createRequest()");
 
-        String createdBy = mLoginStateManager.getLoggedInUser().getUserId();
+        Location location = getCurrentLocation();
 
-        LocationEvents.BestLocationEstimateEvent bestLocationEstimateEvent =
-                EventBus.getDefault().getStickyEvent(LocationEvents.BestLocationEstimateEvent.class);
-
-        if (bestLocationEstimateEvent == null
-                || !mLocationHelper.isAccurateLocation(bestLocationEstimateEvent.location)) {
-            Log.d(TAG, "aborting request creation due to lack of, or insufficiently accurate " +
-                    "location estimate");
+        if (location == null) {
+            Log.d(TAG, "aborting request creation due to unavailable accurate location");
             Toast.makeText(getActivity(), getString(R.string.msg_insufficient_location_accuracy),
                     Toast.LENGTH_LONG).show();
             return;
         }
 
-        Location location = bestLocationEstimateEvent.location;
+        String createdBy = mLoginStateManager.getLoggedInUser().getUserId();
 
-        double latitude = 0, longitude = 0;
-        if (location != null) {
-            latitude = location.getLatitude();
-            longitude = location.getLongitude();
-        }
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
 
         List<String> createdPictures = getPicturesPaths();
 

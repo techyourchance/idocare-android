@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoggedInUserEntity;
-import il.co.idocare.eventbusevents.LocationEvents;
 import il.co.idocare.mvcviews.closerequest.CloseRequestViewMvc;
 import il.co.idocare.mvcviews.closerequest.CloseRequestViewMvcImpl;
 import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
@@ -172,19 +171,16 @@ public class CloseRequestFragment extends NewAndCloseRequestBaseFragment
 
 
     private boolean isValidLocation() {
+        Location currentLocation = getCurrentLocation();
 
-        LocationEvents.BestLocationEstimateEvent bestLocationEstimateEvent =
-                EventBus.getDefault().getStickyEvent(LocationEvents.BestLocationEstimateEvent.class);
-        if (bestLocationEstimateEvent == null
-                || !mLocationHelper.isAccurateLocation(bestLocationEstimateEvent.location)) {
+        if (currentLocation == null) {
+            Log.d(TAG, "current location not available");
             Toast.makeText(getActivity(), getString(R.string.msg_insufficient_location_accuracy),
                     Toast.LENGTH_LONG).show();
             return false;
         }
 
-        Location location = bestLocationEstimateEvent.location;
-
-        if (!mLocationHelper.areSameLocations(location, mRequestLocation)) {
+        if (!mIdcLocationManager.areSameLocations(getCurrentLocation(), mRequestLocation)) {
             Log.d(TAG, "location is too far from request's location");
             Toast.makeText(getActivity(), getString(R.string.msg_too_far_from_original_location),
                     Toast.LENGTH_LONG).show();

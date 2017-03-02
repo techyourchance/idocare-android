@@ -70,14 +70,6 @@ public class MainActivity extends AbstractActivity implements
         if (savedInstanceState == null) {
             replaceFragment(RequestsAllFragment.class, false, true, null);
         }
-
-        startServices();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        stopServices();
     }
 
     @Override
@@ -134,24 +126,6 @@ public class MainActivity extends AbstractActivity implements
                 NavigationDrawerStateChangeEvent.STATE_OPENED :
                 NavigationDrawerStateChangeEvent.STATE_CLOSED));
     }
-
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // Services management
-
-    private void startServices() {
-        this.startService(new Intent(this, LocationTrackerService.class));
-    }
-
-    private void stopServices() {
-        this.stopService(new Intent(this, LocationTrackerService.class));
-    }
-
-    // End of services
-    //
-    // ---------------------------------------------------------------------------------------------
-
 
     @Override
     public void openDrawer() {

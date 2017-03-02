@@ -8,82 +8,104 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderApi;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import il.co.idocare.R;
 import il.co.idocare.controllers.activities.MainActivity;
-import il.co.idocare.eventbusevents.LocationEvents;
 
 /**
  * This service tracks the location of the user and provides this information to other app's
  * components
  */
-public class LocationTrackerService extends Service {
+public class LocationTrackerService extends Service implements
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
 
     private static final String TAG = "LocationTrackerService";
 
-    private static final int LOCATION_UPDATE_INTERVAL_SHORT = 500; // in ms
-    private static final int LOCATION_UPDATE_INTERVAL_LONG = 5000; // in ms
 
-    private static final int TARGET_LOCATION_ACCURACY = 30; // in meters
-
-    private static final int STATE_DISABLED = 0;
-    private static final int STATE_HIGHEST_ACCURACY = 1;
-    private static final int STATE_PASSIVE = 2;
+    private static final int LOCATION_UPDATE_INTERVAL_SHORT_MS = 1000;
+    private static final int LOCATION_UPDATE_INTERVAL_LONG_MS = 5000;
 
     private static final int GPS_PERMISSION_RECHECK_INTERVAL = 2000; // in ms
 
     private static final int NOTIFICATION_ID_GPS_PERMISSION_REQUEST = 0;
 
+    private IBinder mBinder = new LocationTrackerServiceBinder();
 
-    // This listener should be registered with LocationManager in order to handle location updates
-    private LocationListener locationListener = new LocationListener() {
-        public void onLocationChanged(Location location) {
-            processNewLocation(location);
-        }
+    private GoogleApiClient mGoogleApiClient;
+    private FusedLocationProviderApi mFusedLocationProviderApi;
+    private LocationRequest mLocationRequest;
 
-        public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-        public void onProviderEnabled(String provider) {}
-
-        public void onProviderDisabled(String provider) {}
-    };
-
-
-
-    private int mState = STATE_DISABLED;
-
-    private Location mCurrentBestEstimate = null;
-
+    private Set<LocationListener> mListeners = Collections.newSetFromMap(
+            new ConcurrentHashMap<LocationListener, Boolean>(1));
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand called with intent: " + intent);
+    public void onCreate() {
+        super.onCreate();
+        mLocationRequest = createLocationRequest();
+        mFusedLocationProviderApi = LocationServices.FusedLocationApi;
+        mGoogleApiClient = createGoogleApiClient();
 
-        if (!checkGpsPermission()) {
-            EventBus.getDefault().removeStickyEvent(LocationEvents.BestLocationEstimateEvent.class);
-            scheduleGpsPermissionRecheck();
-        } else {
+
+        if (isAccessFineLocationPermissionGranted()) {
             init();
+        } else {
+            showPermissionRequestNotification();
+            scheduleGpsPermissionRecheck();
         }
+    }
 
-        return Service.START_STICKY;
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mGoogleApiClient.disconnect();
+    }
+
+    private GoogleApiClient createGoogleApiClient() {
+        return new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+    }
+
+    private LocationRequest createLocationRequest() {
+        LocationRequest locationRequest = new LocationRequest();
+        locationRequest.setInterval(LOCATION_UPDATE_INTERVAL_LONG_MS);
+        locationRequest.setFastestInterval(LOCATION_UPDATE_INTERVAL_SHORT_MS);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        return locationRequest;
+    }
+
+    private void init() {
+        mGoogleApiClient.connect();
     }
 
     private void scheduleGpsPermissionRecheck() {
@@ -93,7 +115,8 @@ public class LocationTrackerService extends Service {
         mainHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (checkGpsPermission()) {
+                if (isAccessFineLocationPermissionGranted()) {
+                    hidePermissionRequestNotification();
                     init();
                 } else {
                     scheduleGpsPermissionRecheck();
@@ -102,153 +125,20 @@ public class LocationTrackerService extends Service {
         }, GPS_PERMISSION_RECHECK_INTERVAL);
     }
 
-    private void init() {
-        // Use the latest best estimate as a starting point (if exists)
-        if (mCurrentBestEstimate == null) {
-            LocationEvents.BestLocationEstimateEvent pastBestEstimate = EventBus.getDefault()
-                    .getStickyEvent(LocationEvents.BestLocationEstimateEvent.class);
-            if (pastBestEstimate != null) {
-                mCurrentBestEstimate = pastBestEstimate.location;
-            }
-        }
-
-        gotoState(STATE_HIGHEST_ACCURACY);
-    }
-
-
     @Override
-    public void onCreate() {
-        super.onCreate();
-        EventBus.getDefault().register(this);
+    public void onLocationChanged(Location location) {
+        processNewLocation(location);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
-        unregisterFromLocationUpdates();
-    }
-
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // EventBus events handling
-
-    @Subscribe
-    public void onEvent(LocationEvents.HighAccuracyLocationRequiredEvent event) {
-        gotoState(STATE_HIGHEST_ACCURACY);
-    }
-
-    // End of EventBus events handling
-    //
-    // ---------------------------------------------------------------------------------------------
-
-
-    private void gotoState(int state) {
-        Log.d(TAG, "transition to state " + state + " initiated. Current state: " + mState);
-        if (state == mState) {
-            Log.d(TAG, "aborting transition to the same state");
-            return;
-        }
-
-        switch (state) {
-            case STATE_DISABLED:
-                unregisterFromLocationUpdates();
-                break;
-            case STATE_HIGHEST_ACCURACY:
-                unregisterFromLocationUpdates();
-                registerForLocationUpdates(LocationManager.GPS_PROVIDER,
-                        LOCATION_UPDATE_INTERVAL_SHORT, 0);
-                break;
-            case STATE_PASSIVE:
-                unregisterFromLocationUpdates();
-                registerForLocationUpdates(LocationManager.PASSIVE_PROVIDER,
-                        LOCATION_UPDATE_INTERVAL_LONG, 0);
-                break;
-            default:
-                Log.e(TAG, "aborting transition to unrecognized state: " + state);
-                return;
-        }
-        mState = state;
-    }
-
-    private void registerForLocationUpdates(String provider, long minTime, float minDist) {
-        Log.d(TAG, "registering for location updates using provider: " + provider
-                + " minTime: " + minTime + " minDist: " + minDist);
-        LocationManager locationManager =
-                (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(provider, minTime, minDist, locationListener);
-    }
-
-
-    private void unregisterFromLocationUpdates() {
-        Log.d(TAG, "unregistering from location updates");
-        LocationManager locationManager =
-                (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        locationManager.removeUpdates(locationListener);
-
-    }
-
-    private void processNewLocation(Location locationUpdate) {
-        Log.d(TAG, "processing new location update: " + locationUpdate.toString());
-
-        if (!locationUpdate.hasAccuracy()) {
-            Log.e(TAG, "location update discarded because it doesn't have accuracy info");
-            return;
-        }
-
-        boolean locationUpdateIsBetterEstimate = false;
-
-        if (mCurrentBestEstimate == null) {
-            Log.d(TAG, "received the first location update - treating it as the best estimate");
-            locationUpdateIsBetterEstimate = true;
-        } else if (isBetterEstimate(locationUpdate)) {
-            Log.d(TAG, "new location update is a better estimate");
-            locationUpdateIsBetterEstimate = true;
-        }
-
-        if (locationUpdateIsBetterEstimate) {
-            Log.d(TAG, "new best location estimate is " + locationUpdate.toString());
-            mCurrentBestEstimate = locationUpdate;
-            EventBus.getDefault()
-                    .postSticky(new LocationEvents.BestLocationEstimateEvent(mCurrentBestEstimate));
-        }
-
-        // once reached target accuracy - go to passive state in order to conserve power
-        if (mState != STATE_PASSIVE
-                && mCurrentBestEstimate.getAccuracy() < TARGET_LOCATION_ACCURACY) {
-            Log.d(TAG, "reached the target accuracy threshold");
-            gotoState(STATE_PASSIVE);
+    private void processNewLocation(Location location) {
+        for (LocationListener listener : mListeners) {
+            listener.onLocationChanged(location);
         }
     }
 
-    private boolean isBetterEstimate(Location locationUpdate) {
-        float distanceDiffMeters = Math.abs(mCurrentBestEstimate.distanceTo(locationUpdate));
-
-        /*
-         Reject location update only if one of the following holds (CBE = Current Best Estimate):
-         1) CBE's accuracy is better (or equal), and update falls inside CBE's accuracy radius
-
-         TODO: enhance comparison logic
-          */
-
-        if (mCurrentBestEstimate.getAccuracy() <= locationUpdate.getAccuracy()
-                && mCurrentBestEstimate.getAccuracy() > distanceDiffMeters) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private boolean checkGpsPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
-                PackageManager.PERMISSION_GRANTED) {
-            hidePermissionRequestNotification();
-            return true;
-        } else {
-            showPermissionRequestNotification();
-            return false;
-        }
+    private boolean isAccessFineLocationPermissionGranted() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED;
     }
 
 
@@ -277,6 +167,39 @@ public class LocationTrackerService extends Service {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(NOTIFICATION_ID_GPS_PERMISSION_REQUEST);
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (isAccessFineLocationPermissionGranted()) {
+            //noinspection MissingPermission
+            mFusedLocationProviderApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        } else {
+            throw new IllegalStateException("required permission wasn't granted");
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.e(TAG, "onConnectionSuspended(); index: " + i);
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.e(TAG, "onConnectionFailed(); connection result: " + connectionResult);
+    }
+
+
+
+    public class LocationTrackerServiceBinder extends Binder {
+
+        public void registerLocationListener(LocationListener listener) {
+            mListeners.add(listener);
+        }
+
+        public void unregisterLocationListener(LocationListener listener) {
+            mListeners.remove(listener);
+        }
     }
 
 }

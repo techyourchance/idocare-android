@@ -2,8 +2,10 @@ package il.co.idocare.screens.requestdetails.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -17,7 +19,7 @@ import javax.inject.Inject;
 import il.co.idocare.Constants;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.authentication.events.UserLoggedOutEvent;
-import il.co.idocare.helpers.LocationHelper;
+import il.co.idocare.location.IdcLocationManager;
 import il.co.idocare.serversync.ServerSyncController;
 import il.co.idocare.pictures.CameraAdapter;
 import il.co.idocare.screens.common.MainFrameHelper;
@@ -25,11 +27,11 @@ import il.co.idocare.screens.common.fragments.BaseScreenFragment;
 import il.co.idocare.utils.UtilMethods;
 
 
-public abstract class NewAndCloseRequestBaseFragment extends BaseScreenFragment {
+public abstract class NewAndCloseRequestBaseFragment extends BaseScreenFragment implements IdcLocationManager.LocationUpdateListener {
 
     @Inject LoginStateManager mLoginStateManager;
     @Inject CameraAdapter mCameraAdapter;
-    @Inject LocationHelper mLocationHelper;
+    @Inject IdcLocationManager mIdcLocationManager;
     @Inject ServerSyncController mServerSyncController;
     @Inject MainFrameHelper mMainFrameHelper;
 
@@ -37,6 +39,7 @@ public abstract class NewAndCloseRequestBaseFragment extends BaseScreenFragment 
     private List<String> mCameraPicturesPaths = new ArrayList<String>(3);
     private int mNextCameraPictureIndex = 0;
 
+    private Location mCurrentLocation;
 
     /**
      * Will be called when a new picture needs to be added to UI
@@ -83,7 +86,13 @@ public abstract class NewAndCloseRequestBaseFragment extends BaseScreenFragment 
             return;
         }
 
-        mLocationHelper.highAccuracyLocationRequired();
+        mIdcLocationManager.registerListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mIdcLocationManager.unregisterListener(this);
     }
 
     @Override
@@ -161,4 +170,13 @@ public abstract class NewAndCloseRequestBaseFragment extends BaseScreenFragment 
         mNextCameraPictureIndex = (mNextCameraPictureIndex + 1) % getMaxPictures();
     }
 
+    @Override
+    public void onLocationUpdateReceived(Location location) {
+        mCurrentLocation = location;
+    }
+
+    @Nullable
+    protected Location getCurrentLocation() {
+        return mCurrentLocation;
+    }
 }

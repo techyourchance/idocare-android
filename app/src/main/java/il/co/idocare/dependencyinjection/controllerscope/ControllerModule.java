@@ -12,6 +12,7 @@ import dagger.Provides;
 import il.co.idocare.deviceinfo.GooglePlayServicesChecker;
 import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
+import il.co.idocare.location.IdcLocationManager;
 import il.co.idocare.requests.cachers.RequestsCacher;
 import il.co.idocare.screens.common.MainFrameHelper;
 import il.co.idocare.screens.common.toolbar.ToolbarManager;
@@ -140,4 +141,5 @@ public class ControllerModule {
     ToolbarManager toolbarManager(Logger logger) {
         return new ToolbarManager((ToolbarDelegate) mActivity, logger);
     }
+
 }
