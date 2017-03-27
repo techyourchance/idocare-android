@@ -1,7 +1,6 @@
 package il.co.idocare.mvcviews.cameracontrol;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +10,13 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.mvcviews.AbstractViewMVC;
+import il.co.idocare.mvcviews.AbstractViewMvc;
 
 /**
  * Implementation of CameraControlViewMvc interface
  */
 public class CameraControlViewMvcImpl
-        extends AbstractViewMVC<CameraControlViewMvc.CameraControlViewMvcListener>
+        extends AbstractViewMvc<CameraControlViewMvc.CameraControlViewMvcListener>
         implements CameraControlViewMvc {
 
     private static final String TAG = "CameraControlViewMvc";

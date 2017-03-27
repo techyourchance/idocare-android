@@ -11,7 +11,7 @@ import android.widget.ListView;
 import java.util.List;
 
 import il.co.idocare.R;
-import il.co.idocare.mvcviews.AbstractViewMVC;
+import il.co.idocare.mvcviews.AbstractViewMvc;
 import il.co.idocare.requests.RequestEntity;
 import il.co.idocare.screens.requests.listadapters.RequestsListAdapter;
 import il.co.idocare.users.UsersManager;
@@ -21,7 +21,7 @@ import il.co.idocare.utils.IdcViewUtils;
  * This MVC view shows a list of requests
  */
 public class RequestsListViewMvcImpl
-        extends AbstractViewMVC<RequestsListViewMvcImpl.RequestsListViewMvcListener> {
+        extends AbstractViewMvc<RequestsListViewMvcImpl.RequestsListViewMvcListener> {
 
 
 

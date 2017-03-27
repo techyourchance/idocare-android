@@ -3,13 +3,13 @@ package il.co.idocare.mvcviews.navdrawerheader;
 import android.support.annotation.Nullable;
 
 import il.co.idocare.datamodels.functional.UserItem;
-import il.co.idocare.mvcviews.ObservableViewMVC;
+import il.co.idocare.mvcviews.ObservableViewMvc;
 
 /**
  * This MVC view should be used as nav drawer's header (the topmost element in nav drawer)
  */
 public interface NavDrawerHeaderViewMvc
-        extends ObservableViewMVC<NavDrawerHeaderViewMvc.NavDrawerHeaderViewMvcListener> {
+        extends ObservableViewMvc<NavDrawerHeaderViewMvc.NavDrawerHeaderViewMvcListener> {
 
     interface NavDrawerHeaderViewMvcListener {
 

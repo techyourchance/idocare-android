@@ -10,21 +10,21 @@ import android.widget.TextView;
 
 import il.co.idocare.R;
 import il.co.idocare.datamodels.functional.NavigationDrawerEntry;
-import il.co.idocare.mvcviews.ViewMVC;
+import il.co.idocare.mvcviews.ViewMvc;
 
 /**
  * Created by Vasiliy on 3/23/2015.
  */
-public class NavigationDrawerEntryViewMVC extends RelativeLayout implements ViewMVC {
+public class NavigationDrawerEntryViewMvc extends RelativeLayout implements ViewMvc {
 
-    private static final String LOG_TAG = "NavigationDrawerEntryViewMVC";
+    private static final String LOG_TAG = "NavigationDrawerEntryViewMvc";
 
     private Context mContext;
     private ImageView mImgIcon;
     private TextView mTxtTitle;
 
 
-    public NavigationDrawerEntryViewMVC(Context context) {
+    public NavigationDrawerEntryViewMvc(Context context) {
         super(context);
 
         init(context);

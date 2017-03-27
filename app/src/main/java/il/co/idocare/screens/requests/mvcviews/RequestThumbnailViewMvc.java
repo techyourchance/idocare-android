@@ -2,12 +2,12 @@ package il.co.idocare.screens.requests.mvcviews;
 
 import il.co.idocare.datamodels.functional.RequestItem;
 import il.co.idocare.datamodels.functional.UserItem;
-import il.co.idocare.mvcviews.ViewMVC;
+import il.co.idocare.mvcviews.ViewMvc;
 
 /**
  * This MVC view represents a "thumbnail" of request which can be shown as a list element
  */
-public interface RequestThumbnailViewMvc extends ViewMVC {
+public interface RequestThumbnailViewMvc extends ViewMvc {
 
     /**
      * This interface should be implemented by classes which instantiate RequestThumbnailViewMvc in

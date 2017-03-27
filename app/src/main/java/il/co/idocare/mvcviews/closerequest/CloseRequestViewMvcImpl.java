@@ -1,22 +1,15 @@
 package il.co.idocare.mvcviews.closerequest;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-
-import org.greenrobot.eventbus.EventBus;
-
-import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.mvcviews.AbstractViewMVC;
+import il.co.idocare.mvcviews.AbstractViewMvc;
 import il.co.idocare.mvcviews.cameracontrol.CameraControlViewMvc;
 import il.co.idocare.mvcviews.cameracontrol.CameraControlViewMvcImpl;
 
@@ -24,7 +17,7 @@ import il.co.idocare.mvcviews.cameracontrol.CameraControlViewMvcImpl;
  * Implementation of CloseRequestViewMvc interface
  */
 public class CloseRequestViewMvcImpl
-        extends AbstractViewMVC<CloseRequestViewMvc.CloseRequestViewMvcListener>
+        extends AbstractViewMvc<CloseRequestViewMvc.CloseRequestViewMvcListener>
         implements CloseRequestViewMvc {
 
     private final static String TAG = CloseRequestViewMvcImpl.class.getSimpleName();

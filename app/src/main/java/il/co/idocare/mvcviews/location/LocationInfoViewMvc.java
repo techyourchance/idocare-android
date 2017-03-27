@@ -2,13 +2,13 @@ package il.co.idocare.mvcviews.location;
 
 import android.support.annotation.Nullable;
 
-import il.co.idocare.mvcviews.ObservableViewMVC;
+import il.co.idocare.mvcviews.ObservableViewMvc;
 
 /**
  * This MVC view displays information about location (both on map and as a reverse-geocoded string)
  */
 public interface LocationInfoViewMvc
-        extends ObservableViewMVC<LocationInfoViewMvc.LocationInfoViewMvcListener> {
+        extends ObservableViewMvc<LocationInfoViewMvc.LocationInfoViewMvcListener> {
 
     public interface LocationInfoViewMvcListener {
         /**

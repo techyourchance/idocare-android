@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import il.co.idocare.datamodels.functional.NavigationDrawerEntry;
-import il.co.idocare.mvcviews.navdrawerentry.NavigationDrawerEntryViewMVC;
+import il.co.idocare.mvcviews.navdrawerentry.NavigationDrawerEntryViewMvc;
 
 /**
  * Created by Vasiliy on 3/23/2015.
@@ -23,12 +23,12 @@ public class NavigationDrawerListAdapter extends ArrayAdapter<NavigationDrawerEn
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        NavigationDrawerEntryViewMVC view;
+        NavigationDrawerEntryViewMvc view;
 
         if (convertView == null) {
-            view = new NavigationDrawerEntryViewMVC(mContext);
+            view = new NavigationDrawerEntryViewMvc(mContext);
         } else {
-            view = (NavigationDrawerEntryViewMVC) convertView;
+            view = (NavigationDrawerEntryViewMvc) convertView;
         }
 
         view.showEntry(getItem(position));

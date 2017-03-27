@@ -17,13 +17,13 @@ import java.net.URL;
 import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.datamodels.functional.UserItem;
-import il.co.idocare.mvcviews.AbstractViewMVC;
+import il.co.idocare.mvcviews.AbstractViewMvc;
 
 /**
  * Created by Vasiliy on 5/14/2016.
  */
 public class NavDrawerHeaderViewMvcImpl
-        extends AbstractViewMVC<NavDrawerHeaderViewMvc.NavDrawerHeaderViewMvcListener>
+        extends AbstractViewMvc<NavDrawerHeaderViewMvc.NavDrawerHeaderViewMvcListener>
         implements NavDrawerHeaderViewMvc {
 
     private ImageView mImgUserPicture;

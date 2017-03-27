@@ -10,7 +10,7 @@ import android.widget.FrameLayout;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.mvcviews.AbstractViewMVC;
+import il.co.idocare.mvcviews.AbstractViewMvc;
 import il.co.idocare.mvcviews.cameracontrol.CameraControlViewMvc;
 import il.co.idocare.mvcviews.cameracontrol.CameraControlViewMvcImpl;
 
@@ -18,7 +18,7 @@ import il.co.idocare.mvcviews.cameracontrol.CameraControlViewMvcImpl;
  * .
  */
 public class NewRequestViewMvcImpl
-        extends AbstractViewMVC<NewRequestViewMvc.NewRequestViewMvcListener>
+        extends AbstractViewMvc<NewRequestViewMvc.NewRequestViewMvcListener>
         implements NewRequestViewMvc {
 
     private final static String TAG = NewRequestViewMvcImpl.class.getSimpleName();

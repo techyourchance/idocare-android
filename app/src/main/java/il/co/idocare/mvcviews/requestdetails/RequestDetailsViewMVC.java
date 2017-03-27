@@ -1,9 +1,6 @@
 package il.co.idocare.mvcviews.requestdetails;
 
-import il.co.idocare.datamodels.functional.RequestItem;
-import il.co.idocare.datamodels.functional.UserItem;
-import il.co.idocare.mvcviews.ObservableViewMVC;
-import il.co.idocare.mvcviews.ViewMVC;
+import il.co.idocare.mvcviews.ObservableViewMvc;
 import il.co.idocare.requests.RequestEntity;
 import il.co.idocare.users.UserEntity;
 
@@ -11,7 +8,7 @@ import il.co.idocare.users.UserEntity;
  * This MVC view represents a screen showing request's details
  */
 public interface RequestDetailsViewMvc
-        extends ObservableViewMVC<RequestDetailsViewMvc.RequestDetailsViewMvcListener> {
+        extends ObservableViewMvc<RequestDetailsViewMvc.RequestDetailsViewMvcListener> {
 
     interface RequestDetailsViewMvcListener {
         void onCloseRequestClicked();

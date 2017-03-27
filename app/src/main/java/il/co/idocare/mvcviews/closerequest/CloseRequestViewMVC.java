@@ -1,14 +1,13 @@
 package il.co.idocare.mvcviews.closerequest;
 
 import il.co.idocare.Constants;
-import il.co.idocare.mvcviews.ObservableViewMVC;
-import il.co.idocare.mvcviews.ViewMVC;
+import il.co.idocare.mvcviews.ObservableViewMvc;
 
 /**
  * This MVC view represents "close request" screen
  */
 public interface CloseRequestViewMvc
-        extends ObservableViewMVC<CloseRequestViewMvc.CloseRequestViewMvcListener> {
+        extends ObservableViewMvc<CloseRequestViewMvc.CloseRequestViewMvcListener> {
 
 
 

@@ -1,11 +1,11 @@
 package il.co.idocare.mvcviews.signupnative;
 
-import il.co.idocare.mvcviews.ViewMVC;
+import il.co.idocare.mvcviews.ViewMvc;
 
 /**
  * This MVC view represents the signup screen which allows the user to create a new "native" account
  */
-public interface SignupNativeViewMvc extends ViewMVC {
+public interface SignupNativeViewMvc extends ViewMvc {
 
     String VIEW_STATE_EMAIL = "email";
     String VIEW_STATE_PASSWORD = "password";

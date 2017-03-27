@@ -20,19 +20,18 @@ import java.util.List;
 import javax.inject.Inject;
 
 import il.co.idocare.R;
+import il.co.idocare.mvcviews.mainnavdrawer.MainViewMvc;
 import il.co.idocare.screens.common.MainFrameHelper;
 import il.co.idocare.screens.common.toolbar.ToolbarDelegate;
 import il.co.idocare.screens.navigationdrawer.NavigationDrawerDelegate;
 import il.co.idocare.screens.navigationdrawer.events.NavigationDrawerStateChangeEvent;
 import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
-import il.co.idocare.location.LocationTrackerService;
-import il.co.idocare.mvcviews.mainnavdrawer.MainViewMVC;
 import il.co.idocare.serversync.ServerSyncController;
 import il.co.idocare.utils.Logger;
 
 
 public class MainActivity extends AbstractActivity implements
-        MainViewMVC.MainNavDrawerViewMVCListener,
+        MainViewMvc.MainNavDrawerViewMvcListener,
         NavigationDrawerDelegate,
         ToolbarDelegate {
 
@@ -48,7 +47,7 @@ public class MainActivity extends AbstractActivity implements
     @Inject MainFrameHelper mMainFrameHelper;
 
 
-    private MainViewMVC mMainViewMVC;
+    private MainViewMvc mMainViewMvc;
 
 
 
@@ -62,9 +61,9 @@ public class MainActivity extends AbstractActivity implements
 
         getControllerComponent().inject(this);
 
-        mMainViewMVC = new MainViewMVC(LayoutInflater.from(this), null, this);
-        mMainViewMVC.registerListener(this);
-        setContentView(mMainViewMVC.getRootView());
+        mMainViewMvc = new MainViewMvc(LayoutInflater.from(this), null, this);
+        mMainViewMvc.registerListener(this);
+        setContentView(mMainViewMvc.getRootView());
 
         // Show Home fragment if the app is not restored
         if (savedInstanceState == null) {
@@ -89,7 +88,7 @@ public class MainActivity extends AbstractActivity implements
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mMainViewMVC.syncDrawerToggleState();
+        mMainViewMvc.syncDrawerToggleState();
     }
 
     @Override
@@ -129,16 +128,16 @@ public class MainActivity extends AbstractActivity implements
 
     @Override
     public void openDrawer() {
-        mMainViewMVC.openDrawer();
+        mMainViewMvc.openDrawer();
     }
 
     @Override
     public void closeDrawer() {
-        mMainViewMVC.closeDrawer();
+        mMainViewMvc.closeDrawer();
     }
 
     public void setTitle(String title) {
-        mMainViewMVC.setTitle(title);
+        mMainViewMvc.setTitle(title);
     }
 
 
@@ -149,7 +148,7 @@ public class MainActivity extends AbstractActivity implements
 
     @Override
     public void onBackPressed() {
-        if (mMainViewMVC.isDrawerVisible()) {
+        if (mMainViewMvc.isDrawerVisible()) {
             closeDrawer();
         } else {
             super.onBackPressed();
@@ -197,21 +196,21 @@ public class MainActivity extends AbstractActivity implements
 
     @Override
     public void showNavigateUpButton() {
-        mMainViewMVC.setDrawerIndicatorEnabled(false);
+        mMainViewMvc.setDrawerIndicatorEnabled(false);
     }
 
     @Override
     public void showNavDrawerButton() {
-        mMainViewMVC.setDrawerIndicatorEnabled(true);
+        mMainViewMvc.setDrawerIndicatorEnabled(true);
     }
 
     @Override
     public void hideToolbar() {
-        mMainViewMVC.hideToolbar();
+        mMainViewMvc.hideToolbar();
     }
 
     @Override
     public void showToolbar() {
-        mMainViewMVC.showToolbar();
+        mMainViewMvc.showToolbar();
     }
 }

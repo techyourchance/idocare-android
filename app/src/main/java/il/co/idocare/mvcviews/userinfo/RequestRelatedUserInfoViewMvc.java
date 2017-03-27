@@ -10,14 +10,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import il.co.idocare.R;
-import il.co.idocare.mvcviews.AbstractViewMVC;
-import il.co.idocare.mvcviews.ViewMVC;
+import il.co.idocare.mvcviews.AbstractViewMvc;
+import il.co.idocare.mvcviews.ViewMvc;
 import il.co.idocare.pictures.ImageViewPictureLoader;
 import il.co.idocare.users.UserEntity;
 
 public class RequestRelatedUserInfoViewMvc
-        extends AbstractViewMVC<RequestRelatedUserInfoViewMvc.RequestRelatedUserInfoViewMvcListener>
-        implements ViewMVC {
+        extends AbstractViewMvc<RequestRelatedUserInfoViewMvc.RequestRelatedUserInfoViewMvcListener>
+        implements ViewMvc {
 
     @NonNull
     private final ImageViewPictureLoader mImageViewPictureLoader;

@@ -2,13 +2,13 @@ package il.co.idocare.screens.requests.mvcviews;
 
 import android.widget.ListAdapter;
 
-import il.co.idocare.mvcviews.ObservableViewMVC;
+import il.co.idocare.mvcviews.ObservableViewMvc;
 
 /**
  * This MVC view represents "home" screen which displays a list of requests
  */
 public interface RequestsAllViewMvc
-        extends ObservableViewMVC<RequestsAllViewMvc.RequestsAllViewMvcListener> {
+        extends ObservableViewMvc<RequestsAllViewMvc.RequestsAllViewMvcListener> {
 
     /**
      * This interface should be implemented by classes which instantiate RequestsAllViewMvc in

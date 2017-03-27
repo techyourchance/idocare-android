@@ -1,14 +1,13 @@
 package il.co.idocare.mvcviews.newrequest;
 
 import il.co.idocare.Constants;
-import il.co.idocare.mvcviews.ObservableViewMVC;
-import il.co.idocare.mvcviews.ViewMVC;
+import il.co.idocare.mvcviews.ObservableViewMvc;
 
 /**
  * MVC View for New Request screen
  */
 public interface NewRequestViewMvc
-        extends ObservableViewMVC<NewRequestViewMvc.NewRequestViewMvcListener> {
+        extends ObservableViewMvc<NewRequestViewMvc.NewRequestViewMvcListener> {
 
 
     interface NewRequestViewMvcListener {

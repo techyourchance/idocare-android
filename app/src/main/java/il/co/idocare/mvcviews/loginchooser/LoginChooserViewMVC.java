@@ -1,12 +1,12 @@
 package il.co.idocare.mvcviews.loginchooser;
 
-import il.co.idocare.mvcviews.ViewMVC;
+import il.co.idocare.mvcviews.ViewMvc;
 
 /**
  * This MVC view represents "pre-login" screen which allows the user to choose between login
  * mechanisms supported by the app.
  */
-public interface LoginChooserViewMvc extends ViewMVC {
+public interface LoginChooserViewMvc extends ViewMvc {
 
     /**
      * This interface should be implemented by classes which instantiate LoginChooserViewMvc in

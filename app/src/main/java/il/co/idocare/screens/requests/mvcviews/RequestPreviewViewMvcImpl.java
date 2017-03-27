@@ -16,7 +16,7 @@ import java.util.List;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.mvcviews.AbstractViewMVC;
+import il.co.idocare.mvcviews.AbstractViewMvc;
 import il.co.idocare.requests.RequestEntity;
 import il.co.idocare.users.UserEntity;
 
@@ -26,7 +26,7 @@ import il.co.idocare.users.UserEntity;
  * when they are displayed in a list.
  */
 public class RequestPreviewViewMvcImpl
-        extends AbstractViewMVC<RequestPreviewViewMvcImpl.RequestPreviewViewMvcListener> {
+        extends AbstractViewMvc<RequestPreviewViewMvcImpl.RequestPreviewViewMvcListener> {
 
 
     public interface RequestPreviewViewMvcListener {

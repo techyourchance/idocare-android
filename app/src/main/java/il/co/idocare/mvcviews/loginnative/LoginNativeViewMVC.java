@@ -1,13 +1,13 @@
 package il.co.idocare.mvcviews.loginnative;
 
-import il.co.idocare.mvcviews.ObservableViewMVC;
+import il.co.idocare.mvcviews.ObservableViewMvc;
 
 /**
  * This MVC view represents the login screen which allows the user to log in using its "native"
  * credentials
  */
 public interface LoginNativeViewMvc
-        extends ObservableViewMVC<LoginNativeViewMvc.LoginNativeViewMvcListener> {
+        extends ObservableViewMvc<LoginNativeViewMvc.LoginNativeViewMvcListener> {
 
     public static final String VIEW_STATE_USERNAME = "username";
     public static final String VIEW_STATE_PASSWORD = "password";

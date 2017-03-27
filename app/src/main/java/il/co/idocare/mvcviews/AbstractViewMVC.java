@@ -10,12 +10,10 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import il.co.idocare.users.UserEntity;
-
 /**
  * This is the base class for MVC views' implementations which provides basic common functionality
  */
-public abstract class AbstractViewMVC<ListenerType> implements ObservableViewMVC<ListenerType> {
+public abstract class AbstractViewMvc<ListenerType> implements ObservableViewMvc<ListenerType> {
 
     private View mRootView;
 

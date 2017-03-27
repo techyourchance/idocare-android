@@ -1,7 +1,6 @@
 package il.co.idocare.mvcviews.loginnative;
 
 import android.os.Bundle;
-import android.text.method.KeyListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,14 +9,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import il.co.idocare.R;
-import il.co.idocare.mvcviews.AbstractViewMVC;
+import il.co.idocare.mvcviews.AbstractViewMvc;
 import il.co.idocare.utils.IdcViewUtils;
 
 /**
  * MVC View of the Home screen.
  */
 public class LoginNativeViewMvcImpl
-        extends AbstractViewMVC<LoginNativeViewMvc.LoginNativeViewMvcListener>
+        extends AbstractViewMvc<LoginNativeViewMvc.LoginNativeViewMvcListener>
         implements LoginNativeViewMvc {
 
      private final Button mBtnLogin;

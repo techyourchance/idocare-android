@@ -1,7 +1,6 @@
 package il.co.idocare.mvcviews.signupnative;
 
 import android.os.Bundle;
-import android.text.method.KeyListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +13,14 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import il.co.idocare.Constants;
 import il.co.idocare.R;
-import il.co.idocare.mvcviews.AbstractViewMVC;
+import il.co.idocare.mvcviews.AbstractViewMvc;
 import il.co.idocare.utils.IdcViewUtils;
 
 /**
  * MVC View of the Home screen.
  */
 public class SignupNativeViewMvcImpl
-        extends AbstractViewMVC<SignupNativeViewMvc.SignupNativeViewMvcListener>
+        extends AbstractViewMvc<SignupNativeViewMvc.SignupNativeViewMvcListener>
         implements SignupNativeViewMvc {
 
 

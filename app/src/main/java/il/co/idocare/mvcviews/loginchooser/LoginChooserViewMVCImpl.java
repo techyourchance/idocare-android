@@ -1,7 +1,6 @@
 package il.co.idocare.mvcviews.loginchooser;
 
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,14 +8,14 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import il.co.idocare.R;
-import il.co.idocare.mvcviews.AbstractViewMVC;
+import il.co.idocare.mvcviews.AbstractViewMvc;
 import il.co.idocare.utils.IdcViewUtils;
 
 /**
  * Implementation of LoginChooserViewMvc
  */
 public class LoginChooserViewMvcImpl
-        extends AbstractViewMVC<LoginChooserViewMvc.LoginChooserViewMvcListener>
+        extends AbstractViewMvc<LoginChooserViewMvc.LoginChooserViewMvcListener>
         implements LoginChooserViewMvc {
 
     private final View mProgressView;

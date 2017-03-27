@@ -17,13 +17,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import il.co.idocare.R;
-import il.co.idocare.mvcviews.AbstractViewMVC;
+import il.co.idocare.mvcviews.AbstractViewMvc;
 
 /**
  * Implementation of LocationInfoViewMvc interface
  */
 public class LocationInfoViewMvcImpl
-        extends AbstractViewMVC<LocationInfoViewMvc.LocationInfoViewMvcListener>
+        extends AbstractViewMvc<LocationInfoViewMvc.LocationInfoViewMvcListener>
         implements LocationInfoViewMvc, OnMapReadyCallback {
 
     private TextView mTxtLocationTitle;

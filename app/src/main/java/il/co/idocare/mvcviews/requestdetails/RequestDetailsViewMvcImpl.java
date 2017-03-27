@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import il.co.idocare.R;
-import il.co.idocare.mvcviews.AbstractViewMVC;
+import il.co.idocare.mvcviews.AbstractViewMvc;
 import il.co.idocare.mvcviews.location.LocationInfoViewMvc;
 import il.co.idocare.mvcviews.location.LocationInfoViewMvcImpl;
 import il.co.idocare.mvcviews.userinfo.RequestRelatedUserInfoViewMvc;
@@ -31,7 +31,7 @@ import il.co.idocare.widgets.SwipeImageGalleryView;
  * MVC View for New Request screen.
  */
 public class RequestDetailsViewMvcImpl
-        extends AbstractViewMVC<RequestDetailsViewMvc.RequestDetailsViewMvcListener>
+        extends AbstractViewMvc<RequestDetailsViewMvc.RequestDetailsViewMvcListener>
         implements RequestDetailsViewMvc {
 
     private final ImageViewPictureLoader mImageViewPictureLoader;

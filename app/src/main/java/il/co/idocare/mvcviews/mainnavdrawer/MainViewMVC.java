@@ -13,19 +13,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import il.co.idocare.R;
-import il.co.idocare.mvcviews.AbstractViewMVC;
-import il.co.idocare.mvcviews.ViewMVC;
+import il.co.idocare.mvcviews.AbstractViewMvc;
+import il.co.idocare.mvcviews.ViewMvc;
 
 /**
  * This MVC view represents application's main screen which contains NavigationDrawer and a single
  * FrameLayout in which app's screens will be presented
  */
-public class MainViewMVC
-        extends AbstractViewMVC<MainViewMVC.MainNavDrawerViewMVCListener>
-        implements ViewMVC {
+public class MainViewMvc
+        extends AbstractViewMvc<MainViewMvc.MainNavDrawerViewMvcListener>
+        implements ViewMvc {
 
 
-    public interface MainNavDrawerViewMVCListener {
+    public interface MainNavDrawerViewMvcListener {
         /**
          * Will be called when Navigation Drawer's visibility state changes
          * @param isVisible whether the drawer is visible now
@@ -47,7 +47,7 @@ public class MainViewMVC
     private ActionBarDrawerToggle mActionBarDrawerToggle;
 
 
-    public MainViewMVC(@NonNull LayoutInflater inflater,
+    public MainViewMvc(@NonNull LayoutInflater inflater,
                        @Nullable ViewGroup container,
                        @NonNull AppCompatActivity activity) {
         mActivity = activity;
@@ -91,7 +91,7 @@ public class MainViewMVC
                 // Only update when drawer's visibility actually changed
                 if (mIsDrawerVisibleLast != isDrawerVisible()) {
                     mIsDrawerVisibleLast = !mIsDrawerVisibleLast;
-                    for (MainNavDrawerViewMVCListener listener : getListeners()) {
+                    for (MainNavDrawerViewMvcListener listener : getListeners()) {
                         listener.onDrawerVisibilityStateChanged(mIsDrawerVisibleLast);
                     }
                 }
@@ -103,7 +103,7 @@ public class MainViewMVC
         mActionBarDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for (MainNavDrawerViewMVCListener listener : getListeners()) {
+                for (MainNavDrawerViewMvcListener listener : getListeners()) {
                     listener.onNavigationClick();
                 }
             }

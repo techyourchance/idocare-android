@@ -3,7 +3,7 @@ package il.co.idocare.mvcviews;
 /**
  * This interface corresponds to MVC views that need to notify MVC controllers of input events
  */
-public interface ObservableViewMVC<ListenerType> extends ViewMVC {
+public interface ObservableViewMvc<ListenerType> extends ViewMvc {
 
     /**
      * Register a listener that will be notified of any input events performed on this MVC view

@@ -10,13 +10,13 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import il.co.idocare.R;
-import il.co.idocare.mvcviews.AbstractViewMVC;
+import il.co.idocare.mvcviews.AbstractViewMvc;
 
 /**
  * Implementation of RequestsAllViewMvc
  */
 public class RequestsAllViewMvcImpl
-        extends AbstractViewMVC<RequestsAllViewMvc.RequestsAllViewMvcListener>
+        extends AbstractViewMvc<RequestsAllViewMvc.RequestsAllViewMvcListener>
         implements RequestsAllViewMvc {
 
     private ListView mListView;

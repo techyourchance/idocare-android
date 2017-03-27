@@ -22,12 +22,12 @@ import il.co.idocare.Constants;
 import il.co.idocare.R;
 import il.co.idocare.screens.navigationdrawer.listadapters.NavigationDrawerListAdapter;
 import il.co.idocare.datamodels.functional.NavigationDrawerEntry;
-import il.co.idocare.mvcviews.AbstractViewMVC;
+import il.co.idocare.mvcviews.AbstractViewMvc;
 import il.co.idocare.users.UserEntity;
 
 
 public class NavigationDrawerViewMvcImpl extends
-        AbstractViewMVC<NavigationDrawerViewMvc.NavigationDrawerViewMvcListener>
+        AbstractViewMvc<NavigationDrawerViewMvc.NavigationDrawerViewMvcListener>
         implements NavigationDrawerViewMvc, AdapterView.OnItemClickListener {
 
     private static final String ENTRY_NEW_REQUEST = "ENTRY_NEW_REQUEST";

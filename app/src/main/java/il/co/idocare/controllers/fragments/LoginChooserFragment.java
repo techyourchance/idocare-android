@@ -1,8 +1,6 @@
 package il.co.idocare.controllers.fragments;
 
 import android.animation.ValueAnimator;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -34,7 +32,6 @@ import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
-import il.co.idocare.dialogs.events.InfoDialogDismissedEvent;
 import il.co.idocare.eventbusevents.LoginStateEvents;
 import il.co.idocare.mvcviews.loginchooser.LoginChooserViewMvc;
 import il.co.idocare.mvcviews.loginchooser.LoginChooserViewMvcImpl;
@@ -54,7 +51,7 @@ public class LoginChooserFragment extends AbstractFragment
      */
     public static final String ARG_PLAY_ANIMATION = "arg_play_animation";
 
-    private LoginChooserViewMvcImpl mLoginChooserViewMVC;
+    private LoginChooserViewMvcImpl mLoginChooserViewMvc;
 
     private CallbackManager mFacebookCallbackManager;
 
@@ -71,12 +68,12 @@ public class LoginChooserFragment extends AbstractFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getControllerComponent().inject(this);
 
-        mLoginChooserViewMVC = new LoginChooserViewMvcImpl(inflater, container);
-        mLoginChooserViewMVC.registerListener(this);
+        mLoginChooserViewMvc = new LoginChooserViewMvcImpl(inflater, container);
+        mLoginChooserViewMvc.registerListener(this);
 
         initializeFacebookLogin();
 
-        return mLoginChooserViewMVC.getRootView();
+        return mLoginChooserViewMvc.getRootView();
     }
 
     @Override
@@ -103,7 +100,7 @@ public class LoginChooserFragment extends AbstractFragment
 
         mFacebookCallbackManager = CallbackManager.Factory.create();
 
-        LoginButton btnLoginFB = (LoginButton) mLoginChooserViewMVC.getRootView()
+        LoginButton btnLoginFB = (LoginButton) mLoginChooserViewMvc.getRootView()
                 .findViewById(R.id.btn_choose_facebook_login);
         btnLoginFB.setReadPermissions("public_profile", "email");
         btnLoginFB.registerCallback(mFacebookCallbackManager, new LoginFacebookCallback());
@@ -166,7 +163,7 @@ public class LoginChooserFragment extends AbstractFragment
 
     private void animateButtonsSlideIn() {
         final View buttonsLayout =
-                mLoginChooserViewMVC.getRootView().findViewById(R.id.login_buttons_layout);
+                mLoginChooserViewMvc.getRootView().findViewById(R.id.login_buttons_layout);
 
         TypedValue typedValue = new TypedValue();
         getResources().getValue(
@@ -202,13 +199,13 @@ public class LoginChooserFragment extends AbstractFragment
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginStateEvents.LoginSucceededEvent event) {
-        mLoginChooserViewMVC.onLoginCompleted();
+        mLoginChooserViewMvc.onLoginCompleted();
         finishActivity();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginStateEvents.LoginFailedEvent event) {
-        mLoginChooserViewMVC.onLoginCompleted();
+        mLoginChooserViewMvc.onLoginCompleted();
     }
 
     @Override
@@ -228,7 +225,7 @@ public class LoginChooserFragment extends AbstractFragment
     }
 
     private void loginFacebook(AccessToken accessToken) {
-        mLoginChooserViewMVC.onLoginInitiated();
+        mLoginChooserViewMvc.onLoginInitiated();
         mAuthManager.logInFacebook(accessToken);
     }
 

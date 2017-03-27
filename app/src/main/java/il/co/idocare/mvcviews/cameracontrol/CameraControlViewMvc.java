@@ -1,12 +1,12 @@
 package il.co.idocare.mvcviews.cameracontrol;
 
-import il.co.idocare.mvcviews.ObservableViewMVC;
+import il.co.idocare.mvcviews.ObservableViewMvc;
 
 /**
  * This MVC view represents "camera control" element
  */
 public interface CameraControlViewMvc
-        extends ObservableViewMVC<CameraControlViewMvc.CameraControlViewMvcListener> {
+        extends ObservableViewMvc<CameraControlViewMvc.CameraControlViewMvcListener> {
 
 
     interface CameraControlViewMvcListener {
