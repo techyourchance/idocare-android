@@ -17,16 +17,16 @@ public class RequestEntityProvider {
 
 
     public static final String REQUEST_CREATED_BY = "4";
-    public static final String REQUEST_CREATED_AT = "2016-12-10T16:15:54Z";
+    public static final String REQUEST_CREATED_AT = "2016-12-10 16:15:54";
     public static final String REQUEST_CREATED_COMMENT = "created comment";
     public static final List<String> REQUEST_CREATED_PICTURES = Arrays.asList("picture1", "picture2");
     public static final int REQUEST_CREATED_VOTES = 5;
     public static final double REQUEST_LATITUDE = 31.771959;
     public static final double REQUEST_LONGITUDE = 35.217018;
     public static final String REQUEST_PICKED_UP_BY = "30";
-    public static final String REQUEST_PICKED_UP_AT = "2016-12-11T13:10:54Z";
+    public static final String REQUEST_PICKED_UP_AT = "2016-12-11 13:10:54";
     public static final String REQUEST_CLOSED_BY = REQUEST_PICKED_UP_BY;
-    public static final String REQUEST_CLOSED_AT = "2016-12-12T13:10:01Z";
+    public static final String REQUEST_CLOSED_AT = "2016-12-12 13:10:01";
     public static final String REQUEST_CLOSED_COMMENT = "closed comment";
     public static final List<String> REQUEST_CLOSED_PICTURES = Arrays.asList("picture3", "picture4");
     public static final int REQUEST_CLOSED_VOTES = 1;
