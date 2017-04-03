@@ -12,6 +12,7 @@ import il.co.idocare.dependencyinjection.application.ApplicationModule;
 import il.co.idocare.dependencyinjection.application.ContentProviderModule;
 import il.co.idocare.dependencyinjection.application.DaggerApplicationComponent;
 import il.co.idocare.dependencyinjection.application.CachersModule;
+import il.co.idocare.dependencyinjection.application.NetworkingModule;
 import il.co.idocare.dependencyinjection.application.RetrieversModule;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
@@ -34,6 +35,7 @@ public class IdcApplication extends Application {
 
         mApplicationComponent = DaggerApplicationComponent.builder()
                 .applicationModule(new ApplicationModule(this))
+                .networkingModule(new NetworkingModule())
                 .contentProviderModule(new ContentProviderModule(IdcSQLiteOpenHelper.getInstance(this)))
                 .cachersModule(new CachersModule())
                 .retrieversModule(new RetrieversModule())

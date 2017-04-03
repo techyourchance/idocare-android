@@ -121,45 +121,6 @@ public class ApplicationModule {
     }
 
     @Provides
-    StdHeadersInterceptor stdHeadersInterceptor(LoginStateManager loginStateManager, Logger logger) {
-        return new StdHeadersInterceptor(loginStateManager, logger);
-    }
-
-    @Provides
-    @ApplicationScope
-    Retrofit retrofit(StdHeadersInterceptor stdHeadersInterceptor) {
-        // Add the interceptor to OkHttpClient
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.interceptors().add(stdHeadersInterceptor);
-        OkHttpClient client = builder.build();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BuildConfig.ROOT_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
-                .build();
-
-        return retrofit;
-    }
-
-    @Provides
-    @ApplicationScope
-    ServerApi serverApi(Retrofit retrofit) {
-        return retrofit.create(ServerApi.class);
-    }
-
-    @Provides
-    @ApplicationScope
-    GeneralApi generalApi(Retrofit retrofit) {
-        return retrofit.create(GeneralApi.class);
-    }
-
-    @Provides
-    FilesDownloader filesDownloader( Application application, GeneralApi generalApi, Logger logger) {
-        return new FilesDownloader(application, generalApi, logger);
-    }
-
-    @Provides
     ReverseGeocoder reverseGeocoder(Application application) {
         Geocoder geocoder = new Geocoder(application, Locale.getDefault());
         return new StandardReverseGeocoder(geocoder);

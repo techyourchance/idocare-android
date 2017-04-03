@@ -21,14 +21,14 @@ public class FilesDownloader {
 
     private static final String TAG = "FilesDownloader";
 
+    private final CacheDirRetriever mCacheDirRetriever;
     private final GeneralApi mGeneralApi;
     private final Logger mLogger;
-    private final Context mContext;
 
-    public FilesDownloader(Context context, GeneralApi generalApi, Logger logger) {
+    public FilesDownloader(CacheDirRetriever cacheDirRetriever, GeneralApi generalApi, Logger logger) {
+        mCacheDirRetriever = cacheDirRetriever;
         mGeneralApi = generalApi;
         mLogger = logger;
-        mContext = context;
     }
 
     @WorkerThread
@@ -78,7 +78,7 @@ public class FilesDownloader {
     @Nullable
     private String writeResponseBodyToAppCache(ResponseBody body, String fileName) {
         try {
-            String localFileUri = mContext.getCacheDir() + File.separator + fileName;
+            String localFileUri = mCacheDirRetriever.getCacheDir() + File.separator + fileName;
             File localFile = new File(localFileUri);
 
             InputStream inputStream = null;
@@ -116,6 +116,23 @@ public class FilesDownloader {
             }
         } catch (IOException e) {
             return null;
+        }
+    }
+
+    /**
+     * The purpose of this class is to be an adapter (design pattern) between FilesDownloader and
+     * Context. This removes dependency on Context from FilesDownloader.
+     */
+    public static class CacheDirRetriever {
+
+        private final Context mContext;
+
+        public CacheDirRetriever(Context context) {
+            mContext = context;
+        }
+
+        public File getCacheDir() {
+            return mContext.getCacheDir();
         }
     }
 

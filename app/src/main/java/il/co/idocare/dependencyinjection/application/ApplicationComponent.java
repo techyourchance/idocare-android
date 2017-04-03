@@ -10,6 +10,7 @@ import il.co.idocare.dependencyinjection.serversync.ServerSyncModule;
 @Component(
         modules = {
                 ApplicationModule.class,
+                NetworkingModule.class,
                 ContentProviderModule.class,
                 CachersModule.class,
                 RetrieversModule.class
