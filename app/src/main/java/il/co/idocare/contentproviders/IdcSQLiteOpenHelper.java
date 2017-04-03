@@ -1,5 +1,7 @@
 package il.co.idocare.contentproviders;
 
+import android.app.Application;
+import android.content.ContentProvider;
 import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -78,8 +80,16 @@ public class IdcSQLiteOpenHelper extends SQLiteOpenHelper {
     //
     // Singleton management
 
+
     private static IdcSQLiteOpenHelper sInstance;
 
+    /**
+     * Unfortunately, we can't share a single instance of SQLiteOpenHelper between
+     * Application and ContentProvider in a non-static way (using e.g. DI framework).<br>
+     * The reason is that {@link ContentProvider#onCreate()} is called before
+     * {@link Application#onCreate()} which prevents us from getting access to Application level
+     * dependency injection container.
+     */
     public static IdcSQLiteOpenHelper getInstance(Context context) {
         synchronized (IdcSQLiteOpenHelper.class) {
             if (sInstance == null) {

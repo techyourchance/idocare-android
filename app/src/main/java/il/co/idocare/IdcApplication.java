@@ -9,6 +9,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import il.co.idocare.contentproviders.IdcSQLiteOpenHelper;
 import il.co.idocare.dependencyinjection.applicationscope.ApplicationComponent;
 import il.co.idocare.dependencyinjection.applicationscope.ApplicationModule;
+import il.co.idocare.dependencyinjection.applicationscope.ContentProviderModule;
 import il.co.idocare.dependencyinjection.applicationscope.DaggerApplicationComponent;
 import il.co.idocare.dependencyinjection.applicationscope.CachersModule;
 import il.co.idocare.dependencyinjection.applicationscope.RetrieversModule;
@@ -32,7 +33,8 @@ public class IdcApplication extends Application {
         FacebookSdk.sdkInitialize(getApplicationContext());
 
         mApplicationComponent = DaggerApplicationComponent.builder()
-                .applicationModule(new ApplicationModule(this, IdcSQLiteOpenHelper.getInstance(this)))
+                .applicationModule(new ApplicationModule(this))
+                .contentProviderModule(new ContentProviderModule(IdcSQLiteOpenHelper.getInstance(this)))
                 .cachersModule(new CachersModule())
                 .retrieversModule(new RetrieversModule())
                 .build();

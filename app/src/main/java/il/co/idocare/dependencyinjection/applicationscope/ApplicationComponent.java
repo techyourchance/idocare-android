@@ -7,7 +7,14 @@ import il.co.idocare.dependencyinjection.serversync.ServerSyncComponent;
 import il.co.idocare.dependencyinjection.serversync.ServerSyncModule;
 
 @ApplicationScope
-@Component(modules = {ApplicationModule.class, CachersModule.class, RetrieversModule.class})
+@Component(
+        modules = {
+                ApplicationModule.class,
+                ContentProviderModule.class,
+                CachersModule.class,
+                RetrieversModule.class
+        }
+)
 public interface ApplicationComponent {
 
     ControllerComponent newControllerComponent(ControllerModule controllerModule);

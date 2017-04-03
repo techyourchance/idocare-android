@@ -29,7 +29,6 @@ import il.co.idocare.networking.GeneralApi;
 import il.co.idocare.networking.ServerApi;
 import il.co.idocare.networking.StdHeadersInterceptor;
 import il.co.idocare.nonstaticproxies.ContentResolverProxy;
-import il.co.idocare.nonstaticproxies.TextUtilsProxy;
 import il.co.idocare.pictures.ImageViewPictureLoader;
 import il.co.idocare.useractions.UserActionEntityFactory;
 import il.co.idocare.utils.Logger;
@@ -43,11 +42,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApplicationModule {
 
     private final Application mApplication;
-    private final IdcSQLiteOpenHelper mSqLiteOpenHelper;
 
-    public ApplicationModule(Application application, IdcSQLiteOpenHelper sqLiteOpenHelper) {
+    public ApplicationModule(Application application) {
         mApplication = application;
-        mSqLiteOpenHelper = sqLiteOpenHelper;
     }
 
     @Provides
@@ -97,23 +94,6 @@ public class ApplicationModule {
     @ApplicationScope
     Logger provideLogger() {
         return new Logger();
-    }
-
-    @Provides
-    ContentResolver contentResolver() {
-        return mApplication.getContentResolver();
-    }
-
-    @Provides
-    @ApplicationScope
-    ContentResolverProxy provideContentResolverProxy() {
-        return new ContentResolverProxy();
-    }
-
-    @Provides
-    @ApplicationScope
-    TextUtilsProxy  provideTextUtilsProxy() {
-        return new TextUtilsProxy();
     }
 
     @Provides
@@ -181,11 +161,6 @@ public class ApplicationModule {
     @Provides
     FilesDownloader filesDownloader( Application application, GeneralApi generalApi, Logger logger) {
         return new FilesDownloader(application, generalApi, logger);
-    }
-
-    @Provides
-    TransactionsController transactionsController() {
-        return new TransactionsController(mSqLiteOpenHelper);
     }
 
     @Provides
