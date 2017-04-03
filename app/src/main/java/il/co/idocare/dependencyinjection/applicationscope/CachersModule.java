@@ -1,4 +1,4 @@
-package il.co.idocare.dependencyinjection.datacache;
+package il.co.idocare.dependencyinjection.applicationscope;
 
 import android.content.ContentResolver;
 

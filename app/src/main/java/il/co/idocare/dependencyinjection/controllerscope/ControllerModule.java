@@ -9,10 +9,12 @@ import org.greenrobot.eventbus.EventBus;
 
 import dagger.Module;
 import dagger.Provides;
+import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.deviceinfo.GooglePlayServicesChecker;
 import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.location.IdcLocationManager;
+import il.co.idocare.nonstaticproxies.ContentResolverProxy;
 import il.co.idocare.requests.cachers.RequestsCacher;
 import il.co.idocare.screens.common.MainFrameHelper;
 import il.co.idocare.screens.common.toolbar.ToolbarManager;
@@ -142,4 +144,10 @@ public class ControllerModule {
         return new ToolbarManager((ToolbarDelegate) mActivity, logger);
     }
 
+    @Provides
+    @ControllerScope
+    ServerSyncController serverSyncController(ContentResolverProxy contentResolverProxy,
+                                              LoginStateManager loginStateManager) {
+        return new ServerSyncController(contentResolverProxy, loginStateManager);
+    }
 }

@@ -14,7 +14,6 @@ import il.co.idocare.IdcApplication;
 import il.co.idocare.R;
 import il.co.idocare.controllers.fragments.IDoCareFragmentCallback;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
-import il.co.idocare.dependencyinjection.contextscope.ContextModule;
 import il.co.idocare.dependencyinjection.controllerscope.ControllerComponent;
 import il.co.idocare.dependencyinjection.controllerscope.ControllerModule;
 import il.co.idocare.dialogs.DialogsFactory;
@@ -43,7 +42,6 @@ public abstract class AbstractActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
 
         mControllerComponent = ((IdcApplication)getApplication()).getApplicationComponent()
-                .newContextComponent(new ContextModule(this))
                 .newControllerComponent(
                         new ControllerModule(this, getSupportFragmentManager()));
 

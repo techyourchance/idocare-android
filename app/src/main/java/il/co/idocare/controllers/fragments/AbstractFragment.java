@@ -10,7 +10,6 @@ import android.view.View;
 import org.greenrobot.eventbus.EventBus;
 
 import il.co.idocare.IdcApplication;
-import il.co.idocare.dependencyinjection.contextscope.ContextModule;
 import il.co.idocare.dependencyinjection.controllerscope.ControllerComponent;
 import il.co.idocare.dependencyinjection.controllerscope.ControllerModule;
 
@@ -43,7 +42,6 @@ public abstract class AbstractFragment extends Fragment implements
 
         mControllerComponent = ((IdcApplication)getActivity().getApplication())
                 .getApplicationComponent()
-                .newContextComponent(new ContextModule(getActivity()))
                 .newControllerComponent(
                         new ControllerModule((AppCompatActivity) getActivity(), getChildFragmentManager()));
 

@@ -10,8 +10,8 @@ import il.co.idocare.contentproviders.IdcSQLiteOpenHelper;
 import il.co.idocare.dependencyinjection.applicationscope.ApplicationComponent;
 import il.co.idocare.dependencyinjection.applicationscope.ApplicationModule;
 import il.co.idocare.dependencyinjection.applicationscope.DaggerApplicationComponent;
-import il.co.idocare.dependencyinjection.datacache.CachersModule;
-import il.co.idocare.dependencyinjection.datacache.RetrieversModule;
+import il.co.idocare.dependencyinjection.applicationscope.CachersModule;
+import il.co.idocare.dependencyinjection.applicationscope.RetrieversModule;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 public class IdcApplication extends Application {
