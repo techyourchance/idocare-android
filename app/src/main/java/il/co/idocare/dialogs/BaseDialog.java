@@ -6,8 +6,8 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
 import il.co.idocare.IdcApplication;
-import il.co.idocare.dependencyinjection.controllerscope.ControllerComponent;
-import il.co.idocare.dependencyinjection.controllerscope.ControllerModule;
+import il.co.idocare.dependencyinjection.controller.ControllerComponent;
+import il.co.idocare.dependencyinjection.controller.ControllerModule;
 
 /**
  * Base class for all dialogs

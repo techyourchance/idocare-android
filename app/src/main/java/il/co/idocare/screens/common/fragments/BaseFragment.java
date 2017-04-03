@@ -6,8 +6,8 @@ import android.support.v4.app.Fragment;
 import javax.inject.Inject;
 
 import il.co.idocare.IdcApplication;
-import il.co.idocare.dependencyinjection.controllerscope.ControllerComponent;
-import il.co.idocare.dependencyinjection.controllerscope.ControllerModule;
+import il.co.idocare.dependencyinjection.controller.ControllerComponent;
+import il.co.idocare.dependencyinjection.controller.ControllerModule;
 import il.co.idocare.utils.eventbusregistrator.EventBusRegistrator;
 
 

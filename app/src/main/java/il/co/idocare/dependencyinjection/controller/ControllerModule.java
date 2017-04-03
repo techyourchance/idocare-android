@@ -1,8 +1,7 @@
-package il.co.idocare.dependencyinjection.controllerscope;
+package il.co.idocare.dependencyinjection.controller;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -13,7 +12,6 @@ import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.deviceinfo.GooglePlayServicesChecker;
 import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
-import il.co.idocare.location.IdcLocationManager;
 import il.co.idocare.nonstaticproxies.ContentResolverProxy;
 import il.co.idocare.requests.cachers.RequestsCacher;
 import il.co.idocare.screens.common.MainFrameHelper;
@@ -38,10 +36,10 @@ import il.co.idocare.utils.Logger;
 @Module
 public class ControllerModule {
 
-    private Activity mActivity;
-    private FragmentManager mFragmentManager;
+    private final Activity mActivity;
+    private final FragmentManager mFragmentManager;
 
-    public ControllerModule(@NonNull Activity activity, FragmentManager fragmentManager) {
+    public ControllerModule(Activity activity, FragmentManager fragmentManager) {
         mActivity = activity;
         mFragmentManager = fragmentManager;
     }

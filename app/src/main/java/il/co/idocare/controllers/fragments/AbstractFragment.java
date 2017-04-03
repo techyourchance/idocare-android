@@ -10,8 +10,8 @@ import android.view.View;
 import org.greenrobot.eventbus.EventBus;
 
 import il.co.idocare.IdcApplication;
-import il.co.idocare.dependencyinjection.controllerscope.ControllerComponent;
-import il.co.idocare.dependencyinjection.controllerscope.ControllerModule;
+import il.co.idocare.dependencyinjection.controller.ControllerComponent;
+import il.co.idocare.dependencyinjection.controller.ControllerModule;
 
 
 /**

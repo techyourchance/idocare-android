@@ -1,4 +1,4 @@
-package il.co.idocare.dependencyinjection.controllerscope;
+package il.co.idocare.dependencyinjection.controller;
 
 import dagger.Subcomponent;
 import il.co.idocare.controllers.activities.MainActivity;

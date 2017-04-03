@@ -1,4 +1,4 @@
-package il.co.idocare.dependencyinjection.applicationscope;
+package il.co.idocare.dependencyinjection.application;
 
 import android.app.Application;
 import android.content.ContentResolver;

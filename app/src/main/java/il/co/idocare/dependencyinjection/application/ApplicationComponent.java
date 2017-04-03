@@ -1,8 +1,8 @@
-package il.co.idocare.dependencyinjection.applicationscope;
+package il.co.idocare.dependencyinjection.application;
 
 import dagger.Component;
-import il.co.idocare.dependencyinjection.controllerscope.ControllerComponent;
-import il.co.idocare.dependencyinjection.controllerscope.ControllerModule;
+import il.co.idocare.dependencyinjection.controller.ControllerComponent;
+import il.co.idocare.dependencyinjection.controller.ControllerModule;
 import il.co.idocare.dependencyinjection.serversync.ServerSyncComponent;
 import il.co.idocare.dependencyinjection.serversync.ServerSyncModule;
 

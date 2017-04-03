@@ -1,8 +1,7 @@
-package il.co.idocare.dependencyinjection.applicationscope;
+package il.co.idocare.dependencyinjection.application;
 
 import android.accounts.AccountManager;
 import android.app.Application;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Geocoder;
@@ -19,8 +18,6 @@ import il.co.idocare.authentication.AuthManager;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.common.settings.PreferenceSettingsEntryFactoryImpl;
 import il.co.idocare.common.settings.SettingsManager;
-import il.co.idocare.contentproviders.IdcSQLiteOpenHelper;
-import il.co.idocare.contentproviders.TransactionsController;
 import il.co.idocare.location.IdcLocationManager;
 import il.co.idocare.location.ReverseGeocoder;
 import il.co.idocare.location.StandardReverseGeocoder;
@@ -28,7 +25,6 @@ import il.co.idocare.networking.FilesDownloader;
 import il.co.idocare.networking.GeneralApi;
 import il.co.idocare.networking.ServerApi;
 import il.co.idocare.networking.StdHeadersInterceptor;
-import il.co.idocare.nonstaticproxies.ContentResolverProxy;
 import il.co.idocare.pictures.ImageViewPictureLoader;
 import il.co.idocare.useractions.UserActionEntityFactory;
 import il.co.idocare.utils.Logger;

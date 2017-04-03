@@ -1,4 +1,4 @@
-package il.co.idocare.dependencyinjection.controllerscope;
+package il.co.idocare.dependencyinjection.controller;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

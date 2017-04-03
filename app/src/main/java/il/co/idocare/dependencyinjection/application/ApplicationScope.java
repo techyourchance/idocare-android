@@ -1,4 +1,4 @@
-package il.co.idocare.dependencyinjection.applicationscope;
+package il.co.idocare.dependencyinjection.application;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

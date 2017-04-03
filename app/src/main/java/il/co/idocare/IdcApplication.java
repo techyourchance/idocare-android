@@ -7,12 +7,12 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import il.co.idocare.contentproviders.IdcSQLiteOpenHelper;
-import il.co.idocare.dependencyinjection.applicationscope.ApplicationComponent;
-import il.co.idocare.dependencyinjection.applicationscope.ApplicationModule;
-import il.co.idocare.dependencyinjection.applicationscope.ContentProviderModule;
-import il.co.idocare.dependencyinjection.applicationscope.DaggerApplicationComponent;
-import il.co.idocare.dependencyinjection.applicationscope.CachersModule;
-import il.co.idocare.dependencyinjection.applicationscope.RetrieversModule;
+import il.co.idocare.dependencyinjection.application.ApplicationComponent;
+import il.co.idocare.dependencyinjection.application.ApplicationModule;
+import il.co.idocare.dependencyinjection.application.ContentProviderModule;
+import il.co.idocare.dependencyinjection.application.DaggerApplicationComponent;
+import il.co.idocare.dependencyinjection.application.CachersModule;
+import il.co.idocare.dependencyinjection.application.RetrieversModule;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 public class IdcApplication extends Application {
