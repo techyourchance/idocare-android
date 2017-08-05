@@ -17,6 +17,7 @@ import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class UtilMethods {
 
@@ -180,7 +181,7 @@ public class UtilMethods {
 
         Date date = null;
         try {
-            SimpleDateFormat sdfServer = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat sdfServer = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             date = sdfServer.parse(stringDate);
         } catch (ParseException e) {
             // TODO: need anything here?
@@ -194,7 +195,7 @@ public class UtilMethods {
         }
 
 
-        SimpleDateFormat sdfOut = new SimpleDateFormat("dd/MM/yy 'at' HH:mm ");
+        SimpleDateFormat sdfOut = new SimpleDateFormat("dd/MM/yy 'at' HH:mm", Locale.getDefault());
 
         if (date != null) {
             return sdfOut.format(date);
