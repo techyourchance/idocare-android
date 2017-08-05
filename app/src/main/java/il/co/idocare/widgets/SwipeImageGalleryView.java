@@ -1,7 +1,9 @@
 package il.co.idocare.widgets;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -48,11 +50,11 @@ public class SwipeImageGalleryView extends FrameLayout implements ViewPager.OnPa
         init();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public SwipeImageGalleryView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }
-
 
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.element_swipe_image_gallery, this);
