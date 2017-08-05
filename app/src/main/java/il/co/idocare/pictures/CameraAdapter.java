@@ -4,9 +4,12 @@ package il.co.idocare.pictures;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.BuildConfig;
+import android.support.v4.content.FileProvider;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -41,7 +44,16 @@ public class CameraAdapter {
         File outputFile = new File(mActivity
                 .getExternalFilesDir(Environment.DIRECTORY_PICTURES), pictureName + ".jpg");
 
-        Uri cameraPictureUri = Uri.fromFile(outputFile);
+        Uri cameraPictureUri;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            cameraPictureUri = FileProvider.getUriForFile(
+                    mActivity,
+                    "il.co.idocare.provider",
+                    outputFile);
+        } else {
+            cameraPictureUri = Uri.fromFile(outputFile);
+        }
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraPictureUri);

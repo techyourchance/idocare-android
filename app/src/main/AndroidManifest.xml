@@ -89,6 +89,16 @@
             android:writePermission="il.co.idocare.provider.WRITE" >
         </provider>
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="il.co.idocare.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
