@@ -38,17 +38,6 @@ public abstract class AbstractActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        mControllerComponent = ((IdcApplication)getApplication()).getApplicationComponent()
-                .newControllerComponent(
-                        new ControllerModule(this, getSupportFragmentManager()));
-
-
-    }
-
-    @Override
     public void showActionBar(boolean show) {
         if (getSupportActionBar() != null) {
             if (show)
@@ -64,6 +53,11 @@ public abstract class AbstractActivity extends AppCompatActivity implements
     // Dependency injection
 
     protected ControllerComponent getControllerComponent() {
+        if (mControllerComponent == null) {
+            mControllerComponent = ((IdcApplication)getApplication()).getApplicationComponent()
+                    .newControllerComponent(
+                            new ControllerModule(this, getSupportFragmentManager()));
+        }
         return mControllerComponent;
     }
 

@@ -9,94 +9,123 @@ import javax.inject.Inject;
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.fragments.SplashFragment;
+import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
+import il.co.idocare.utils.multithreading.MainThreadPoster;
 
 /**
  * This startup activity is the main entry point into the app.
  */
 public class StartupActivity extends AbstractActivity {
 
-    private static final String LOG_TAG = StartupActivity.class.getSimpleName();
+    private static final String TAG = "StartupActivity";
 
+    private static final String KEY_INIT_TIME = "KEY_INIT_TIME";
 
     @Inject LoginStateManager mLoginStateManager;
+    @Inject BackgroundThreadPoster mBackgroundThreadPoster;
+    @Inject MainThreadPoster mMainThreadPoster;
 
-    private long mInitTime;
+    private long mInitTime = 0;
+
+    private boolean mResumed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getControllerComponent().inject(this);
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.layout_single_frame);
 
-        getControllerComponent().inject(this);
-
         if (savedInstanceState == null) {
             mInitTime = System.currentTimeMillis();
             replaceFragment(SplashFragment.class, false, true, null);
+        } else {
+            mInitTime = savedInstanceState.getLong(KEY_INIT_TIME);
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(KEY_INIT_TIME, mInitTime);
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
+        mResumed = true;
+        waitAndThenSwitchToNextActivity();
+    }
 
-        // This asynctask waits for a predefined amount of time and then switches to MainActivity
-        new AsyncTask<Void, Void, Void>() {
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mResumed = false;
+    }
+
+    private void waitAndThenSwitchToNextActivity() {
+
+        // perform on background thread
+        mBackgroundThreadPoster.post(new Runnable() {
             @Override
-            protected Void doInBackground(Void... voids) {
-
+            public void run() {
                 long currTime = System.currentTimeMillis();
 
-                if (currTime < mInitTime + 2*1000) {
+                // wait if needed
+                if (currTime < mInitTime + 2 * 1000) {
                     try {
-                        Thread.sleep(mInitTime + 2*1000 - currTime);
+                        Thread.sleep(mInitTime + 2 * 1000 - currTime);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
 
-                return null;
-
-            }
-
-            @Override
-            protected void onPostExecute(Void obj) {
-                Intent intent;
-
-                if (mLoginStateManager.isLoggedIn()) {
-                    // If the user is logged in - show the MainFragment
-                    intent = new Intent(StartupActivity.this, MainActivity.class);
-                } else {
-                    if (mLoginStateManager.isLoginSkipped()) {
-                        // If the user has already chosen to skip login at startup - switch to
-                        // MainActivity right away.
-                        intent = new Intent(StartupActivity.this, MainActivity.class);
-                    } else {
-                        // Present a login screen to the user, but make sure that LoginActivity knows
-                        // that is has been started from StartupActivity
-                        intent = new Intent(StartupActivity.this, LoginActivity.class);
-                        intent.putExtra(LoginActivity.ARG_LAUNCHED_FROM_STARTUP_ACTIVITY, 1);
-                        // Disable entry animation
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-
-                        // This need to be placed here in order to override exit animation
-                        startActivity(intent);
-                        finish();
-
-                        // Disable exit animation
-                        overridePendingTransition(0, 0);
-
-                        return;
+                // switch to next activity on main thread
+                mMainThreadPoster.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        switchToNextActivityIfResumed();
                     }
-                }
-
-                startActivity(intent);
-                finish();
-
+                });
             }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        });
+    }
+
+    private void switchToNextActivityIfResumed() {
+
+        if (!mResumed) return;
+
+        Intent intent;
+        boolean disableExitAnimation = false;
+
+        if (mLoginStateManager.isLoggedIn()) {
+            // If the user is logged in - show the MainFragment
+            intent = new Intent(StartupActivity.this, MainActivity.class);
+        } else {
+            if (mLoginStateManager.isLoginSkipped()) {
+                // If the user has already chosen to skip login at startup - switch to
+                // MainActivity right away.
+                intent = new Intent(StartupActivity.this, MainActivity.class);
+            } else {
+                // Present a login screen to the user, but make sure that LoginActivity knows
+                // that is has been started from StartupActivity
+                intent = new Intent(StartupActivity.this, LoginActivity.class);
+                intent.putExtra(LoginActivity.ARG_LAUNCHED_FROM_STARTUP_ACTIVITY, 1);
+                // Disable entry animation
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+
+                disableExitAnimation = true;
+            }
+        }
+
+        startActivity(intent);
+        finish();
+
+        if (disableExitAnimation) {
+            overridePendingTransition(0, 0);
+        }
     }
 
 

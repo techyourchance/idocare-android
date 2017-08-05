@@ -16,9 +16,6 @@ import il.co.idocare.controllers.fragments.LoginNativeFragment;
  */
 public class LoginActivity extends AbstractActivity {
 
-    public final static String ARG_ACCOUNT_NAME = "il.co.idocare.accountName";
-    public static final String ARG_ACCOUNT_TYPE = "il.co.idocare.accountType";
-
     /**
      * When set to a strictly positive integer, this entry in the launching intent's extra
      * indicates that this activity was started from StartupActivity.
