@@ -3,15 +3,9 @@ package il.co.idocare.authentication;
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
-import android.accounts.AccountManager;
 import android.accounts.NetworkErrorException;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
-
-import il.co.idocare.controllers.activities.LoginActivity;
 /**
  * Implement AbstractAccountAuthenticator and stub out all
  * of its methods
