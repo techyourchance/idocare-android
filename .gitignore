@@ -25,6 +25,7 @@ Thumbs.db
 .idea
 .gradle
 build/*
+app/build/
 *.iml
 
 # Emacs backups
