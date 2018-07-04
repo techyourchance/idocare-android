@@ -140,7 +140,6 @@ public class MainActivity extends AbstractActivity implements
         mMainViewMvc.setTitle(title);
     }
 
-
     @Override
     public void onNavigationClick() {
         mMainFrameHelper.navigateUp();

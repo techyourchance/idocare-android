@@ -92,7 +92,7 @@ public class RequestsManagerTest {
         SUT.fetchRequestsAssignedToUserAndNotify(TEST_USER_ID);
 
         // Assert
-        mThreadPostersTestController.waitUntilAllActionsCompleted();
+        mThreadPostersTestController.join();
 
         verify(mRequestsManagerListenerMock1, times(1)).onRequestsFetched(mRequestsListCaptor.capture());
         verify(mRequestsManagerListenerMock2, times(1)).onRequestsFetched(mRequestsListCaptor.capture());
@@ -125,7 +125,7 @@ public class RequestsManagerTest {
         SUT.fetchAllRequestsAndNotify();
 
         // Assert
-        mThreadPostersTestController.waitUntilAllActionsCompleted();
+        mThreadPostersTestController.join();
 
         verify(mRequestsManagerListenerMock1, times(1)).onRequestsFetched(mRequestsListCaptor.capture());
         verify(mRequestsManagerListenerMock2, times(1)).onRequestsFetched(mRequestsListCaptor.capture());
@@ -143,7 +143,7 @@ public class RequestsManagerTest {
         SUT.addNewRequest(newRequest);
 
         // Assert
-        mThreadPostersTestController.waitUntilAllActionsCompleted();
+        mThreadPostersTestController.join();
 
         verify(mRequestsCacherMock).updateOrInsertAndNotify(mRequestsCaptor.capture());
         RequestEntity cachedRequest = mRequestsCaptor.getValue();
@@ -159,7 +159,7 @@ public class RequestsManagerTest {
         SUT.addNewRequest(newRequest);
 
         // Assert
-        mThreadPostersTestController.waitUntilAllActionsCompleted();
+        mThreadPostersTestController.join();
 
         CreateRequestUserActionEntity expectedUserAction =
                 new CreateRequestUserActionEntity(newRequest.getCreatedAt(), newRequest.getId(), newRequest.getCreatedBy());

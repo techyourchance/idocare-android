@@ -32,7 +32,7 @@ public class ThreadPostersTestController {
      * {@link #getBackgroundThreadPoster()} are finished.<br><br>
      *
      */
-    public void waitUntilAllActionsCompleted() {
+    public void join() {
         mBackgroundThreadPosterTestDouble.join();
         mMainThreadPosterTestDouble.join();
     }
