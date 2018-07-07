@@ -119,7 +119,7 @@ public class RequestItem extends RequestItemPojo {
      * @param jsonObjectString a string formatted as JSON object having request's data
      */
     public static RequestItem create(String jsonObjectString) {
-        RequestItemPojo requestPojo = RequestItemPojo.create(jsonObjectString);
+        RequestItemPojo requestPojo = RequestItemPojo.Companion.create(jsonObjectString);
 
         RequestItem request = RequestItem.create(requestPojo);
 
