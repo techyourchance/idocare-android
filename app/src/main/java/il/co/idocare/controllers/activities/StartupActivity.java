@@ -4,13 +4,14 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import com.techyourchance.threadposter.BackgroundThreadPoster;
+import com.techyourchance.threadposter.UiThreadPoster;
+
 import javax.inject.Inject;
 
 import il.co.idocare.R;
 import il.co.idocare.authentication.LoginStateManager;
 import il.co.idocare.controllers.fragments.SplashFragment;
-import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
-import il.co.idocare.utils.multithreading.MainThreadPoster;
 
 /**
  * This startup activity is the main entry point into the app.
@@ -23,7 +24,7 @@ public class StartupActivity extends AbstractActivity {
 
     @Inject LoginStateManager mLoginStateManager;
     @Inject BackgroundThreadPoster mBackgroundThreadPoster;
-    @Inject MainThreadPoster mMainThreadPoster;
+    @Inject UiThreadPoster mUiThreadPoster;
 
     private long mInitTime = 0;
 
@@ -83,7 +84,7 @@ public class StartupActivity extends AbstractActivity {
                 }
 
                 // switch to next activity on main thread
-                mMainThreadPoster.post(new Runnable() {
+                mUiThreadPoster.post(new Runnable() {
                     @Override
                     public void run() {
                         switchToNextActivityIfResumed();

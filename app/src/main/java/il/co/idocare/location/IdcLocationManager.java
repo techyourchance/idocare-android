@@ -10,13 +10,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.android.gms.location.LocationListener;
+import com.techyourchance.threadposter.UiThreadPoster;
 
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import il.co.idocare.utils.Logger;
-import il.co.idocare.utils.multithreading.MainThreadPoster;
 
 /**
  * This class encapsulates the logic related to user's location
@@ -56,7 +56,7 @@ public class IdcLocationManager implements LocationListener {
     private final Object MONITOR = new Object();
 
     private final Context mContext;
-    private final MainThreadPoster mMainThreadPoster;
+    private final UiThreadPoster mUiThreadPoster;
     private final Logger mLogger;
 
 
@@ -66,9 +66,9 @@ public class IdcLocationManager implements LocationListener {
     private LocationTrackerService.LocationTrackerServiceBinder mLocationTrackerServiceBinder;
 
 
-    public IdcLocationManager(Context context, MainThreadPoster mainThreadPoster, Logger logger) {
+    public IdcLocationManager(Context context, UiThreadPoster uiThreadPoster, Logger logger) {
         mContext = context;
-        mMainThreadPoster = mainThreadPoster;
+        mUiThreadPoster = uiThreadPoster;
         mLogger = logger;
     }
 
@@ -100,7 +100,7 @@ public class IdcLocationManager implements LocationListener {
     @Override
     public void onLocationChanged(final Location location) {
         if (isAccurateLocation(location)) {
-            mMainThreadPoster.post(new Runnable() {
+            mUiThreadPoster.post(new Runnable() {
                 @Override
                 public void run() {
                     for (LocationUpdateListener listener : mListeners) {

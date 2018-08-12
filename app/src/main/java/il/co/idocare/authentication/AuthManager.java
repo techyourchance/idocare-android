@@ -7,6 +7,7 @@ import android.support.annotation.WorkerThread;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.techyourchance.threadposter.BackgroundThreadPoster;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
@@ -23,7 +24,6 @@ import il.co.idocare.networking.ServerApi;
 import il.co.idocare.networking.schemes.responses.AuthResponseScheme;
 import il.co.idocare.utils.Logger;
 import il.co.idocare.utils.SecurityUtils;
-import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;

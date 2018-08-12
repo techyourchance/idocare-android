@@ -5,6 +5,8 @@ import android.content.ContentResolver;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
+import com.techyourchance.threadposter.BackgroundThreadPoster;
+
 import org.joda.time.DateTime;
 
 import java.io.IOException;
@@ -32,7 +34,6 @@ import il.co.idocare.useractions.entities.VoteForRequestUserActionEntity;
 import il.co.idocare.useractions.retrievers.UserActionsRetriever;
 import il.co.idocare.utils.IdcDateTimeUtils;
 import il.co.idocare.utils.Logger;
-import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;

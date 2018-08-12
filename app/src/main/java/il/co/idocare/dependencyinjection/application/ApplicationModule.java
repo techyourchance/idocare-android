@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Geocoder;
 
+import com.techyourchance.threadposter.BackgroundThreadPoster;
+import com.techyourchance.threadposter.UiThreadPoster;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.Locale;
@@ -28,8 +31,6 @@ import il.co.idocare.networking.StdHeadersInterceptor;
 import il.co.idocare.pictures.ImageViewPictureLoader;
 import il.co.idocare.useractions.UserActionEntityFactory;
 import il.co.idocare.utils.Logger;
-import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
-import il.co.idocare.utils.multithreading.MainThreadPoster;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -99,8 +100,8 @@ public class ApplicationModule {
 
     @Provides
     @ApplicationScope
-    MainThreadPoster mainThreadPoster() {
-        return new MainThreadPoster();
+    UiThreadPoster uiThreadPoster() {
+        return new UiThreadPoster();
     }
 
     @Provides
@@ -128,7 +129,7 @@ public class ApplicationModule {
 
     @Provides
     @ApplicationScope
-    IdcLocationManager idcLocationManager(Application application, MainThreadPoster mainThreadPoster, Logger logger) {
-        return new IdcLocationManager(application, mainThreadPoster, logger);
+    IdcLocationManager idcLocationManager(Application application, UiThreadPoster uiThreadPoster, Logger logger) {
+        return new IdcLocationManager(application, uiThreadPoster, logger);
     }
 }

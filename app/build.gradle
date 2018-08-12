@@ -61,6 +61,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-crash:16.0.1'
     // Datetime library
     implementation 'joda-time:joda-time:2.9.4'
+
+    implementation "com.techyourchance.threadposter:threadposter:0.8.0"
 }
 
 apply plugin: 'com.google.gms.google-services'

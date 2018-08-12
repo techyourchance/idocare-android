@@ -2,10 +2,11 @@ package il.co.idocare.users;
 
 import android.support.annotation.WorkerThread;
 
+import com.techyourchance.threadposter.BackgroundThreadPoster;
+import com.techyourchance.threadposter.UiThreadPoster;
+
 import java.util.List;
 
-import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
-import il.co.idocare.utils.multithreading.MainThreadPoster;
 
 public class UsersManager {
 
@@ -15,14 +16,14 @@ public class UsersManager {
 
     private final UsersRetriever mUsersRetriever;
     private final BackgroundThreadPoster mBackgroundThreadPoster;
-    private final MainThreadPoster mMainThreadPoster;
+    private final UiThreadPoster mUiThreadPoster;
 
     public UsersManager(UsersRetriever usersRetriever,
                         BackgroundThreadPoster backgroundThreadPoster,
-                        MainThreadPoster mainThreadPoster) {
+                        UiThreadPoster uiThreadPoster) {
         mUsersRetriever = usersRetriever;
         mBackgroundThreadPoster = backgroundThreadPoster;
-        mMainThreadPoster = mainThreadPoster;
+        mUiThreadPoster = uiThreadPoster;
     }
 
     public void fetchUsersByIdAndNotify(final List<String> userIds,
@@ -38,7 +39,7 @@ public class UsersManager {
     @WorkerThread
     private void fetchUsersByIdAndNotifySync(List<String> userIds, final UsersManagerListener listener) {
         final List<UserEntity> users = mUsersRetriever.getUsersByIds(userIds);
-        mMainThreadPoster.post(new Runnable() {
+        mUiThreadPoster.post(new Runnable() {
             @Override
             public void run() {
                 listener.onUsersFetched(users);

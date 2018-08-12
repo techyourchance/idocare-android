@@ -2,6 +2,8 @@ package il.co.idocare.dependencyinjection.serversync;
 
 import android.content.ContentResolver;
 
+import com.techyourchance.threadposter.BackgroundThreadPoster;
+
 import org.greenrobot.eventbus.EventBus;
 
 import dagger.Module;
@@ -22,7 +24,6 @@ import il.co.idocare.useractions.retrievers.UserActionsRetriever;
 import il.co.idocare.users.UsersCacher;
 import il.co.idocare.users.UsersRetriever;
 import il.co.idocare.utils.Logger;
-import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
 
 @Module
 public class ServerSyncModule {

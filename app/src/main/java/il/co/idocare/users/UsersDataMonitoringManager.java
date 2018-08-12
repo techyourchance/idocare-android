@@ -2,13 +2,14 @@ package il.co.idocare.users;
 
 import android.support.annotation.WorkerThread;
 
+import com.techyourchance.threadposter.BackgroundThreadPoster;
+import com.techyourchance.threadposter.UiThreadPoster;
+
 import org.greenrobot.eventbus.Subscribe;
 
 import il.co.idocare.common.BaseManager;
 import il.co.idocare.users.events.UserDataChangedEvent;
 import il.co.idocare.utils.eventbusregistrator.EventBusRegistrable;
-import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
-import il.co.idocare.utils.multithreading.MainThreadPoster;
 
 /**
  * This manager encapsulates logic related to users
@@ -27,14 +28,14 @@ public class UsersDataMonitoringManager extends
 
     private UsersRetriever mUsersRetriever;
     private BackgroundThreadPoster mBackgroundThreadPoster;
-    private MainThreadPoster mMainThreadPoster;
+    private UiThreadPoster mUiThreadPoster;
 
     public UsersDataMonitoringManager(UsersRetriever usersRetriever,
                                       BackgroundThreadPoster backgroundThreadPoster,
-                                      MainThreadPoster mainThreadPoster) {
+                                      UiThreadPoster uiThreadPoster) {
         mUsersRetriever = usersRetriever;
         mBackgroundThreadPoster = backgroundThreadPoster;
-        mMainThreadPoster = mainThreadPoster;
+        mUiThreadPoster = uiThreadPoster;
     }
 
     /**
@@ -59,7 +60,7 @@ public class UsersDataMonitoringManager extends
     }
 
     private void notifyUserDataFetched(final UserEntity userEntity) {
-        mMainThreadPoster.post(new Runnable() {
+        mUiThreadPoster.post(new Runnable() {
             @Override
             public void run() {
                 for (UsersDataMonitorListener listener : getListeners()) {

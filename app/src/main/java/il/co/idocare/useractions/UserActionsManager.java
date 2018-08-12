@@ -2,10 +2,11 @@ package il.co.idocare.useractions;
 
 import android.support.annotation.WorkerThread;
 
+import com.techyourchance.threadposter.BackgroundThreadPoster;
+import com.techyourchance.threadposter.UiThreadPoster;
+
 import il.co.idocare.useractions.cachers.UserActionCacher;
 import il.co.idocare.useractions.entities.UserActionEntity;
-import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
-import il.co.idocare.utils.multithreading.MainThreadPoster;
 
 public class UserActionsManager {
 
@@ -15,14 +16,14 @@ public class UserActionsManager {
 
     private final UserActionCacher mUserActionCacher;
     private final BackgroundThreadPoster mBackgroundThreadPoster;
-    private final MainThreadPoster mMainThreadPoster;
+    private final UiThreadPoster mUiThreadPoster;
 
     public UserActionsManager(UserActionCacher userActionCacher,
                               BackgroundThreadPoster backgroundThreadPoster,
-                              MainThreadPoster mainThreadPoster) {
+                              UiThreadPoster uiThreadPoster) {
         mUserActionCacher = userActionCacher;
         mBackgroundThreadPoster = backgroundThreadPoster;
-        mMainThreadPoster = mainThreadPoster;
+        mUiThreadPoster = uiThreadPoster;
     }
 
     public void addUserActionAndNotify(final UserActionEntity userAction,
@@ -39,7 +40,7 @@ public class UserActionsManager {
     private void addNewUserActionSync(final UserActionEntity userAction,
                                       final UserActionsManagerListener listener) {
         mUserActionCacher.cacheUserAction(userAction);
-        mMainThreadPoster.post(new Runnable() {
+        mUiThreadPoster.post(new Runnable() {
             @Override
             public void run() {
                 listener.onUserActionAdded(userAction);

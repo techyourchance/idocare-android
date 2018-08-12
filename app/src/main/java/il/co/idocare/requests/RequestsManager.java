@@ -1,5 +1,8 @@
 package il.co.idocare.requests;
 
+import com.techyourchance.threadposter.BackgroundThreadPoster;
+import com.techyourchance.threadposter.UiThreadPoster;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,8 +14,6 @@ import il.co.idocare.requests.retrievers.RequestsRetriever;
 import il.co.idocare.useractions.cachers.UserActionCacher;
 import il.co.idocare.useractions.entities.CreateRequestUserActionEntity;
 import il.co.idocare.utils.Logger;
-import il.co.idocare.utils.multithreading.BackgroundThreadPoster;
-import il.co.idocare.utils.multithreading.MainThreadPoster;
 
 /**
  * This manager encapsulates functionality related to "requests"
@@ -26,7 +27,7 @@ public class RequestsManager extends BaseManager<RequestsManager.RequestsManager
     }
 
     private final BackgroundThreadPoster mBackgroundThreadPoster;
-    private final MainThreadPoster mMainThreadPoster;
+    private final UiThreadPoster mUiThreadPoster;
     private final UserActionCacher mUserActionCacher;
     private final RequestsRetriever mRequestsRetriever;
     private RequestsCacher mRequestsCacher;
@@ -34,14 +35,14 @@ public class RequestsManager extends BaseManager<RequestsManager.RequestsManager
     private final ServerSyncController mServerSyncController;
 
     public RequestsManager(BackgroundThreadPoster backgroundThreadPoster,
-                           MainThreadPoster mainThreadPoster,
+                           UiThreadPoster uiThreadPoster,
                            UserActionCacher userActionCacher,
                            RequestsRetriever requestsRetriever,
                            RequestsCacher requestsCacher,
                            Logger logger,
                            ServerSyncController serverSyncController) {
         mBackgroundThreadPoster = backgroundThreadPoster;
-        mMainThreadPoster = mainThreadPoster;
+        mUiThreadPoster = uiThreadPoster;
         mUserActionCacher = userActionCacher;
         mRequestsRetriever = requestsRetriever;
         mRequestsCacher = requestsCacher;
@@ -114,7 +115,7 @@ public class RequestsManager extends BaseManager<RequestsManager.RequestsManager
     }
 
     private void notifyListenersWithRequests(final List<RequestEntity> requests) {
-        mMainThreadPoster.post(new Runnable() {
+        mUiThreadPoster.post(new Runnable() {
             @Override
             public void run() {
                 for (RequestsManagerListener listener : getListeners()) {

@@ -59,7 +59,7 @@ public class RequestsManagerTest {
     public void setup() throws Exception {
         SUT = new RequestsManager(
                 mThreadPostersTestController.getBackgroundThreadPoster(),
-                mThreadPostersTestController.getMainThreadPoster(),
+                mThreadPostersTestController.getUiThreadPoster(),
                 mUserActionCacherMock,
                 mRequestsRetrieverMock,
                 mRequestsCacherMock,

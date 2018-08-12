@@ -41,7 +41,7 @@ public class UsersDataMonitoringManagerTest {
         SUT = new UsersDataMonitoringManager(
                 mUsersRetrieverMock,
                 mThreadPostersTestController.getBackgroundThreadPoster(),
-                mThreadPostersTestController.getMainThreadPoster());
+                mThreadPostersTestController.getUiThreadPoster());
     }
 
     @Test
