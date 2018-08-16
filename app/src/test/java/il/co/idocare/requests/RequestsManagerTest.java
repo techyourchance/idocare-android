@@ -1,5 +1,7 @@
 package il.co.idocare.requests;
 
+import com.techyourchance.threadposter.ThreadPostersTestDouble;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,12 +13,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Arrays;
 import java.util.List;
 
-import il.co.idocare.serversync.ServerSyncController;
 import il.co.idocare.requests.cachers.RequestsCacher;
 import il.co.idocare.requests.retrievers.RequestsRetriever;
+import il.co.idocare.serversync.ServerSyncController;
 import il.co.idocare.testdoubles.entities.RequestEntityProvider;
 import il.co.idocare.testdoubles.utils.NullLogger;
-import il.co.idocare.testdoubles.utils.multithreading.ThreadPostersTestController;
 import il.co.idocare.useractions.cachers.UserActionCacher;
 import il.co.idocare.useractions.entities.CreateRequestUserActionEntity;
 import il.co.idocare.useractions.entities.UserActionEntity;
@@ -24,7 +25,7 @@ import il.co.idocare.utils.Logger;
 
 import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -45,7 +46,7 @@ public class RequestsManagerTest {
 
 
     private Logger mLogger = new NullLogger();
-    private ThreadPostersTestController mThreadPostersTestController = new ThreadPostersTestController();
+    private ThreadPostersTestDouble mThreadPostersTestDouble = new ThreadPostersTestDouble();
 
     @Captor private ArgumentCaptor<List<RequestEntity>> mRequestsListCaptor;
     @Captor private  ArgumentCaptor<RequestEntity> mRequestsCaptor;
@@ -58,8 +59,8 @@ public class RequestsManagerTest {
     @Before
     public void setup() throws Exception {
         SUT = new RequestsManager(
-                mThreadPostersTestController.getBackgroundThreadPoster(),
-                mThreadPostersTestController.getUiThreadPoster(),
+                mThreadPostersTestDouble.getBackgroundTestDouble(),
+                mThreadPostersTestDouble.getUiTestDouble(),
                 mUserActionCacherMock,
                 mRequestsRetrieverMock,
                 mRequestsCacherMock,
@@ -92,7 +93,7 @@ public class RequestsManagerTest {
         SUT.fetchRequestsAssignedToUserAndNotify(TEST_USER_ID);
 
         // Assert
-        mThreadPostersTestController.join();
+        mThreadPostersTestDouble.join();
 
         verify(mRequestsManagerListenerMock1, times(1)).onRequestsFetched(mRequestsListCaptor.capture());
         verify(mRequestsManagerListenerMock2, times(1)).onRequestsFetched(mRequestsListCaptor.capture());
@@ -125,7 +126,7 @@ public class RequestsManagerTest {
         SUT.fetchAllRequestsAndNotify();
 
         // Assert
-        mThreadPostersTestController.join();
+        mThreadPostersTestDouble.join();
 
         verify(mRequestsManagerListenerMock1, times(1)).onRequestsFetched(mRequestsListCaptor.capture());
         verify(mRequestsManagerListenerMock2, times(1)).onRequestsFetched(mRequestsListCaptor.capture());
@@ -143,7 +144,7 @@ public class RequestsManagerTest {
         SUT.addNewRequest(newRequest);
 
         // Assert
-        mThreadPostersTestController.join();
+        mThreadPostersTestDouble.join();
 
         verify(mRequestsCacherMock).updateOrInsertAndNotify(mRequestsCaptor.capture());
         RequestEntity cachedRequest = mRequestsCaptor.getValue();
@@ -159,7 +160,7 @@ public class RequestsManagerTest {
         SUT.addNewRequest(newRequest);
 
         // Assert
-        mThreadPostersTestController.join();
+        mThreadPostersTestDouble.join();
 
         CreateRequestUserActionEntity expectedUserAction =
                 new CreateRequestUserActionEntity(newRequest.getCreatedAt(), newRequest.getId(), newRequest.getCreatedBy());

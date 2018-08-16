@@ -1,5 +1,7 @@
 package il.co.idocare.users;
 
+import com.techyourchance.threadposter.ThreadPostersTestDouble;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,7 +10,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import il.co.idocare.testdoubles.utils.multithreading.ThreadPostersTestController;
 import il.co.idocare.users.events.UserDataChangedEvent;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -27,7 +28,7 @@ public class UsersDataMonitoringManagerTest {
     @Mock UsersRetriever mUsersRetrieverMock;
     @Mock UsersDataMonitoringManager.UsersDataMonitorListener mUsersDataMonitorListenerMock;
 
-    private ThreadPostersTestController mThreadPostersTestController = new ThreadPostersTestController();
+    private ThreadPostersTestDouble mThreadPostersTestDouble = new ThreadPostersTestDouble();
 
     private UsersDataMonitoringManager SUT;
 
@@ -40,8 +41,8 @@ public class UsersDataMonitoringManagerTest {
     public void setup() throws Exception {
         SUT = new UsersDataMonitoringManager(
                 mUsersRetrieverMock,
-                mThreadPostersTestController.getBackgroundThreadPoster(),
-                mThreadPostersTestController.getUiThreadPoster());
+                mThreadPostersTestDouble.getBackgroundTestDouble(),
+                mThreadPostersTestDouble.getUiTestDouble());
     }
 
     @Test
@@ -52,7 +53,7 @@ public class UsersDataMonitoringManagerTest {
         SUT.registerListener(mUsersDataMonitorListenerMock);
         SUT.fetchUserByIdAndNotifyIfExists(TEST_USER_ID);
 
-        mThreadPostersTestController.join();
+        mThreadPostersTestDouble.join();
         // Assert
         verify(mUsersRetrieverMock, times(1)).getUserById(mStringCaptor.capture());
         verifyNoMoreInteractions(mUsersRetrieverMock);
@@ -71,7 +72,7 @@ public class UsersDataMonitoringManagerTest {
         SUT.registerListener(mUsersDataMonitorListenerMock);
         SUT.fetchUserByIdAndNotifyIfExists(TEST_USER_ID);
 
-        mThreadPostersTestController.join();
+        mThreadPostersTestDouble.join();
         // Assert
         verify(mUsersRetrieverMock, times(1)).getUserById(mStringCaptor.capture());
         verifyNoMoreInteractions(mUsersRetrieverMock);
@@ -88,7 +89,7 @@ public class UsersDataMonitoringManagerTest {
         SUT.registerListener(mUsersDataMonitorListenerMock);
         SUT.onUserDataChanged(new UserDataChangedEvent(TEST_USER_ID));
 
-        mThreadPostersTestController.join();
+        mThreadPostersTestDouble.join();
         // Assert
         verify(mUsersRetrieverMock, times(1)).getUserById(mStringCaptor.capture());
         verifyNoMoreInteractions(mUsersRetrieverMock);
@@ -107,7 +108,7 @@ public class UsersDataMonitoringManagerTest {
         SUT.registerListener(mUsersDataMonitorListenerMock);
         SUT.onUserDataChanged(new UserDataChangedEvent(TEST_USER_ID));
 
-        mThreadPostersTestController.join();
+        mThreadPostersTestDouble.join();
         // Assert
         verify(mUsersRetrieverMock, times(1)).getUserById(mStringCaptor.capture());
         verifyNoMoreInteractions(mUsersRetrieverMock);
