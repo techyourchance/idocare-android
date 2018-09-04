@@ -35,7 +35,7 @@ public class MainViewMvc
         /**
          * Will be called when "navigate up" button is clicked
          */
-        void onNavigationClick();
+        void onNavigateUpClicked();
     }
 
 
@@ -104,7 +104,7 @@ public class MainViewMvc
             @Override
             public void onClick(View view) {
                 for (MainNavDrawerViewMvcListener listener : getListeners()) {
-                    listener.onNavigationClick();
+                    listener.onNavigateUpClicked();
                 }
             }
         });
@@ -162,5 +162,9 @@ public class MainViewMvc
 
     public void showToolbar() {
         mToolbar.setVisibility(View.VISIBLE);
+    }
+
+    public ViewGroup getFrameContent() {
+        return findViewById(R.id.frame_contents);
     }
 }

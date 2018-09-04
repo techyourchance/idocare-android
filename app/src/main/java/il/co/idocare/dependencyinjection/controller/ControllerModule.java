@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.v4.app.FragmentManager;
 
+import com.techyourchance.fragmenthelper.FragmentContainerWrapper;
+import com.techyourchance.fragmenthelper.FragmentHelper;
 import com.techyourchance.threadposter.BackgroundThreadPoster;
 import com.techyourchance.threadposter.UiThreadPoster;
 
@@ -148,5 +150,17 @@ public class ControllerModule {
     ServerSyncController serverSyncController(ContentResolverProxy contentResolverProxy,
                                               LoginStateManager loginStateManager) {
         return new ServerSyncController(contentResolverProxy, loginStateManager);
+    }
+
+    @Provides
+    FragmentContainerWrapper fragmentContainerWrapper(Activity activity) {
+        return (FragmentContainerWrapper) activity;
+    }
+
+    @Provides
+    FragmentHelper fragmentHelper(Activity activity,
+                                  FragmentContainerWrapper fragmentContainerWrapper,
+                                  FragmentManager fragmentManager) {
+        return new FragmentHelper(activity, fragmentContainerWrapper, fragmentManager);
     }
 }

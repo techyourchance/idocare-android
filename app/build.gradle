@@ -63,6 +63,7 @@ dependencies {
     implementation 'joda-time:joda-time:2.9.4'
 
     implementation "com.techyourchance.threadposter:threadposter:0.8.1"
+    implementation "com.techyourchance:fragmenthelper:0.7.1"
 }
 
 apply plugin: 'com.google.gms.google-services'

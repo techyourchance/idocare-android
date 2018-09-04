@@ -11,6 +11,10 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.ViewGroup;
+
+import com.techyourchance.fragmenthelper.FragmentContainerWrapper;
+import com.techyourchance.fragmenthelper.FragmentHelper;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -33,7 +37,8 @@ import il.co.idocare.utils.Logger;
 public class MainActivity extends AbstractActivity implements
         MainViewMvc.MainNavDrawerViewMvcListener,
         NavigationDrawerDelegate,
-        ToolbarDelegate {
+        ToolbarDelegate,
+        FragmentContainerWrapper {
 
     private static final String TAG = "MainActivity";
 
@@ -44,7 +49,8 @@ public class MainActivity extends AbstractActivity implements
     @Inject ServerSyncController mServerSyncController;
     @Inject Logger mLogger;
     @Inject EventBus mEventBus;
-    @Inject MainFrameHelper mMainFrameHelper;
+    @Inject FragmentHelper mFragmentHelper;
+
 
 
     private MainViewMvc mMainViewMvc;
@@ -67,7 +73,7 @@ public class MainActivity extends AbstractActivity implements
 
         // Show Home fragment if the app is not restored
         if (savedInstanceState == null) {
-            replaceFragment(RequestsAllFragment.class, false, true, null);
+            mFragmentHelper.replaceFragmentAndRemoveCurrentFromHistory(new RequestsAllFragment());
         }
     }
 
@@ -141,8 +147,8 @@ public class MainActivity extends AbstractActivity implements
     }
 
     @Override
-    public void onNavigationClick() {
-        mMainFrameHelper.navigateUp();
+    public void onNavigateUpClicked() {
+        mFragmentHelper.navigateUp();
     }
 
     @Override
@@ -150,7 +156,7 @@ public class MainActivity extends AbstractActivity implements
         if (mMainViewMvc.isDrawerVisible()) {
             closeDrawer();
         } else {
-            super.onBackPressed();
+            mFragmentHelper.navigateBack();
         }
     }
 
@@ -211,5 +217,11 @@ public class MainActivity extends AbstractActivity implements
     @Override
     public void showToolbar() {
         mMainViewMvc.showToolbar();
+    }
+
+    @NonNull
+    @Override
+    public ViewGroup getFragmentContainer() {
+        return mMainViewMvc.getFrameContent();
     }
 }

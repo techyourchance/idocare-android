@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.techyourchance.fragmenthelper.FragmentHelper;
+
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
@@ -41,9 +43,9 @@ public abstract class RequestsListBaseFragment extends BaseScreenFragment implem
     @Inject RequestsManager mRequestsManager;
     @Inject DialogsManager mDialogsManager;
     @Inject DialogsFactory mDialogsFactory;
-    @Inject MainFrameHelper mMainMainFrameHelper;
     @Inject UsersManager mUsersManager;
     @Inject Logger mLogger;
+    @Inject FragmentHelper mFragmentHelper;
 
     private RequestsListViewMvcImpl mViewMvc;
 
@@ -87,13 +89,13 @@ public abstract class RequestsListBaseFragment extends BaseScreenFragment implem
     @Override
     public void onRequestClicked(RequestEntity request) {
         RequestDetailsFragment fragment = RequestDetailsFragment.newInstance(request.getId());
-        mMainMainFrameHelper.replaceFragment(fragment, true, false);
+        mFragmentHelper.replaceFragment(fragment);
     }
 
     @Override
     public void onCreateNewRequestClicked() {
         if (mLoginStateManager.isLoggedIn()) {
-            mMainMainFrameHelper.replaceFragment(NewRequestFragment.class, true, false, null);
+            mFragmentHelper.replaceFragment(new NewRequestFragment());
         } else {
             mDialogsManager.showRetainedDialogWithTag(
                     mDialogsFactory.newPromptDialog(
