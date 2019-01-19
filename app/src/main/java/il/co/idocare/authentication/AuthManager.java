@@ -1,8 +1,8 @@
 package il.co.idocare.authentication;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;

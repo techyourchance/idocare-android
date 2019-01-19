@@ -7,7 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.datamodels.functional.UserItem;

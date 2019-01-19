@@ -2,7 +2,7 @@ package il.co.idocare.location;
 
 import android.location.Address;
 import android.location.Geocoder;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import java.io.IOException;
 import java.util.List;

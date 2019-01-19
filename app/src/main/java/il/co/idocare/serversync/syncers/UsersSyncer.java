@@ -1,6 +1,6 @@
 package il.co.idocare.serversync.syncers;
 
-import android.support.annotation.WorkerThread;
+import androidx.annotation.WorkerThread;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -1,9 +1,9 @@
 package il.co.idocare.dialogs;
 
 import android.app.Activity;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 
 import il.co.idocare.IdcApplication;
 import il.co.idocare.dependencyinjection.controller.ControllerComponent;

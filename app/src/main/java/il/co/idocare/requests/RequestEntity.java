@@ -1,7 +1,7 @@
 package il.co.idocare.requests;
 
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;

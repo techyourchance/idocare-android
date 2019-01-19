@@ -2,7 +2,7 @@ package il.co.idocare.requests.retrievers;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import il.co.idocare.contentproviders.IDoCareContract;
 

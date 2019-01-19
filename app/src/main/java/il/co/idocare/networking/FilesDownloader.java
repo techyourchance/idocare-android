@@ -1,8 +1,8 @@
 package il.co.idocare.networking;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 
 import java.io.File;
 import java.io.FileOutputStream;

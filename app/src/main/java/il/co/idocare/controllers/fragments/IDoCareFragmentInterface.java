@@ -1,7 +1,7 @@
 package il.co.idocare.controllers.fragments;
 
 
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 /**
  *

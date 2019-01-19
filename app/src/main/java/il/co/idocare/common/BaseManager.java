@@ -1,6 +1,6 @@
 package il.co.idocare.common;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.util.Collections;
 import java.util.Set;

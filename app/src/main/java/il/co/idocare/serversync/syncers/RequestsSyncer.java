@@ -1,7 +1,7 @@
 package il.co.idocare.serversync.syncers;
 
-import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 
 import org.greenrobot.eventbus.EventBus;
 

@@ -2,13 +2,12 @@ package il.co.idocare.useractions.retrievers;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import il.co.idocare.contentproviders.IDoCareContract;
 import il.co.idocare.useractions.entities.UserActionEntity;
 import il.co.idocare.contentproviders.IDoCareContract.UserActions;
 

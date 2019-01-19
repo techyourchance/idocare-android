@@ -3,7 +3,7 @@ package il.co.idocare.users;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.WorkerThread;
 
 import org.greenrobot.eventbus.EventBus;
 

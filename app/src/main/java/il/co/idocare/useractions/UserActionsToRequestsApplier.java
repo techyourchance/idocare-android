@@ -1,6 +1,6 @@
 package il.co.idocare.useractions;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import il.co.idocare.contentproviders.IDoCareContract.UserActions;
 import il.co.idocare.requests.RequestEntity;

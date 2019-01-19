@@ -2,12 +2,10 @@ package il.co.idocare.serversync.syncers;
 
 
 import android.content.ContentResolver;
-import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 
 import com.techyourchance.threadposter.BackgroundThreadPoster;
-
-import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.util.ArrayList;

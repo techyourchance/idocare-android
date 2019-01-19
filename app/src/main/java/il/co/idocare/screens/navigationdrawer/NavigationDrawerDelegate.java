@@ -1,6 +1,6 @@
 package il.co.idocare.screens.navigationdrawer;
 
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 
 /**
  * Implementations of this interface can be used in order to manipulate the

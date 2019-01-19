@@ -1,6 +1,6 @@
 package il.co.idocare.mvcviews.location;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import il.co.idocare.mvcviews.ObservableViewMvc;
 

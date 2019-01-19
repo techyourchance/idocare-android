@@ -2,14 +2,13 @@ package il.co.idocare.users;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
-import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import il.co.idocare.contentproviders.ContentProviderUtils;
-import il.co.idocare.contentproviders.IDoCareContract;
 
 import static il.co.idocare.contentproviders.IDoCareContract.*;
 

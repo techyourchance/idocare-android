@@ -2,11 +2,11 @@ package il.co.idocare.screens.common;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.NavUtils;
+import androidx.annotation.IdRes;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.core.app.NavUtils;
 
 import il.co.idocare.R;
 import il.co.idocare.screens.common.fragments.BaseScreenFragment;

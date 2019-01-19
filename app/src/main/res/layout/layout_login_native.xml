@@ -54,7 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="30dp"/>
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_login"
                 android:layout_width="@dimen/large_button_width"
                 android:layout_height="@dimen/button_height"

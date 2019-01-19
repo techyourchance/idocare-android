@@ -1,6 +1,6 @@
 package il.co.idocare.screens.common.toolbar;
 
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 
 import org.greenrobot.eventbus.Subscribe;
 

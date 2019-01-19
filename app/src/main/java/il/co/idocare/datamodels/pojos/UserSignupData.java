@@ -1,6 +1,6 @@
 package il.co.idocare.datamodels.pojos;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 public class UserSignupData {
 

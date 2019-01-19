@@ -1,6 +1,6 @@
 package il.co.idocare.utils.eventbusregistrator;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.greenrobot.eventbus.EventBus;
 

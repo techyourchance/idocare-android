@@ -2,7 +2,7 @@ package il.co.idocare.common.settings;
 
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 public class PreferenceSettingsEntryFactoryImpl extends SettingsEntryFactory {
 

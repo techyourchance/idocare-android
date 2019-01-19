@@ -1,6 +1,6 @@
 package il.co.idocare.screens.navigationdrawer;
 
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 
 import il.co.idocare.utils.Logger;
 
