@@ -13,8 +13,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.ViewGroup;
 
-import com.techyourchance.fragmenthelper.FragmentContainerWrapper;
-import com.techyourchance.fragmenthelper.FragmentHelper;
+import il.co.idocare.screens.common.fragmenthelper.FragmentContainerWrapper;
+import il.co.idocare.screens.common.fragmenthelper.FragmentHelper;
 
 import org.greenrobot.eventbus.EventBus;
 

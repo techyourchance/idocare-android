@@ -8,8 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.techyourchance.fragmenthelper.FragmentHelper;
-
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
@@ -17,6 +15,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import il.co.idocare.R;
+import il.co.idocare.screens.common.fragmenthelper.FragmentHelper;
 import il.co.idocarecore.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.screens.requestdetails.fragments.NewRequestFragment;

@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import androidx.fragment.app.FragmentManager;
 
-import com.techyourchance.fragmenthelper.FragmentContainerWrapper;
-import com.techyourchance.fragmenthelper.FragmentHelper;
+import il.co.idocare.screens.common.fragmenthelper.FragmentContainerWrapper;
+import il.co.idocare.screens.common.fragmenthelper.FragmentHelper;
 import com.techyourchance.threadposter.BackgroundThreadPoster;
 import com.techyourchance.threadposter.UiThreadPoster;
 
