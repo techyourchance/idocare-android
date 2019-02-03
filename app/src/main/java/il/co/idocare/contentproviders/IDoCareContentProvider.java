@@ -8,6 +8,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import il.co.idocarecore.contentproviders.IDoCareContract;
+import il.co.idocarecore.contentproviders.IdcSQLiteOpenHelper;
+import il.co.idocarecore.contentproviders.SQLiteWrapper;
+
 /**
  * Our implementation of ContentProvider
  */

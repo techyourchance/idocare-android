@@ -15,17 +15,17 @@ import org.greenrobot.eventbus.ThreadMode;
 import javax.inject.Inject;
 
 import il.co.idocare.R;
-import il.co.idocare.authentication.AuthManager;
-import il.co.idocare.authentication.LoginStateManager;
+import il.co.idocarecore.authentication.AuthManager;
+import il.co.idocarecore.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
 import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.dialogs.events.InfoDialogDismissedEvent;
-import il.co.idocare.eventbusevents.LoginStateEvents;
+import il.co.idocarecore.eventbusevents.LoginStateEvents;
 import il.co.idocare.mvcviews.loginnative.LoginNativeViewMvc;
 import il.co.idocare.mvcviews.loginnative.LoginNativeViewMvcImpl;
-import il.co.idocare.utils.Logger;
+import il.co.idocarecore.utils.Logger;
 
 /**
  * This fragment handles native login flow

@@ -1,8 +1,8 @@
 package il.co.idocare.mvcviews.requestdetails;
 
 import il.co.idocare.mvcviews.ObservableViewMvc;
-import il.co.idocare.requests.RequestEntity;
-import il.co.idocare.users.UserEntity;
+import il.co.idocarecore.requests.RequestEntity;
+import il.co.idocarecore.users.UserEntity;
 
 /**
  * This MVC view represents a screen showing request's details

@@ -1,4 +1,4 @@
-package il.co.idocare.requests.retrievers;
+package il.co.idocarecore.requests.retrievers;
 
 import androidx.annotation.NonNull;
 
@@ -12,15 +12,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import il.co.idocare.requests.RequestEntity;
+import il.co.idocarecore.requests.RequestEntity;
 import il.co.idocare.testdoubles.entities.RequestEntityProvider;
-import il.co.idocare.useractions.UserActionEntityFactory;
-import il.co.idocare.useractions.UserActionsToRequestsApplier;
-import il.co.idocare.useractions.entities.CloseRequestUserActionEntity;
-import il.co.idocare.useractions.entities.PickUpRequestUserActionEntity;
-import il.co.idocare.useractions.entities.UserActionEntity;
-import il.co.idocare.useractions.entities.VoteForRequestUserActionEntity;
-import il.co.idocare.useractions.retrievers.UserActionsRetriever;
+import il.co.idocarecore.useractions.UserActionEntityFactory;
+import il.co.idocarecore.useractions.UserActionsToRequestsApplier;
+import il.co.idocarecore.useractions.entities.CloseRequestUserActionEntity;
+import il.co.idocarecore.useractions.entities.PickUpRequestUserActionEntity;
+import il.co.idocarecore.useractions.entities.UserActionEntity;
+import il.co.idocarecore.useractions.entities.VoteForRequestUserActionEntity;
+import il.co.idocarecore.useractions.retrievers.UserActionsRetriever;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;

@@ -1,4 +1,4 @@
-package il.co.idocare.users;
+package il.co.idocarecore.users;
 
 import com.techyourchance.threadposter.ThreadPostersTestDouble;
 
@@ -10,7 +10,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import il.co.idocare.users.events.UserDataChangedEvent;
+import il.co.idocarecore.users.events.UserDataChangedEvent;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

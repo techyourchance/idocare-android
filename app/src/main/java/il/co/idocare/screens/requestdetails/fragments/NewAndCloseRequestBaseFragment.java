@@ -16,15 +16,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import il.co.idocare.Constants;
-import il.co.idocare.authentication.LoginStateManager;
-import il.co.idocare.authentication.events.UserLoggedOutEvent;
+import il.co.idocarecore.Constants;
+import il.co.idocarecore.authentication.LoginStateManager;
+import il.co.idocarecore.authentication.events.UserLoggedOutEvent;
 import il.co.idocare.location.IdcLocationManager;
-import il.co.idocare.serversync.ServerSyncController;
-import il.co.idocare.pictures.CameraAdapter;
+import il.co.idocarecore.serversync.ServerSyncController;
+import il.co.idocarecore.pictures.CameraAdapter;
 import il.co.idocare.screens.common.MainFrameHelper;
 import il.co.idocare.screens.common.fragments.BaseScreenFragment;
-import il.co.idocare.utils.UtilMethods;
+import il.co.idocarecore.utils.UtilMethods;
 
 
 public abstract class NewAndCloseRequestBaseFragment extends BaseScreenFragment implements IdcLocationManager.LocationUpdateListener {

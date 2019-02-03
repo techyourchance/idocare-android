@@ -21,11 +21,11 @@ import javax.inject.Inject;
 import il.co.idocare.R;
 import il.co.idocare.mvcviews.newrequest.NewRequestViewMvc;
 import il.co.idocare.mvcviews.newrequest.NewRequestViewMvcImpl;
-import il.co.idocare.requests.RequestEntity;
-import il.co.idocare.requests.RequestsManager;
+import il.co.idocarecore.requests.RequestEntity;
+import il.co.idocarecore.requests.RequestsManager;
 import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
-import il.co.idocare.utils.IdcDateTimeUtils;
-import il.co.idocare.utils.Logger;
+import il.co.idocarecore.utils.IdcDateTimeUtils;
+import il.co.idocarecore.utils.Logger;
 
 
 public class NewRequestFragment extends NewAndCloseRequestBaseFragment

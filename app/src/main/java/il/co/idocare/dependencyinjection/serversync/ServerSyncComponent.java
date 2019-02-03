@@ -1,7 +1,7 @@
 package il.co.idocare.dependencyinjection.serversync;
 
 import dagger.Subcomponent;
-import il.co.idocare.serversync.SyncAdapter;
+import il.co.idocarecore.serversync.SyncAdapter;
 
 @ServerSyncScope
 @Subcomponent(modules = {ServerSyncModule.class})

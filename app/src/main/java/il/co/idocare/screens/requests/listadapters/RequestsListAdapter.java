@@ -11,10 +11,10 @@ import android.widget.ArrayAdapter;
 import java.util.Collections;
 import java.util.List;
 
-import il.co.idocare.requests.RequestEntity;
+import il.co.idocarecore.requests.RequestEntity;
 import il.co.idocare.screens.requests.mvcviews.RequestPreviewViewMvcImpl;
-import il.co.idocare.users.UserEntity;
-import il.co.idocare.users.UsersManager;
+import il.co.idocarecore.users.UserEntity;
+import il.co.idocarecore.users.UsersManager;
 
 /**
  * This adapter should be used in order to populate ListView with {@link RequestEntity} objects

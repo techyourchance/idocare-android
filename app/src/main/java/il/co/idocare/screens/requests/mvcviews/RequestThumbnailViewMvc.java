@@ -1,7 +1,7 @@
 package il.co.idocare.screens.requests.mvcviews;
 
-import il.co.idocare.datamodels.functional.RequestItem;
-import il.co.idocare.datamodels.functional.UserItem;
+import il.co.idocarecore.datamodels.functional.RequestItem;
+import il.co.idocarecore.datamodels.functional.UserItem;
 import il.co.idocare.mvcviews.ViewMvc;
 
 /**

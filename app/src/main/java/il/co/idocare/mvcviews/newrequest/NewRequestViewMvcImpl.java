@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 
-import il.co.idocare.Constants;
+import il.co.idocarecore.Constants;
 import il.co.idocare.R;
 import il.co.idocare.mvcviews.AbstractViewMvc;
 import il.co.idocare.mvcviews.cameracontrol.CameraControlViewMvc;

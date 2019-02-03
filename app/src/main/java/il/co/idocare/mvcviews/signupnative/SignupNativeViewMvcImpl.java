@@ -11,10 +11,10 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import il.co.idocare.Constants;
+import il.co.idocarecore.Constants;
 import il.co.idocare.R;
 import il.co.idocare.mvcviews.AbstractViewMvc;
-import il.co.idocare.utils.IdcViewUtils;
+import il.co.idocare.screens.common.IdcViewUtils;
 
 /**
  * MVC View of the Home screen.

@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import il.co.idocare.R;
-import il.co.idocare.utils.UtilMethods;
+import il.co.idocarecore.utils.UtilMethods;
 
 /**
  * This is the splash fragment that will be shown when the app starts

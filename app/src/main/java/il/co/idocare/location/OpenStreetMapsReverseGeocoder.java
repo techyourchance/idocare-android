@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Locale;
 
-import il.co.idocare.networking.GeneralApi;
+import il.co.idocarecore.networking.GeneralApi;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;

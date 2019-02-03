@@ -1,7 +1,7 @@
 package il.co.idocare.screens.navigationdrawer.mvcviews;
 
 import il.co.idocare.mvcviews.ObservableViewMvc;
-import il.co.idocare.users.UserEntity;
+import il.co.idocarecore.users.UserEntity;
 
 /**
  * This mvc view represents navigation drawer's UI

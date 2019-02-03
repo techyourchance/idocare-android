@@ -15,25 +15,19 @@ import java.util.Locale;
 
 import dagger.Module;
 import dagger.Provides;
-import il.co.idocare.BuildConfig;
-import il.co.idocare.Constants;
-import il.co.idocare.authentication.AuthManager;
-import il.co.idocare.authentication.LoginStateManager;
-import il.co.idocare.common.settings.PreferenceSettingsEntryFactoryImpl;
-import il.co.idocare.common.settings.SettingsManager;
+import il.co.idocarecore.Constants;
+import il.co.idocarecore.authentication.AuthManager;
+import il.co.idocarecore.authentication.LoginStateManager;
+import il.co.idocarecore.common.settings.PreferenceSettingsEntryFactoryImpl;
+import il.co.idocarecore.common.settings.SettingsManager;
 import il.co.idocare.location.IdcLocationManager;
 import il.co.idocare.location.ReverseGeocoder;
 import il.co.idocare.location.StandardReverseGeocoder;
-import il.co.idocare.networking.FilesDownloader;
-import il.co.idocare.networking.GeneralApi;
-import il.co.idocare.networking.ServerApi;
-import il.co.idocare.networking.StdHeadersInterceptor;
-import il.co.idocare.pictures.ImageViewPictureLoader;
-import il.co.idocare.useractions.UserActionEntityFactory;
-import il.co.idocare.utils.Logger;
-import okhttp3.OkHttpClient;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import il.co.idocarecore.networking.FilesDownloader;
+import il.co.idocarecore.networking.ServerApi;
+import il.co.idocarecore.pictures.ImageViewPictureLoader;
+import il.co.idocarecore.useractions.UserActionEntityFactory;
+import il.co.idocarecore.utils.Logger;
 
 @Module
 public class ApplicationModule {

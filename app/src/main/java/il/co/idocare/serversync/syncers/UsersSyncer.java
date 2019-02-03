@@ -1,4 +1,4 @@
-package il.co.idocare.serversync.syncers;
+package il.co.idocarecore.serversync.syncers;
 
 import androidx.annotation.WorkerThread;
 
@@ -8,16 +8,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import il.co.idocare.Constants;
-import il.co.idocare.authentication.LoginStateManager;
-import il.co.idocare.networking.ServerApi;
-import il.co.idocare.networking.schemes.responses.GetUsersInfoResponseScheme;
-import il.co.idocare.networking.schemes.responses.UserInfoScheme;
-import il.co.idocare.serversync.SyncFailedException;
-import il.co.idocare.users.UserEntity;
-import il.co.idocare.users.UsersCacher;
-import il.co.idocare.users.UsersRetriever;
-import il.co.idocare.utils.Logger;
+import il.co.idocarecore.Constants;
+import il.co.idocarecore.authentication.LoginStateManager;
+import il.co.idocarecore.networking.ServerApi;
+import il.co.idocarecore.networking.schemes.responses.GetUsersInfoResponseScheme;
+import il.co.idocarecore.networking.schemes.responses.UserInfoScheme;
+import il.co.idocarecore.serversync.SyncFailedException;
+import il.co.idocarecore.users.UserEntity;
+import il.co.idocarecore.users.UsersCacher;
+import il.co.idocarecore.users.UsersRetriever;
+import il.co.idocarecore.utils.Logger;
 import retrofit2.Call;
 import retrofit2.Response;
 

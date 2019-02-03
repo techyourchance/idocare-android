@@ -41,7 +41,7 @@
 }
 
 # Our custom non-static logger
--assumenosideeffects class il.co.idocare.utils.Logger {
+-assumenosideeffects class il.co.idocarecore.utils.Logger {
     public *** d(...);
     public *** v(...);
     public *** i(...);

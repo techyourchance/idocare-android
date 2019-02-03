@@ -18,12 +18,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import il.co.idocare.Constants;
+import il.co.idocarecore.Constants;
 import il.co.idocare.R;
 import il.co.idocare.screens.navigationdrawer.listadapters.NavigationDrawerListAdapter;
-import il.co.idocare.datamodels.functional.NavigationDrawerEntry;
+import il.co.idocarecore.datamodels.functional.NavigationDrawerEntry;
 import il.co.idocare.mvcviews.AbstractViewMvc;
-import il.co.idocare.users.UserEntity;
+import il.co.idocarecore.users.UserEntity;
 
 
 public class NavigationDrawerViewMvcImpl extends

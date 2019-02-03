@@ -2,7 +2,7 @@ package il.co.idocare.mvcviews.navdrawerheader;
 
 import androidx.annotation.Nullable;
 
-import il.co.idocare.datamodels.functional.UserItem;
+import il.co.idocarecore.datamodels.functional.UserItem;
 import il.co.idocare.mvcviews.ObservableViewMvc;
 
 /**

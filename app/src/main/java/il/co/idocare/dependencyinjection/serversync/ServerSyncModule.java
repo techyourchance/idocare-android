@@ -8,22 +8,22 @@ import org.greenrobot.eventbus.EventBus;
 
 import dagger.Module;
 import dagger.Provides;
-import il.co.idocare.authentication.LoginStateManager;
-import il.co.idocare.contentproviders.TransactionsController;
+import il.co.idocarecore.authentication.LoginStateManager;
+import il.co.idocarecore.contentproviders.TransactionsController;
 import il.co.idocare.location.ReverseGeocoder;
-import il.co.idocare.networking.ServerApi;
-import il.co.idocare.requests.cachers.RequestsCacher;
-import il.co.idocare.requests.cachers.TempIdCacher;
-import il.co.idocare.requests.retrievers.RawRequestRetriever;
-import il.co.idocare.requests.retrievers.TempIdRetriever;
-import il.co.idocare.serversync.syncers.RequestsSyncer;
-import il.co.idocare.serversync.syncers.UserActionsSyncer;
-import il.co.idocare.serversync.syncers.UsersSyncer;
-import il.co.idocare.useractions.cachers.UserActionCacher;
-import il.co.idocare.useractions.retrievers.UserActionsRetriever;
-import il.co.idocare.users.UsersCacher;
-import il.co.idocare.users.UsersRetriever;
-import il.co.idocare.utils.Logger;
+import il.co.idocarecore.networking.ServerApi;
+import il.co.idocarecore.requests.cachers.RequestsCacher;
+import il.co.idocarecore.requests.cachers.TempIdCacher;
+import il.co.idocarecore.requests.retrievers.RawRequestRetriever;
+import il.co.idocarecore.requests.retrievers.TempIdRetriever;
+import il.co.idocarecore.serversync.syncers.RequestsSyncer;
+import il.co.idocarecore.serversync.syncers.UserActionsSyncer;
+import il.co.idocarecore.serversync.syncers.UsersSyncer;
+import il.co.idocarecore.useractions.cachers.UserActionCacher;
+import il.co.idocarecore.useractions.retrievers.UserActionsRetriever;
+import il.co.idocarecore.users.UsersCacher;
+import il.co.idocarecore.users.UsersRetriever;
+import il.co.idocarecore.utils.Logger;
 
 @Module
 public class ServerSyncModule {

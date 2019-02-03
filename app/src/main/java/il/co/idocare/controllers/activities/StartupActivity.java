@@ -1,7 +1,6 @@
 package il.co.idocare.controllers.activities;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.techyourchance.threadposter.BackgroundThreadPoster;
@@ -10,7 +9,7 @@ import com.techyourchance.threadposter.UiThreadPoster;
 import javax.inject.Inject;
 
 import il.co.idocare.R;
-import il.co.idocare.authentication.LoginStateManager;
+import il.co.idocarecore.authentication.LoginStateManager;
 import il.co.idocare.controllers.fragments.SplashFragment;
 
 /**

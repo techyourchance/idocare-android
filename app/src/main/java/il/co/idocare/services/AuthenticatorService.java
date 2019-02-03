@@ -4,7 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import il.co.idocare.authentication.StubAccountAuthenticator;
+import il.co.idocarecore.authentication.StubAccountAuthenticator;
 
 /**
  * Authentication service.

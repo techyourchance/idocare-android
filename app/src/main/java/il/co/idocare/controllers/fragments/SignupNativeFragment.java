@@ -22,22 +22,22 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
-import il.co.idocare.Constants;
+import il.co.idocarecore.Constants;
 import il.co.idocare.R;
-import il.co.idocare.authentication.AuthManager;
-import il.co.idocare.authentication.LoginStateManager;
+import il.co.idocarecore.authentication.AuthManager;
+import il.co.idocarecore.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.controllers.activities.MainActivity;
-import il.co.idocare.datamodels.pojos.UserSignupData;
+import il.co.idocarecore.datamodels.pojos.UserSignupData;
 import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.dialogs.events.PromptDialogDismissedEvent;
-import il.co.idocare.eventbusevents.LoginStateEvents;
+import il.co.idocarecore.eventbusevents.LoginStateEvents;
 import il.co.idocare.mvcviews.signupnative.SignupNativeViewMvc;
 import il.co.idocare.mvcviews.signupnative.SignupNativeViewMvcImpl;
-import il.co.idocare.pictures.CameraAdapter;
-import il.co.idocare.utils.UtilMethods;
-import il.co.idocare.utils.eventbusregistrator.EventBusRegistrable;
+import il.co.idocarecore.pictures.CameraAdapter;
+import il.co.idocarecore.utils.UtilMethods;
+import il.co.idocarecore.utils.eventbusregistrator.EventBusRegistrable;
 
 /**
  * This fragment handles native signup flow

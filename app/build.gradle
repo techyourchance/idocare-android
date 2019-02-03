@@ -12,7 +12,6 @@ android {
         versionCode 9
         versionName "0.7.4"
 
-        buildConfigField "int", "DATABASE_SCHEMA_VERSION", "4"
     }
 
     buildTypes {
@@ -34,6 +33,7 @@ android {
 }
 
 dependencies {
+    implementation project(path: ':core')
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     implementation 'org.greenrobot:eventbus:3.0.0'

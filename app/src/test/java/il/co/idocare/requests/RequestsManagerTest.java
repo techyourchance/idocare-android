@@ -1,4 +1,4 @@
-package il.co.idocare.requests;
+package il.co.idocarecore.requests;
 
 import com.techyourchance.threadposter.ThreadPostersTestDouble;
 
@@ -13,15 +13,15 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Arrays;
 import java.util.List;
 
-import il.co.idocare.requests.cachers.RequestsCacher;
-import il.co.idocare.requests.retrievers.RequestsRetriever;
-import il.co.idocare.serversync.ServerSyncController;
+import il.co.idocarecore.requests.cachers.RequestsCacher;
+import il.co.idocarecore.requests.retrievers.RequestsRetriever;
+import il.co.idocarecore.serversync.ServerSyncControllerImpl;
 import il.co.idocare.testdoubles.entities.RequestEntityProvider;
 import il.co.idocare.testdoubles.utils.NullLogger;
-import il.co.idocare.useractions.cachers.UserActionCacher;
-import il.co.idocare.useractions.entities.CreateRequestUserActionEntity;
-import il.co.idocare.useractions.entities.UserActionEntity;
-import il.co.idocare.utils.Logger;
+import il.co.idocarecore.useractions.cachers.UserActionCacher;
+import il.co.idocarecore.useractions.entities.CreateRequestUserActionEntity;
+import il.co.idocarecore.useractions.entities.UserActionEntity;
+import il.co.idocarecore.utils.Logger;
 
 import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.CoreMatchers.is;
@@ -39,7 +39,7 @@ public class RequestsManagerTest {
     @Mock UserActionCacher mUserActionCacherMock;
     @Mock RequestsRetriever mRequestsRetrieverMock;
     @Mock RequestsCacher mRequestsCacherMock;
-    @Mock ServerSyncController mServerSyncControllerMock;
+    @Mock ServerSyncControllerImpl mServerSyncControllerMock;
 
     @Mock RequestsManager.RequestsManagerListener mRequestsManagerListenerMock1;
     @Mock RequestsManager.RequestsManagerListener mRequestsManagerListenerMock2;

@@ -13,28 +13,29 @@ import org.greenrobot.eventbus.EventBus;
 
 import dagger.Module;
 import dagger.Provides;
-import il.co.idocare.authentication.LoginStateManager;
-import il.co.idocare.deviceinfo.GooglePlayServicesChecker;
+import il.co.idocarecore.authentication.LoginStateManager;
+import il.co.idocarecore.deviceinfo.GooglePlayServicesChecker;
 import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
-import il.co.idocare.nonstaticproxies.ContentResolverProxy;
-import il.co.idocare.pictures.CameraAdapter;
-import il.co.idocare.requests.RequestsManager;
-import il.co.idocare.requests.cachers.RequestsCacher;
-import il.co.idocare.requests.retrievers.RequestsRetriever;
+import il.co.idocarecore.nonstaticproxies.ContentResolverProxy;
+import il.co.idocarecore.pictures.CameraAdapter;
+import il.co.idocarecore.requests.RequestsManager;
+import il.co.idocarecore.requests.cachers.RequestsCacher;
+import il.co.idocarecore.requests.retrievers.RequestsRetriever;
 import il.co.idocare.screens.common.MainFrameHelper;
 import il.co.idocare.screens.common.toolbar.ToolbarDelegate;
 import il.co.idocare.screens.common.toolbar.ToolbarManager;
 import il.co.idocare.screens.navigationdrawer.NavigationDrawerDelegate;
 import il.co.idocare.screens.navigationdrawer.NavigationDrawerManager;
-import il.co.idocare.serversync.ServerSyncController;
-import il.co.idocare.useractions.UserActionsManager;
-import il.co.idocare.useractions.cachers.UserActionCacher;
-import il.co.idocare.users.UsersDataMonitoringManager;
-import il.co.idocare.users.UsersManager;
-import il.co.idocare.users.UsersRetriever;
-import il.co.idocare.utils.Logger;
-import il.co.idocare.utils.eventbusregistrator.EventBusRegistrator;
+import il.co.idocarecore.serversync.ServerSyncController;
+import il.co.idocarecore.serversync.ServerSyncControllerImpl;
+import il.co.idocarecore.useractions.UserActionsManager;
+import il.co.idocarecore.useractions.cachers.UserActionCacher;
+import il.co.idocarecore.users.UsersDataMonitoringManager;
+import il.co.idocarecore.users.UsersManager;
+import il.co.idocarecore.users.UsersRetriever;
+import il.co.idocarecore.utils.Logger;
+import il.co.idocarecore.utils.eventbusregistrator.EventBusRegistrator;
 
 @Module
 public class ControllerModule {
@@ -103,7 +104,7 @@ public class ControllerModule {
             RequestsRetriever requestsRetriever,
             RequestsCacher requestsCacher,
             Logger logger,
-            ServerSyncController serverSyncController) {
+            ServerSyncControllerImpl serverSyncController) {
         return new RequestsManager(backgroundThreadPoster, uiThreadPoster, userActionCacher,
                 requestsRetriever, requestsCacher, logger, serverSyncController);
     }
@@ -149,7 +150,7 @@ public class ControllerModule {
     @ControllerScope
     ServerSyncController serverSyncController(ContentResolverProxy contentResolverProxy,
                                               LoginStateManager loginStateManager) {
-        return new ServerSyncController(contentResolverProxy, loginStateManager);
+        return new ServerSyncControllerImpl(contentResolverProxy, loginStateManager);
     }
 
     @Provides

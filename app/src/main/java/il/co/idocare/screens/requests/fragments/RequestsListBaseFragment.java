@@ -4,7 +4,6 @@ package il.co.idocare.screens.requests.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,19 +17,19 @@ import java.util.List;
 import javax.inject.Inject;
 
 import il.co.idocare.R;
-import il.co.idocare.authentication.LoginStateManager;
+import il.co.idocarecore.authentication.LoginStateManager;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.screens.requestdetails.fragments.NewRequestFragment;
 import il.co.idocare.screens.requestdetails.fragments.RequestDetailsFragment;
 import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.dialogs.events.PromptDialogDismissedEvent;
-import il.co.idocare.requests.RequestEntity;
-import il.co.idocare.requests.RequestsManager;
+import il.co.idocarecore.requests.RequestEntity;
+import il.co.idocarecore.requests.RequestsManager;
 import il.co.idocare.screens.common.fragments.BaseScreenFragment;
 import il.co.idocare.screens.requests.mvcviews.RequestsListViewMvcImpl;
-import il.co.idocare.users.UsersManager;
-import il.co.idocare.utils.Logger;
+import il.co.idocarecore.users.UsersManager;
+import il.co.idocarecore.utils.Logger;
 
 public abstract class RequestsListBaseFragment extends BaseScreenFragment implements
         RequestsListViewMvcImpl.RequestsListViewMvcListener,

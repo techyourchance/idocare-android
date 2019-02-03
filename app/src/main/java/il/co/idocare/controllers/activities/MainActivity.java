@@ -29,8 +29,8 @@ import il.co.idocare.screens.common.toolbar.ToolbarDelegate;
 import il.co.idocare.screens.navigationdrawer.NavigationDrawerDelegate;
 import il.co.idocare.screens.navigationdrawer.events.NavigationDrawerStateChangeEvent;
 import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
-import il.co.idocare.serversync.ServerSyncController;
-import il.co.idocare.utils.Logger;
+import il.co.idocarecore.serversync.ServerSyncController;
+import il.co.idocarecore.utils.Logger;
 
 
 public class MainActivity extends AbstractActivity implements

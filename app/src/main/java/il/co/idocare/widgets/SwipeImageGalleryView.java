@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import il.co.idocare.R;
-import il.co.idocare.pictures.ImageViewPictureLoader;
+import il.co.idocarecore.pictures.ImageViewPictureLoader;
 
 /**
  * This View is a "swipeable" images gallery that has "bullets" indicators of total images count

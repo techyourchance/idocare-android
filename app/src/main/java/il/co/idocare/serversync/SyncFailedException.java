@@ -1,4 +1,4 @@
-package il.co.idocare.serversync;
+package il.co.idocarecore.serversync;
 
 
 public class SyncFailedException extends RuntimeException {

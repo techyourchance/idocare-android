@@ -15,26 +15,26 @@ import org.greenrobot.eventbus.ThreadMode;
 import javax.inject.Inject;
 
 import il.co.idocare.R;
-import il.co.idocare.authentication.LoginStateManager;
-import il.co.idocare.authentication.events.UserLoggedOutEvent;
+import il.co.idocarecore.authentication.LoginStateManager;
+import il.co.idocarecore.authentication.events.UserLoggedOutEvent;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.screens.requestdetails.fragments.NewRequestFragment;
 import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.dialogs.events.PromptDialogDismissedEvent;
-import il.co.idocare.eventbusevents.LoginStateEvents;
+import il.co.idocarecore.eventbusevents.LoginStateEvents;
 import il.co.idocare.screens.requests.fragments.RequestsMyFragment;
-import il.co.idocare.serversync.ServerSyncController;
+import il.co.idocarecore.serversync.ServerSyncController;
 import il.co.idocare.screens.common.MainFrameHelper;
 import il.co.idocare.screens.common.fragments.BaseFragment;
 import il.co.idocare.screens.navigationdrawer.NavigationDrawerManager;
 import il.co.idocare.screens.navigationdrawer.mvcviews.NavigationDrawerViewMvc;
 import il.co.idocare.screens.navigationdrawer.mvcviews.NavigationDrawerViewMvcImpl;
 import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
-import il.co.idocare.users.UserEntity;
-import il.co.idocare.users.UsersDataMonitoringManager;
-import il.co.idocare.utils.Logger;
-import il.co.idocare.utils.eventbusregistrator.EventBusRegistrable;
+import il.co.idocarecore.users.UserEntity;
+import il.co.idocarecore.users.UsersDataMonitoringManager;
+import il.co.idocarecore.utils.Logger;
+import il.co.idocarecore.utils.eventbusregistrator.EventBusRegistrable;
 
 /**
  * This fragment will be shown in navigation drawer

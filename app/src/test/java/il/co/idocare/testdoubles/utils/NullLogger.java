@@ -1,6 +1,6 @@
 package il.co.idocare.testdoubles.utils;
 
-import il.co.idocare.utils.Logger;
+import il.co.idocarecore.utils.Logger;
 
 /**
  * No op logger for testing

@@ -1,6 +1,6 @@
 package il.co.idocare.mvcviews.closerequest;
 
-import il.co.idocare.Constants;
+import il.co.idocarecore.Constants;
 import il.co.idocare.mvcviews.ObservableViewMvc;
 
 /**

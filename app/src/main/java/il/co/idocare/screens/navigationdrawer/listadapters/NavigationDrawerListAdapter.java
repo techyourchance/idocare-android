@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import il.co.idocare.datamodels.functional.NavigationDrawerEntry;
+import il.co.idocarecore.datamodels.functional.NavigationDrawerEntry;
 import il.co.idocare.mvcviews.navdrawerentry.NavigationDrawerEntryViewMvc;
 
 /**

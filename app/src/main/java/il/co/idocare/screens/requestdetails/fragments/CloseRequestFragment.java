@@ -17,17 +17,17 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import il.co.idocare.Constants;
+import il.co.idocarecore.Constants;
 import il.co.idocare.R;
-import il.co.idocare.authentication.LoggedInUserEntity;
+import il.co.idocarecore.authentication.LoggedInUserEntity;
 import il.co.idocare.mvcviews.closerequest.CloseRequestViewMvc;
 import il.co.idocare.mvcviews.closerequest.CloseRequestViewMvcImpl;
 import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
-import il.co.idocare.useractions.UserActionEntityFactory;
-import il.co.idocare.useractions.UserActionsManager;
-import il.co.idocare.useractions.entities.CloseRequestUserActionEntity;
-import il.co.idocare.useractions.entities.UserActionEntity;
-import il.co.idocare.utils.Logger;
+import il.co.idocarecore.useractions.UserActionEntityFactory;
+import il.co.idocarecore.useractions.UserActionsManager;
+import il.co.idocarecore.useractions.entities.CloseRequestUserActionEntity;
+import il.co.idocarecore.useractions.entities.UserActionEntity;
+import il.co.idocarecore.utils.Logger;
 
 
 public class CloseRequestFragment extends NewAndCloseRequestBaseFragment

@@ -9,7 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import il.co.idocare.R;
-import il.co.idocare.datamodels.functional.NavigationDrawerEntry;
+import il.co.idocarecore.datamodels.functional.NavigationDrawerEntry;
 import il.co.idocare.mvcviews.ViewMvc;
 
 /**

@@ -2,7 +2,7 @@ package il.co.idocare.screens.navigationdrawer;
 
 import androidx.annotation.UiThread;
 
-import il.co.idocare.utils.Logger;
+import il.co.idocarecore.utils.Logger;
 
 /**
  * This class encapsulates functionality related to NavigationDrawer

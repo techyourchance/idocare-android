@@ -22,9 +22,9 @@ import il.co.idocare.mvcviews.AbstractViewMvc;
 import il.co.idocare.mvcviews.location.LocationInfoViewMvc;
 import il.co.idocare.mvcviews.location.LocationInfoViewMvcImpl;
 import il.co.idocare.mvcviews.userinfo.RequestRelatedUserInfoViewMvc;
-import il.co.idocare.pictures.ImageViewPictureLoader;
-import il.co.idocare.requests.RequestEntity;
-import il.co.idocare.users.UserEntity;
+import il.co.idocarecore.pictures.ImageViewPictureLoader;
+import il.co.idocarecore.requests.RequestEntity;
+import il.co.idocarecore.users.UserEntity;
 import il.co.idocare.widgets.SwipeImageGalleryView;
 
 /**

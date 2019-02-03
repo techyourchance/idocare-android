@@ -12,8 +12,8 @@ import android.widget.TextView;
 import il.co.idocare.R;
 import il.co.idocare.mvcviews.AbstractViewMvc;
 import il.co.idocare.mvcviews.ViewMvc;
-import il.co.idocare.pictures.ImageViewPictureLoader;
-import il.co.idocare.users.UserEntity;
+import il.co.idocarecore.pictures.ImageViewPictureLoader;
+import il.co.idocarecore.users.UserEntity;
 
 public class RequestRelatedUserInfoViewMvc
         extends AbstractViewMvc<RequestRelatedUserInfoViewMvc.RequestRelatedUserInfoViewMvcListener>

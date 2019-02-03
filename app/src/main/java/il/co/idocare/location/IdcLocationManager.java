@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import il.co.idocare.utils.Logger;
+import il.co.idocarecore.utils.Logger;
 
 /**
  * This class encapsulates the logic related to user's location

@@ -6,11 +6,11 @@ import org.greenrobot.eventbus.EventBus;
 
 import dagger.Module;
 import dagger.Provides;
-import il.co.idocare.requests.cachers.RequestsCacher;
-import il.co.idocare.requests.cachers.TempIdCacher;
-import il.co.idocare.useractions.cachers.UserActionCacher;
-import il.co.idocare.users.UsersCacher;
-import il.co.idocare.utils.Logger;
+import il.co.idocarecore.requests.cachers.RequestsCacher;
+import il.co.idocarecore.requests.cachers.TempIdCacher;
+import il.co.idocarecore.useractions.cachers.UserActionCacher;
+import il.co.idocarecore.users.UsersCacher;
+import il.co.idocarecore.utils.Logger;
 
 @Module
 public class CachersModule {

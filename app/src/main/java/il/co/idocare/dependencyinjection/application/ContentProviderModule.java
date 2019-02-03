@@ -5,9 +5,9 @@ import android.content.ContentResolver;
 
 import dagger.Module;
 import dagger.Provides;
-import il.co.idocare.contentproviders.IdcSQLiteOpenHelper;
-import il.co.idocare.contentproviders.TransactionsController;
-import il.co.idocare.nonstaticproxies.ContentResolverProxy;
+import il.co.idocarecore.contentproviders.IdcSQLiteOpenHelper;
+import il.co.idocarecore.contentproviders.TransactionsController;
+import il.co.idocarecore.nonstaticproxies.ContentResolverProxy;
 
 @Module
 public class ContentProviderModule {

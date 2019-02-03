@@ -9,9 +9,9 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.List;
 
 import il.co.idocare.R;
-import il.co.idocare.requests.RequestEntity;
-import il.co.idocare.requests.events.RequestsChangedEvent;
-import il.co.idocare.utils.eventbusregistrator.EventBusRegistrable;
+import il.co.idocarecore.requests.RequestEntity;
+import il.co.idocarecore.requests.events.RequestsChangedEvent;
+import il.co.idocarecore.utils.eventbusregistrator.EventBusRegistrable;
 @EventBusRegistrable
 public class RequestsAllFragment extends RequestsListBaseFragment {
 

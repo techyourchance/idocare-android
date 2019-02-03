@@ -18,31 +18,31 @@ import java.util.List;
 import javax.inject.Inject;
 
 import il.co.idocare.R;
-import il.co.idocare.authentication.LoginStateManager;
-import il.co.idocare.authentication.events.UserLoggedOutEvent;
+import il.co.idocarecore.authentication.LoginStateManager;
+import il.co.idocarecore.authentication.events.UserLoggedOutEvent;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.dialogs.DialogsFactory;
 import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocare.dialogs.events.PromptDialogDismissedEvent;
 import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvc;
 import il.co.idocare.mvcviews.requestdetails.RequestDetailsViewMvcImpl;
-import il.co.idocare.pictures.ImageViewPictureLoader;
-import il.co.idocare.requests.RequestEntity;
-import il.co.idocare.requests.events.RequestIdChangedEvent;
-import il.co.idocare.requests.events.RequestsChangedEvent;
-import il.co.idocare.requests.RequestsManager;
+import il.co.idocarecore.pictures.ImageViewPictureLoader;
+import il.co.idocarecore.requests.RequestEntity;
+import il.co.idocarecore.requests.events.RequestIdChangedEvent;
+import il.co.idocarecore.requests.events.RequestsChangedEvent;
+import il.co.idocarecore.requests.RequestsManager;
 import il.co.idocare.screens.common.MainFrameHelper;
 import il.co.idocare.screens.common.fragments.BaseScreenFragment;
-import il.co.idocare.useractions.UserActionEntityFactory;
-import il.co.idocare.useractions.UserActionsManager;
-import il.co.idocare.useractions.entities.PickUpRequestUserActionEntity;
-import il.co.idocare.useractions.entities.UserActionEntity;
-import il.co.idocare.useractions.entities.VoteForRequestUserActionEntity;
-import il.co.idocare.users.UserEntity;
-import il.co.idocare.users.UsersManager;
-import il.co.idocare.users.events.UserDataChangedEvent;
-import il.co.idocare.utils.Logger;
-import il.co.idocare.utils.eventbusregistrator.EventBusRegistrable;
+import il.co.idocarecore.useractions.UserActionEntityFactory;
+import il.co.idocarecore.useractions.UserActionsManager;
+import il.co.idocarecore.useractions.entities.PickUpRequestUserActionEntity;
+import il.co.idocarecore.useractions.entities.UserActionEntity;
+import il.co.idocarecore.useractions.entities.VoteForRequestUserActionEntity;
+import il.co.idocarecore.users.UserEntity;
+import il.co.idocarecore.users.UsersManager;
+import il.co.idocarecore.users.events.UserDataChangedEvent;
+import il.co.idocarecore.utils.Logger;
+import il.co.idocarecore.utils.eventbusregistrator.EventBusRegistrable;
 
 @EventBusRegistrable
 public class RequestDetailsFragment extends BaseScreenFragment implements

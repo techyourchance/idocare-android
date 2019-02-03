@@ -1,4 +1,4 @@
-package il.co.idocare.useractions;
+package il.co.idocarecore.useractions;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -6,9 +6,9 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 
-import il.co.idocare.requests.RequestEntity;
+import il.co.idocarecore.requests.RequestEntity;
 import il.co.idocare.testdoubles.entities.RequestEntityProvider;
-import il.co.idocare.useractions.entities.UserActionEntity;
+import il.co.idocarecore.useractions.entities.UserActionEntity;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;

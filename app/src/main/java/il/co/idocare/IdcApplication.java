@@ -6,7 +6,8 @@ import com.facebook.FacebookSdk;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
-import il.co.idocare.contentproviders.IdcSQLiteOpenHelper;
+import il.co.idocarecore.Constants;
+import il.co.idocarecore.contentproviders.IdcSQLiteOpenHelper;
 import il.co.idocare.dependencyinjection.application.ApplicationComponent;
 import il.co.idocare.dependencyinjection.application.ApplicationModule;
 import il.co.idocare.dependencyinjection.application.ContentProviderModule;

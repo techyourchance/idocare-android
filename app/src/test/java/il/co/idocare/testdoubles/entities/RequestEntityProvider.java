@@ -3,7 +3,7 @@ package il.co.idocare.testdoubles.entities;
 import java.util.Arrays;
 import java.util.List;
 
-import il.co.idocare.requests.RequestEntity;
+import il.co.idocarecore.requests.RequestEntity;
 
 /**
  * This class provides {@link RequestEntity} for tests

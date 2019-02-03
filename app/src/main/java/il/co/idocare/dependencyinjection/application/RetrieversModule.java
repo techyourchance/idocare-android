@@ -4,12 +4,12 @@ import android.content.ContentResolver;
 
 import dagger.Module;
 import dagger.Provides;
-import il.co.idocare.requests.retrievers.RawRequestRetriever;
-import il.co.idocare.requests.retrievers.RequestsRetriever;
-import il.co.idocare.requests.retrievers.TempIdRetriever;
-import il.co.idocare.useractions.UserActionsToRequestsApplier;
-import il.co.idocare.useractions.retrievers.UserActionsRetriever;
-import il.co.idocare.users.UsersRetriever;
+import il.co.idocarecore.requests.retrievers.RawRequestRetriever;
+import il.co.idocarecore.requests.retrievers.RequestsRetriever;
+import il.co.idocarecore.requests.retrievers.TempIdRetriever;
+import il.co.idocarecore.useractions.UserActionsToRequestsApplier;
+import il.co.idocarecore.useractions.retrievers.UserActionsRetriever;
+import il.co.idocarecore.users.UsersRetriever;
 
 @Module
 public class RetrieversModule {

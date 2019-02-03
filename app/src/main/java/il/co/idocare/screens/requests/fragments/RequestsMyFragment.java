@@ -7,9 +7,9 @@ import androidx.fragment.app.Fragment;
 import org.greenrobot.eventbus.Subscribe;
 
 import il.co.idocare.R;
-import il.co.idocare.authentication.LoggedInUserEntity;
-import il.co.idocare.requests.events.RequestsChangedEvent;
-import il.co.idocare.utils.eventbusregistrator.EventBusRegistrable;
+import il.co.idocarecore.authentication.LoggedInUserEntity;
+import il.co.idocarecore.requests.events.RequestsChangedEvent;
+import il.co.idocarecore.utils.eventbusregistrator.EventBusRegistrable;
 
 @EventBusRegistrable
 public class RequestsMyFragment extends RequestsListBaseFragment {

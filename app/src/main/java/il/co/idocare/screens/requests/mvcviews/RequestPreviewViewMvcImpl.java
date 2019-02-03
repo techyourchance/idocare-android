@@ -14,11 +14,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-import il.co.idocare.Constants;
+import il.co.idocarecore.Constants;
 import il.co.idocare.R;
 import il.co.idocare.mvcviews.AbstractViewMvc;
-import il.co.idocare.requests.RequestEntity;
-import il.co.idocare.users.UserEntity;
+import il.co.idocarecore.requests.RequestEntity;
+import il.co.idocarecore.users.UserEntity;
 
 
 /**

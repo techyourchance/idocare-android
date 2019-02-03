@@ -6,8 +6,8 @@ import org.greenrobot.eventbus.Subscribe;
 
 import il.co.idocare.screens.common.Screen;
 import il.co.idocare.screens.navigationdrawer.events.NavigationDrawerStateChangeEvent;
-import il.co.idocare.utils.Logger;
-import il.co.idocare.utils.eventbusregistrator.EventBusRegistrable;
+import il.co.idocarecore.utils.Logger;
+import il.co.idocarecore.utils.eventbusregistrator.EventBusRegistrable;
 
 /**
  * Implementations of this interface can be used in order to control the toolbar

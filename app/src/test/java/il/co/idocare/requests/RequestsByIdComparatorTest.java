@@ -1,4 +1,4 @@
-package il.co.idocare.requests;
+package il.co.idocarecore.requests;
 
 import org.junit.Before;
 import org.junit.Test;

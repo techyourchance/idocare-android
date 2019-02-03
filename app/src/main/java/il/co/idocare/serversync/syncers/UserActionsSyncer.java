@@ -1,4 +1,4 @@
-package il.co.idocare.serversync.syncers;
+package il.co.idocarecore.serversync.syncers;
 
 
 import android.content.ContentResolver;
@@ -17,21 +17,21 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import il.co.idocare.Constants;
-import il.co.idocare.contentproviders.IDoCareContract;
-import il.co.idocare.networking.HttpUtils;
-import il.co.idocare.networking.NetworkingUtils;
-import il.co.idocare.networking.ServerApi;
-import il.co.idocare.requests.retrievers.TempIdRetriever;
-import il.co.idocare.serversync.SyncFailedException;
-import il.co.idocare.useractions.cachers.UserActionCacher;
-import il.co.idocare.useractions.entities.CloseRequestUserActionEntity;
-import il.co.idocare.useractions.entities.PickUpRequestUserActionEntity;
-import il.co.idocare.useractions.entities.UserActionEntity;
-import il.co.idocare.useractions.entities.VoteForRequestUserActionEntity;
-import il.co.idocare.useractions.retrievers.UserActionsRetriever;
-import il.co.idocare.utils.IdcDateTimeUtils;
-import il.co.idocare.utils.Logger;
+import il.co.idocarecore.Constants;
+import il.co.idocarecore.contentproviders.IDoCareContract;
+import il.co.idocarecore.networking.HttpUtils;
+import il.co.idocarecore.networking.NetworkingUtils;
+import il.co.idocarecore.networking.ServerApi;
+import il.co.idocarecore.requests.retrievers.TempIdRetriever;
+import il.co.idocarecore.serversync.SyncFailedException;
+import il.co.idocarecore.useractions.cachers.UserActionCacher;
+import il.co.idocarecore.useractions.entities.CloseRequestUserActionEntity;
+import il.co.idocarecore.useractions.entities.PickUpRequestUserActionEntity;
+import il.co.idocarecore.useractions.entities.UserActionEntity;
+import il.co.idocarecore.useractions.entities.VoteForRequestUserActionEntity;
+import il.co.idocarecore.useractions.retrievers.UserActionsRetriever;
+import il.co.idocarecore.utils.IdcDateTimeUtils;
+import il.co.idocarecore.utils.Logger;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;

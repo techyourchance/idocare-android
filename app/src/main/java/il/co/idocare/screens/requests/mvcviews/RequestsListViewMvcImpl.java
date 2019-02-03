@@ -12,10 +12,10 @@ import java.util.List;
 
 import il.co.idocare.R;
 import il.co.idocare.mvcviews.AbstractViewMvc;
-import il.co.idocare.requests.RequestEntity;
+import il.co.idocarecore.requests.RequestEntity;
 import il.co.idocare.screens.requests.listadapters.RequestsListAdapter;
-import il.co.idocare.users.UsersManager;
-import il.co.idocare.utils.IdcViewUtils;
+import il.co.idocarecore.users.UsersManager;
+import il.co.idocare.screens.common.IdcViewUtils;
 
 /**
  * This MVC view shows a list of requests
