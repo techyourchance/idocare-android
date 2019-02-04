@@ -1,0 +1,92 @@
+<resources>
+    <dimen name="drawer_width">230dp</dimen>
+    <dimen name="long_button_horizontal_padding">60dp</dimen>
+
+    <dimen name="map_preview_height">110dp</dimen>
+    <dimen name="button_corners_radius">3dp</dimen>
+    <dimen name="button_stroke_width">1dp</dimen>
+
+    <!-- Elements sizes -->
+    <dimen name="divider_width">1dp</dimen>
+    <dimen name="request_thumbnail_layout_height">160dp</dimen>
+
+    <dimen name="wide_button_height">40dp</dimen>
+    <dimen name="wide_button_width">240dp</dimen>
+
+    <dimen name="two_medium_buttons_horizontal_spacing">16dp</dimen>
+
+    <dimen name="button_height">40dp</dimen>
+    <dimen name="large_button_width">276dp</dimen>
+    <dimen name="medium_button_width">130dp</dimen>
+
+    <dimen name="txt_request_status_width">120dp</dimen>
+    <dimen name="vote_panel_divider_height">23dp</dimen>
+
+    <!-- Margins and paddings-->
+    <dimen name="fragment_large_padding">15dp</dimen>
+    <dimen name="fragment_default_padding">10dp</dimen>
+    <dimen name="fragment_small_padding">8dp</dimen>
+    <dimen name="fragment_tiny_padding">5dp</dimen>
+    <dimen name="fragment_tiniest_padding">2dp</dimen>
+
+    <dimen name="login_chooser_margin_1">33dp</dimen>
+    <dimen name="login_chooser_margin_2">16dp</dimen>
+    <dimen name="login_chooser_margin_3">12dp</dimen>
+
+    <dimen name="signup_native_margin_1">70dp</dimen>
+
+    <dimen name="nav_drawer_icon_margin_left">10dp</dimen>
+    <dimen name="nav_drawer_title_margin_left">50dp</dimen>
+    <dimen name="text_view_default_padding">5dp</dimen>
+
+    <dimen name="home_list_view_padding">@dimen/fragment_default_padding</dimen>
+
+    <dimen name="swipe_image_gallery_indicators_margin">5dp</dimen>
+
+
+
+    <!-- Text sizes -->
+    <dimen name="largest_text_size">15sp</dimen>
+    <dimen name="large_text_size">14sp</dimen>
+    <dimen name="default_text_size">13sp</dimen>
+    <dimen name="small_text_size">12sp</dimen>
+    <dimen name="smallest_text_size">11sp</dimen>
+    <dimen name="tiny_text_size">10sp</dimen>
+
+    <dimen name="title_text_size">@dimen/largest_text_size</dimen>
+
+    <dimen name="button_text_size">13sp</dimen>
+    <dimen name="edit_text_text_size">13sp</dimen>
+
+
+
+    <!-- Picture sizes -->
+    <dimen name="user_small_picture_size">35dp</dimen>
+    <dimen name="nav_drawer_user_picture_size">60dp</dimen>
+
+    <!-- Facebook login button related stuff (in order to change its shape)-->
+    <dimen name="fb_margin_override_top">13dp</dimen>
+    <dimen name="fb_margin_override_bottom">13dp</dimen>
+    <!--The next value changes the margin between the FB icon and the left border:-->
+    <dimen name="fb_margin_override_lr">10dp</dimen>
+    <!--The next value changes the margin between the FB icon and the login text:-->
+    <dimen name="fb_margin_override_textpadding">17dp</dimen>
+    <dimen name="vote_panel_spacing">5dp</dimen>
+    <dimen name="login_chooser_screen_margin_bottom">20dp</dimen>
+    <dimen name="request_details_picture_height">170dp</dimen>
+    <dimen name="nav_drawer_margin">@dimen/fragment_default_padding</dimen>
+
+
+    <!-- This is the initial offset that the "sliding buttons" will be slided for -->
+    <item name="initial_buttons_layout_offset" format="float" type="dimen">300.0</item>
+
+
+    <!-- DIALOGS -->
+    <dimen name="dialog_padding">20dp</dimen>
+    <dimen name="dialog_button_horizontal_padding">30dp</dimen>
+
+    <!-- Signup screen -->
+    <dimen name="signup_user_picture_size">114dp</dimen>
+
+
+</resources>

@@ -3,21 +3,21 @@ package il.co.idocare.controllers.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AppCompatActivity;
 
 import javax.inject.Inject;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import il.co.idocare.IdcApplication;
 import il.co.idocare.R;
 import il.co.idocare.controllers.fragments.IDoCareFragmentCallback;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
 import il.co.idocare.dependencyinjection.controller.ControllerComponent;
 import il.co.idocare.dependencyinjection.controller.ControllerModule;
-import il.co.idocare.dialogs.DialogsFactory;
-import il.co.idocare.dialogs.DialogsManager;
+import il.co.idocarecore.screens.common.dialogs.DialogsFactory;
+import il.co.idocarecore.screens.common.dialogs.DialogsManager;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**

@@ -2,33 +2,32 @@ package il.co.idocare.dependencyinjection.controller;
 
 import android.app.Activity;
 import android.content.Context;
-import androidx.fragment.app.FragmentManager;
 
-import il.co.idocare.screens.common.fragmenthelper.FragmentContainerWrapper;
-import il.co.idocare.screens.common.fragmenthelper.FragmentHelper;
 import com.techyourchance.threadposter.BackgroundThreadPoster;
 import com.techyourchance.threadposter.UiThreadPoster;
 
 import org.greenrobot.eventbus.EventBus;
 
+import androidx.fragment.app.FragmentFactory;
+import androidx.fragment.app.FragmentManager;
 import dagger.Module;
 import dagger.Provides;
+import il.co.idocare.screens.common.dialogs.DialogsFactoryImpl;
+import il.co.idocare.screens.common.toolbar.ToolbarDelegate;
+import il.co.idocare.screens.common.toolbar.ToolbarManager;
+import il.co.idocare.screens.navigationdrawer.NavigationDrawerDelegate;
+import il.co.idocare.screens.navigationdrawer.NavigationDrawerManager;
+import il.co.idocare.serversync.ServerSyncControllerImpl;
 import il.co.idocarecore.authentication.LoginStateManager;
 import il.co.idocarecore.deviceinfo.GooglePlayServicesChecker;
-import il.co.idocare.dialogs.DialogsFactory;
-import il.co.idocare.dialogs.DialogsManager;
 import il.co.idocarecore.nonstaticproxies.ContentResolverProxy;
 import il.co.idocarecore.pictures.CameraAdapter;
 import il.co.idocarecore.requests.RequestsManager;
 import il.co.idocarecore.requests.cachers.RequestsCacher;
 import il.co.idocarecore.requests.retrievers.RequestsRetriever;
-import il.co.idocare.screens.common.MainFrameHelper;
-import il.co.idocare.screens.common.toolbar.ToolbarDelegate;
-import il.co.idocare.screens.common.toolbar.ToolbarManager;
-import il.co.idocare.screens.navigationdrawer.NavigationDrawerDelegate;
-import il.co.idocare.screens.navigationdrawer.NavigationDrawerManager;
+import il.co.idocarecore.screens.common.dialogs.DialogsFactory;
+import il.co.idocarecore.screens.common.dialogs.DialogsManager;
 import il.co.idocarecore.serversync.ServerSyncController;
-import il.co.idocarecore.serversync.ServerSyncControllerImpl;
 import il.co.idocarecore.useractions.UserActionsManager;
 import il.co.idocarecore.useractions.cachers.UserActionCacher;
 import il.co.idocarecore.users.UsersDataMonitoringManager;
@@ -66,6 +65,7 @@ public class ControllerModule {
         return mFragmentManager;
     }
 
+
     @Provides
     @ControllerScope
     GooglePlayServicesChecker googlePlayServicesChecker(Activity activity) {
@@ -79,20 +79,14 @@ public class ControllerModule {
 
     @Provides
     @ControllerScope
-    MainFrameHelper frameHelper(Activity activity, FragmentManager fragmentManager) {
-        return new MainFrameHelper(activity, fragmentManager);
-    }
-
-    @Provides
-    @ControllerScope
     DialogsManager dialogsManager(FragmentManager fragmentManager) {
         return new DialogsManager(fragmentManager);
     }
 
     @Provides
     @ControllerScope
-    DialogsFactory dialogsFactory() {
-        return new DialogsFactory();
+    DialogsFactory dialogsFactory(FragmentFactory fragmentFactory, Activity activity) {
+        return new DialogsFactoryImpl(fragmentFactory, activity);
     }
 
     @Provides
@@ -104,7 +98,7 @@ public class ControllerModule {
             RequestsRetriever requestsRetriever,
             RequestsCacher requestsCacher,
             Logger logger,
-            ServerSyncControllerImpl serverSyncController) {
+            ServerSyncController serverSyncController) {
         return new RequestsManager(backgroundThreadPoster, uiThreadPoster, userActionCacher,
                 requestsRetriever, requestsCacher, logger, serverSyncController);
     }
@@ -153,15 +147,4 @@ public class ControllerModule {
         return new ServerSyncControllerImpl(contentResolverProxy, loginStateManager);
     }
 
-    @Provides
-    FragmentContainerWrapper fragmentContainerWrapper(Activity activity) {
-        return (FragmentContainerWrapper) activity;
-    }
-
-    @Provides
-    FragmentHelper fragmentHelper(Activity activity,
-                                  FragmentContainerWrapper fragmentContainerWrapper,
-                                  FragmentManager fragmentManager) {
-        return new FragmentHelper(activity, fragmentContainerWrapper, fragmentManager);
-    }
 }

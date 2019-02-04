@@ -13,8 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import il.co.idocare.R;
-import il.co.idocare.mvcviews.AbstractViewMvc;
-import il.co.idocare.mvcviews.ViewMvc;
+import il.co.idocarecore.screens.common.mvcviews.AbstractViewMvc;
+import il.co.idocarecore.screens.common.mvcviews.ViewMvc;
 
 /**
  * This MVC view represents application's main screen which contains NavigationDrawer and a single

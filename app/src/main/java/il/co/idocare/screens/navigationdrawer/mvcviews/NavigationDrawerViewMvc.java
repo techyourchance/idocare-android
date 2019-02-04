@@ -1,6 +1,6 @@
 package il.co.idocare.screens.navigationdrawer.mvcviews;
 
-import il.co.idocare.mvcviews.ObservableViewMvc;
+import il.co.idocarecore.screens.common.mvcviews.ObservableViewMvc;
 import il.co.idocarecore.users.UserEntity;
 
 /**

@@ -22,7 +22,7 @@ import il.co.idocarecore.Constants;
 import il.co.idocare.R;
 import il.co.idocare.screens.navigationdrawer.listadapters.NavigationDrawerListAdapter;
 import il.co.idocarecore.datamodels.functional.NavigationDrawerEntry;
-import il.co.idocare.mvcviews.AbstractViewMvc;
+import il.co.idocarecore.screens.common.mvcviews.AbstractViewMvc;
 import il.co.idocarecore.users.UserEntity;
 
 

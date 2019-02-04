@@ -4,7 +4,7 @@ import androidx.annotation.UiThread;
 
 import org.greenrobot.eventbus.Subscribe;
 
-import il.co.idocare.screens.common.Screen;
+import il.co.idocarecore.screens.common.Screen;
 import il.co.idocare.screens.navigationdrawer.events.NavigationDrawerStateChangeEvent;
 import il.co.idocarecore.utils.Logger;
 import il.co.idocarecore.utils.eventbusregistrator.EventBusRegistrable;

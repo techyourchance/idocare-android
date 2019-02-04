@@ -1,4 +1,4 @@
-package il.co.idocarecore.serversync;
+package il.co.idocare.serversync;
 
 import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
@@ -14,6 +14,8 @@ import org.greenrobot.eventbus.EventBus;
 import javax.inject.Inject;
 
 import il.co.idocarecore.authentication.LoginStateManager;
+import il.co.idocarecore.serversync.ManualSyncCompletedEvent;
+import il.co.idocarecore.serversync.SyncFailedException;
 import il.co.idocarecore.serversync.syncers.RequestsSyncer;
 import il.co.idocarecore.serversync.syncers.UserActionsSyncer;
 import il.co.idocarecore.serversync.syncers.UsersSyncer;

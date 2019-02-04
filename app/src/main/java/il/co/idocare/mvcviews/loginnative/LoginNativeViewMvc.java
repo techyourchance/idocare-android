@@ -1,6 +1,6 @@
 package il.co.idocare.mvcviews.loginnative;
 
-import il.co.idocare.mvcviews.ObservableViewMvc;
+import il.co.idocarecore.screens.common.mvcviews.ObservableViewMvc;
 
 /**
  * This MVC view represents the login screen which allows the user to log in using its "native"

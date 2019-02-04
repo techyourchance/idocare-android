@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<il.co.idocarecore.screens.common.widgets.VerticalScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:scrollbars="none"
+    android:padding="@dimen/fragment_default_padding"
+    android:fillViewport="true"
+    android:background="@color/request_details_background">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/request_details_picture_height">
+
+            <il.co.idocarecore.screens.common.widgets.SwipeImageGalleryView
+                android:id="@+id/swipeImageGalleryTop"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:id="@+id/txt_request_status"
+                android:layout_width="@dimen/txt_request_status_width"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/fragment_tiny_padding"
+                android:padding="@dimen/text_view_default_padding"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                style="@style/RequestStatusTextViewStyle"/>
+
+        </RelativeLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fragment_tiny_padding" />
+
+        <TextView
+            android:id="@+id/txt_top_user_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fragment_tiny_padding" />
+
+
+        <FrameLayout
+            android:id="@+id/frame_user_info_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fragment_small_padding" />
+
+
+        <FrameLayout
+            android:id="@+id/frame_location_info"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/map_preview_height"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fragment_tiny_padding" />
+
+        <TextView
+            android:id="@+id/txt_bottom_user_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fragment_tiny_padding" />
+
+        <FrameLayout
+            android:id="@+id/frame_user_info_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fragment_tiny_padding" />
+
+        <il.co.idocarecore.screens.common.widgets.SwipeImageGalleryView
+            android:id="@+id/swipeImageGalleryBottom"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/request_details_picture_height"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fragment_small_padding"/>
+
+        <Button
+            android:id="@+id/btn_pickup_request"
+            android:layout_width="@dimen/large_button_width"
+            android:layout_height="@dimen/button_height"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/btn_pickup_request"
+            style="@style/AppTheme.RedButton"/>
+
+
+        <Button
+            android:id="@+id/btn_close_request"
+            android:layout_width="@dimen/large_button_width"
+            android:layout_height="@dimen/button_height"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/btn_switch_to_close_request_fragment"
+            style="@style/AppTheme.GreenButton"/>
+
+    </LinearLayout>
+
+</il.co.idocarecore.screens.common.widgets.VerticalScrollView>

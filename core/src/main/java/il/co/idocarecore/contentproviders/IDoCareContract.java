@@ -15,7 +15,7 @@ public class IDoCareContract {
 	/**
 	 * The authority of the requests provider.
 	 */
-	public static final String AUTHORITY = "il.co.idocarecore.provider.IDoCareContentProvider";
+	public static final String AUTHORITY = "il.co.idocare.provider.IDoCareContentProvider";
 
 	/**
 	 * The content URI for the top-level authority.

@@ -13,8 +13,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.ViewGroup;
 
-import il.co.idocare.screens.common.fragmenthelper.FragmentContainerWrapper;
-import il.co.idocare.screens.common.fragmenthelper.FragmentHelper;
+import androidx.fragment.app.FragmentFactory;
+import androidx.fragment.app.FragmentManager;
+import il.co.idocarecore.screens.ScreensNavigator;
+import il.co.idocarecore.screens.common.fragmenthelper.FragmentContainerWrapper;
+import il.co.idocarecore.screens.common.fragmenthelper.FragmentHelper;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -28,7 +31,7 @@ import il.co.idocare.mvcviews.mainnavdrawer.MainViewMvc;
 import il.co.idocare.screens.common.toolbar.ToolbarDelegate;
 import il.co.idocare.screens.navigationdrawer.NavigationDrawerDelegate;
 import il.co.idocare.screens.navigationdrawer.events.NavigationDrawerStateChangeEvent;
-import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
+import il.co.idocarerequests.screens.requests.fragments.RequestsAllFragment;
 import il.co.idocarecore.serversync.ServerSyncController;
 import il.co.idocarecore.utils.Logger;
 
@@ -48,7 +51,9 @@ public class MainActivity extends AbstractActivity implements
     @Inject ServerSyncController mServerSyncController;
     @Inject Logger mLogger;
     @Inject EventBus mEventBus;
-    @Inject FragmentHelper mFragmentHelper;
+    @Inject ScreensNavigator mScreensNavigator;
+    @Inject FragmentManager mFragmentManager;
+    @Inject FragmentFactory mFragmentFactory;
 
 
 
@@ -62,9 +67,11 @@ public class MainActivity extends AbstractActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getControllerComponent().inject(this);
+
         super.onCreate(savedInstanceState);
 
-        getControllerComponent().inject(this);
+        mFragmentManager.setFragmentFactory(mFragmentFactory);
 
         mMainViewMvc = new MainViewMvc(LayoutInflater.from(this), null, this);
         mMainViewMvc.registerListener(this);
@@ -72,7 +79,7 @@ public class MainActivity extends AbstractActivity implements
 
         // Show Home fragment if the app is not restored
         if (savedInstanceState == null) {
-            mFragmentHelper.replaceFragmentAndRemoveCurrentFromHistory(new RequestsAllFragment());
+            mScreensNavigator.toAllRequests();
         }
     }
 
@@ -147,7 +154,7 @@ public class MainActivity extends AbstractActivity implements
 
     @Override
     public void onNavigateUpClicked() {
-        mFragmentHelper.navigateUp();
+        mScreensNavigator.navigateUp();
     }
 
     @Override
@@ -155,7 +162,7 @@ public class MainActivity extends AbstractActivity implements
         if (mMainViewMvc.isDrawerVisible()) {
             closeDrawer();
         } else {
-            mFragmentHelper.navigateBack();
+            mScreensNavigator.navigateBack();
         }
     }
 

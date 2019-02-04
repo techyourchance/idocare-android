@@ -3,7 +3,6 @@ package il.co.idocare.screens.navigationdrawer.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,23 +13,21 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import javax.inject.Inject;
 
+import androidx.annotation.Nullable;
 import il.co.idocare.R;
-import il.co.idocarecore.authentication.LoginStateManager;
-import il.co.idocarecore.authentication.events.UserLoggedOutEvent;
 import il.co.idocare.controllers.activities.LoginActivity;
-import il.co.idocare.screens.requestdetails.fragments.NewRequestFragment;
-import il.co.idocare.dialogs.DialogsFactory;
-import il.co.idocare.dialogs.DialogsManager;
-import il.co.idocare.dialogs.events.PromptDialogDismissedEvent;
-import il.co.idocarecore.eventbusevents.LoginStateEvents;
-import il.co.idocare.screens.requests.fragments.RequestsMyFragment;
-import il.co.idocarecore.serversync.ServerSyncController;
-import il.co.idocare.screens.common.MainFrameHelper;
 import il.co.idocare.screens.common.fragments.BaseFragment;
 import il.co.idocare.screens.navigationdrawer.NavigationDrawerManager;
 import il.co.idocare.screens.navigationdrawer.mvcviews.NavigationDrawerViewMvc;
 import il.co.idocare.screens.navigationdrawer.mvcviews.NavigationDrawerViewMvcImpl;
-import il.co.idocare.screens.requests.fragments.RequestsAllFragment;
+import il.co.idocarecore.authentication.LoginStateManager;
+import il.co.idocarecore.authentication.events.UserLoggedOutEvent;
+import il.co.idocarecore.eventbusevents.LoginStateEvents;
+import il.co.idocarecore.screens.ScreensNavigator;
+import il.co.idocarecore.screens.common.dialogs.DialogsFactory;
+import il.co.idocarecore.screens.common.dialogs.DialogsManager;
+import il.co.idocarecore.screens.common.dialogs.PromptDialogDismissedEvent;
+import il.co.idocarecore.serversync.ServerSyncController;
 import il.co.idocarecore.users.UserEntity;
 import il.co.idocarecore.users.UsersDataMonitoringManager;
 import il.co.idocarecore.utils.Logger;
@@ -56,7 +53,7 @@ public class NavigationDrawerFragment extends BaseFragment implements
     @Inject UsersDataMonitoringManager mUsersDataMonitoringManager;
     @Inject EventBus mEventBus;
     @Inject Logger mLogger;
-    @Inject MainFrameHelper mMainMainFrameHelper;
+    @Inject ScreensNavigator mScreensNavigator;
 
 
     private NavigationDrawerViewMvcImpl mViewMvc;
@@ -112,20 +109,20 @@ public class NavigationDrawerFragment extends BaseFragment implements
 
     @Override
     public void onRequestsListClicked() {
-        mMainMainFrameHelper.replaceFragment(RequestsAllFragment.class, false, true, null);
+        mScreensNavigator.toAllRequests();
         closeNavDrawer();
     }
 
     @Override
     public void onMyRequestsClicked() {
-        mMainMainFrameHelper.replaceFragment(RequestsMyFragment.class, false, true, null);
+        mScreensNavigator.toMyRequests();
         closeNavDrawer();
     }
 
     @Override
     public void onNewRequestClicked() {
         if (mLoginStateManager.isLoggedIn()) {
-            mMainMainFrameHelper.replaceFragment(NewRequestFragment.class, true, false, null);
+            mScreensNavigator.toNewRequest();
             closeNavDrawer();
         } else {
             mDialogsManager.showRetainedDialogWithTag(

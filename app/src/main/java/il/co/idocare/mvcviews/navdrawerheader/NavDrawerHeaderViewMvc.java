@@ -3,7 +3,7 @@ package il.co.idocare.mvcviews.navdrawerheader;
 import androidx.annotation.Nullable;
 
 import il.co.idocarecore.datamodels.functional.UserItem;
-import il.co.idocare.mvcviews.ObservableViewMvc;
+import il.co.idocarecore.screens.common.mvcviews.ObservableViewMvc;
 
 /**
  * This MVC view should be used as nav drawer's header (the topmost element in nav drawer)

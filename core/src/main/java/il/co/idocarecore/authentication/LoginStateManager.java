@@ -23,7 +23,7 @@ public class LoginStateManager {
     private static final String TAG = "LoginStateManager";
 
     private static final String DUMMY_ACCOUNT_NAME = "dummy_account";
-    private static final String DUMMY_ACCOUNT_TYPE = "il.co.idocarecore.account";
+    private static final String DUMMY_ACCOUNT_TYPE = "il.co.idocare.account";
 
     private final AccountManager mAccountManager;
     private final SettingsManager mSettingsManager;

@@ -1,6 +1,6 @@
 package il.co.idocare.mvcviews.loginchooser;
 
-import il.co.idocare.mvcviews.ViewMvc;
+import il.co.idocarecore.screens.common.mvcviews.ViewMvc;
 
 /**
  * This MVC view represents "pre-login" screen which allows the user to choose between login

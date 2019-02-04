@@ -17,7 +17,7 @@ import java.net.URL;
 import il.co.idocarecore.Constants;
 import il.co.idocare.R;
 import il.co.idocarecore.datamodels.functional.UserItem;
-import il.co.idocare.mvcviews.AbstractViewMvc;
+import il.co.idocarecore.screens.common.mvcviews.AbstractViewMvc;
 
 /**
  * Created by Vasiliy on 5/14/2016.

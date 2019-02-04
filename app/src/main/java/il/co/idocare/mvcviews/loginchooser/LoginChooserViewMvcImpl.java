@@ -8,8 +8,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import il.co.idocare.R;
-import il.co.idocare.mvcviews.AbstractViewMvc;
-import il.co.idocare.screens.common.IdcViewUtils;
+import il.co.idocarecore.screens.common.mvcviews.AbstractViewMvc;
+import il.co.idocarecore.screens.common.widgets.IdcViewUtils;
 
 /**
  * Implementation of LoginChooserViewMvc

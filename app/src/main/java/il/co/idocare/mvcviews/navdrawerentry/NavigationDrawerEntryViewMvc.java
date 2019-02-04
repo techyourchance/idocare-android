@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import il.co.idocare.R;
 import il.co.idocarecore.datamodels.functional.NavigationDrawerEntry;
-import il.co.idocare.mvcviews.ViewMvc;
+import il.co.idocarecore.screens.common.mvcviews.ViewMvc;
 
 /**
  * Created by Vasiliy on 3/23/2015.

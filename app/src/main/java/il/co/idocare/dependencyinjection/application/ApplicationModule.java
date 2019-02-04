@@ -15,14 +15,15 @@ import java.util.Locale;
 
 import dagger.Module;
 import dagger.Provides;
+import il.co.idocare.location.IdcLocationManagerImpl;
 import il.co.idocarecore.Constants;
 import il.co.idocarecore.authentication.AuthManager;
 import il.co.idocarecore.authentication.LoginStateManager;
 import il.co.idocarecore.common.settings.PreferenceSettingsEntryFactoryImpl;
 import il.co.idocarecore.common.settings.SettingsManager;
-import il.co.idocare.location.IdcLocationManager;
 import il.co.idocare.location.ReverseGeocoder;
 import il.co.idocare.location.StandardReverseGeocoder;
+import il.co.idocarecore.location.IdcLocationManager;
 import il.co.idocarecore.networking.FilesDownloader;
 import il.co.idocarecore.networking.ServerApi;
 import il.co.idocarecore.pictures.ImageViewPictureLoader;
@@ -124,6 +125,6 @@ public class ApplicationModule {
     @Provides
     @ApplicationScope
     IdcLocationManager idcLocationManager(Application application, UiThreadPoster uiThreadPoster, Logger logger) {
-        return new IdcLocationManager(application, uiThreadPoster, logger);
+        return new IdcLocationManagerImpl(application, uiThreadPoster, logger);
     }
 }

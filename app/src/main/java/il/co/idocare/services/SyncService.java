@@ -7,7 +7,7 @@ import android.os.IBinder;
 import il.co.idocare.IdcApplication;
 import il.co.idocare.dependencyinjection.serversync.ServerSyncComponent;
 import il.co.idocare.dependencyinjection.serversync.ServerSyncModule;
-import il.co.idocarecore.serversync.SyncAdapter;
+import il.co.idocare.serversync.SyncAdapter;
 
 /**
  * Bound service to be used by the framework for SyncAdapter enablement

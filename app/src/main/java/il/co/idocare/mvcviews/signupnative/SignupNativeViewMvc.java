@@ -1,6 +1,6 @@
 package il.co.idocare.mvcviews.signupnative;
 
-import il.co.idocare.mvcviews.ViewMvc;
+import il.co.idocarecore.screens.common.mvcviews.ViewMvc;
 
 /**
  * This MVC view represents the signup screen which allows the user to create a new "native" account
