@@ -68,10 +68,8 @@ public class MainActivity extends AbstractActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getControllerComponent().inject(this);
-
-        super.onCreate(savedInstanceState);
-
         mFragmentManager.setFragmentFactory(mFragmentFactory);
+        super.onCreate(savedInstanceState);
 
         mMainViewMvc = new MainViewMvc(LayoutInflater.from(this), null, this);
         mMainViewMvc.registerListener(this);
