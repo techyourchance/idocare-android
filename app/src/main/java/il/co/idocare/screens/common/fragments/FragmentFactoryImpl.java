@@ -73,7 +73,7 @@ public class FragmentFactoryImpl extends FragmentFactory {
             fragment = mPromptDialogProvider.get();
         }
         else {
-            fragment = super.instantiate(classLoader, className, args);
+            return super.instantiate(classLoader, className, args);
         }
 
         if (args != null) {
