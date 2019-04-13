@@ -39,9 +39,9 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.0.0'
     implementation 'com.facebook.android:facebook-android-sdk:4.39.0'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
-    implementation 'com.google.android.gms:play-services-maps:16.0.0'
-    implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
-    implementation 'com.google.android.material:material:1.1.0-alpha02'
+    implementation 'com.google.android.gms:play-services-maps:16.1.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0-alpha03'
+    implementation 'com.google.android.material:material:1.1.0-alpha05'
     implementation 'com.makeramen:roundedimageview:2.3.0'
     implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
     // JSON
@@ -51,18 +51,18 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     // Dependency injection
-    implementation 'com.google.dagger:dagger:2.16'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.16'
+    implementation 'com.google.dagger:dagger:2.17'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.17'
     // Testing
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:2.19.0'
+    testImplementation 'org.mockito:mockito-core:2.21.0'
     // Crash report
-    implementation 'com.google.firebase:firebase-core:16.0.6'
+    implementation 'com.google.firebase:firebase-core:16.0.8'
     implementation 'com.google.firebase:firebase-crash:16.2.1'
     // Datetime library
-    implementation 'joda-time:joda-time:2.9.4'
+    implementation 'joda-time:joda-time:2.10.1'
 
-    implementation "com.techyourchance.threadposter:threadposter:0.8.1"
+    implementation "com.techyourchance.threadposter:threadposter:0.8.2"
     compile project(path: ':requests')
 }
 
