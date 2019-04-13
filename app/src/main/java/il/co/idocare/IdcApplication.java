@@ -6,6 +6,7 @@ import com.facebook.FacebookSdk;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+import androidx.multidex.MultiDexApplication;
 import il.co.idocarecore.Constants;
 import il.co.idocarecore.contentproviders.IdcSQLiteOpenHelper;
 import il.co.idocare.dependencyinjection.application.ApplicationComponent;
@@ -17,7 +18,7 @@ import il.co.idocare.dependencyinjection.application.NetworkingModule;
 import il.co.idocare.dependencyinjection.application.RetrieversModule;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
-public class IdcApplication extends Application {
+public class IdcApplication extends MultiDexApplication {
 
     private ApplicationComponent mApplicationComponent;
 
