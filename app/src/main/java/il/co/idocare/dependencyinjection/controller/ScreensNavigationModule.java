@@ -2,6 +2,9 @@ package il.co.idocare.dependencyinjection.controller;
 
 import android.app.Activity;
 
+import com.techyourchance.fragmenthelper.FragmentContainerWrapper;
+import com.techyourchance.fragmenthelper.FragmentHelper;
+
 import org.greenrobot.eventbus.EventBus;
 
 import androidx.fragment.app.FragmentFactory;
@@ -14,8 +17,6 @@ import il.co.idocare.screens.common.fragments.FragmentFactoryImpl;
 import il.co.idocarecore.screens.ScreensNavigator;
 import il.co.idocarecore.screens.common.dialogs.InfoDialog;
 import il.co.idocarecore.screens.common.dialogs.PromptDialog;
-import il.co.idocarecore.screens.common.fragmenthelper.FragmentContainerWrapper;
-import il.co.idocarecore.screens.common.fragmenthelper.FragmentHelper;
 
 @Module
 public abstract class ScreensNavigationModule {

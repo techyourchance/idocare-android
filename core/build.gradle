@@ -3,8 +3,6 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 28
 
-
-
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 28
@@ -12,7 +10,6 @@ android {
         versionName "1.0"
 
         buildConfigField "int", "DATABASE_SCHEMA_VERSION", "5"
-
     }
 
     buildTypes {

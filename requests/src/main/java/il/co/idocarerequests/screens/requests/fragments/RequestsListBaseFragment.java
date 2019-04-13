@@ -1,31 +1,29 @@
 package il.co.idocarerequests.screens.requests.fragments;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.techyourchance.fragmenthelper.FragmentHelper;
 
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
 import androidx.fragment.app.Fragment;
+import il.co.idocarecore.authentication.LoginStateManager;
+import il.co.idocarecore.requests.RequestEntity;
+import il.co.idocarecore.requests.RequestsManager;
 import il.co.idocarecore.screens.ScreensNavigator;
 import il.co.idocarecore.screens.common.dialogs.DialogsFactory;
 import il.co.idocarecore.screens.common.dialogs.DialogsManager;
 import il.co.idocarecore.screens.common.dialogs.PromptDialogDismissedEvent;
-import il.co.idocarecore.screens.common.fragmenthelper.FragmentHelper;
-import il.co.idocarecore.authentication.LoginStateManager;
-import il.co.idocarerequests.R;
-import il.co.idocarerequests.screens.requestdetails.fragments.NewRequestFragment;
-import il.co.idocarerequests.screens.requestdetails.fragments.RequestDetailsFragment;
-import il.co.idocarecore.requests.RequestEntity;
-import il.co.idocarecore.requests.RequestsManager;
-import il.co.idocarerequests.screens.requests.mvcviews.RequestsListViewMvcImpl;
 import il.co.idocarecore.users.UsersManager;
 import il.co.idocarecore.utils.Logger;
+import il.co.idocarerequests.R;
+import il.co.idocarerequests.screens.requests.mvcviews.RequestsListViewMvcImpl;
 
 public abstract class RequestsListBaseFragment extends Fragment implements
         RequestsListViewMvcImpl.RequestsListViewMvcListener,

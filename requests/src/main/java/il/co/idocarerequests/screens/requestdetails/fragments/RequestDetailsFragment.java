@@ -1,6 +1,5 @@
 package il.co.idocarerequests.screens.requestdetails.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -8,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.maps.MapView;
+import com.techyourchance.fragmenthelper.FragmentHelper;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -20,16 +20,15 @@ import javax.inject.Inject;
 import androidx.fragment.app.Fragment;
 import il.co.idocarecore.authentication.LoginStateManager;
 import il.co.idocarecore.authentication.events.UserLoggedOutEvent;
+import il.co.idocarecore.pictures.ImageViewPictureLoader;
+import il.co.idocarecore.requests.RequestEntity;
+import il.co.idocarecore.requests.RequestsManager;
+import il.co.idocarecore.requests.events.RequestIdChangedEvent;
+import il.co.idocarecore.requests.events.RequestsChangedEvent;
 import il.co.idocarecore.screens.ScreensNavigator;
 import il.co.idocarecore.screens.common.dialogs.DialogsFactory;
 import il.co.idocarecore.screens.common.dialogs.DialogsManager;
-import il.co.idocarecore.pictures.ImageViewPictureLoader;
-import il.co.idocarecore.requests.RequestEntity;
-import il.co.idocarecore.requests.events.RequestIdChangedEvent;
-import il.co.idocarecore.requests.events.RequestsChangedEvent;
-import il.co.idocarecore.requests.RequestsManager;
 import il.co.idocarecore.screens.common.dialogs.PromptDialogDismissedEvent;
-import il.co.idocarecore.screens.common.fragmenthelper.FragmentHelper;
 import il.co.idocarecore.useractions.UserActionEntityFactory;
 import il.co.idocarecore.useractions.UserActionsManager;
 import il.co.idocarecore.useractions.entities.PickUpRequestUserActionEntity;

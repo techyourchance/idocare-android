@@ -9,20 +9,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.techyourchance.fragmenthelper.FragmentHelper;
+
 import java.util.List;
 
 import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import il.co.idocarecore.Constants;
 import il.co.idocarecore.authentication.LoggedInUserEntity;
 import il.co.idocarecore.authentication.LoginStateManager;
 import il.co.idocarecore.location.IdcLocationManager;
 import il.co.idocarecore.pictures.CameraAdapter;
 import il.co.idocarecore.screens.ScreensNavigator;
-import il.co.idocarecore.screens.common.fragmenthelper.FragmentHelper;
 import il.co.idocarecore.serversync.ServerSyncController;
 import il.co.idocarecore.useractions.UserActionEntityFactory;
 import il.co.idocarecore.useractions.UserActionsManager;
@@ -32,7 +31,6 @@ import il.co.idocarecore.utils.Logger;
 import il.co.idocarerequests.R;
 import il.co.idocarerequests.screens.requestdetails.mvcviews.CloseRequestViewMvc;
 import il.co.idocarerequests.screens.requestdetails.mvcviews.CloseRequestViewMvcImpl;
-import il.co.idocarerequests.screens.requests.fragments.RequestsAllFragment;
 
 
 public class CloseRequestFragment extends NewAndCloseRequestBaseFragment

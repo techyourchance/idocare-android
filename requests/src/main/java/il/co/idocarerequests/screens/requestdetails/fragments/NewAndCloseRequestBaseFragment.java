@@ -6,6 +6,8 @@ import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 
+import com.techyourchance.fragmenthelper.FragmentHelper;
+
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -20,7 +22,6 @@ import il.co.idocarecore.authentication.LoginStateManager;
 import il.co.idocarecore.authentication.events.UserLoggedOutEvent;
 import il.co.idocarecore.location.IdcLocationManager;
 import il.co.idocarecore.pictures.CameraAdapter;
-import il.co.idocarecore.screens.common.fragmenthelper.FragmentHelper;
 import il.co.idocarecore.serversync.ServerSyncController;
 import il.co.idocarecore.utils.UtilMethods;
 

@@ -1,6 +1,8 @@
 package il.co.idocarerequests.screens.requests.fragments;
 
 
+import com.techyourchance.fragmenthelper.FragmentHelper;
+
 import org.greenrobot.eventbus.Subscribe;
 
 import javax.inject.Inject;
@@ -12,7 +14,6 @@ import il.co.idocarecore.requests.events.RequestsChangedEvent;
 import il.co.idocarecore.screens.ScreensNavigator;
 import il.co.idocarecore.screens.common.dialogs.DialogsFactory;
 import il.co.idocarecore.screens.common.dialogs.DialogsManager;
-import il.co.idocarecore.screens.common.fragmenthelper.FragmentHelper;
 import il.co.idocarecore.users.UsersManager;
 import il.co.idocarecore.utils.Logger;
 import il.co.idocarecore.utils.eventbusregistrator.EventBusRegistrable;

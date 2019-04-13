@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.techyourchance.fragmenthelper.FragmentHelper;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -21,7 +23,6 @@ import il.co.idocarecore.pictures.CameraAdapter;
 import il.co.idocarecore.requests.RequestEntity;
 import il.co.idocarecore.requests.RequestsManager;
 import il.co.idocarecore.screens.ScreensNavigator;
-import il.co.idocarecore.screens.common.fragmenthelper.FragmentHelper;
 import il.co.idocarecore.serversync.ServerSyncController;
 import il.co.idocarecore.utils.IdcDateTimeUtils;
 import il.co.idocarecore.utils.Logger;

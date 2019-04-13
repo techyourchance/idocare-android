@@ -4,11 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
+import com.techyourchance.fragmenthelper.FragmentHelper;
+
 import androidx.fragment.app.FragmentFactory;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocarecore.screens.ScreensNavigator;
-import il.co.idocarecore.screens.common.fragmenthelper.FragmentHelper;
 import il.co.idocarerequests.screens.requestdetails.fragments.CloseRequestFragment;
 import il.co.idocarerequests.screens.requestdetails.fragments.NewRequestFragment;
 import il.co.idocarerequests.screens.requestdetails.fragments.RequestDetailsFragment;

@@ -28,3 +28,9 @@ allprojects {
         jcenter()
     }
 }
+
+ext {
+    fragmentHelperVersion = "0.8.0"
+    threadPosterVersion = "0.8.2"
+    androidxAppcompatVersion = "1.1.0-alpha03"
+}

@@ -4,20 +4,11 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.ViewGroup;
 
-import androidx.fragment.app.FragmentFactory;
-import androidx.fragment.app.FragmentManager;
-import il.co.idocarecore.screens.ScreensNavigator;
-import il.co.idocarecore.screens.common.fragmenthelper.FragmentContainerWrapper;
-import il.co.idocarecore.screens.common.fragmenthelper.FragmentHelper;
+import com.techyourchance.fragmenthelper.FragmentContainerWrapper;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -26,12 +17,19 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentFactory;
+import androidx.fragment.app.FragmentManager;
 import il.co.idocare.R;
 import il.co.idocare.mvcviews.mainnavdrawer.MainViewMvc;
 import il.co.idocare.screens.common.toolbar.ToolbarDelegate;
 import il.co.idocare.screens.navigationdrawer.NavigationDrawerDelegate;
 import il.co.idocare.screens.navigationdrawer.events.NavigationDrawerStateChangeEvent;
-import il.co.idocarerequests.screens.requests.fragments.RequestsAllFragment;
+import il.co.idocarecore.screens.ScreensNavigator;
 import il.co.idocarecore.serversync.ServerSyncController;
 import il.co.idocarecore.utils.Logger;
 

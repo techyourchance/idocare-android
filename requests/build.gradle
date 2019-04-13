@@ -24,11 +24,17 @@ dependencies {
     implementation project(path: ':core')
 
     implementation 'javax.inject:javax.inject:1'
-    implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
+    implementation "androidx.appcompat:appcompat:${rootProject.ext.androidxAppcompatVersion}"
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation 'com.google.android.gms:play-services-maps:16.0.0'
     implementation 'org.greenrobot:eventbus:3.0.0'
     implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     implementation 'com.google.android.material:material:1.1.0-alpha02'
     testImplementation 'junit:junit:4.12'
+
+    // multithreading
+    implementation "com.techyourchance.threadposter:threadposter:${rootProject.ext.threadPosterVersion}"
+
+    // fragment transactions
+    implementation "com.techyourchance:fragmenthelper:${rootProject.ext.fragmentHelperVersion}"
 }
