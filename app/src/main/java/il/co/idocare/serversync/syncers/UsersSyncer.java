@@ -1,4 +1,4 @@
-package il.co.idocarecore.serversync.syncers;
+package il.co.idocare.serversync.syncers;
 
 import androidx.annotation.WorkerThread;
 

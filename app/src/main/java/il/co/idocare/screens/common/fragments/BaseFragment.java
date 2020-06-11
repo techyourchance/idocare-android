@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment;
 import javax.inject.Inject;
 
 import il.co.idocare.IdcApplication;
-import il.co.idocare.dependencyinjection.controller.ControllerComponent;
 import il.co.idocare.dependencyinjection.controller.ControllerModule;
 import il.co.idocarecore.utils.eventbusregistrator.EventBusRegistrator;
 
@@ -16,26 +15,7 @@ import il.co.idocarecore.utils.eventbusregistrator.EventBusRegistrator;
  */
 public abstract class BaseFragment extends Fragment {
 
-    private ControllerComponent mControllerComponent;
-
     @Inject EventBusRegistrator mEventBusRegistrator;
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        mControllerComponent = ((IdcApplication)getActivity().getApplication())
-                .getApplicationComponent()
-                .newControllerComponent(
-                        new ControllerModule(getActivity(), getActivity().getSupportFragmentManager()));
-
-        mControllerComponent.inject(this);
-
-    }
-
-    protected ControllerComponent getControllerComponent() {
-        return mControllerComponent;
-    }
 
     @Override
     public void onStart() {

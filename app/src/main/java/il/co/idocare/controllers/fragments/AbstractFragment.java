@@ -10,7 +10,6 @@ import android.view.View;
 import org.greenrobot.eventbus.EventBus;
 
 import il.co.idocare.IdcApplication;
-import il.co.idocare.dependencyinjection.controller.ControllerComponent;
 import il.co.idocare.dependencyinjection.controller.ControllerModule;
 
 
@@ -21,8 +20,6 @@ import il.co.idocare.dependencyinjection.controller.ControllerModule;
  */
 public abstract class AbstractFragment extends Fragment implements
         IDoCareFragmentInterface {
-
-    private ControllerComponent mControllerComponent;
 
     private IDoCareFragmentCallback mCallback;
 
@@ -39,12 +36,6 @@ public abstract class AbstractFragment extends Fragment implements
                     + " must implement IDoCareFragmentCallback");
         }
 
-
-        mControllerComponent = ((IdcApplication)getActivity().getApplication())
-                .getApplicationComponent()
-                .newControllerComponent(
-                        new ControllerModule((AppCompatActivity) getActivity(), getChildFragmentManager()));
-
     }
 
 
@@ -54,19 +45,6 @@ public abstract class AbstractFragment extends Fragment implements
         mCallback.showActionBar(shouldShowActionBar());
         mCallback.setTitle(getTitle());
     }
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // Dependency injection
-
-    protected ControllerComponent getControllerComponent() {
-        return mControllerComponent;
-    }
-
-    // End of dependency injection
-    //
-    // ---------------------------------------------------------------------------------------------
-
 
     /**
      * See {@link IDoCareFragmentCallback#replaceFragment(Class, boolean, boolean, Bundle)}

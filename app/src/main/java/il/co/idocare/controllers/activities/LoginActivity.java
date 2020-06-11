@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import il.co.idocare.R;
 import il.co.idocare.controllers.fragments.LoginChooserFragment;
 import il.co.idocare.controllers.fragments.LoginNativeFragment;
@@ -14,6 +15,7 @@ import il.co.idocare.controllers.fragments.LoginNativeFragment;
  * This activity takes care of login process. This activity is also used by StubAccountAuthenticator
  * service.
  */
+@AndroidEntryPoint
 public class LoginActivity extends AbstractActivity {
 
     /**

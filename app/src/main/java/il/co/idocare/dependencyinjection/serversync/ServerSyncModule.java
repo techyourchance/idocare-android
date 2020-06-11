@@ -1,5 +1,6 @@
 package il.co.idocare.dependencyinjection.serversync;
 
+import android.app.Application;
 import android.content.ContentResolver;
 
 import com.techyourchance.threadposter.BackgroundThreadPoster;
@@ -8,6 +9,13 @@ import org.greenrobot.eventbus.EventBus;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.android.components.ApplicationComponent;
+import il.co.idocare.dependencyinjection.application.ApplicationScope;
+import il.co.idocare.serversync.SyncAdapter;
+import il.co.idocare.serversync.syncers.RequestsSyncer;
+import il.co.idocare.serversync.syncers.UserActionsSyncer;
+import il.co.idocare.serversync.syncers.UsersSyncer;
 import il.co.idocarecore.authentication.LoginStateManager;
 import il.co.idocarecore.contentproviders.TransactionsController;
 import il.co.idocare.location.ReverseGeocoder;
@@ -16,9 +24,6 @@ import il.co.idocarecore.requests.cachers.RequestsCacher;
 import il.co.idocarecore.requests.cachers.TempIdCacher;
 import il.co.idocarecore.requests.retrievers.RawRequestRetriever;
 import il.co.idocarecore.requests.retrievers.TempIdRetriever;
-import il.co.idocarecore.serversync.syncers.RequestsSyncer;
-import il.co.idocarecore.serversync.syncers.UserActionsSyncer;
-import il.co.idocarecore.serversync.syncers.UsersSyncer;
 import il.co.idocarecore.useractions.cachers.UserActionCacher;
 import il.co.idocarecore.useractions.retrievers.UserActionsRetriever;
 import il.co.idocarecore.users.UsersCacher;
@@ -26,10 +31,23 @@ import il.co.idocarecore.users.UsersRetriever;
 import il.co.idocarecore.utils.Logger;
 
 @Module
+@InstallIn(ApplicationComponent.class)
 public class ServerSyncModule {
 
     @Provides
-    @ServerSyncScope
+    @ApplicationScope
+    SyncAdapter syncAdapter(Application application,
+                            RequestsSyncer requestsSyncer,
+                            UserActionsSyncer userActionsSyncer,
+                            UsersSyncer usersSyncer,
+                            LoginStateManager loginStateManager,
+                            EventBus eventBus,
+                            Logger logger) {
+        return new SyncAdapter(application, requestsSyncer, userActionsSyncer, usersSyncer, loginStateManager, eventBus, logger, false);
+    }
+
+    @Provides
+    @ApplicationScope
     RequestsSyncer requestsSyncer(RequestsCacher requestsCacher,
                                   RawRequestRetriever rawRequestsRetriever,
                                   TransactionsController transactionsController,
@@ -43,7 +61,6 @@ public class ServerSyncModule {
     }
 
     @Provides
-    @ServerSyncScope
     UserActionsSyncer userActionsSyncer(RequestsSyncer requestsSyncer,
                                         BackgroundThreadPoster backgroundThreadPoster,
                                         UserActionsRetriever userActionsRetriever,
@@ -53,10 +70,10 @@ public class ServerSyncModule {
                                         ServerApi serverApi,
                                         Logger logger) {
         return new UserActionsSyncer(requestsSyncer, backgroundThreadPoster, userActionsRetriever,
-                userActionCacher, tempIdRetriever, contentResolver, serverApi, logger);
+                                     userActionCacher, tempIdRetriever, contentResolver, serverApi, logger);
     }
+
     @Provides
-    @ServerSyncScope
     UsersSyncer usersSyncer(UsersRetriever usersRetriever,
                             UsersCacher usersCacher,
                             LoginStateManager loginStateManager,

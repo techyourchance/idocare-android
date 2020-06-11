@@ -11,14 +11,12 @@ import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
-import javax.inject.Inject;
-
+import il.co.idocare.serversync.syncers.RequestsSyncer;
+import il.co.idocare.serversync.syncers.UserActionsSyncer;
+import il.co.idocare.serversync.syncers.UsersSyncer;
 import il.co.idocarecore.authentication.LoginStateManager;
 import il.co.idocarecore.serversync.ManualSyncCompletedEvent;
 import il.co.idocarecore.serversync.SyncFailedException;
-import il.co.idocarecore.serversync.syncers.RequestsSyncer;
-import il.co.idocarecore.serversync.syncers.UserActionsSyncer;
-import il.co.idocarecore.serversync.syncers.UsersSyncer;
 import il.co.idocarecore.utils.Logger;
 
 /**
@@ -41,20 +39,32 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
      */
     public static final String SYNC_EXTRAS_MANUAL_SYNC_ID = "SYNC_EXTRAS_MANUAL_SYNC_ID";
 
-    @Inject RequestsSyncer mRequestsSyncer;
-    @Inject UserActionsSyncer mUserActionsSyncer;
-    @Inject UsersSyncer mUsersSyncer;
+    private final RequestsSyncer mRequestsSyncer;
+    private final UserActionsSyncer mUserActionsSyncer;
+    private final UsersSyncer mUsersSyncer;
 
-    @Inject LoginStateManager mLoginStateManager;
-    @Inject EventBus mEventBus;
-    @Inject Logger mLogger;
+    private final LoginStateManager mLoginStateManager;
+    private final EventBus mEventBus;
+    private final Logger mLogger;
 
     /**
      * Set up the sync adapter
      */
-    public SyncAdapter(@NonNull Context context,
+    public SyncAdapter(Context context,
+                       RequestsSyncer requestsSyncer,
+                       UserActionsSyncer userActionsSyncer,
+                       UsersSyncer usersSyncer,
+                       LoginStateManager loginStateManager,
+                       EventBus eventBus,
+                       Logger logger,
                        boolean autoInitialize) {
         super(context, autoInitialize);
+        mRequestsSyncer = requestsSyncer;
+        mUserActionsSyncer = userActionsSyncer;
+        mUsersSyncer = usersSyncer;
+        mLoginStateManager = loginStateManager;
+        mEventBus = eventBus;
+        mLogger = logger;
     }
 
     @Override

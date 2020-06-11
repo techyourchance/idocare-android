@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.techyourchance.fragmenthelper.FragmentHelper;
 
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentFactory;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocarecore.screens.ScreensNavigator;
@@ -42,9 +43,10 @@ public class ScreensNavigatorImpl implements ScreensNavigator {
         Bundle args = new Bundle();
         args.putString(RequestDetailsFragment.ARG_REQUEST_ID, requestId);
 
-        mFragmentHelper.replaceFragment(
-                mFragmentFactory.instantiate(mActivity.getClassLoader(), RequestDetailsFragment.class.getName(), args)
-        );
+        Fragment fragment = mFragmentFactory.instantiate(mActivity.getClassLoader(), RequestDetailsFragment.class.getName());
+        fragment.setArguments(args);
+
+        mFragmentHelper.replaceFragment(fragment);
     }
 
     @Override
@@ -52,9 +54,10 @@ public class ScreensNavigatorImpl implements ScreensNavigator {
         Bundle args = new Bundle();
         args.putString(CloseRequestFragment.ARG_REQUEST_ID, requestId);
 
-        mFragmentHelper.replaceFragment(
-                mFragmentFactory.instantiate(mActivity.getClassLoader(), CloseRequestFragment.class.getName(), args)
-        );
+        Fragment fragment = mFragmentFactory.instantiate(mActivity.getClassLoader(), CloseRequestFragment.class.getName());
+        fragment.setArguments(args);
+
+        mFragmentHelper.replaceFragment(fragment);
     }
 
     @Override
@@ -66,21 +69,21 @@ public class ScreensNavigatorImpl implements ScreensNavigator {
     @Override
     public void toNewRequest() {
         mFragmentHelper.replaceFragment(
-                mFragmentFactory.instantiate(mActivity.getClassLoader(), NewRequestFragment.class.getName(), null)
+                mFragmentFactory.instantiate(mActivity.getClassLoader(), NewRequestFragment.class.getName())
         );
     }
 
     @Override
     public void toMyRequests() {
         mFragmentHelper.replaceFragmentAndClearHistory(
-                mFragmentFactory.instantiate(mActivity.getClassLoader(), RequestsMyFragment.class.getName(), null)
+                mFragmentFactory.instantiate(mActivity.getClassLoader(), RequestsMyFragment.class.getName())
         );
     }
 
     @Override
     public void toAllRequests() {
         mFragmentHelper.replaceFragmentAndClearHistory(
-                mFragmentFactory.instantiate(mActivity.getClassLoader(), RequestsAllFragment.class.getName(), null)
+                mFragmentFactory.instantiate(mActivity.getClassLoader(), RequestsAllFragment.class.getName())
         );
     }
 }

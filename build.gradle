@@ -1,6 +1,17 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+
+
+
 buildscript {
+
+    ext {
+        fragmentHelperVersion = "0.8.0"
+        threadPosterVersion = "0.8.2"
+        androidxAppcompatVersion = "1.1.0"
+        hiltVersion = "2.28-alpha"
+    }
+
     repositories {
         google()
         jcenter()
@@ -10,17 +21,20 @@ buildscript {
 
         classpath 'com.google.gms:google-services:4.2.0'
 
+       classpath "com.google.dagger:hilt-android-gradle-plugin:${hiltVersion}"
+
+
     }
 }
 
-plugins {
-    id 'com.gradle.build-scan' version '1.15.1'
-}
+//plugins {
+//    id 'com.gradle.build-scan' version '1.15.1'
+//}
 
-buildScan {
-    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-    termsOfServiceAgree = 'yes'
-}
+//buildScan {
+//    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+//    termsOfServiceAgree = 'yes'
+//}
 
 allprojects {
     repositories {
@@ -29,8 +43,3 @@ allprojects {
     }
 }
 
-ext {
-    fragmentHelperVersion = "0.8.0"
-    threadPosterVersion = "0.8.2"
-    androidxAppcompatVersion = "1.1.0-alpha03"
-}

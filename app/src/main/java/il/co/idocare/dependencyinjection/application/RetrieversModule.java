@@ -4,6 +4,8 @@ import android.content.ContentResolver;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.android.components.ApplicationComponent;
 import il.co.idocarecore.requests.retrievers.RawRequestRetriever;
 import il.co.idocarecore.requests.retrievers.RequestsRetriever;
 import il.co.idocarecore.requests.retrievers.TempIdRetriever;
@@ -12,6 +14,7 @@ import il.co.idocarecore.useractions.retrievers.UserActionsRetriever;
 import il.co.idocarecore.users.UsersRetriever;
 
 @Module
+@InstallIn(ApplicationComponent.class)
 public class RetrieversModule {
 
     @Provides

@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import javax.inject.Inject;
 
+import androidx.activity.ComponentActivity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -14,7 +15,6 @@ import il.co.idocare.IdcApplication;
 import il.co.idocare.R;
 import il.co.idocare.controllers.fragments.IDoCareFragmentCallback;
 import il.co.idocare.controllers.fragments.IDoCareFragmentInterface;
-import il.co.idocare.dependencyinjection.controller.ControllerComponent;
 import il.co.idocare.dependencyinjection.controller.ControllerModule;
 import il.co.idocarecore.screens.common.dialogs.DialogsFactory;
 import il.co.idocarecore.screens.common.dialogs.DialogsManager;
@@ -30,8 +30,6 @@ public abstract class AbstractActivity extends AppCompatActivity implements
     @Inject DialogsManager mDialogsManager;
     @Inject DialogsFactory mDialogsFactory;
 
-    private ControllerComponent mControllerComponent;
-
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
@@ -46,24 +44,6 @@ public abstract class AbstractActivity extends AppCompatActivity implements
                 getSupportActionBar().hide();
         }
     }
-
-
-    // ---------------------------------------------------------------------------------------------
-    //
-    // Dependency injection
-
-    protected ControllerComponent getControllerComponent() {
-        if (mControllerComponent == null) {
-            mControllerComponent = ((IdcApplication)getApplication()).getApplicationComponent()
-                    .newControllerComponent(
-                            new ControllerModule(this, getSupportFragmentManager()));
-        }
-        return mControllerComponent;
-    }
-
-    // End of dependency injection
-    //
-    // ---------------------------------------------------------------------------------------------
 
     // TODO: maybe we need to preserve the state of the replaced fragments?
     @Override

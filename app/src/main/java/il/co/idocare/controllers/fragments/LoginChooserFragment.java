@@ -25,6 +25,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import il.co.idocare.R;
 import il.co.idocarecore.authentication.AuthManager;
 import il.co.idocarecore.authentication.LoginStateManager;
@@ -40,6 +41,7 @@ import il.co.idocarecore.utils.Logger;
 /**
  * This fragment allows the user to choose between multiple signup/login options, or skip login
  */
+@AndroidEntryPoint
 public class LoginChooserFragment extends AbstractFragment
         implements LoginChooserViewMvc.LoginChooserViewMvcListener {
 
@@ -66,7 +68,6 @@ public class LoginChooserFragment extends AbstractFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getControllerComponent().inject(this);
 
         mLoginChooserViewMvc = new LoginChooserViewMvcImpl(inflater, container);
         mLoginChooserViewMvc.registerListener(this);

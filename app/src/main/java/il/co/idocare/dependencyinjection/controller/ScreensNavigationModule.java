@@ -12,13 +12,16 @@ import androidx.fragment.app.FragmentManager;
 import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.android.components.ActivityComponent;
 import il.co.idocare.screens.ScreensNavigatorImpl;
-import il.co.idocare.screens.common.fragments.FragmentFactoryImpl;
+import il.co.idocare.screens.common.fragments.MyFragmentFactory;
 import il.co.idocarecore.screens.ScreensNavigator;
 import il.co.idocarecore.screens.common.dialogs.InfoDialog;
 import il.co.idocarecore.screens.common.dialogs.PromptDialog;
 
 @Module
+@InstallIn(ActivityComponent.class)
 public abstract class ScreensNavigationModule {
 
     @Provides
@@ -34,7 +37,7 @@ public abstract class ScreensNavigationModule {
     }
 
     @Binds
-    abstract FragmentFactory fragmentFactory(FragmentFactoryImpl fragmentFactoryImpl);
+    abstract FragmentFactory fragmentFactory(MyFragmentFactory fragmentFactoryImpl);
 
     @Provides
     static ScreensNavigator screensNavigator(FragmentHelper fragmentHelper, Activity activity, FragmentFactory fragmentFactory) {

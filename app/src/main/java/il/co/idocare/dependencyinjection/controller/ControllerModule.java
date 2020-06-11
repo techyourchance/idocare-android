@@ -1,17 +1,19 @@
 package il.co.idocare.dependencyinjection.controller;
 
 import android.app.Activity;
-import android.content.Context;
 
 import com.techyourchance.threadposter.BackgroundThreadPoster;
 import com.techyourchance.threadposter.UiThreadPoster;
 
 import org.greenrobot.eventbus.EventBus;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentFactory;
 import androidx.fragment.app.FragmentManager;
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.android.components.ActivityComponent;
 import il.co.idocare.screens.common.dialogs.DialogsFactoryImpl;
 import il.co.idocare.screens.common.toolbar.ToolbarDelegate;
 import il.co.idocare.screens.common.toolbar.ToolbarManager;
@@ -37,37 +39,15 @@ import il.co.idocarecore.utils.Logger;
 import il.co.idocarecore.utils.eventbusregistrator.EventBusRegistrator;
 
 @Module
+@InstallIn(ActivityComponent.class)
 public class ControllerModule {
 
-    private final Activity mActivity;
-    private final FragmentManager mFragmentManager;
-
-    public ControllerModule(Activity activity, FragmentManager fragmentManager) {
-        mActivity = activity;
-        mFragmentManager = fragmentManager;
+    @Provides
+    FragmentManager fragmentManager(Activity activity) {
+        return ((AppCompatActivity)activity).getSupportFragmentManager();
     }
 
     @Provides
-    @ControllerScope
-    Context context() {
-        return mActivity;
-    }
-
-    @Provides
-    @ControllerScope
-    Activity activity() {
-        return mActivity;
-    }
-
-    @Provides
-    @ControllerScope
-    FragmentManager fragmentManager() {
-        return mFragmentManager;
-    }
-
-
-    @Provides
-    @ControllerScope
     GooglePlayServicesChecker googlePlayServicesChecker(Activity activity) {
         return new GooglePlayServicesChecker(activity);
     }
@@ -78,19 +58,16 @@ public class ControllerModule {
     }
 
     @Provides
-    @ControllerScope
     DialogsManager dialogsManager(FragmentManager fragmentManager) {
         return new DialogsManager(fragmentManager);
     }
 
     @Provides
-    @ControllerScope
     DialogsFactory dialogsFactory(FragmentFactory fragmentFactory, Activity activity) {
         return new DialogsFactoryImpl(fragmentFactory, activity);
     }
 
     @Provides
-    @ControllerScope
     RequestsManager requestsManager(
             BackgroundThreadPoster backgroundThreadPoster,
             UiThreadPoster uiThreadPoster,
@@ -131,17 +108,16 @@ public class ControllerModule {
     }
 
     @Provides
-    NavigationDrawerManager navigationDrawerManager(Logger logger) {
-        return new NavigationDrawerManager((NavigationDrawerDelegate) mActivity, logger);
+    NavigationDrawerManager navigationDrawerManager(Logger logger, Activity activity) {
+        return new NavigationDrawerManager((NavigationDrawerDelegate) activity, logger);
     }
 
     @Provides
-    ToolbarManager toolbarManager(Logger logger) {
-        return new ToolbarManager((ToolbarDelegate) mActivity, logger);
+    ToolbarManager toolbarManager(Logger logger, Activity activity) {
+        return new ToolbarManager((ToolbarDelegate) activity, logger);
     }
 
     @Provides
-    @ControllerScope
     ServerSyncController serverSyncController(ContentResolverProxy contentResolverProxy,
                                               LoginStateManager loginStateManager) {
         return new ServerSyncControllerImpl(contentResolverProxy, loginStateManager);

@@ -14,6 +14,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import javax.inject.Inject;
 
 import androidx.annotation.Nullable;
+import dagger.hilt.android.AndroidEntryPoint;
 import il.co.idocare.R;
 import il.co.idocare.controllers.activities.LoginActivity;
 import il.co.idocare.screens.common.fragments.BaseFragment;
@@ -37,6 +38,7 @@ import il.co.idocarecore.utils.eventbusregistrator.EventBusRegistrable;
  * This fragment will be shown in navigation drawer
  */
 @EventBusRegistrable
+@AndroidEntryPoint
 public class NavigationDrawerFragment extends BaseFragment implements
         NavigationDrawerViewMvc.NavigationDrawerViewMvcListener,
         UsersDataMonitoringManager.UsersDataMonitorListener {
@@ -58,12 +60,6 @@ public class NavigationDrawerFragment extends BaseFragment implements
 
     private NavigationDrawerViewMvcImpl mViewMvc;
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        getControllerComponent().inject(this);
-    }
 
     @Nullable
     @Override

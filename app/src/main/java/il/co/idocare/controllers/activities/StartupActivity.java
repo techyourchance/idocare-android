@@ -8,6 +8,7 @@ import com.techyourchance.threadposter.UiThreadPoster;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import il.co.idocare.R;
 import il.co.idocarecore.authentication.LoginStateManager;
 import il.co.idocare.controllers.fragments.SplashFragment;
@@ -15,6 +16,7 @@ import il.co.idocare.controllers.fragments.SplashFragment;
 /**
  * This startup activity is the main entry point into the app.
  */
+@AndroidEntryPoint
 public class StartupActivity extends AbstractActivity {
 
     private static final String TAG = "StartupActivity";
@@ -31,8 +33,6 @@ public class StartupActivity extends AbstractActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        getControllerComponent().inject(this);
-
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.layout_single_frame);

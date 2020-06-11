@@ -38,7 +38,9 @@ public class DialogsFactoryImpl implements DialogsFactory {
         args.putString(InfoDialog.ARG_MESSAGE, message);
         args.putString(InfoDialog.ARG_BUTTON_CAPTION, buttonCaption);
 
-        return (DialogFragment) mFragmentFactory.instantiate(mActivity.getClassLoader(), InfoDialog.class.getName(), args);
+        DialogFragment fragment = (DialogFragment) mFragmentFactory.instantiate(mActivity.getClassLoader(), InfoDialog.class.getName());
+        fragment.setArguments(args);
+        return fragment;
     }
 
     /**
@@ -57,7 +59,9 @@ public class DialogsFactoryImpl implements DialogsFactory {
         args.putString(PromptDialog.ARG_POSITIVE_BUTTON_CAPTION, positiveButtonCaption);
         args.putString(PromptDialog.ARG_NEGATIVE_BUTTON_CAPTION, negativeButtonCaption);
 
-        return (DialogFragment) mFragmentFactory.instantiate(mActivity.getClassLoader(), PromptDialog.class.getName(), args);
+        DialogFragment fragment = (DialogFragment) mFragmentFactory.instantiate(mActivity.getClassLoader(), PromptDialog.class.getName());
+        fragment.setArguments(args);
+        return fragment;
     }
 
 }

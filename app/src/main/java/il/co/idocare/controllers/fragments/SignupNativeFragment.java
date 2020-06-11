@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import il.co.idocarecore.Constants;
 import il.co.idocare.R;
 import il.co.idocarecore.authentication.AuthManager;
@@ -43,6 +44,7 @@ import il.co.idocarecore.utils.eventbusregistrator.EventBusRegistrable;
  * This fragment handles native signup flow
  */
 @EventBusRegistrable
+@AndroidEntryPoint
 public class SignupNativeFragment extends AbstractFragment implements SignupNativeViewMvcImpl.SignupNativeViewMvcListener {
 
 
@@ -68,8 +70,6 @@ public class SignupNativeFragment extends AbstractFragment implements SignupNati
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getControllerComponent().inject(this);
-
         mSignupNativeViewMvc = new SignupNativeViewMvcImpl(inflater, container);
         mSignupNativeViewMvc.registerListener(this);
 

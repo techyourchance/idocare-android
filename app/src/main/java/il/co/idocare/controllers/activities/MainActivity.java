@@ -24,6 +24,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentFactory;
 import androidx.fragment.app.FragmentManager;
+import dagger.hilt.android.AndroidEntryPoint;
 import il.co.idocare.R;
 import il.co.idocare.mvcviews.mainnavdrawer.MainViewMvc;
 import il.co.idocare.screens.common.toolbar.ToolbarDelegate;
@@ -33,7 +34,7 @@ import il.co.idocarecore.screens.ScreensNavigator;
 import il.co.idocarecore.serversync.ServerSyncController;
 import il.co.idocarecore.utils.Logger;
 
-
+@AndroidEntryPoint
 public class MainActivity extends AbstractActivity implements
         MainViewMvc.MainNavDrawerViewMvcListener,
         NavigationDrawerDelegate,
@@ -53,8 +54,6 @@ public class MainActivity extends AbstractActivity implements
     @Inject FragmentManager mFragmentManager;
     @Inject FragmentFactory mFragmentFactory;
 
-
-
     private MainViewMvc mMainViewMvc;
 
 
@@ -65,9 +64,9 @@ public class MainActivity extends AbstractActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        getControllerComponent().inject(this);
-        mFragmentManager.setFragmentFactory(mFragmentFactory);
         super.onCreate(savedInstanceState);
+
+        mFragmentManager.setFragmentFactory(mFragmentFactory);
 
         mMainViewMvc = new MainViewMvc(LayoutInflater.from(this), null, this);
         mMainViewMvc.registerListener(this);

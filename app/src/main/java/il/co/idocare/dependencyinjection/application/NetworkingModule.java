@@ -4,6 +4,8 @@ import android.app.Application;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.android.components.ApplicationComponent;
 import il.co.idocare.BuildConfig;
 import il.co.idocarecore.authentication.LoginStateManager;
 import il.co.idocarecore.networking.FilesDownloader;
@@ -16,6 +18,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 @Module
+@InstallIn(ApplicationComponent.class)
 public class NetworkingModule {
 
     @Provides

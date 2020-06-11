@@ -14,6 +14,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import il.co.idocare.R;
 import il.co.idocarecore.authentication.AuthManager;
 import il.co.idocarecore.authentication.LoginStateManager;
@@ -30,6 +31,7 @@ import il.co.idocarecore.utils.Logger;
 /**
  * This fragment handles native login flow
  */
+@AndroidEntryPoint
 public class LoginNativeFragment extends AbstractFragment implements LoginNativeViewMvc.LoginNativeViewMvcListener {
 
     private static final String TAG = "LoginNativeFragment";
@@ -52,8 +54,6 @@ public class LoginNativeFragment extends AbstractFragment implements LoginNative
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mLoginNativeViewMvc = new LoginNativeViewMvcImpl(inflater, container);
         mLoginNativeViewMvc.registerListener(this);
-
-        getControllerComponent().inject(this);
 
         return mLoginNativeViewMvc.getRootView();
     }

@@ -6,6 +6,8 @@ import org.greenrobot.eventbus.EventBus;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.android.components.ApplicationComponent;
 import il.co.idocarecore.requests.cachers.RequestsCacher;
 import il.co.idocarecore.requests.cachers.TempIdCacher;
 import il.co.idocarecore.useractions.cachers.UserActionCacher;
@@ -13,6 +15,7 @@ import il.co.idocarecore.users.UsersCacher;
 import il.co.idocarecore.utils.Logger;
 
 @Module
+@InstallIn(ApplicationComponent.class)
 public class CachersModule {
 
     @Provides

@@ -15,6 +15,8 @@ import java.util.Locale;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.android.components.ApplicationComponent;
 import il.co.idocare.location.IdcLocationManagerImpl;
 import il.co.idocarecore.Constants;
 import il.co.idocarecore.authentication.AuthManager;
@@ -31,19 +33,8 @@ import il.co.idocarecore.useractions.UserActionEntityFactory;
 import il.co.idocarecore.utils.Logger;
 
 @Module
+@InstallIn(ApplicationComponent.class)
 public class ApplicationModule {
-
-    private final Application mApplication;
-
-    public ApplicationModule(Application application) {
-        mApplication = application;
-    }
-
-    @Provides
-    @ApplicationScope
-    Application provideApplicationContext() {
-        return mApplication;
-    }
 
     @Provides
     @ApplicationScope
@@ -72,8 +63,8 @@ public class ApplicationModule {
 
     @Provides
     @ApplicationScope
-    SharedPreferences provideSharedPreferences() {
-        return mApplication.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
+    SharedPreferences provideSharedPreferences(Application application) {
+        return application.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
     }
 
     @Provides
