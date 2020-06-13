@@ -16,7 +16,6 @@ import il.co.idocare.dependencyinjection.application.DaggerApplicationComponent;
 import il.co.idocare.dependencyinjection.application.CachersModule;
 import il.co.idocare.dependencyinjection.application.NetworkingModule;
 import il.co.idocare.dependencyinjection.application.RetrieversModule;
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 public class IdcApplication extends MultiDexApplication {
 
@@ -25,13 +24,6 @@ public class IdcApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        CalligraphyConfig.initDefault(
-                new CalligraphyConfig.Builder()
-                        .setDefaultFontPath("fonts/Montserrat-Regular.ttf")
-                        .setFontAttrId(R.attr.fontPath)
-                        .build()
-        );
 
         FacebookSdk.sdkInitialize(getApplicationContext());
 

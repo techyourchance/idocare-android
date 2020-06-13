@@ -18,7 +18,6 @@ import il.co.idocare.dependencyinjection.controller.ControllerComponent;
 import il.co.idocare.dependencyinjection.controller.ControllerModule;
 import il.co.idocarecore.screens.common.dialogs.DialogsFactory;
 import il.co.idocarecore.screens.common.dialogs.DialogsManager;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
  * This is a wrapper around a standard Activity class which provides few convenience methods
@@ -31,11 +30,6 @@ public abstract class AbstractActivity extends AppCompatActivity implements
     @Inject DialogsFactory mDialogsFactory;
 
     private ControllerComponent mControllerComponent;
-
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
 
     @Override
     public void showActionBar(boolean show) {
