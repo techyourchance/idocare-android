@@ -6,20 +6,11 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.2'
+        classpath 'com.android.tools.build:gradle:3.6.3'
 
         classpath 'com.google.gms:google-services:4.2.0'
 
     }
-}
-
-plugins {
-    id 'com.gradle.build-scan' version '1.15.1'
-}
-
-buildScan {
-    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-    termsOfServiceAgree = 'yes'
 }
 
 allprojects {
