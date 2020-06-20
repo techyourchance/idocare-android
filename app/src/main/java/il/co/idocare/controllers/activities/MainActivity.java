@@ -24,7 +24,11 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentFactory;
 import androidx.fragment.app.FragmentManager;
+import dagger.hilt.EntryPoint;
+import dagger.hilt.InstallIn;
 import dagger.hilt.android.AndroidEntryPoint;
+import dagger.hilt.android.EntryPointAccessors;
+import dagger.hilt.android.components.ActivityComponent;
 import il.co.idocare.R;
 import il.co.idocare.mvcviews.mainnavdrawer.MainViewMvc;
 import il.co.idocare.screens.common.toolbar.ToolbarDelegate;
@@ -43,6 +47,13 @@ public class MainActivity extends AbstractActivity implements
 
     private static final String TAG = "MainActivity";
 
+    @EntryPoint
+    @InstallIn(ActivityComponent.class)
+    public interface MainActivityEntryPoint {
+        public FragmentManager getFragmentManager();
+        public FragmentFactory getFragmentFactory();
+    }
+
     private static final int PERMISSION_REQUEST_GPS = 1;
 
     public static final String EXTRA_GPS_PERMISSION_REQUEST_RETRY = "EXTRA_GPS_PERMISSION_REQUEST_RETRY";
@@ -51,8 +62,6 @@ public class MainActivity extends AbstractActivity implements
     @Inject Logger mLogger;
     @Inject EventBus mEventBus;
     @Inject ScreensNavigator mScreensNavigator;
-    @Inject FragmentManager mFragmentManager;
-    @Inject FragmentFactory mFragmentFactory;
 
     private MainViewMvc mMainViewMvc;
 
@@ -64,9 +73,11 @@ public class MainActivity extends AbstractActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        MainActivityEntryPoint entryPoint =
+                EntryPointAccessors.fromActivity(this, MainActivityEntryPoint.class);
+        entryPoint.getFragmentManager().setFragmentFactory(entryPoint.getFragmentFactory());
 
-        mFragmentManager.setFragmentFactory(mFragmentFactory);
+        super.onCreate(savedInstanceState);
 
         mMainViewMvc = new MainViewMvc(LayoutInflater.from(this), null, this);
         mMainViewMvc.registerListener(this);
